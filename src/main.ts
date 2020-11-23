@@ -1,9 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ApiModule } from './api.module';
+import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const api = await NestFactory.create(ApiModule);
+  const app = await NestFactory.create(AppModule);
 
   const options = new DocumentBuilder()
     .setTitle('Ti Broish API')
@@ -12,15 +12,15 @@ async function bootstrap() {
     .setContact('Da Bulgaria', 'https://dabulgaria.bg', 'team@dabulgaria.bg')
     .build();
 
-  const document = SwaggerModule.createDocument(api, options, {
+  const document = SwaggerModule.createDocument(app, options, {
     operationIdFactory: (
       controllerKey: string,
       methodKey: string
     ) => controllerKey.replace(/controller/ig, '') + '.' + methodKey,
     ignoreGlobalPrefix: false,
   });
-  SwaggerModule.setup('api', api, document);
+  SwaggerModule.setup('app', app, document);
 
-  await api.listen(3000);
+  await app.listen(3000);
 }
 bootstrap();

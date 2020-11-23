@@ -10,7 +10,6 @@ import { SectionsController } from './sections/sections/sections.controller';
 import { TownsController } from './sections/towns/towns.controller';
 import { UsersController } from './users/users.controller';
 
-
 @Module({
   controllers: [
     CityRegionsController,
@@ -24,6 +23,5 @@ import { UsersController } from './users/users.controller';
     TownsController,
     UsersController,
   ],
-  imports: [ ],
 })
 export class ApiModule {}

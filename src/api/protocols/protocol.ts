@@ -1,5 +1,5 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { Picture } from 'src/pictures/picture';
+import { Picture } from '../pictures/picture';
 import { ProtocolCreateDto } from './protocolCreate.dto';
 
 export class Protocol extends OmitType(ProtocolCreateDto, ['pictures'] as const) {

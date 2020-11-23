@@ -1,4 +1,4 @@
-import { Controller, Get, Post, HttpCode, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode } from '@nestjs/common';
 import { Party } from './party';
 
 @Controller('parties')
