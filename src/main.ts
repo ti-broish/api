@@ -1,9 +1,12 @@
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const configService: ConfigService = app.get(ConfigService);
 
   const options = new DocumentBuilder()
     .setTitle('Ti Broish API')
@@ -21,6 +24,6 @@ async function bootstrap() {
   });
   SwaggerModule.setup('app', app, document);
 
-  await app.listen(3000);
+  await app.listen(configService.get<number>('PORT', 3000));
 }
 bootstrap();
