@@ -18,7 +18,4 @@ export class UserCreateDto {
 
   @ApiProperty({ required: true })
   organization: number;
-
-  @ApiProperty({ required: true })
-  password: string;
 }
