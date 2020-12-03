@@ -1,33 +1,28 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirebaseAdminCoreModule } from '@tfarras/nestjs-firebase-admin';
-import * as Joi from '@hapi/joi';
 import { AuthModule } from './auth/auth.module';
-import { FirebaseService } from './auth/firebase.service';
-import { ApiModule } from './api/api.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SectionsModule } from './sections/sections.module';
+import { UsersModule } from './users/users.module';
+import { configSchema, TypeOrmConfigService } from './config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      validationSchema: Joi.object({
-        NODE_ENV: Joi.string()
-          .valid('development', 'production', 'test', 'provision')
-          .default('development'),
-        PORT: Joi.number().default(3000),
-        GOOGLE_CLOUD_PROJECT: Joi.string().required(),
-        GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
-      }),
-    }),
+    ConfigModule.forRoot({ validationSchema: configSchema }),
     FirebaseAdminCoreModule.forRootAsync({
       useFactory: () => ({}),
       inject: [ConfigService],
       imports: [ConfigModule],
     }),
     AuthModule,
-    ApiModule
-  ],
-  providers: [
-    FirebaseService
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useClass: TypeOrmConfigService,
+    }),
+    UsersModule,
+    SectionsModule,
   ],
 })
 export class AppModule {}
