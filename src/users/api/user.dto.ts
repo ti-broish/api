@@ -14,18 +14,21 @@ export class UserDto {
   @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @IsString({ groups: [UserDto.CREATE, UserDto.UPDATE] })
+  @Length(1, 100)
   firstName: string;
 
   @ApiProperty({ required: true })
   @Expose({ groups: [ UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @IsString({ groups: [UserDto.CREATE, UserDto.UPDATE] })
+  @Length(1, 100)
   lastName: string;
 
   @ApiProperty({ required: true })
   @Expose({ groups: [ UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @IsEmail({}, { groups: [UserDto.CREATE, UserDto.UPDATE] })
+  @Length(1, 100)
   email: string;
 
   @ApiProperty({ required: true })
