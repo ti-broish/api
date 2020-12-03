@@ -1,7 +1,7 @@
 import { Controller, Get, Post, HttpCode, Query, Param, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiProperty } from '@nestjs/swagger';
-import { Picture } from './picture';
+import { Picture } from './picture.dto';
 
 class FileUploadDto {
   @ApiProperty({ type: 'string', format: 'binary' })

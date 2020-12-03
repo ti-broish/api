@@ -1,5 +1,5 @@
 import { Controller, Get, HttpCode } from '@nestjs/common';
-import { Party } from './party';
+import { Party } from './party.dto';
 
 @Controller('parties')
 export class PartiesController {

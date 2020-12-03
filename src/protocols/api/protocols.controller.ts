@@ -1,5 +1,5 @@
 import { Controller, Get, Post, HttpCode, Query, Param, Body } from '@nestjs/common';
-import { Protocol } from './protocol';
+import { Protocol } from './protocol.dto';
 import { ProtocolCreateDto } from './protocolCreate.dto';
 
 @Controller('protocols')

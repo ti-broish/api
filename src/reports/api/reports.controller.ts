@@ -1,5 +1,5 @@
 import { Controller, Get, Post, HttpCode, Query, Param, Body } from '@nestjs/common';
-import { Report } from './report';
+import { Report } from './report.dto';
 import { ReportCreateDto } from './reportCreate.dto';
 
 @Controller('reports')
