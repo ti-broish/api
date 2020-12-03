@@ -7,7 +7,7 @@ export const configSchema = Joi.object({
   PORT: Joi.number().default(4000),
   DATABASE_HOST: Joi.string().hostname().default('localhost'),
   DATABASE_PORT: Joi.number().default(5432),
-  DATABASE_USERNAME: Joi.string().default('postgres'),
+  DATABASE_USERNAME: Joi.string().required(),
   DATABASE_PASSWORD: Joi.string().required(),
   DATABASE_NAME: Joi.string().default('ti_broish'),
   GOOGLE_CLOUD_PROJECT: Joi.string().required(),
