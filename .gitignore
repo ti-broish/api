@@ -387,6 +387,6 @@ Temporary Items
 
 =======
 # Local
-.env
-dist
+/.env
+/dist/
 /firebase.json
