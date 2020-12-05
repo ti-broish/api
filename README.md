@@ -14,7 +14,7 @@ git clone git@github.com:Da-Bulgaria/ti-broish-api.git
 cd ti-broish-api
 # Install dependencies
 npm install
-# Start the database with a Docker
+# Start the database with Docker
 npm run start:dev:db
 # Run the migrations
 npm typeorm migration:run
@@ -50,6 +50,14 @@ npm run firebase:token
 ``` shell
 npm run start
 ```
+
+##  API Документация
+
+Ти Броиш REST API- използва Swagger OpenAPI стандарта.
+След като стартирате приложението можете да намерите API документация на:
+
+- http://localhost:4000/docs - Swagger документация и playground
+- http://localhost:4000/docs-json - OpenAPI JSON Спецификация
 
 ## Разработване
 
