@@ -121,9 +121,11 @@ export class InitialSchema1606602418369 implements MigrationInterface {
         "id" SMALLSERIAL,
         "name" varchar NOT NULL,
         "country_id" smallint NOT NULL,
+        "election_region_id" smallint NOT NULL,
         "municipality_id" smallint DEFAULT NULL,
         PRIMARY KEY ("id"),
         CONSTRAINT "towns_country_id_fkey" FOREIGN KEY ("country_id") REFERENCES "countries" ("id"),
+        CONSTRAINT "towns_election_region_id_fkey" FOREIGN KEY ("election_region_id") REFERENCES "election_regions" ("id"),
         CONSTRAINT "towns_municipality_id_fkey" FOREIGN KEY ("municipality_id") REFERENCES "municipalities" ("id")
       );`
     );
