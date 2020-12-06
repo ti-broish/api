@@ -24,7 +24,7 @@ export class Sections1607202587052 implements MigrationInterface {
     `);
 
     await queryRunner.query(await csvToSql(
-      'src/seeds/eu2019/sections.txt',
+      __dirname + '/eu2019/sections.txt',
       'sections_elections',
       {
         delimiter: ';',
@@ -174,7 +174,7 @@ export class Sections1607202587052 implements MigrationInterface {
     `);
 
     await queryRunner.query(await csvToSql(
-      'src/seeds/eu2019/sections_ekatte.csv',
+      __dirname + '/eu2019/sections_ekatte.csv',
       'sections_ekatte'
     ));
 
