@@ -118,14 +118,14 @@ export class InitialSchema1606602418369 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE "towns" (
-        "id" SMALLSERIAL,
+        "id" SERIAL,
         "name" varchar NOT NULL,
+        "code" int NOT NULL,
         "country_id" smallint NOT NULL,
-        "election_region_id" smallint NOT NULL,
         "municipality_id" smallint DEFAULT NULL,
         PRIMARY KEY ("id"),
+        UNIQUE ("code"),
         CONSTRAINT "towns_country_id_fkey" FOREIGN KEY ("country_id") REFERENCES "countries" ("id"),
-        CONSTRAINT "towns_election_region_id_fkey" FOREIGN KEY ("election_region_id") REFERENCES "election_regions" ("id"),
         CONSTRAINT "towns_municipality_id_fkey" FOREIGN KEY ("municipality_id") REFERENCES "municipalities" ("id")
       );`
     );
@@ -159,9 +159,10 @@ export class InitialSchema1606602418369 implements MigrationInterface {
         "city_region_id" smallint DEFAULT NULL,
         "code" bpchar(3) NOT NULL,
         "place" varchar DEFAULT '' NOT NULL,
-        "voters_count" smallint DEFAULT NULL,
+        "voters_count" int DEFAULT NULL,
         "is_mobile" boolean,
         "is_ship" boolean,
+        "is_machine" boolean,
         PRIMARY KEY ("id"),
         CONSTRAINT "sections_election_region_id_fkey" FOREIGN KEY ("election_region_id") REFERENCES "election_regions" ("id"),
         CONSTRAINT "sections_town_id_fkey" FOREIGN KEY ("town_id") REFERENCES "towns" ("id"),
@@ -337,5 +338,6 @@ export class InitialSchema1606602418369 implements MigrationInterface {
     await queryRunner.query(`DROP TYPE "confirmation_type";`);
     await queryRunner.query(`DROP TABLE "people";`);
     await queryRunner.query(`DROP TABLE "organizations";`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "seeds";`);
   }
 }
