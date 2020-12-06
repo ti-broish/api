@@ -273,6 +273,22 @@ export class Sections1607202587052 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
+        update sections
+        set place = sections_ekatte.place
+        from sections_ekatte
+        join election_regions
+          on election_regions.code = sections_ekatte.election_region_code
+        join towns
+          on towns.code = sections_ekatte.town_code
+        left join city_regions
+          on city_regions.code = sections_ekatte.city_region_code
+        where election_regions.id = sections.election_region_id
+        and towns.id = sections.town_id
+        and (sections.city_region_id is null or sections.city_region_id = city_regions.id)
+        and sections.code = sections_ekatte.section_code;
+    `);
+
+    await queryRunner.query(`
       insert into municipalities(code, name)
       select municipality_code, INITCAP(MAX(municipality_name))
       from sections_ekatte
