@@ -13,6 +13,9 @@ export class OrganizationDto {
   name: string;
 
   public static fromEntity(entity: Organization): OrganizationDto {
-    return plainToClass<OrganizationDto, Partial<Organization>>(OrganizationDto, entity, { excludeExtraneousValues: true })
+    return plainToClass<OrganizationDto, Partial<Organization>>(OrganizationDto, entity, {
+      excludeExtraneousValues: true,
+      groups: ['read'],
+    })
   }
 }
