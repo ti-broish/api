@@ -1,0 +1,103 @@
+# List organizations
+GET /organizations
+
+# Register users
+POST   /users
+# Get authenticated in user
+GET    /me
+# Update authenticated user
+PATCH  /me
+# Delete authenticated user
+DELETE /me
+
+# Retrieve latest posts
+GET    /posts
+# Get details for a specific post
+GET    /posts/:post
+
+# Create a new broadcast for a push notification
+POST   /broadcasts
+
+# List countries
+GET    /countries
+[
+  {
+    code: "00",
+    name: "България",
+    isAbroad: false
+  },
+  {
+    code: "01",
+    name: "Австралия",
+    isAbroad: true
+  }
+]
+
+# List election regions, receive municipalities with them
+GET    /election_regions
+[
+  {
+    code: "01",
+    name: "Благоевград",
+    isAbroad: false,
+    municipalities: [{code: "05", name: "Банско"}]
+  }
+]
+
+# Query towns either by country, receive city regions with them
+GET    /towns?country=:country
+# Query towns by election region and municipality
+GET    /towns?election_region=:election_region&municipality=:municipality
+[
+  {
+    id: 1234,
+    name: "Варна",
+    cityRegions: [{
+      code:
+      name:
+    }]
+  }
+]
+
+# Query sections either by town (works for both abroad and domestically)
+GET    /sections?town=:town
+# Query sections by town and city region
+GET    /sections?town=:town&city_region=:city_region
+
+# Upload a picture
+POST   /pictures
+{
+  imageData
+}
+{
+  id
+}
+# Get a picture record
+GET    /pictures/:picture
+
+# List parties in the election
+GET /parties
+
+# Submit a protocol with a section and pictures
+POST   /protocols
+{
+  section: 123456789,
+  pictures: [1, 2, 3, 4]
+}
+# Retrieve a protocol you've submitted
+GET    /protocols/:protocol
+# Submit votes data for a protocol
+POST   /protocols/:protocol/data
+# Query protocols submitted by a user
+GET    /protocols?author=:user
+
+# Submit a report with a section and optional pictures
+POST   /reports
+# Retrieve a report you've submitted
+GET    /reports/:report
+# Retrieve reports submitted by a user
+GET    /reports?author=:user
+# Retrieve pictures attached to a protocol
+GET    /pictures?protocol=:protocol
+# Retrieve pictures attached to a report
+GET    /pictures?report=:report
