@@ -276,7 +276,7 @@ export class Sections1607202587052 implements MigrationInterface {
       insert into municipalities(code, name)
       select municipality_code, INITCAP(MAX(municipality_name))
       from sections_ekatte
-      group by election_region_code, municipality_code
+      group by province_code, municipality_code
     `);
 
     await queryRunner.query(`
