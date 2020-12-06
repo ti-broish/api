@@ -1,8 +1,8 @@
-import { readFileSync } from 'fs';
-import { parse } from 'dotenv';
-import FirebaseTokenGetter from 'firebase-idtoken-getter';
+const fs = require('fs');
+const dotenv = require('dotenv');
+const FirebaseTokenGetter = require('firebase-idtoken-getter');
 
-const envConfig = parse(readFileSync('./.env'))
+const envConfig = dotenv.parse(fs.readFileSync('./.env'))
 
 const FirebaseTokenGetterObject = new FirebaseTokenGetter(
   envConfig.GOOGLE_APPLICATION_CREDENTIALS,
