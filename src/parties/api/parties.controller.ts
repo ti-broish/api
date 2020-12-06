@@ -1,11 +1,15 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
-import { Party } from './party.dto';
+import { Controller, Get, HttpCode, Inject, Param } from '@nestjs/common';
+import { Public } from 'src/auth/decorators/Public.decorator';
+import { PartiesRepository } from '../entities/parties.repository';
+import { PartyDto } from './Party.dto';
 
 @Controller('parties')
 export class PartiesController {
+  constructor(private readonly repo: PartiesRepository) { }
+
   @Get()
   @HttpCode(200)
-  index(): Array<Party> {
-    return [];
+  async index(): Promise<PartyDto[]> {
+    return (await this.repo.findAll()).map(PartyDto.fromEntity);
   }
 }

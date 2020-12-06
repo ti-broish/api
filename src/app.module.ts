@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SectionsModule } from './sections/sections.module';
 import { UsersModule } from './users/users.module';
+import { PartiesModule } from './parties/parties.module';
 import { configSchema, TypeOrmConfigService } from './config';
 
 @Module({
@@ -23,6 +24,7 @@ import { configSchema, TypeOrmConfigService } from './config';
     }),
     UsersModule,
     SectionsModule,
+    PartiesModule,
   ],
 })
 export class AppModule {}
