@@ -42,10 +42,34 @@ export class Sections1607202587052 implements MigrationInterface {
     ));
 
     await queryRunner.query(`
+      update sections_elections
+      set
+        election_region_code = SUBSTRING(section_id from 1 for 2),
+        election_region_name = INITCAP(SUBSTRING(election_region_name from 5)),
+        section_code = SUBSTRING(section_id from 7);
+    `);
+
+    await queryRunner.query(`
+      update sections_elections
+      set
+        country_code = case
+          when election_region_code = '32' then SUBSTRING(section_id from 3 for 2)
+          else '00'
+        end
+    `);
+
+    await queryRunner.query(`
+      update sections_elections
+      set country_name = 'България'
+      where country_code = '00'
+    `);
+
+    await queryRunner.query(`
       UPDATE sections_elections
       SET
         town_name = split_part(town_name, ',', 1)
-        WHERE town_name LIKE '%,%';
+      WHERE town_name LIKE '%,%'
+      AND country_code = '00';
     `);
 
     await queryRunner.query(`
@@ -60,26 +84,6 @@ export class Sections1607202587052 implements MigrationInterface {
       WHERE town_name = 'гр. София';
     `);
 
-    await queryRunner.query(`
-      update sections_elections
-      set
-        election_region_code = SUBSTRING(section_id from 1 for 2),
-        election_region_name = INITCAP(SUBSTRING(election_region_name from 5)),
-        section_code = SUBSTRING(section_id from 7);
-    `);
-    await queryRunner.query(`
-      update sections_elections
-      set
-        country_code = case
-          when election_region_code = '32' then SUBSTRING(section_id from 3 for 2)
-          else '00'
-        end
-    `);
-    await queryRunner.query(`
-      update sections_elections
-      set country_name = 'България'
-      where country_code = '00'
-    `);
     await queryRunner.query(`
       update sections_elections
       set
