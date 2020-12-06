@@ -4,7 +4,7 @@
 
 Това е REST API приложението, което приема и обработва данните от мобилните приложения.
 
-## Инсталация
+## Първоначална инсталация
 
 Пуснете [Docker][] и изпълнете следните команди:
 
@@ -16,10 +16,10 @@ cd ti-broish-api
 npm install
 # Start the database with Docker
 npm run start:dev:db
-# Run the migrations
-npm typeorm migration:run
-# Seed the database
-npm typeorm seed:run
+# Build and start the app
+npm run start
+# Create the schema and seed the data
+npm run migration:run && npm run seed:run
 ```
 
 ### Конфигурация
