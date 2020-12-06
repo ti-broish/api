@@ -37,7 +37,8 @@ export class InitialSchema1606602418369 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE TYPE confirmation_type AS ENUM ('email', 'phone');
+      DROP TYPE IF EXISTS "confirmation_type";
+      CREATE TYPE "confirmation_type" AS ENUM ('email', 'phone');
 
       CREATE TABLE "person_confirmations" (
         "id" bpchar(26) NOT NULL,
@@ -172,7 +173,9 @@ export class InitialSchema1606602418369 implements MigrationInterface {
 
 
     await queryRunner.query(`
+      DROP TYPE IF EXISTS "protocol_origin";
       CREATE TYPE "protocol_origin" AS ENUM('ti-broish', 'cik');
+      DROP TYPE IF EXISTS "protocol_status";
       CREATE TYPE "protocol_status" AS ENUM('pending', 'processing', 'processed', 'rejected');
 
       CREATE TABLE "protocols" (
@@ -206,6 +209,7 @@ export class InitialSchema1606602418369 implements MigrationInterface {
 
 
     await queryRunner.query(`
+      DROP TYPE IF EXISTS "protocol_action";
       CREATE TYPE "protocol_action" AS ENUM('submitted', 'assigned_to', 'edited', 'approved', 'rejected');
 
       CREATE TABLE "protocol_actions" (
@@ -240,6 +244,7 @@ export class InitialSchema1606602418369 implements MigrationInterface {
     );
 
     await queryRunner.query(`
+      DROP TYPE IF EXISTS "report_status";
       CREATE TYPE "report_status" AS ENUM('submitted', 'accepted', 'rejected', 'published');
 
       CREATE TABLE "report_updates" (

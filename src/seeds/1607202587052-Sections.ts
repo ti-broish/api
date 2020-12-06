@@ -153,7 +153,7 @@ export class Sections1607202587052 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE TABLE TEMPORARY "sections_ekatte" (
+      CREATE TEMPORARY TABLE "sections_ekatte" (
         "province_code" char(2),
         "province_name" varchar,
         "election_region_code" char(2),
