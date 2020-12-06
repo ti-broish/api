@@ -18,14 +18,13 @@ export class TownsRepository {
     return this.repo.find({
       relations: ['cityRegions'],
       join: {
-        alias: 'country',
+        alias: 'town',
         innerJoin: {
           country: 'town.country',
         },
       },
       where: (qb: SelectQueryBuilder<Town>) => {
-        qb
-          .where('country.code = :countryCode', { countryCode });
+        qb.where('country.code = :countryCode', { countryCode });
       }
     });
   }
