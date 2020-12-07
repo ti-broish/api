@@ -1,3 +1,7 @@
+<p align="center">
+  <img align="center" src="docs/youCount_horizontal_RGB_color.png" alt="Ти Броиш лого" width="500px">
+</p>
+
 <h1 align="center">Ти Броиш REST API</h1>
 
 Ти Броиш е платформа за паралелно преброяване и проследяване на парламентарните избори в България.
