@@ -1,5 +1,5 @@
 import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe } from '@nestjs/common';
-import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
+import { InjectUser } from '../../auth/decorators/injectUser.decorator';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from '../entities/users.repository';
 import { UserDto } from './user.dto';

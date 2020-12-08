@@ -1,5 +1,5 @@
 import { Controller, Get, HttpCode, Inject, Param } from '@nestjs/common';
-import { Public } from 'src/auth/decorators/Public.decorator';
+import { Public } from '../../auth/decorators/Public.decorator';
 import { OrganizationsRepository } from '../entities/organizations.repository';
 import { OrganizationDto } from './organization.dto';
 

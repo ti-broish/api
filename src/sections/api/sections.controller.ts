@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { ApiFirebaseAuth } from 'src/auth/decorators/ApiFirebaseAuth.decorator';
+import { ApiFirebaseAuth } from '../../auth/decorators/ApiFirebaseAuth.decorator';
 import { Section } from '../entities/section.entity';
 import { SectionsRepository } from '../entities/sections.repository';
 import { SectionDto } from './section.dto';
