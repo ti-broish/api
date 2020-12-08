@@ -21,6 +21,8 @@ export class FirebaseStrategy extends PassportStrategy(FirebaseAuthStrategy, 'fi
   }
 
   async validate(firebaseUser: FirebaseUser, req?: Request): Promise<User|FirebaseUser> {
-    return await this.usersRepo.findByFirebaseUid(firebaseUser.uid) ?? firebaseUser;
+    req.firebaseUser = firebaseUser ?? null;
+
+    return await this.usersRepo.findByFirebaseUid(firebaseUser.uid) ?? null;
   }
 }
