@@ -2,7 +2,7 @@
   "globals": {
     "ts-jest": {
       "astTransformers": {
-        "before": ["e2e-swagger.ts"]
+        "before": ["test/e2e-swagger.ts"]
       }
     }
   },
