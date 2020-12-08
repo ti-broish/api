@@ -3,15 +3,15 @@ import { Test } from '@nestjs/testing';
 import { HomeModule } from './home.module';
 import { INestApplication } from '@nestjs/common';
 
-describe('HomeController (e2e)', () => {
+describe('Home (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       imports: [HomeModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = moduleRef.createNestApplication();
     await app.init();
   });
 
@@ -23,5 +23,9 @@ describe('HomeController (e2e)', () => {
         hello: 'world',
       })
       .expect('Content-Type', /json/);
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

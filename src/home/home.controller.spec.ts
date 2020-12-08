@@ -15,4 +15,8 @@ describe('HomeController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  it('should greet with hello world', () => {
+    expect(controller.home()).toStrictEqual({hello: 'world'});
+  });
 });
