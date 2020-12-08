@@ -7,7 +7,7 @@
     }
   },
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
+  "rootDir": "../src/",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
   "transform": {
