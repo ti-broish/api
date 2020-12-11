@@ -7,13 +7,11 @@ export function setUpSwagger(app: INestApplication) {
     .setDescription('Ti Broish API is built for clients sending in election results data in Bulgaria')
     .setVersion('0.1')
     .setContact('Da Bulgaria', 'https://dabulgaria.bg', 'team@dabulgaria.bg')
-    .addSecurity('firebase', {
-      type: 'apiKey',
+    .addBearerAuth({
+      type: 'http',
       description: 'Firebase Authentication on the client with JWT tokens sent to the API',
-      name: 'firebase',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-    })
+      name: 'Firebase',
+    }, 'Firebase bearer token')
     .build();
 
   const document = SwaggerModule.createDocument(app, options, {
