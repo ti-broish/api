@@ -5,18 +5,17 @@ import { Picture } from '../entities/picture.entity';
 @Exclude()
 export class PictureDto {
   @ApiProperty()
-  @Expose()
+  @Expose({ groups: ['read'] })
   id: string;
 
   @ApiProperty()
-  @Expose()
+  @Expose({ groups: ['read'] })
   url: string;
 
-  @ApiProperty()
-  @Expose()
-  sortPosition: number;
-
   public static fromEntity(entity: Picture): PictureDto {
-    return plainToClass<PictureDto, Partial<Picture>>(PictureDto, entity, { excludeExtraneousValues: true });
+    return plainToClass<PictureDto, Partial<Picture>>(PictureDto, entity, {
+      excludeExtraneousValues: true,
+      groups: ['read'],
+    })
   }
 }
