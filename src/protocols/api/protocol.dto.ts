@@ -7,5 +7,5 @@ export class Protocol extends OmitType(ProtocolCreateDto, ['pictures'] as const)
   id: string;
 
   @ApiProperty()
-  pictures: Array<Picture>
+  pictures: PictureDto[]
 }

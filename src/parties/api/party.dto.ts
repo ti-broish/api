@@ -22,5 +22,4 @@ export class PartyDto {
       groups: ['read'],
     })
   }
-
 }
