@@ -7,6 +7,7 @@ import { SectionsModule } from './sections/sections.module';
 import { UsersModule } from './users/users.module';
 import { PartiesModule } from './parties/parties.module';
 import { configSchema, TypeOrmConfigService } from './config';
+import { PicturesModule } from './pictures/pictures.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { configSchema, TypeOrmConfigService } from './config';
     UsersModule,
     SectionsModule,
     PartiesModule,
+    PicturesModule,
   ],
 })
 export class AppModule {}

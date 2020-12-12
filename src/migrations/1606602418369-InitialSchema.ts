@@ -197,7 +197,7 @@ export class InitialSchema1606602418369 implements MigrationInterface {
         "id" bpchar(26) NOT NULL,
         "protocol_id" bpchar(26) NOT NULL,
         "data" jsonb NOT NULL,
-        created_at timestamp NOT NULL,
+        "created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
         PRIMARY KEY ("id"),
         CONSTRAINT "protocol_data_protocol_id_fkey" FOREIGN KEY ("protocol_id") REFERENCES "protocols" ("id")
       );`
@@ -272,7 +272,7 @@ export class InitialSchema1606602418369 implements MigrationInterface {
         "author_id" bpchar(26) NOT NULL,
         "path" varchar NOT NULL,
         "sort_position" smallint NOT NULL,
-        "created_at" timestamp NOT NULL,
+        "created_at" timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
         PRIMARY KEY ("id"),
         CONSTRAINT "pictures_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "people" ("id")
       );`
