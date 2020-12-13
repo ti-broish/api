@@ -19,7 +19,7 @@ export class UsersRepository {
   }
 
   async findByFirebaseUid(firebaseUid: string): Promise<User> {
-    return await this.repo.findOne({ firebaseUid });
+    return await this.repo.findOne({ where: { firebaseUid }, relations: ['organization'] });
   }
 
   async findByEmail(email: string): Promise<User> {
@@ -28,6 +28,12 @@ export class UsersRepository {
 
   async save(user: User): Promise<User> {
     return await this.repo.save(user);
+  }
+
+  async update(user: User): Promise<User> {
+    await this.repo.update(user.id, user);
+
+    return this.findOneOrFail(user.id);
   }
 
   async delete(id: string): Promise<void> {
