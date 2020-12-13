@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { classToPlain, Exclude, Expose, plainToClass, plainToClassFromExist, serialize, Type } from 'class-transformer';
+import { classToPlain, Exclude, Expose, plainToClass, serialize, Type } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsNumberString, IsPhoneNumber, IsString, Length, ValidateNested } from 'class-validator';
 import { User } from '../entities/user.entity';
 import { OrganizationDto } from './organization.dto';
