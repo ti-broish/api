@@ -8,6 +8,9 @@ import { IsOrganizationExists } from './organization-exists.constraint';
 export class OrganizationDto {
   @ApiProperty()
   @Expose({ groups: ['read', 'create', 'update'] })
+  @IsNumber({}, { groups: ['create', 'update'] })
+  @IsNotEmpty({ groups: ['create', 'update'] })
+  @IsOrganizationExists({ groups: ['create', 'update'] })
   id: number;
 
   @ApiProperty()

@@ -48,7 +48,8 @@ export class UserDto {
   @ApiProperty({ required: true })
   @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @Type(() => OrganizationDto)
-  @IsNotEmpty({ groups: [UserDto.CREATE] })
+  @IsNotEmpty({ groups: [UserDto.CREATE, UserDto.UPDATE] })
+  @IsNotEmptyObject({ groups: [UserDto.CREATE, UserDto.UPDATE] })
   @ValidateNested({ groups: [UserDto.CREATE, UserDto.UPDATE] })
   organization: OrganizationDto;
 

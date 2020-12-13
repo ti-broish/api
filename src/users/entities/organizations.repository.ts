@@ -13,4 +13,8 @@ export class OrganizationsRepository {
   findAll(): Promise<Organization[]> {
     return this.repo.find();
   }
+
+  findOne(id: number): Promise<Organization|null> {
+    return this.repo.findOne(id);
+  }
 }
