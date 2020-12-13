@@ -33,7 +33,7 @@ export class UsersRepository {
   async update(user: User): Promise<User> {
     await this.repo.update(user.id, user);
 
-    return user;
+    return this.findOneOrFail(user.id);
   }
 
   async delete(id: string): Promise<void> {
