@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { classToPlain, Exclude, Expose, plainToClass, serialize, Type } from 'class-transformer';
-import { IsBoolean, IsEmail, IsNotEmpty, IsNumberString, IsPhoneNumber, IsString, Length, ValidateNested } from 'class-validator';
+import { classToPlain, Exclude, Expose, plainToClass, Type } from 'class-transformer';
+import { IsBoolean, IsEmail, IsNotEmpty, IsNotEmptyObject, IsNumberString, IsPhoneNumber, IsString, Length, ValidateNested } from 'class-validator';
+import { merge } from 'lodash';
 import { User } from '../entities/user.entity';
 import { OrganizationDto } from './organization.dto';
 
@@ -76,11 +77,11 @@ export class UserDto {
   }
 
   public updateEntity(user: User): User {
-    const updateDto = JSON.parse(serialize(classToPlain<UserDto>(this, {
+    const updatedKeys = classToPlain<UserDto>(this, {
       excludeExtraneousValues: false,
       groups: [UserDto.UPDATE],
-    })));
+    });
 
-    return Object.assign(user, updateDto);
+    return merge(user, updatedKeys);
   }
 }
