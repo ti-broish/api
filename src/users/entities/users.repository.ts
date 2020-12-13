@@ -19,7 +19,7 @@ export class UsersRepository {
   }
 
   async findByFirebaseUid(firebaseUid: string): Promise<User> {
-    return await this.repo.findOne({ firebaseUid });
+    return await this.repo.findOne({ where: { firebaseUid }, relations: ['organization'] });
   }
 
   async findByEmail(email: string): Promise<User> {
