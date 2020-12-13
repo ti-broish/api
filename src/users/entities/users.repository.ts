@@ -30,6 +30,12 @@ export class UsersRepository {
     return await this.repo.save(user);
   }
 
+  async update(user: User): Promise<User> {
+    await this.repo.update(user.id, user);
+
+    return user;
+  }
+
   async delete(id: string): Promise<void> {
     await this.repo.delete(id);
   }

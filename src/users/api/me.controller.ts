@@ -18,7 +18,7 @@ export class MeController {
   @HttpCode(200)
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: [UserDto.UPDATE] }, groups: [UserDto.UPDATE], skipMissingProperties: true }))
   async patch(@InjectUser() user: User, @Body() userDto: UserDto): Promise<UserDto> {
-    const updatedUser = await this.usersRepo.save(userDto.updateEntity(user));
+    const updatedUser = await this.usersRepo.update(userDto.updateEntity(user));
 
     return UserDto.fromEntity(updatedUser);
   }
