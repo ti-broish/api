@@ -6,7 +6,7 @@ import { useContainer } from 'class-validator';
 import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
   setUpSwagger(app);
   app.useGlobalFilters(new NotFoundExceptionFilter());
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
