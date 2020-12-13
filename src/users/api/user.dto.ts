@@ -18,41 +18,41 @@ export class UserDto {
   firstName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [ UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @IsString({ groups: [UserDto.CREATE, UserDto.UPDATE] })
   @Length(1, 100)
   lastName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [ UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @IsEmail({}, { groups: [UserDto.CREATE, UserDto.UPDATE] })
   @Length(1, 100)
   email: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [ UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @IsPhoneNumber(null, { groups: [UserDto.CREATE, UserDto.UPDATE] })
   phone: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [ UserDto.READ,  UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ,  UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @IsNumberString({}, { groups: [UserDto.CREATE, UserDto.UPDATE] })
   @Length(4, 4, { groups: [UserDto.CREATE, UserDto.UPDATE] })
   pin: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [ UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
   @Type(() => OrganizationDto)
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   @ValidateNested({ groups: [UserDto.CREATE, UserDto.UPDATE] })
   organization: OrganizationDto;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [ UserDto.READ, UserDto.CREATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
   firebaseUid: string;
 
