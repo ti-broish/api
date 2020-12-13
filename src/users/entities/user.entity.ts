@@ -1,4 +1,5 @@
-import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, Index } from 'typeorm';
+import { Picture } from 'src/pictures/entities/picture.entity';
+import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany } from 'typeorm';
 import { ulid } from 'ulid';
 import { Organization } from './organization.entity';
 
@@ -26,6 +27,9 @@ export class User {
 
   @ManyToOne(() => Organization, organization => organization.users)
   organization: Organization;
+
+  @OneToMany(() => Picture, picture => picture.author)
+  pictures: Picture[];
 
   @Column({ unique: true })
   firebaseUid: string;

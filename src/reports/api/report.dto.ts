@@ -1,5 +1,5 @@
 import { ApiProperty, OmitType } from '@nestjs/swagger';
-import { Picture } from '../../pictures/api/picture.dto';
+import { PictureDto } from '../../pictures/api/picture.dto';
 import { ReportCreateDto } from './reportCreate.dto';
 
 export class Report extends OmitType(ReportCreateDto, ['pictures'] as const) {
@@ -7,5 +7,5 @@ export class Report extends OmitType(ReportCreateDto, ['pictures'] as const) {
   id: string;
 
   @ApiProperty()
-  pictures: Array<Picture> | null
+  pictures: Array<PictureDto> | null
 }
