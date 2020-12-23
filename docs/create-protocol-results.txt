@@ -1,0 +1,69 @@
+POST /protocols/01ET90MG60WPHA18VG2HAWMPJ9/results HTTP/1.1
+Accept: application/json, */*;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Bearer <Firebase ID token>
+Connection: keep-alive
+Content-Length: 246
+Content-Type: application/json
+Host: localhost:4000
+User-Agent: HTTPie/2.3.0
+
+{
+    "invalidVotesCount": 5,
+    "machineVotesCount": 50,
+    "results": [
+        {
+            "invalidVotesCount": 2,
+            "party": 1,
+            "validVotesCount": 50
+        },
+        {
+            "invalidVotesCount": 3,
+            "party": 2,
+            "validVotesCount": 120
+        },
+        {
+            "party": 3,
+            "validVotesCount": 30
+        }
+    ],
+    "validVotesCount": 200
+}
+
+
+HTTP/1.1 201 Created
+Connection: keep-alive
+Content-Length: 245
+Content-Type: application/json; charset=utf-8
+Date: Wed, 23 Dec 2020 23:58:40 GMT
+ETag: W/"f5-sjJQR0kCfXkWQul6tOTb2yLsLcM"
+Keep-Alive: timeout=5
+X-Powered-By: Express
+
+{
+    "invalidVotesCount": 5,
+    "machineVotesCount": 50,
+    "results": [
+        {
+            "invalidVotesCount": 2,
+            "party": {
+                "id": 1
+            },
+            "validVotesCount": 50
+        },
+        {
+            "invalidVotesCount": 3,
+            "party": {
+                "id": 2
+            },
+            "validVotesCount": 120
+        },
+        {
+            "party": {
+                "id": 3
+            },
+            "validVotesCount": 30
+        }
+    ],
+    "validVotesCount": 200
+}
