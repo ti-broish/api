@@ -10,6 +10,10 @@ export class PicturesRepository {
     private repo: Repository<Picture>,
   ) {}
 
+  findOne(id: string): Promise<Picture | undefined> {
+    return this.repo.findOne({ where: { id } });
+  }
+
   findOneOrFail(id: string): Promise<Picture> {
     return this.repo.findOneOrFail({ where: { id } });
   }

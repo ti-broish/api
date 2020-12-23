@@ -1,11 +1,15 @@
-import { Entity, Column, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryColumn, OneToMany } from 'typeorm';
+import { Protocol } from '../../protocols/entities/protocol.entity';
 import { CityRegion } from './cityRegion.entity';
 import { ElectionRegion } from './electionRegion.entity';
 import { Town } from './town.entity';
 
 @Entity('sections')
 export class Section {
-  @PrimaryColumn('char', { length: 9 })
+
+  public static readonly SECTION_ID_LENGTH = 9;
+
+  @PrimaryColumn('char', { length: Section.SECTION_ID_LENGTH })
   id: string;
 
   @Column('char', { length: 3 })
@@ -25,4 +29,7 @@ export class Section {
 
   @ManyToOne(() => CityRegion, cityRegion => cityRegion.sections)
   cityRegion: CityRegion;
+
+  @OneToMany(() => Protocol, protocol => protocol.section)
+  protocols: Protocol[];
 }

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NestMinioModule } from 'nestjs-minio';
-import { FilesService } from './files.service';
+import { FilesUrlGenerator, FilesUploader } from '.';
 import { MinioConfigService } from './minio.config';
 
 @Module({
@@ -13,7 +13,7 @@ import { MinioConfigService } from './minio.config';
       useClass: MinioConfigService,
     }),
   ],
-  providers: [FilesService],
-  exports: [FilesService],
+  providers: [FilesUploader, FilesUrlGenerator],
+  exports: [FilesUploader, FilesUrlGenerator],
 })
 export class FilesModule {}

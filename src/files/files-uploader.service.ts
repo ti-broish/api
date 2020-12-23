@@ -8,7 +8,7 @@ import * as mime from 'mime-types';
 import * as path from 'path';
 
 @Injectable()
-export class FilesService {
+export class FilesUploader {
   constructor(
     @Inject(ConfigService) private readonly config: ConfigService,
     @Inject(MINIO_CONNECTION) private readonly minioClient: MinioClient
@@ -45,9 +45,5 @@ export class FilesService {
     );
 
     return fileName;
-  }
-
-  fileUrl(bucketName: string, filePath: string): string {
-    return `https://${this.config.get('MINIO_ENDPOINT')}/${bucketName}/${filePath}`;
   }
 }

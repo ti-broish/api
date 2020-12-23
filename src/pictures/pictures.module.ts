@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Picture } from './entities/picture.entity';
 import { PicturesRepository } from './entities/pictures.repository';
 import { PicturesController } from './api/pictures.controller';
 import { FilesModule } from '../files';
-import { PicturesService } from './pictures.service';
+import { PicturesUploader } from './pictures-uploader.service';
+import { PicturesUrlGenerator } from './pictures-url-generator.service';
+import { IsPictureExistsConstraint } from './api/picture-exists.constraint';
 
 @Module({
   imports: [ConfigModule, FilesModule, TypeOrmModule.forFeature([Picture])],
-  providers: [PicturesRepository, PicturesService],
-  exports: [PicturesRepository],
+  providers: [PicturesRepository, PicturesUploader, PicturesUrlGenerator, IsPictureExistsConstraint],
+  exports: [PicturesRepository, PicturesUrlGenerator],
   controllers: [PicturesController],
 })
 export class PicturesModule {}
