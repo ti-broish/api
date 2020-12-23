@@ -3,7 +3,8 @@ import { InjectUser } from '../../auth/decorators/injectUser.decorator';
 import { User } from '../../users/entities';
 import { Picture } from '../entities/picture.entity';
 import { PicturesRepository } from '../entities/pictures.repository';
-import { PicturesService } from '../pictures.service';
+import { PicturesUploader } from '../pictures-uploader.service';
+import { PicturesUrlGenerator } from '../pictures-url-generator.service';
 import { PictureDto } from './picture.dto';
 import { UploadImageDto } from './upload-image.dto';
 
@@ -11,18 +12,19 @@ import { UploadImageDto } from './upload-image.dto';
 export class PicturesController {
 
   constructor(
-    @Inject(PicturesService) private readonly picturesService: PicturesService,
-    @Inject(PicturesRepository) private readonly repo: PicturesRepository
+    @Inject(PicturesUploader) private readonly picturesUploader: PicturesUploader,
+    @Inject(PicturesRepository) private readonly repo: PicturesRepository,
+    @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadFile(@Body() upload: UploadImageDto, @InjectUser() user: User): Promise<PictureDto> {
-    let picture = await this.picturesService.upload(upload.image);
+    let picture = await this.picturesUploader.upload(upload.image);
     picture.author = user;
-    picture = await this.repo.save(picture);
-    const pictureDto = PictureDto.fromEntity(picture);
-    pictureDto.url = this.picturesService.pictureUrl(picture);
+
+    const pictureDto = PictureDto.fromEntity(await this.repo.save(picture));
+    pictureDto.url = this.urlGenerator.getUrl(pictureDto);
 
     return pictureDto;
   }
@@ -38,7 +40,7 @@ export class PicturesController {
   async get(@Param('id') id: string): Promise<PictureDto> {
     const picture = await this.repo.findOneOrFail(id);
     const pictureDto = PictureDto.fromEntity(picture);
-    pictureDto.url = this.picturesService.pictureUrl(picture);
+    pictureDto.url = this.urlGenerator.getUrl(pictureDto);
 
     return pictureDto;
   }

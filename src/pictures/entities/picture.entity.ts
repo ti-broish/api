@@ -1,9 +1,11 @@
+import { Protocol } from 'src/protocols/entities/protocol.entity';
 import { User } from 'src/users/entities';
-import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne, ManyToMany } from 'typeorm';
 import { ulid } from 'ulid';
+import { PathInterface } from '../path.interface';
 
 @Entity('pictures')
-export class Picture {
+export class Picture implements PathInterface {
   @PrimaryColumn('char', {
     length: 26,
   })
@@ -20,4 +22,11 @@ export class Picture {
 
   @ManyToOne(() => User)
   author: User;
+
+  @ManyToMany(() => Protocol, protocol => protocol.pictures)
+  protocol: Protocol;
+
+  getPath(): string {
+    return this.path;
+  }
 }
