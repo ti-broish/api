@@ -13,4 +13,8 @@ export class PartiesRepository {
   findAll(): Promise<Party[]> {
     return this.repo.find();
   }
+
+  findOne(id: number): Promise<Party> {
+    return this.repo.findOne(id);
+  }
 }

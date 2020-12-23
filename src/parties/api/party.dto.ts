@@ -1,11 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator';
 import { Party } from '../entities/party.entity';
+import { IsPartyExists } from './party-exists.constraint';
 
 @Exclude()
 export class PartyDto {
   @ApiProperty()
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', 'create'] })
+  @IsPartyExists({ groups: ['create'] })
+  @IsNumber()
+  @IsNotEmpty()
+  @Min(1)
+  @IsInt()
   id: number;
 
   @ApiProperty()
