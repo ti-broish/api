@@ -4,7 +4,7 @@ import { PictureDto } from 'src/pictures/api/picture.dto';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
 import { User } from 'src/users/entities';
 import { ProtocolsRepository } from '../entities/protocols.repository';
-import { ProtocolResultsDto } from './protocol-results.dto';
+import { ProtocolResultDto, ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 
 @Controller('protocols')
@@ -37,7 +37,7 @@ export class ProtocolsController {
     @Param('protocol_id') protocolId: string,
     @Body() resultsDto: ProtocolResultsDto,
     @InjectUser() user: User,
-  ): Promise<ProtocolDto> {
+  ): Promise<ProtocolResultsDto> {
     const protocol = await this.repo.findOneOrFail(protocolId);
     if (protocol.results.length > 0) {
       throw new ConflictException([
@@ -49,7 +49,7 @@ export class ProtocolsController {
     const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol));
     this.updatePicturesUrl(savedDto);
 
-    return savedDto;
+    return resultsDto;
   }
 
   @Get()
