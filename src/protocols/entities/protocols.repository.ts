@@ -8,7 +8,7 @@ export class ProtocolsRepository {
   constructor(@InjectRepository(Protocol) private readonly repo: Repository<Protocol>) {}
 
   findOneOrFail(id: string): Promise<Protocol> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'pictures'] } );
+    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'pictures', 'data', 'results', 'actions'] } );
   }
 
   async save(protocol: Protocol): Promise<Protocol> {

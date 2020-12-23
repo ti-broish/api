@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulid';
 import { Protocol } from './protocol.entity';
 
@@ -10,6 +10,9 @@ export class ProtocolData {
   id: string = ulid();
 
   @OneToOne(() => Protocol, protocol => protocol.data)
+  @JoinColumn({
+    name: 'protocol_id',
+  })
   protocol: Protocol;
 
   @Column()

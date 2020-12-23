@@ -1,10 +1,10 @@
-import { Controller, Get, Post, HttpCode, Query, Param, Body, ValidationPipe, UsePipes, Inject } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Query, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException } from '@nestjs/common';
 import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
 import { User } from 'src/users/entities';
-import { ProtocolAction } from '../entities/protocol-actions.entity';
 import { ProtocolsRepository } from '../entities/protocols.repository';
+import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 
 @Controller('protocols')
@@ -25,7 +25,29 @@ export class ProtocolsController {
     protocol.setReceivedStatus(user);
 
     const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol));
-    savedDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
+    this.updatePicturesUrl(savedDto);
+
+    return savedDto;
+  }
+
+  @Post(':protocol_id/results')
+  @HttpCode(201)
+  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] } }))
+  async createResults(
+    @Param('protocol_id') protocolId: string,
+    @Body() resultsDto: ProtocolResultsDto,
+    @InjectUser() user: User,
+  ): Promise<ProtocolDto> {
+    const protocol = await this.repo.findOneOrFail(protocolId);
+    if (protocol.results.length > 0) {
+      throw new ConflictException([
+        'Cannot populate a populated protocol! You must create a new one.',
+      ]);
+    }
+    protocol.populate(user, resultsDto.toResults(), resultsDto.toVotersData());
+
+    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol));
+    this.updatePicturesUrl(savedDto);
 
     return savedDto;
   }
@@ -42,5 +64,11 @@ export class ProtocolsController {
     const dto = ProtocolDto.fromEntity(await this.repo.findOneOrFail(id));
     dto.pictures.forEach(picture => picture.url = this.urlGenerator.getUrl(picture));
     return dto;
+  }
+
+  private updatePicturesUrl(protocolDto: ProtocolDto) {
+    protocolDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
+
+    return protocolDto;
   }
 }

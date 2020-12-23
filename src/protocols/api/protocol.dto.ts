@@ -42,6 +42,6 @@ export class ProtocolDto {
     return plainToClass<ProtocolDto, Partial<Protocol>>(ProtocolDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
-    })
+    });
   }
 }
