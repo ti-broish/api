@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException } from '@nestjs/common';
 import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
 import { ProtocolDto } from 'src/protocols/api/protocol.dto';
@@ -42,7 +42,12 @@ export class MeController {
   @Delete()
   @HttpCode(202)
   async delete(@InjectUser() user: User): Promise<void> {
-    // TODO: delete only if no protocols are submitted by this user
+    const submittedProtocols = await this.protocolsRepo.findByAuthor(user);
+    if (submittedProtocols.length > 0) {
+      throw new ConflictException([
+        'Cannot delete a person record with submitted protocols! User records would be deleted 30 days after the election.'
+      ]);
+    }
     await this.usersRepo.delete(user.id);
   }
 }
