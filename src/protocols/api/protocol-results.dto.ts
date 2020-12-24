@@ -11,6 +11,7 @@ export class ProtocolResultDto {
   @ValidateNested({
     groups: ['create'],
   })
+  @Type(() => PartyDto)
   @Expose({ groups: ['read', 'create'] })
   party: PartyDto;
 
@@ -49,18 +50,21 @@ export class ProtocolResultsDto {
   @IsNumber()
   @IsInt()
   @Min(0)
+  @Expose({ groups: ['read', 'create'] })
   validVotesCount?: number;
 
   @IsOptional()
   @IsNumber()
   @IsInt()
   @Min(0)
+  @Expose({ groups: ['read', 'create'] })
   invalidVotesCount?: number;
 
   @IsOptional()
   @IsNumber()
   @IsInt()
   @Min(0)
+  @Expose({ groups: ['read', 'create'] })
   machineVotesCount?: number;
 
   @Type(() => ProtocolResultDto)
@@ -91,7 +95,6 @@ export class ProtocolResultsDto {
 
   public toVotersData(): ProtocolData {
     return plainToClass<ProtocolData, Partial<ProtocolResultsDto>>(ProtocolData, this, {
-      excludeExtraneousValues: true,
       groups: ['create'],
     });
   }

@@ -46,10 +46,11 @@ export class ProtocolsController {
     }
     protocol.populate(user, resultsDto.toResults(), resultsDto.toVotersData());
 
-    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol));
+    const savedProtocol = await this.repo.save(protocol);
+    const savedDto = ProtocolDto.fromEntity(savedProtocol);
     this.updatePicturesUrl(savedDto);
 
-    return resultsDto;
+    return ProtocolResultsDto.fromEntity(savedProtocol);
   }
 
   @Get(':id')
