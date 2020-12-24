@@ -1,0 +1,43 @@
+POST /protocols HTTP/1.1
+Accept: application/json, */*;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Bearer <Firebase ID token>
+Connection: keep-alive
+Content-Length: 68
+Content-Type: application/json
+Host: localhost:4000
+User-Agent: HTTPie/2.3.0
+
+{
+    "pictures": [
+        "01ET7ZSC3YD1MRTMPV4CCE6MRF"
+    ],
+    "section": "010100015"
+}
+
+
+HTTP/1.1 201 Created
+Connection: keep-alive
+Content-Length: 377
+Content-Type: application/json; charset=utf-8
+Date: Wed, 23 Dec 2020 14:30:35 GMT
+ETag: W/"179-aktLJMAOarKPJVXatXypQjC+Cis"
+Keep-Alive: timeout=5
+X-Powered-By: Express
+
+{
+    "id": "01ET804FQX6X2TFR17RZRF2AVC",
+    "pictures": [
+        {
+            "id": "01ET7ZSC3YD1MRTMPV4CCE6MRF",
+            "path": "01ET7ZSC3ZN7MXGN95WK04DH40.png",
+            "sortPosition": 0,
+            "url": "https://d1t.dabulgaria.bg/testphotos/01ET7ZSC3ZN7MXGN95WK04DH40.png"
+        }
+    ],
+    "section": {
+        "code": "015",
+        "id": "010100015",
+        "place": "ОСНОВНО УЧИЛИЩЕ \"СВ. КЛИМЕНТ ОХРИДСКИ\", УЛ. \"ИВ. ГАЛЧЕВ\" №21"
+    }
+}

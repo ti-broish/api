@@ -1,5 +1,5 @@
 import { Protocol } from './protocol.entity';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { ulid } from "ulid";
 import { Party } from 'src/parties/entities/party.entity';
 
@@ -11,9 +11,15 @@ export class ProtocolResult {
   id: string = ulid();
 
   @ManyToOne(() => Protocol, protocol => protocol.actions)
+  @JoinColumn({
+    name: 'protocol_id',
+  })
   protocol: Protocol;
 
   @ManyToOne(() => Party)
+  @JoinColumn({
+    name: 'party_id',
+  })
   party: Party;
 
   @Column()

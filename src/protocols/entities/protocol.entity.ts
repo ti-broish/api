@@ -1,13 +1,13 @@
 import { Section } from '../../sections/entities';
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { ulid } from 'ulid';
-import { ProtocolAction } from './protocol-actions.entity';
+import { ProtocolAction, ProtocolActionType } from './protocol-actions.entity';
 import { ProtocolData } from './protocol-data.entity';
 import { Picture } from 'src/pictures/entities/picture.entity';
 import { ProtocolResult } from './protocol-result.entity';
 import { User } from 'src/users/entities';
 
-enum ProtocolStatus {
+export enum ProtocolStatus {
   RECEIVED = 'received',
   APPROVED = 'approved',
   REPLACED = 'replaced',
@@ -31,10 +31,10 @@ export class Protocol {
   origin: string = ProtocolOrigin.TI_BROISH;
 
   @Column({ type: 'varchar' })
-  status: ProtocolStatus = ProtocolStatus.RECEIVED;
+  status: ProtocolStatus;
 
   @OneToOne(() => ProtocolData, data => data.protocol, {
-    cascade: true,
+    cascade: ['insert', 'update'],
   })
   data: ProtocolData|null;
 
@@ -49,18 +49,35 @@ export class Protocol {
   })
   pictures: Picture[];
 
-  @OneToMany(() => ProtocolAction, action => action.protocol, {
-    cascade: ['insert'],
+  @OneToMany(() => ProtocolAction, (action: ProtocolAction) => action.protocol, {
+    cascade: ['insert', 'update'],
   })
   actions: ProtocolAction[];
 
-  @OneToMany(() => ProtocolResult, result => result.protocol)
+  @OneToMany(() => ProtocolResult, (result: ProtocolResult) => result.protocol, {
+    cascade: ['insert', 'update'],
+  })
   results: ProtocolResult[];
 
   @ManyToOne(() => Protocol)
   parent: Protocol;
 
+  public getResults(): ProtocolResult[] {
+    return this.results || [];
+  }
+
+  public getActions(): ProtocolAction[] {
+    return this.actions || [];
+  }
+
+  getAuthor(): User {
+    return this.actions.find((action: ProtocolAction) => action.action = ProtocolActionType.SEND).actor;
+  }
+
   setReceivedStatus(sender: User): void {
+    if (this.status) {
+      throw new Error('Protocol status cannot be set to received when not empty!');
+    }
     this.status = ProtocolStatus.RECEIVED;
     this.addAction(ProtocolAction.createSendAction(sender));
   }
@@ -69,22 +86,44 @@ export class Protocol {
     this.addAction(ProtocolAction.createAsssignAction(assignee));
   }
 
+  populate(actor: User, results: ProtocolResult[], votesData?: ProtocolData): void {
+    this.setResults(results);
+    this.setVotesData(votesData);
+    this.addAction(ProtocolAction.createPopulateAction(actor));
+  }
+
   reject(actor: User): void {
+    if (this.status !== ProtocolStatus.RECEIVED) {
+      throw new Error('Protocol status can be set to rejected only if it is received!');
+    }
+
     this.status = ProtocolStatus.REJECTED;
     this.addAction(ProtocolAction.createRejectAction(actor));
   }
 
   approve(actor: User): void {
+    if (this.status !== ProtocolStatus.RECEIVED) {
+      throw new Error('Protocol status can be set to approved only if it is received!');
+    }
+
     this.status = ProtocolStatus.APPROVED;
     this.addAction(ProtocolAction.createApproveAction(actor));
   }
 
   publish(): void {
+    if (this.status !== ProtocolStatus.APPROVED) {
+      throw new Error('Protocol status can be set to published only if it is approved!');
+    }
+
     this.status = ProtocolStatus.PUBLISHED;
     this.addAction(ProtocolAction.createPublishAction());
   }
 
   replace(replacement: Protocol, actor: User): void {
+    if ([ProtocolStatus.RECEIVED, ProtocolStatus.APPROVED, ProtocolStatus.PUBLISHED]) {
+      throw new Error('Protocol status cannot be replaced!');
+    }
+
     this.status = ProtocolStatus.REPLACED;
     this.parent = replacement;
     this.addAction(ProtocolAction.createReplaceAction(actor));
@@ -95,14 +134,16 @@ export class Protocol {
     this.actions = (this.actions || []).concat([action]);
   }
 
-  addResults(...results: ProtocolResult[]): void {
+  private setResults(results: ProtocolResult[]): void {
+    if (this.getResults().length > 0) {
+      throw new Error('Cannot set results on an populated protocol!');
+    }
     results.forEach(result => result.protocol = this);
-    this.results = (this.results || []).concat(results);
+    this.results = results;
   }
 
-  setVotesData(data: ProtocolData, actor: User): void {
+  private setVotesData(data: ProtocolData): void {
     data.protocol = this;
     this.data = data;
-    this.addAction(ProtocolAction.createPopulateAction(actor));
   }
 }

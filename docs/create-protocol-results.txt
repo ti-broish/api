@@ -1,0 +1,75 @@
+POST /protocols/01ET96Y1758G7K5TSYNN0X24P7/results HTTP/1.1
+Accept: application/json, */*;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Bearer <Firebase ID Token>
+Connection: keep-alive
+Content-Length: 221
+Content-Type: application/json
+Host: localhost:4000
+User-Agent: HTTPie/2.3.0
+
+{
+    "invalidVotesCount": 5,
+    "results": [
+        {
+            "invalidVotesCount": 2,
+            "party": 1,
+            "validVotesCount": 50
+        },
+        {
+            "invalidVotesCount": 3,
+            "party": 2,
+            "validVotesCount": 120
+        },
+        {
+            "party": 3,
+            "validVotesCount": 30
+        }
+    ],
+    "validVotesCount": 200
+}
+
+
+HTTP/1.1 201 Created
+Connection: keep-alive
+Content-Length: 625
+Content-Type: application/json; charset=utf-8
+Date: Thu, 24 Dec 2020 01:48:57 GMT
+ETag: W/"271-HJJWjAF9wPKUgO0d7SOP6CChZkc"
+Keep-Alive: timeout=5
+X-Powered-By: Express
+
+{
+    "invalidVotesCount": 5,
+    "machineVotesCount": null,
+    "results": [
+        {
+            "invalidVotesCount": 2,
+            "party": {
+                "displayName": "Партия 1",
+                "id": 1,
+                "name": "Пълно име на Партия 1"
+            },
+            "validVotesCount": 50
+        },
+        {
+            "invalidVotesCount": 3,
+            "party": {
+                "displayName": "Партия 2",
+                "id": 2,
+                "name": "Пълно име на Партия 2"
+            },
+            "validVotesCount": 120
+        },
+        {
+            "invalidVotesCount": null,
+            "party": {
+                "displayName": "Партия 3",
+                "id": 3,
+                "name": "Пълно име на Партия 3"
+            },
+            "validVotesCount": 30
+        }
+    ],
+    "validVotesCount": 200
+}

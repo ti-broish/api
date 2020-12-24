@@ -3,7 +3,7 @@ import { Exclude, Expose, plainToClass, Transform, TransformPlainToClass, Type }
 import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { SectionDto } from 'src/sections/api/section.dto';
-import { Protocol } from '../entities/protocol.entity';
+import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
 
 @Exclude()
 export class ProtocolDto {
@@ -32,6 +32,9 @@ export class ProtocolDto {
   })
   pictures: PictureDto[]
 
+  @Expose({ groups: ['read'] })
+  status: ProtocolStatus;
+
   public toEntity(): Protocol {
     return plainToClass<Protocol, Partial<ProtocolDto>>(Protocol, this, {
       groups: ['create'],
@@ -42,6 +45,6 @@ export class ProtocolDto {
     return plainToClass<ProtocolDto, Partial<Protocol>>(ProtocolDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
-    })
+    });
   }
 }

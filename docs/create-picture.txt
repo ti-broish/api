@@ -1,0 +1,30 @@
+POST /pictures HTTP/1.1
+Accept: application/json, */*;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Bearer <Firebase ID Token>
+Connection: keep-alive
+Content-Length: 86999
+Content-Type: application/json
+Host: localhost:4000
+User-Agent: HTTPie/2.3.0
+
+{
+    "image": "data:<image mime type>;base64,<base64-encoded image>
+}
+
+
+HTTP/1.1 201 Created
+Connection: keep-alive
+Content-Length: 168
+Content-Type: application/json; charset=utf-8
+Date: Wed, 23 Dec 2020 14:28:25 GMT
+ETag: W/"a8-njYjI8G/TQqKaldGinIhwgK52/0"
+Keep-Alive: timeout=5
+X-Powered-By: Express
+
+{
+    "id": "01ET800HH6YYCBM8AHHW6QP893",
+    "path": "01ET800HH6BGYQ5H1N1314P279.png",
+    "sortPosition": 0,
+    "url": "https://d1t.dabulgaria.bg/testphotos/01ET800HH6BGYQ5H1N1314P279.png"
+}
