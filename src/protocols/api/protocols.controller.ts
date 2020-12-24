@@ -52,12 +52,6 @@ export class ProtocolsController {
     return resultsDto;
   }
 
-  @Get()
-  @HttpCode(200)
-  query(@Query('author') author: number): Array<ProtocolDto> {
-    return [];
-  }
-
   @Get(':id')
   @HttpCode(200)
   async get(@Param('id') id: string): Promise<ProtocolDto> {

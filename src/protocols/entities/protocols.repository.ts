@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { User } from '../../users/entities';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { ProtocolActionType } from './protocol-actions.entity';
 import { Protocol } from './protocol.entity';
 
 @Injectable()
@@ -15,5 +17,22 @@ export class ProtocolsRepository {
     await this.repo.save(protocol);
 
     return this.findOneOrFail(protocol.id);
+  }
+
+  findByAuthor(author: User): Promise<Protocol[]> {
+    return this.repo.find({
+      relations: ['section', 'pictures'],
+      join: {
+        alias: 'protocol',
+        innerJoin: {
+          action: 'protocol.actions'
+        }
+      },
+      where: (qb: SelectQueryBuilder<Protocol>) => {
+        qb
+          .where('action.actor_id = :authorId', { authorId: author.id })
+          .andWhere('action.action = :action', { action: ProtocolActionType.SEND });
+      }
+    });
   }
 }
