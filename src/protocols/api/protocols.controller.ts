@@ -1,4 +1,4 @@
-import { Controller, Get, Post, HttpCode, Query, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Query, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
@@ -54,8 +54,15 @@ export class ProtocolsController {
 
   @Get(':id')
   @HttpCode(200)
-  async get(@Param('id') id: string): Promise<ProtocolDto> {
-    const dto = ProtocolDto.fromEntity(await this.repo.findOneOrFail(id));
+  async get(
+    @Param('id') id: string,
+    @InjectUser() user: User,
+  ): Promise<ProtocolDto> {
+    const protocol = await this.repo.findOneOrFail(id);
+    if (protocol.getAuthor().id !== user.id) {
+      throw new ForbiddenException();
+    }
+    const dto = ProtocolDto.fromEntity(protocol);
     dto.pictures.forEach(picture => picture.url = this.urlGenerator.getUrl(picture));
     return dto;
   }
