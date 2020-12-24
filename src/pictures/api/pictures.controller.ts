@@ -29,12 +29,6 @@ export class PicturesController {
     return pictureDto;
   }
 
-  @Get()
-  @HttpCode(200)
-  query(@Query('protocol') protocol?: string, @Query('report') report?: string): Array<Picture> {
-    return [];
-  }
-
   @Get(':id')
   @HttpCode(200)
   async get(@Param('id') id: string): Promise<PictureDto> {
