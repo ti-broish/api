@@ -7,7 +7,7 @@ import { Picture } from 'src/pictures/entities/picture.entity';
 import { ProtocolResult } from './protocol-result.entity';
 import { User } from 'src/users/entities';
 
-enum ProtocolStatus {
+export enum ProtocolStatus {
   RECEIVED = 'received',
   APPROVED = 'approved',
   REPLACED = 'replaced',
