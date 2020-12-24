@@ -66,6 +66,12 @@ export class ProtocolsController {
     return dto;
   }
 
+  @Get(':id/results')
+  @HttpCode(200)
+  async results(@Param('id') id: string): Promise<ProtocolResultsDto> {
+    return ProtocolResultsDto.fromEntity(await this.repo.findOneOrFail(id));
+  }
+
   private updatePicturesUrl(protocolDto: ProtocolDto) {
     protocolDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
 
