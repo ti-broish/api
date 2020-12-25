@@ -9,6 +9,7 @@ import { PartiesModule } from './parties/parties.module';
 import { configSchema, TypeOrmConfigService } from './config';
 import { PicturesModule } from './pictures/pictures.module';
 import { ProtocolsModule } from './protocols/protocols.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ProtocolsModule } from './protocols/protocols.module';
     PartiesModule,
     PicturesModule,
     ProtocolsModule,
+    ReportsModule,
   ],
 })
 export class AppModule {}
