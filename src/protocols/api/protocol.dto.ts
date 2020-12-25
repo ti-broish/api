@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform, TransformPlainToClass, Type } from 'class-transformer';
-import { IsNotEmpty, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { SectionDto } from 'src/sections/api/section.dto';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
@@ -23,8 +23,10 @@ export class ProtocolDto {
 
   @ApiProperty({ required: true })
   @Expose({ groups: ['read', 'create'] })
-  @Transform((ids: string[]) => ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })), { groups: ['create'] })
+  @Transform((ids: string[]) => Array.isArray(ids) ? ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })) : ids, { groups: ['create'] })
   @Type(() => PictureDto)
+  @IsArray({ groups: ['create'] })
+  @ArrayNotEmpty({ groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
   @ValidateNested({
     each: true,
