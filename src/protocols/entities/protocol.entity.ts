@@ -41,7 +41,7 @@ export class Protocol {
   @ManyToOne(() => Section, section => section.protocols)
   section: Section;
 
-  @ManyToMany(() => Picture, picture => picture.protocol)
+  @ManyToMany(() => Picture)
   @JoinTable({
     name: 'protocols_pictures',
     joinColumn: { name: 'protocol_id' },

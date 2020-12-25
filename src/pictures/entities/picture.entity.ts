@@ -23,9 +23,6 @@ export class Picture implements PathInterface {
   @ManyToOne(() => User)
   author: User;
 
-  @ManyToMany(() => Protocol, protocol => protocol.pictures)
-  protocol: Protocol;
-
   getPath(): string {
     return this.path;
   }
