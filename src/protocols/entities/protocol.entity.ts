@@ -1,7 +1,7 @@
 import { Section } from '../../sections/entities';
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
 import { ulid } from 'ulid';
-import { ProtocolAction, ProtocolActionType } from './protocol-actions.entity';
+import { ProtocolAction, ProtocolActionType } from './protocol-action.entity';
 import { ProtocolData } from './protocol-data.entity';
 import { Picture } from 'src/pictures/entities/picture.entity';
 import { ProtocolResult } from './protocol-result.entity';
