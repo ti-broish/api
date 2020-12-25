@@ -64,7 +64,8 @@ export class ProtocolsController {
       throw new ForbiddenException();
     }
     const dto = ProtocolDto.fromEntity(protocol);
-    dto.pictures.forEach(picture => picture.url = this.urlGenerator.getUrl(picture));
+    this.updatePicturesUrl(dto);
+
     return dto;
   }
 
