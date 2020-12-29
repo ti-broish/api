@@ -2,10 +2,10 @@ import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transforme
 import { ArrayNotEmpty, IsArray, IsNotEmpty, MaxLength, MinLength, ValidateNested } from 'class-validator';
 import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
-import { Report, ReportStatus } from '../entities/report.entity';
+import { Violation, ViolationStatus } from '../entities/violation.entity';
 
 @Exclude()
-export class ReportDto{
+export class ViolationDto{
   @Expose({ groups: ['read'] })
   id: string;
 
@@ -37,16 +37,16 @@ export class ReportDto{
   description: string;
 
   @Expose({ groups: ['read'] })
-  status: ReportStatus;
+  status: ViolationStatus;
 
-  public toEntity(): Report {
-    return plainToClass<Report, Partial<ReportDto>>(Report, this, {
+  public toEntity(): Violation {
+    return plainToClass<Violation, Partial<ViolationDto>>(Violation, this, {
       groups: ['create'],
     });
   }
 
-  public static fromEntity(entity: Report): ReportDto {
-    return plainToClass<ReportDto, Partial<Report>>(ReportDto, entity, {
+  public static fromEntity(entity: Violation): ViolationDto {
+    return plainToClass<ViolationDto, Partial<Violation>>(ViolationDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
     });

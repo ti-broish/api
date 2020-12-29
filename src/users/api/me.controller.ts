@@ -3,8 +3,8 @@ import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
 import { ProtocolDto } from 'src/protocols/api/protocol.dto';
 import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository';
-import { ReportDto } from 'src/reports/api/report.dto';
-import { ReportssRepository } from 'src/reports/entities/reports.repository';
+import { ViolationDto } from 'src/violations/api/violation.dto';
+import { ViolationsRepository } from 'src/violations/entities/violations.repository';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from '../entities/users.repository';
 import { UserDto } from './user.dto';
@@ -14,7 +14,7 @@ export class MeController {
   constructor(
     @Inject(UsersRepository) private readonly usersRepo: UsersRepository,
     @Inject(ProtocolsRepository) private readonly protocolsRepo: ProtocolsRepository,
-    @Inject(ReportssRepository) private readonly reportsRepo: ReportssRepository,
+    @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
     @Inject(PicturesUrlGenerator) private readonly picturesUrlGenerator: PicturesUrlGenerator,
   ) { }
 
@@ -43,13 +43,13 @@ export class MeController {
   }
 
 
-  @Get('reports')
+  @Get('violations')
   @HttpCode(200)
-  async reports(@InjectUser() user: User): Promise<ReportDto[]> {
-    const reports = (await this.reportsRepo.findByAuthor(user)).map(ReportDto.fromEntity);
-    this.updatePicturesUrl(reports);
+  async violations(@InjectUser() user: User): Promise<ViolationDto[]> {
+    const violations = (await this.violationsRepo.findByAuthor(user)).map(ViolationDto.fromEntity);
+    this.updatePicturesUrl(violations);
 
-    return reports;
+    return violations;
   }
 
   @Delete()
@@ -64,7 +64,7 @@ export class MeController {
     await this.usersRepo.delete(user.id);
   }
 
-  private updatePicturesUrl(dtos: ReportDto[]|ProtocolDto[]): void {
-    dtos.forEach((dto: ProtocolDto|ReportDto) => dto.pictures.forEach(picture => picture.url = this.picturesUrlGenerator.getUrl(picture)));
+  private updatePicturesUrl(dtos: ViolationDto[]|ProtocolDto[]): void {
+    dtos.forEach((dto: ProtocolDto|ViolationDto) => dto.pictures.forEach(picture => picture.url = this.picturesUrlGenerator.getUrl(picture)));
   }
 }
