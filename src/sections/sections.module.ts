@@ -6,10 +6,11 @@ import { Section, Country, ElectionRegion, Town, Municipality } from './entities
 import { ElectionRegionsRepository } from './entities/electionRegions.repository';
 import { TownsRepository } from './entities/towns.repository';
 import { IsSectionExistsConstraint } from './api/section-exists.constraint';
+import { IsTownExistsConstraint } from './api/town-exists.constraint';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Section, Town, Municipality, ElectionRegion, Country])],
-  providers: [SectionsRepository, CountriesRepository, ElectionRegionsRepository, TownsRepository, IsSectionExistsConstraint],
+  providers: [SectionsRepository, CountriesRepository, ElectionRegionsRepository, TownsRepository, IsSectionExistsConstraint, IsTownExistsConstraint],
   exports: [],
   controllers: [SectionsController, CountriesController, ElectionRegionsController, TownsController],
 })

@@ -10,7 +10,11 @@ export class TownsRepository {
     private repo: Repository<Town>,
   ) {}
 
-  findOneOrFail(id: string): Promise<Town> {
+  findOne(id: number): Promise<Town> {
+    return this.repo.findOne(id);
+  }
+
+  findOneOrFail(id: number): Promise<Town> {
     return this.repo.findOneOrFail(id);
   }
 

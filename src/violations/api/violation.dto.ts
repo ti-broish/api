@@ -1,8 +1,9 @@
 import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsNotEmpty, MaxLength, MinLength, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsNotEmpty, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
 import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { Violation, ViolationStatus } from '../entities/violation.entity';
+import { TownDto } from 'src/sections/api/town.dto';
 
 @Exclude()
 export class ViolationDto{
@@ -11,12 +12,21 @@ export class ViolationDto{
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => SectionDto)
-  @Transform((id: string) => plainToClass(SectionDto, { id }, { groups: ['create'] }), { groups: ['create'] })
+  @ValidateIf((violationDto: ViolationDto) => violationDto.town !== undefined)
+  @Transform((id: string) => id ? plainToClass(SectionDto, { id }, { groups: ['create'] }) : undefined, { groups: ['create'] })
+  @ValidateNested({
+    groups: ['create'],
+  })
+  section?: SectionDto;
+
+  @Expose({ groups: ['read', 'create'] })
+  @Type(() => TownDto)
+  @Transform((id: string) => plainToClass(TownDto, { id }, { groups: ['create'] }), { groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
   @ValidateNested({
     groups: ['create'],
   })
-  section: SectionDto;
+  town: TownDto;
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => PictureDto)

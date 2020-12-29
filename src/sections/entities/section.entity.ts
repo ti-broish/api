@@ -1,3 +1,4 @@
+import { Violation } from 'src/violations/entities/violation.entity';
 import { Entity, Column, ManyToOne, PrimaryColumn, OneToMany } from 'typeorm';
 import { Protocol } from '../../protocols/entities/protocol.entity';
 import { CityRegion } from './cityRegion.entity';
@@ -32,4 +33,7 @@ export class Section {
 
   @OneToMany(() => Protocol, protocol => protocol.section)
   protocols: Protocol[];
+
+  @OneToMany(() => Violation, violation => violation.section)
+  violations: Protocol[];
 }

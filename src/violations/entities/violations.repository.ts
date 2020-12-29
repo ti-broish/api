@@ -10,7 +10,7 @@ export class ViolationsRepository {
   constructor(@InjectRepository(Violation) private readonly repo: Repository<Violation>) {}
 
   findOneOrFail(id: string): Promise<Violation> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'pictures', 'updates', 'updates.actor'] } );
+    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'town', 'pictures', 'updates', 'updates.actor'] } );
   }
 
   async save(violation: Violation): Promise<Violation> {

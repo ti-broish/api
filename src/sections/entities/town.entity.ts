@@ -1,3 +1,4 @@
+import { Violation } from 'src/violations/entities/violation.entity';
 import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CityRegion } from './cityRegion.entity';
 import { Country } from './country.entity';
@@ -23,4 +24,7 @@ export class Town {
 
   @OneToMany(() => Section, section => section.town)
   readonly sections: Section[];
+
+  @OneToMany(() => Violation, violation => violation.town)
+  readonly violations: Violation[];
 }

@@ -15,7 +15,11 @@ export class IsSectionExistsConstraint implements ValidatorConstraintInterface {
   constructor(@Inject(SectionsRepository) private readonly repo: SectionsRepository) { }
 
   async validate(sectionId?: string): Promise<boolean> {
-    if (!sectionId || typeof(sectionId) !== 'string' || sectionId.length !== Section.SECTION_ID_LENGTH ) {
+    if (!sectionId) {
+      return true;
+    }
+
+    if (typeof(sectionId) !== 'string' || sectionId.length !== Section.SECTION_ID_LENGTH ) {
       return false;
     }
 

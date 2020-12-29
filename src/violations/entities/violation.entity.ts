@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulid';
-import { Section } from '../../sections/entities';
+import { Section, Town } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
 import { ViolationUpdate, ViolationUpdateType } from './violation-update.entity';
@@ -26,8 +26,11 @@ export class Violation {
   @Column({ type: 'varchar' })
   status: ViolationStatus;
 
-  @ManyToOne(() => Section, section => section.protocols)
-  section: Section;
+  @ManyToOne(() => Section, section => section.violations)
+  section?: Section;
+
+  @ManyToOne(() => Town, town => town.violations)
+  town: Town;
 
   @ManyToMany(() => Picture)
   @JoinTable({
