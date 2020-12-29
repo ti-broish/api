@@ -1,6 +1,6 @@
-import { Controller, Post, HttpCode, Body, Inject, ValidationPipe, UsePipes, HttpException, HttpStatus, All } from '@nestjs/common';
+import { Controller, Post, HttpCode, Body, Inject, ValidationPipe, UsePipes, HttpException, HttpStatus } from '@nestjs/common';
 import { FirebaseUser } from '@tfarras/nestjs-firebase-admin';
-import { AllowOnlyFirebaseUser, InjectFirebaseUser, InjectUser } from 'src/auth/decorators';
+import { AllowOnlyFirebaseUser, InjectFirebaseUser, InjectUser } from '../../auth/decorators';
 import { User } from '../entities';
 import RegistrationService, { RegistrationError } from './registration.service';
 import { UserDto } from './user.dto';

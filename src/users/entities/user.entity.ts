@@ -1,6 +1,6 @@
-import { Picture } from 'src/pictures/entities/picture.entity';
 import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany } from 'typeorm';
 import { ulid } from 'ulid';
+import { Picture } from '../../pictures/entities/picture.entity';
 import { Organization } from './organization.entity';
 
 @Entity('people')

@@ -1,5 +1,4 @@
 import { Controller, Get, HttpCode, Inject, Param } from '@nestjs/common';
-import { Public } from 'src/auth/decorators/public.decorator';
 import { PartiesRepository } from '../entities/parties.repository';
 import { PartyDto } from './Party.dto';
 

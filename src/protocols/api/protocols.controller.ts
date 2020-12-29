@@ -1,10 +1,10 @@
-import { Controller, Get, Post, HttpCode, Query, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException } from '@nestjs/common';
-import { InjectUser } from 'src/auth/decorators/inject-user.decorator';
-import { PictureDto } from 'src/pictures/api/picture.dto';
-import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
-import { User } from 'src/users/entities';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException } from '@nestjs/common';
+import { InjectUser } from '../../auth/decorators/inject-user.decorator';
+import { PictureDto } from '../../pictures/api/picture.dto';
+import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
+import { User } from '../../users/entities';
 import { ProtocolsRepository } from '../entities/protocols.repository';
-import { ProtocolResultDto, ProtocolResultsDto } from './protocol-results.dto';
+import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 
 @Controller('protocols')

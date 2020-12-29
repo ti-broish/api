@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass, Transform, TransformPlainToClass, Type } from 'class-transformer';
+import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
 import { ArrayNotEmpty, IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
-import { PictureDto } from 'src/pictures/api/picture.dto';
-import { SectionDto } from 'src/sections/api/section.dto';
+import { PictureDto } from '../../pictures/api/picture.dto';
+import { SectionDto } from '../../sections/api/section.dto';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
 
 @Exclude()

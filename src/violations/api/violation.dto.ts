@@ -3,7 +3,7 @@ import { ArrayNotEmpty, IsArray, IsNotEmpty, MaxLength, MinLength, ValidateIf, V
 import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { Violation, ViolationStatus } from '../entities/violation.entity';
-import { TownDto } from 'src/sections/api/town.dto';
+import { TownDto } from '../../sections/api/town.dto';
 
 @Exclude()
 export class ViolationDto{
