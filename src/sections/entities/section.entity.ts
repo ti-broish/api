@@ -1,5 +1,5 @@
-import { Violation } from 'src/violations/entities/violation.entity';
 import { Entity, Column, ManyToOne, PrimaryColumn, OneToMany } from 'typeorm';
+import { Violation } from '../../violations/entities/violation.entity';
 import { Protocol } from '../../protocols/entities/protocol.entity';
 import { CityRegion } from './cityRegion.entity';
 import { ElectionRegion } from './electionRegion.entity';

@@ -1,7 +1,7 @@
-import { Protocol } from './protocol.entity';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { ulid } from "ulid";
-import { User } from 'src/users/entities';
+import { ulid } from 'ulid';
+import { Protocol } from './protocol.entity';
+import { User } from '../../users/entities';
 
 export enum ProtocolActionType {
   SEND = 'send',

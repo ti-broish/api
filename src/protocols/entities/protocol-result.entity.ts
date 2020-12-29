@@ -1,7 +1,7 @@
-import { Protocol } from './protocol.entity';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { ulid } from "ulid";
-import { Party } from 'src/parties/entities/party.entity';
+import { ulid } from 'ulid';
+import { Protocol } from './protocol.entity';
+import { Party } from '../../parties/entities/party.entity';
 
 @Entity('protocol_results')
 export class ProtocolResult {

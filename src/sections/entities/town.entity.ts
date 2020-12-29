@@ -1,4 +1,4 @@
-import { Violation } from 'src/violations/entities/violation.entity';
+import { Violation } from '../../violations/entities/violation.entity';
 import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CityRegion } from './cityRegion.entity';
 import { Country } from './country.entity';

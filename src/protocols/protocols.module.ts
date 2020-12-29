@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PicturesModule } from 'src/pictures/pictures.module';
+import { PicturesModule } from '../pictures/pictures.module';
 import { ProtocolsController } from './api/protocols.controller';
 import { Protocol } from './entities/protocol.entity';
 import { ProtocolsRepository } from './entities/protocols.repository';

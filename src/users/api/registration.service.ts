@@ -14,17 +14,13 @@ export default class RegistrationService {
 
   public constructor(@Inject(UsersRepository) private readonly repo: UsersRepository) {}
 
-  async register(authUser: User|FirebaseUser, userDto: UserDto): Promise<User> {
-    if (authUser instanceof User) {
-      throw new RegistrationError(
-        'RegistrationForbiddenError',
-        'Already authenticated as we have the Firebase UID in our records'
-      );
-    }
-
+  async register(
+    firebaseUser: FirebaseUser|null,
+    userDto: UserDto
+  ): Promise<User> {
     const userSignup = userDto.toEntity();
 
-    if (userSignup.firebaseUid !== authUser.uid || userSignup.email !== authUser.email) {
+    if (userSignup.firebaseUid !== firebaseUser.uid || userSignup.email !== firebaseUser.email) {
       throw new RegistrationError(
         'RegistrationForbiddenError',
         'Trying to sign up with data which does not match the Firebase token'

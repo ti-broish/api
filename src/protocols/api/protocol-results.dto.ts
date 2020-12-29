@@ -1,6 +1,6 @@
-import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, Min, ValidateNested } from 'class-validator';
-import { PartyDto } from 'src/parties/api/Party.dto';
+import { Expose, plainToClass, Transform, Type } from 'class-transformer';
+import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, Min, ValidateNested } from 'class-validator';
+import { PartyDto } from '../../parties/api/Party.dto';
 import { ProtocolData } from '../entities/protocol-data.entity';
 import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol } from '../entities/protocol.entity';

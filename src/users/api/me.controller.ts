@@ -1,10 +1,10 @@
 import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException } from '@nestjs/common';
-import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
-import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
-import { ProtocolDto } from 'src/protocols/api/protocol.dto';
-import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository';
-import { ViolationDto } from 'src/violations/api/violation.dto';
-import { ViolationsRepository } from 'src/violations/entities/violations.repository';
+import { InjectUser } from '../../auth/decorators/inject-user.decorator';
+import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
+import { ProtocolDto } from '../../protocols/api/protocol.dto';
+import { ProtocolsRepository } from '../../protocols/entities/protocols.repository';
+import { ViolationDto } from '../../violations/api/violation.dto';
+import { ViolationsRepository } from '../../violations/entities/violations.repository';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from '../entities/users.repository';
 import { UserDto } from './user.dto';

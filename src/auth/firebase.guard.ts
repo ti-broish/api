@@ -1,7 +1,11 @@
-import { ExecutionContext, Injectable } from "@nestjs/common";
+import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { AuthGuard } from "@nestjs/passport";
-import { IS_PUBLIC_KEY } from "./decorators/Public.decorator";
+import { Request } from "express";
+import { resolve } from "path";
+import { Observable } from "rxjs";
+import { ALLOW_ONLY_FIREBASE_USER } from "./decorators/allow-only-firebase-user.decorator";
+import { IS_PUBLIC_KEY } from "./decorators/public.decorator";
 
 /**
  * All controllers use this authentication guard by default.
@@ -20,9 +24,38 @@ export class FirebaseGuard extends AuthGuard('firebase') {
       context.getHandler(),
       context.getClass(),
     ]);
+
     if (isPublic) {
       return true;
     }
-    return super.canActivate(context);
+
+    // If AllowOnlyFirebaseUser() decorator is set on controller
+    // authentication would allow it if the firebase user is valid
+    // even if the user does not exist in the database
+    const allowOnlyFirebaseUser = !!this.reflector.getAllAndOverride<boolean>(ALLOW_ONLY_FIREBASE_USER, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    let guardResultOrPromise = super.canActivate(context);
+
+    if (!allowOnlyFirebaseUser) {
+      return guardResultOrPromise;
+    }
+
+    if (typeof guardResultOrPromise === 'boolean') {
+      return guardResultOrPromise && !!context.switchToHttp().getRequest().firebaseUser;
+    }
+
+    if (guardResultOrPromise instanceof Observable) {
+      guardResultOrPromise = guardResultOrPromise.toPromise();
+    }
+    return guardResultOrPromise.catch((reason: Error) => {
+      if (reason instanceof UnauthorizedException) {
+        return !!context.switchToHttp().getRequest().firebaseUser;
+      }
+
+      throw reason;
+    });
   }
 }

@@ -1,11 +1,11 @@
-import { Section } from '../../sections/entities';
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulid';
 import { ProtocolAction, ProtocolActionType } from './protocol-action.entity';
 import { ProtocolData } from './protocol-data.entity';
-import { Picture } from 'src/pictures/entities/picture.entity';
 import { ProtocolResult } from './protocol-result.entity';
-import { User } from 'src/users/entities';
+import { Section } from '../../sections/entities';
+import { Picture } from '../../pictures/entities/picture.entity';
+import { User } from '../../users/entities';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
