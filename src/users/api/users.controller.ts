@@ -16,10 +16,10 @@ export class UsersController {
   async create(
     @Body() userDto: UserDto,
     @InjectFirebaseUser() firebaseUser: FirebaseUser,
-    @InjectUser() authUser: User|null,
+    @InjectUser() authUser: User|undefined,
   ): Promise<UserDto> {
     try {
-      if (authUser !== null) {
+      if (authUser !== undefined) {
         throw new RegistrationError(
           'RegistrationForbiddenError',
           'Already authenticated as we have the Firebase UID in our records'
