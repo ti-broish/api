@@ -3,13 +3,13 @@ import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
 import { User } from 'src/users/entities';
-import { ReportssRepository } from '../entities/reports.repository';
-import { ReportDto } from './report.dto';
+import { ViolationsRepository } from '../entities/violations.repository';
+import { ViolationDto } from './violation.dto';
 
-@Controller('reports')
-export class ReportsController {
+@Controller('violations')
+export class ViolationsController {
   constructor(
-    @Inject(ReportssRepository) private readonly repo: ReportssRepository,
+    @Inject(ViolationsRepository) private readonly repo: ViolationsRepository,
     @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
 
@@ -17,12 +17,12 @@ export class ReportsController {
   @HttpCode(201)
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
   async create(
-    @Body() reportDto: ReportDto,
+    @Body() violationDto: ViolationDto,
     @InjectUser() user: User,
-  ): Promise<ReportDto> {
-    const report = reportDto.toEntity();
-    report.setReceivedStatus(user);
-    const savedDto = ReportDto.fromEntity(await this.repo.save(report));
+  ): Promise<ViolationDto> {
+    const violation = violationDto.toEntity();
+    violation.setReceivedStatus(user);
+    const savedDto = ViolationDto.fromEntity(await this.repo.save(violation));
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
@@ -33,20 +33,20 @@ export class ReportsController {
   async get(
     @Param('id') id: string,
     @InjectUser() user: User,
-  ): Promise<ReportDto> {
-    const report = await this.repo.findOneOrFail(id);
-    if (report.getAuthor().id !== user.id) {
+  ): Promise<ViolationDto> {
+    const violation = await this.repo.findOneOrFail(id);
+    if (violation.getAuthor().id !== user.id) {
       throw new ForbiddenException();
     }
-    const dto = ReportDto.fromEntity(report);
+    const dto = ViolationDto.fromEntity(violation);
     this.updatePicturesUrl(dto);
 
     return dto;
   }
 
-  private updatePicturesUrl(reportDto: ReportDto) {
-    reportDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
+  private updatePicturesUrl(violationDto: ViolationDto) {
+    violationDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
 
-    return reportDto;
+    return violationDto;
   }
 }

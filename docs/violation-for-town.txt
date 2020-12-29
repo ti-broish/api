@@ -1,0 +1,46 @@
+POST /violations HTTP/1.1
+Accept: application/json, */*;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Bearer <Firebase ID Token>
+Connection: keep-alive
+Content-Length: 147
+Content-Type: application/json
+Host: localhost:4000
+User-Agent: HTTPie/2.3.0
+
+{
+    "description": "This is a violation report for a given town without speciyfing a section.",
+    "pictures": [
+        "01ET95VHHGPNE70WVFGSYDWCZ3"
+    ],
+    "town": 9
+}
+
+
+HTTP/1.1 201 Created
+Connection: keep-alive
+Content-Length: 388
+Content-Type: application/json; charset=utf-8
+Date: Tue, 29 Dec 2020 19:43:06 GMT
+ETag: W/"184-x4pBa/RAMN06SLIIV0uIcMlDMLw"
+Keep-Alive: timeout=5
+X-Powered-By: Express
+
+{
+    "description": "This is a violation report for a given town without speciyfing a section.",
+    "id": "01ETR0D1HAAQXGETBK8XAD3KZZ",
+    "pictures": [
+        {
+            "id": "01ET95VHHGPNE70WVFGSYDWCZ3",
+            "path": "01ET95VHHGSWYNCJJX5DMX4J51.png",
+            "sortPosition": 0,
+            "url": "https://d1t.dabulgaria.bg/testphotos/01ET95VHHGSWYNCJJX5DMX4J51.png"
+        }
+    ],
+    "section": null,
+    "status": "received",
+    "town": {
+        "id": 9,
+        "name": "с. Баскалци"
+    }
+}

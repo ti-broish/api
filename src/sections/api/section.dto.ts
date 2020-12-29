@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
-import { IsNotEmpty, IsNumberString, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumberString, IsOptional, IsString, Length } from 'class-validator';
 import { Section } from '../entities/section.entity';
 import { IsSectionExists } from './section-exists.constraint';
 
@@ -12,7 +12,6 @@ export class SectionDto {
   @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH, { groups: ['create'] })
   @IsString({ groups: ['create'] })
   @IsNumberString({ no_symbols: true }, { groups: ['create'] })
-  @IsNotEmpty({ groups: ['create'] })
   public id: string;
 
   @ApiProperty()

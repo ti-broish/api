@@ -8,10 +8,10 @@ import RegistrationService from './api/registration.service';
 import { IsOrganizationExistsConstraint } from './api/organization-exists.constraint';
 import { ProtocolsModule } from 'src/protocols/protocols.module';
 import { PicturesModule } from 'src/pictures/pictures.module';
-import { ReportsModule } from 'src/reports/reports.module';
+import { ViolationsModule } from 'src/violations/violations.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Organization]), ProtocolsModule, PicturesModule, ReportsModule],
+  imports: [TypeOrmModule.forFeature([User, Organization]), ProtocolsModule, PicturesModule, ViolationsModule],
   providers: [UsersRepository, OrganizationsRepository, RegistrationService, IsOrganizationExistsConstraint],
   exports: [UsersRepository],
   controllers: [UsersController, MeController, OrganizationsController],
