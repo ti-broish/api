@@ -1,5 +1,5 @@
 import { Controller, Get, Post, HttpCode, Query, Param, Body, Inject, UsePipes, ValidationPipe } from '@nestjs/common';
-import { InjectUser } from '../../auth/decorators/injectUser.decorator';
+import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { User } from '../../users/entities';
 import { Picture } from '../entities/picture.entity';
 import { PicturesRepository } from '../entities/pictures.repository';

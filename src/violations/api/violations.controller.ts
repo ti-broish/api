@@ -1,5 +1,5 @@
 import { Controller, Get, Post, HttpCode, Param, Body, UsePipes, ValidationPipe, Inject, ForbiddenException } from '@nestjs/common';
-import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
+import { InjectUser } from 'src/auth/decorators/inject-user.decorator';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
 import { User } from 'src/users/entities';

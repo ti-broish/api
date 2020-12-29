@@ -1,5 +1,5 @@
 import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException } from '@nestjs/common';
-import { InjectUser } from 'src/auth/decorators/injectUser.decorator';
+import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
 import { ProtocolDto } from 'src/protocols/api/protocol.dto';
 import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository';
