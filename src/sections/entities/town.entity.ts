@@ -1,5 +1,5 @@
 import { Violation } from '../../violations/entities/violation.entity';
-import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 import { CityRegion } from './cityRegion.entity';
 import { Country } from './country.entity';
 import { Municipality } from './municipality.entity';
@@ -19,7 +19,12 @@ export class Town {
   @ManyToOne(() => Municipality, municipality => municipality.towns)
   readonly municipality: Municipality;
 
-  @OneToMany(() => CityRegion, cityRegion => cityRegion.town)
+  @ManyToMany(() => CityRegion, cityRegion => cityRegion.towns)
+  @JoinTable({
+    name: 'city_regions_towns',
+    joinColumn: { name: 'town_id' },
+    inverseJoinColumn: { name: 'city_region_id' },
+  })
   readonly cityRegions: CityRegion[];
 
   @OneToMany(() => Section, section => section.town)

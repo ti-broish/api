@@ -18,39 +18,25 @@ export class SectionsRepository {
     return this.repo.findOneOrFail(id);
   }
 
-  findByCityRegion(townId: number, cityRegionCode: string): Promise<Section[]> {
+  findByTownAndCityRegion(townId: number, cityRegionCode?: string): Promise<Section[]> {
     return this.repo.find({
       join: {
         alias: 'section',
         innerJoinAndSelect: {
           town: 'section.town',
-          cityRegion: 'section.cityRegion',
         },
       },
-      where: (qb: SelectQueryBuilder<Section>) => {
-        qb
-          .where({town: townId })
-          .andWhere('cityRegion.code = :cityRegionCode', { cityRegionCode });
+      where: (qb: SelectQueryBuilder<Section>): void => {
+        qb.where({ town: townId });
+
+        if (cityRegionCode) {
+          qb.innerJoinAndSelect('section.cityRegion', 'cityRegion', 'cityRegion.code = :cityRegionCode', { cityRegionCode });
+        }
       }
     });
   }
 
-  findByTown(townId: number): Promise<Section[]> {
-    return this.repo.find({
-      join: {
-        alias: 'section',
-        innerJoinAndSelect: {
-          town: 'section.town',
-        },
-        leftJoinAndSelect: {
-          cityRegion: 'section.cityRegion',
-        }
-      },
-      where: {town: townId },
-    });
-  }
-
   findByElectionRegion(electionRegion: string): Promise<Section[]> {
-    return this.repo.find({  where: { electionRegion } });
+    return this.repo.find({ where: { electionRegion } });
   }
 }

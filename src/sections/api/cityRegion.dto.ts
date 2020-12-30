@@ -11,6 +11,4 @@ export class CityRegionDto {
   @ApiProperty()
   @Expose()
   name: string;
-
-  town: TownDto;
 }

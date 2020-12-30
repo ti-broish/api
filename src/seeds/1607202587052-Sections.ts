@@ -217,19 +217,50 @@ export class Sections1607202587052 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      INSERT INTO city_regions (code, name, town_id)
-      SELECT city_region_code, initcap(max(city_region_name)), max(towns.id)
+      INSERT INTO city_regions (code, name)
+      SELECT city_region_code, initcap(max(city_region_name))
       FROM sections_ekatte
-      JOIN towns ON towns.code = sections_ekatte.town_code
       WHERE city_region_code != '00'
       GROUP BY sections_ekatte.province_code, sections_ekatte.city_region_code
+    `);
+
+    await queryRunner.query(`
+      insert into municipalities(code, name)
+      select municipality_code, INITCAP(MAX(municipality_name))
+      from sections_ekatte
+      group by province_code, municipality_code
+    `);
+
+    await queryRunner.query(`
+      update towns
+      set municipality_id = municipalities.id
+      from sections_ekatte
+      join municipalities
+        on municipalities.code = sections_ekatte.municipality_code
+      where sections_ekatte.town_code = towns.code
+    `);
+
+
+    await queryRunner.query(`
+      insert into "city_regions_towns" ("city_region_id", "town_id")
+      select city_regions.id as city_region_id, towns.id as town_id
+      from sections_ekatte
+      join towns
+        on towns.code = sections_ekatte.town_code
+      join municipalities
+        on municipalities.id = towns.municipality_id
+        and municipalities.code = sections_ekatte.municipality_code
+      join city_regions
+        on city_regions.code = sections_ekatte.city_region_code
+      group by city_regions.id, towns.id
     `);
 
     await queryRunner.query(`
       UPDATE sections
       SET city_region_id = city_regions.id
       FROM towns
-      JOIN city_regions ON city_regions.town_id = towns.id
+      JOIN city_regions_towns ON city_regions_towns.town_id = towns.id
+      JOIN city_regions ON city_regions_towns.city_region_id = city_regions.id
       WHERE towns.id = sections.town_id
       AND city_regions.code = substring(sections.id from 5 for 2)
     `);
@@ -289,22 +320,6 @@ export class Sections1607202587052 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      insert into municipalities(code, name)
-      select municipality_code, INITCAP(MAX(municipality_name))
-      from sections_ekatte
-      group by province_code, municipality_code
-    `);
-
-    await queryRunner.query(`
-      update towns
-      set municipality_id = municipalities.id
-      from sections_ekatte
-      join municipalities
-        on municipalities.code = sections_ekatte.municipality_code
-      where sections_ekatte.town_code = towns.code
-    `);
-
-    await queryRunner.query(`
       insert into election_regions_municipalities(election_region_id, municipality_id)
       select election_regions.id, municipalities.id
       from sections_ekatte
@@ -323,6 +338,7 @@ export class Sections1607202587052 implements MigrationInterface {
       truncate table "election_regions" RESTART IDENTITY CASCADE;
       truncate table "municipalities" RESTART IDENTITY CASCADE;
       truncate table "countries" RESTART IDENTITY CASCADE;
+      truncate table "city_regions_towns" RESTART IDENTITY CASCADE;
     `);
   }
 }

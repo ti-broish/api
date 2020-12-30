@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
 import { Section } from './section.entity';
 import { Town } from './town.entity';
 
@@ -13,8 +13,8 @@ export class CityRegion {
   @Column()
   name: string;
 
-  @ManyToOne(() => Town, town => town.cityRegions)
-  town: Town;
+  @ManyToMany(() => Town, town => town.cityRegions)
+  towns: Town[];
 
   @OneToMany(() => Section, section => section.cityRegion)
   sections: Section[];

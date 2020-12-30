@@ -14,27 +14,22 @@ export class SectionsController {
   @Get()
   @HttpCode(200)
   @ApiQuery({
-    name: "town",
-    description: "The town code to filter by",
+    name: 'town',
+    description: 'The town code to filter by',
     required: true,
     type: Number,
   })
   @ApiQuery({
-    name: "city_region",
-    description: "The city region code to filter by",
+    name: 'city_region',
+    description: 'The city region code to filter by',
     required: false,
     type: String,
   })
   @ApiResponse({ status: 200, description: 'Successful query of sections'})
-  @ApiResponse({ status: 400, description: 'Invalid query parameters'})
   async query(
     @Query('town', ParseIntPipe) townId: number,
     @Query('city_region') cityRegionCode?: string,
   ): Promise<SectionDto[]> {
-    const sections: Section[] = cityRegionCode
-      ? await this.repo.findByCityRegion(townId, cityRegionCode)
-      : await this.repo.findByTown(townId);
-
-    return sections.map(SectionDto.fromEntity);
+    return (await this.repo.findByTownAndCityRegion(townId, cityRegionCode)).map(SectionDto.fromEntity);
   }
 }
