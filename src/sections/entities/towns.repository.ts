@@ -18,9 +18,16 @@ export class TownsRepository {
     return this.repo.findOneOrFail(id);
   }
 
-  findByCountry(countryCode: string): Promise<Town[]> {
+  filter(
+    countryCode: string,
+    electionRegionCode?: string,
+    municipalityCode?: string,
+  ): Promise<Town[]> {
+    if (electionRegionCode && !municipalityCode) {
+      throw new Error('Cannot filter towns by just election region!');
+    }
+
     return this.repo.find({
-      relations: ['cityRegions'],
       join: {
         alias: 'town',
         innerJoin: {
@@ -29,26 +36,14 @@ export class TownsRepository {
       },
       where: (qb: SelectQueryBuilder<Town>) => {
         qb.where('country.code = :countryCode', { countryCode });
+
+        if (electionRegionCode && municipalityCode) {
+          qb.innerJoin('town.municipality', 'municipality', 'municipality.code = :municipalityCode', { municipalityCode });
+          qb.innerJoin('municipality.electionRegions', 'electionRegions', 'electionRegions.code = :electionRegionCode', { electionRegionCode });
+          qb.innerJoin('town.sections', 'section', 'section.election_region_id = electionRegions.id');
+          qb.leftJoinAndSelect('town.cityRegions', 'city_region', 'city_region.id = "section"."city_region_id"');
+        }
       }
     });
-  }
-
-  findByMunicipality(electionRegionCode: string, municipalityCode: string): Promise<Town[]> {
-    return this.repo.find({
-      relations: ['cityRegions'],
-      join: {
-        alias: 'town',
-        innerJoin: {
-          municipality: 'town.municipality',
-          electionRegions: 'municipality.electionRegions',
-        },
-      },
-      where: (qb: SelectQueryBuilder<Town>) => {
-        qb
-          .where('municipality.code = :municipalityCode', { municipalityCode })
-          .andWhere('electionRegions.code = :electionRegionCode', { electionRegionCode });
-      }
-    });
-
   }
 }
