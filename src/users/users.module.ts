@@ -9,11 +9,14 @@ import { IsOrganizationExistsConstraint } from './api/organization-exists.constr
 import { ProtocolsModule } from '../protocols/protocols.module';
 import { PicturesModule } from '../pictures/pictures.module';
 import { ViolationsModule } from '../violations/violations.module';
+import { IsUserExistsConstraint } from './api/user-exists.constraint';
+import { ClientsRepository } from './entities/clients.repository';
+import { Client } from './entities/client.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Organization]), ProtocolsModule, PicturesModule, ViolationsModule],
-  providers: [UsersRepository, OrganizationsRepository, RegistrationService, IsOrganizationExistsConstraint],
-  exports: [UsersRepository],
+  imports: [TypeOrmModule.forFeature([User, Organization, Client]), ProtocolsModule, PicturesModule, ViolationsModule],
+  providers: [UsersRepository, OrganizationsRepository, ClientsRepository, RegistrationService, IsOrganizationExistsConstraint, IsUserExistsConstraint],
+  exports: [UsersRepository, ClientsRepository],
   controllers: [UsersController, MeController, OrganizationsController],
 })
 export class UsersModule {}

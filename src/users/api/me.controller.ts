@@ -1,18 +1,21 @@
-import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException } from '@nestjs/common';
+import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException, Post } from '@nestjs/common';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { ProtocolDto } from '../../protocols/api/protocol.dto';
 import { ProtocolsRepository } from '../../protocols/entities/protocols.repository';
 import { ViolationDto } from '../../violations/api/violation.dto';
 import { ViolationsRepository } from '../../violations/entities/violations.repository';
+import { ClientsRepository } from '../entities/clients.repository';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from '../entities/users.repository';
+import { ClientDto } from './client.dto';
 import { UserDto } from './user.dto';
 
 @Controller('me')
 export class MeController {
   constructor(
     @Inject(UsersRepository) private readonly usersRepo: UsersRepository,
+    @Inject(ClientsRepository) private readonly clientsRepo: ClientsRepository,
     @Inject(ProtocolsRepository) private readonly protocolsRepo: ProtocolsRepository,
     @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
     @Inject(PicturesUrlGenerator) private readonly picturesUrlGenerator: PicturesUrlGenerator,
@@ -50,6 +53,26 @@ export class MeController {
     this.updatePicturesUrl(violations);
 
     return violations;
+  }
+
+  @Get('clients')
+  @HttpCode(200)
+  async clients(@InjectUser() user: User): Promise<ClientDto[]> {
+    return (await this.clientsRepo.findAllForOwner(user)).map(ClientDto.fromEntity);
+  }
+
+  @Post('clients')
+  @HttpCode(201)
+  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
+  async registerClient(
+    @InjectUser() user: User,
+    @Body() clientDto: ClientDto
+  ): Promise<ClientDto> {
+    const client = clientDto.toEntity();
+    client.activate();
+    client.owner = user;
+
+    return ClientDto.fromEntity(await this.clientsRepo.save(client));
   }
 
   @Delete()
