@@ -17,7 +17,7 @@ export class BroadcastsPublishTask {
     @InjectEntityManager() private entityManager: EntityManager
   ) {}
 
-  @Cron(CronExpression.EVERY_10_SECONDS, {
+  @Cron(CronExpression.EVERY_MINUTE, {
     name: 'notifications',
     timeZone: process.env.TZ,
   })
