@@ -3,7 +3,7 @@ import { IsDate, IsNotEmpty, IsOptional, IsString, Length, MaxLength, MinLength,
 import { merge } from 'lodash';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { UserDto } from 'src/users/api/user.dto';
-import { Post } from '../entities/post.entity';
+import { Post } from '../../../posts/entities/post.entity';
 import { IsPostExists } from './post-exists.constraint';
 
 @Exclude()

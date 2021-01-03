@@ -11,6 +11,7 @@ import { PicturesModule } from './pictures/pictures.module';
 import { ProtocolsModule } from './protocols/protocols.module';
 import { ViolationsModule } from './violations/violations.module';
 import { PostsModule } from './posts/posts.module';
+import { BroadcastsModule } from './broadcasts/broadcasts.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PostsModule } from './posts/posts.module';
     ProtocolsModule,
     ViolationsModule,
     PostsModule,
+    BroadcastsModule,
   ],
 })
 export class AppModule {}

@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne, ManyToMany 
 import { ulid } from 'ulid';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
-import { Broadcast } from './broadcast.entity';
+import { Broadcast } from '../../broadcasts/entities/broadcast.entity';
 
 @Entity('posts')
 export class Post {

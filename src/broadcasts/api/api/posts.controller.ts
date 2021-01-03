@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { InjectUser } from 'src/auth/decorators';
 import { User } from 'src/users/entities';
-import { PostsRepository } from '../entities/posts.repository';
+import { PostsRepository } from '../../../posts/entities/posts.repository';
 import { PostDto } from './post.dto';
 
 @Controller('posts')
