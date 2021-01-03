@@ -22,17 +22,15 @@ export class BroadcastsPublishTask {
     timeZone: process.env.TZ,
   })
   async triggerNotifications() {
-    console.log('Broadcasts publish task started...');
     const broadcasts = await this.broadcastsRepo.findAllToBePublishedAndPending();
-    console.log(broadcasts);
     broadcasts.forEach((broadcast: Broadcast) => {
       broadcast.process();
     });
     this.entityManager.save(broadcasts);
     const notifications = await Promise.all(broadcasts.map(async (broadcast: Broadcast) => this.convertBroadcastToNotification(broadcast)));
     try {
-      console.log(notifications);
-      // firebase.messaging().sendAll(notifications);
+      // TODO: add proper logging with an external logger
+      firebase.messaging().sendAll(notifications);
     } catch (error) {
 
     }
