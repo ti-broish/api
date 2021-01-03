@@ -1,6 +1,5 @@
-import { Post } from '@nestjs/common';
-import { classToPlain, Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsDate, IsEmpty, IsIn, IsNotEmpty, IsOptional, IsUrl, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
+import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
+import { ArrayNotEmpty, IsArray, IsDate, IsIn, IsNotEmpty, IsUrl, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
 import { UserDto } from 'src/users/api/user.dto';
 import { Broadcast, BroadcastStatus, BroadcastTopic, BroadcastType } from '../entities/broadcast.entity';
 import { PostDto } from './api/post.dto';
@@ -31,7 +30,7 @@ export class BroadcastDto {
   @ValidateIf((broadcast) => broadcast.users === undefined || broadcast.topics !== undefined, { always: true })
   @IsNotEmpty({ always: true, message: 'at least one of "topics" or "users" should be populated' })
   @IsArray({ always: true })
-  @ArrayMinSize(1, { always: true })
+  @ArrayNotEmpty({ always: true })
   @IsIn(Object.values(BroadcastTopic), {
     always: true,
     each: true,
@@ -42,8 +41,9 @@ export class BroadcastDto {
   @ValidateIf((broadcast) => broadcast.users !== undefined || broadcast.topics === undefined, { always: true })
   @IsNotEmpty({ always: true, message: 'at least one of "topics" or "users" should be populated' })
   @IsArray()
-  @ArrayMinSize(1, { always: true })
+  @ArrayNotEmpty({ always: true })
   @Type(() => UserDto)
+  @Transform((ids: string[]) => Array.isArray(ids) ? ids.map(id => plainToClass(UserDto, { id }, { groups: ['broadcast.create'] })) : ids, { groups: ['create'] })
   @ValidateNested({
     always: true,
     each: true,
@@ -112,8 +112,6 @@ export class BroadcastDto {
         url: this.url,
       };
     }
-
-    console.log(this, broadcast);
 
     return broadcast;
   }

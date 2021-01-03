@@ -4,12 +4,19 @@ import { IsBoolean, IsEmail, IsNotEmpty, IsNotEmptyObject, IsNumberString, IsPho
 import { merge } from 'lodash';
 import { User } from '../entities/user.entity';
 import { OrganizationDto } from './organization.dto';
+import { IsUserExists } from './user-exists.constraint';
 
 @Exclude()
 export class UserDto {
   public static readonly READ = 'read';
   public static readonly CREATE = 'create';
   public static readonly UPDATE = 'update';
+
+  @Expose({ groups: [ 'broadcast.create'] })
+  @IsUserExists({ groups: ['broadcast.create'] })
+  @IsString({ groups: ['broadcast.create'] })
+  @IsNotEmpty({ groups: ['broadcast.create'] })
+  id: string;
 
   @ApiProperty({ required: true })
   @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })

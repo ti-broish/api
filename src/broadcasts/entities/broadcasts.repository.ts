@@ -32,6 +32,7 @@ export class BroadcastsRepository {
     const date = dateformat(publishedBeforeDate, "yyyy-mm-dd' 'HH:MM:ss");
 
     return this.repo.find({
+      relations: ['users'],
       where: {
         publishAt: Raw(alias => `${alias} <= :date`, { date }),
         status: BroadcastStatus.PENDING,
@@ -43,6 +44,10 @@ export class BroadcastsRepository {
   }
 
   save(broadcast: Broadcast): Promise<Broadcast> {
-    return this.repo.save(broadcast);
+    this.repo.save(broadcast);
+
+    return this.repo.findOne(broadcast.id, {
+      relations: ['users'],
+    });
   }
 }
