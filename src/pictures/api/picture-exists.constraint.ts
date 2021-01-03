@@ -14,7 +14,11 @@ export class IsPictureExistsConstraint implements ValidatorConstraintInterface {
   constructor(@Inject(PicturesRepository) private readonly repo: PicturesRepository) { }
 
   async validate(pictureId?: string): Promise<boolean> {
-    if (!pictureId || typeof(pictureId) !== 'string') {
+    if (!pictureId) {
+      return true;
+    }
+
+    if (typeof(pictureId) !== 'string') {
       return false;
     }
 
