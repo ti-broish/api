@@ -2,7 +2,7 @@ import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transforme
 import { ArrayNotEmpty, IsArray, IsDate, IsIn, IsNotEmpty, IsUrl, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
 import { UserDto } from 'src/users/api/user.dto';
 import { Broadcast, BroadcastStatus, BroadcastTopic, BroadcastType } from '../entities/broadcast.entity';
-import { PostDto } from './api/post.dto';
+import { PostDto } from './post.dto';
 
 @Exclude()
 export class BroadcastDto {

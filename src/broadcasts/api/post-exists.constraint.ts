@@ -6,7 +6,7 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { PostsRepository } from '../../../posts/entities/posts.repository';
+import { PostsRepository } from '../../posts/entities/posts.repository';
 
 @ValidatorConstraint({ async: true })
 @Injectable()

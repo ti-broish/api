@@ -1,9 +1,8 @@
 import { Body, Controller, Get, HttpCode, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { InjectUser } from 'src/auth/decorators';
 import { User } from 'src/users/entities';
-import { BroadcastStatus } from '../../entities/broadcast.entity';
-import { BroadcastsRepository } from '../../entities/broadcasts.repository';
-import { BroadcastDto } from '../broadcast.dto';
+import { BroadcastsRepository } from '../entities/broadcasts.repository';
+import { BroadcastDto } from './broadcast.dto';
 
 @Controller('broadcasts')
 export class BroadcastsController {
