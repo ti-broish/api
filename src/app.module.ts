@@ -11,6 +11,7 @@ import { PicturesModule } from './pictures/pictures.module';
 import { ProtocolsModule } from './protocols/protocols.module';
 import { ViolationsModule } from './violations/violations.module';
 import { PostsModule } from './posts/posts.module';
+import { ScheduleModule } from '@nestjs/schedule';
 import { BroadcastsModule } from './broadcasts/broadcasts.module';
 
 @Module({
@@ -35,6 +36,7 @@ import { BroadcastsModule } from './broadcasts/broadcasts.module';
     ViolationsModule,
     PostsModule,
     BroadcastsModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}
