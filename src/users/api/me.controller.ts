@@ -58,7 +58,7 @@ export class MeController {
   @Get('clients')
   @HttpCode(200)
   async clients(@InjectUser() user: User): Promise<ClientDto[]> {
-    return (await this.clientsRepo.findAllForOwner(user)).map(ClientDto.fromEntity);
+    return (await this.clientsRepo.findAllForOwners([user])).map(ClientDto.fromEntity);
   }
 
   @Post('clients')

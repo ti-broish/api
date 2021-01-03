@@ -19,13 +19,15 @@ export class ClientsRepository {
     return this.repo.findOneOrFail({ where: { id }, relations: ['owner'] } );
   }
 
-  findAllForOwner(owner: User): Promise<Client[]> {
+  findAllForOwners(owners: User[]): Promise<Client[]> {
     return this.repo.find({
       join: {
         alias: 'client',
       },
       where: (qb: SelectQueryBuilder<Client>): void => {
-        qb.innerJoinAndSelect('client.owner', 'owner', 'owner.id = :owner', { owner: owner.id });
+        qb.innerJoinAndSelect('client.owner', 'owner', 'owner.id in (:...owners)', {
+          owners: owners.map(owner => owner.id),
+        });
       },
     });
   }
