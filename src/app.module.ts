@@ -10,6 +10,9 @@ import { configSchema, TypeOrmConfigService } from './config';
 import { PicturesModule } from './pictures/pictures.module';
 import { ProtocolsModule } from './protocols/protocols.module';
 import { ViolationsModule } from './violations/violations.module';
+import { PostsModule } from './posts/posts.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BroadcastsModule } from './broadcasts/broadcasts.module';
 
 @Module({
   imports: [
@@ -31,6 +34,9 @@ import { ViolationsModule } from './violations/violations.module';
     PicturesModule,
     ProtocolsModule,
     ViolationsModule,
+    PostsModule,
+    BroadcastsModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}

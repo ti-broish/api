@@ -1,6 +1,7 @@
 import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany } from 'typeorm';
 import { ulid } from 'ulid';
 import { Picture } from '../../pictures/entities/picture.entity';
+import { Client } from './client.entity';
 import { Organization } from './organization.entity';
 
 @Entity('people')
@@ -39,6 +40,11 @@ export class User {
 
   @Column('simple-json')
   roles: string[] = ['user'];
+
+  @OneToMany(() => Client, client => client.owner, {
+    cascade: ['remove'],
+  })
+  clients: Client[];
 
   @CreateDateColumn({ type: 'timestamp' })
   registeredAt: Date;
