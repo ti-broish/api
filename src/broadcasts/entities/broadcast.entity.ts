@@ -6,7 +6,7 @@ export enum BroadcastStatus {
   PENDING = 'pending',
   PROCESSING = 'processing',
   PUBLISHED = 'published',
-  DISABLED = 'disabled',
+  DISCARDED = 'discarded',
 }
 
 export enum BroadcastTopic {
@@ -65,4 +65,33 @@ export class Broadcast {
 
   @Column({ type: 'timestamp' })
   publishAt: Date;
+
+  setInitialStatus(author: User): void {
+    if (this.status !== undefined) {
+      throw new Error('Broadcast status can be set to pending only when unset');
+    }
+    this.author = author;
+    this.status = BroadcastStatus.PENDING;
+  }
+
+  process(): void {
+    if (this.status !== BroadcastStatus.PENDING) {
+      throw new Error('Broadcast status can be set to processing only when pending');
+    }
+    this.status = BroadcastStatus.PROCESSING;
+  }
+
+  publish(): void {
+    if (this.status !== BroadcastStatus.PROCESSING) {
+      throw new Error('Broadcast status can be set to published only when processing');
+    }
+    this.status = BroadcastStatus.PUBLISHED;
+  }
+
+  discard(): void {
+    if (this.status !== BroadcastStatus.PENDING) {
+      throw new Error('Broadcast status can be set to discarded only when pending');
+    }
+    this.status = BroadcastStatus.DISCARDED;
+  }
 }

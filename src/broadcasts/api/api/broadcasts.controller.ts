@@ -23,8 +23,7 @@ export class BroadcastsController {
     @InjectUser() user: User
   ): Promise<BroadcastDto> {
     const broadcast = broadcastDto.toEntity();
-    broadcast.author = user;
-    broadcast.status = BroadcastStatus.PENDING;
+    broadcast.setInitialStatus(user);
 
     return BroadcastDto.fromEntity(await this.repo.save(broadcast));
   }
