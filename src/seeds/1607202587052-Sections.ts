@@ -233,13 +233,17 @@ export class Sections1607202587052 implements MigrationInterface {
 
     await queryRunner.query(`
       update towns
-      set municipality_id = municipalities.id
-      from sections_ekatte
-      join municipalities
-        on municipalities.code = sections_ekatte.municipality_code
-      where sections_ekatte.town_code = towns.code
+      set municipality_id = ekatte.municipality_id
+      from (
+        select max(municipalities.id) as municipality_id, town_code
+        from sections_ekatte
+        join municipalities
+          on municipalities.code = sections_ekatte.municipality_code
+          and lower(municipalities."name") = lower(sections_ekatte.municipality_name)
+        group by sections_ekatte.town_code
+      ) as ekatte
+      where ekatte.town_code = towns.code
     `);
-
 
     await queryRunner.query(`
       insert into "city_regions_towns" ("city_region_id", "town_id")
@@ -321,10 +325,18 @@ export class Sections1607202587052 implements MigrationInterface {
 
     await queryRunner.query(`
       insert into election_regions_municipalities(election_region_id, municipality_id)
-      select election_regions.id, municipalities.id
+      select election_regions.id as election_region_id, municipalities.id as municipality_id
       from sections_ekatte
-      join election_regions on sections_ekatte.election_region_code = election_regions.code
-      join municipalities on sections_ekatte.municipality_code = municipalities.code
+      join election_regions
+        on sections_ekatte.election_region_code = election_regions.code
+      join sections
+        on sections.code = sections_ekatte.section_code
+        and sections.election_region_id = election_regions.id
+      join towns
+        on towns.id = sections.town_id
+      join municipalities
+        on municipalities.id = towns.municipality_id
+        and sections_ekatte.municipality_code = municipalities.code
       group by election_regions.id, municipalities.id
     `);
   }
