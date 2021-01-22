@@ -206,14 +206,8 @@ export class Sections1607202587052 implements MigrationInterface {
 
     await queryRunner.query(`
       UPDATE sections_ekatte
-      SET city_region_code = '00'
-      WHERE city_region_code IS NULL or city_region_code = ''
-    `);
-
-    await queryRunner.query(`
-      UPDATE sections_ekatte
-      SET city_region_code = '00'
-      WHERE city_region_code IS NULL or city_region_code = ''
+      SET city_region_code = NULL
+      WHERE city_region_code = ''
     `);
 
     await queryRunner.query(`
@@ -246,17 +240,16 @@ export class Sections1607202587052 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      insert into "city_regions_towns" ("city_region_id", "town_id")
-      select city_regions.id as city_region_id, towns.id as town_id
+      insert into city_regions_towns (town_id, city_region_id)
+      select towns.id as town_id, city_regions.id as city_region_id
       from sections_ekatte
       join towns
         on towns.code = sections_ekatte.town_code
-      join municipalities
-        on municipalities.id = towns.municipality_id
-        and municipalities.code = sections_ekatte.municipality_code
       join city_regions
         on city_regions.code = sections_ekatte.city_region_code
-      group by city_regions.id, towns.id
+        and lower(city_regions.name) = lower(sections_ekatte.city_region_name)
+      where sections_ekatte.city_region_code is not null
+      group by towns.id, city_regions.id
     `);
 
     await queryRunner.query(`
@@ -279,7 +272,7 @@ export class Sections1607202587052 implements MigrationInterface {
 
       update sections_ekatte
       set election_region_code = '17'
-      where province_code = '16' and city_region_code = '00';
+      where province_code = '16' and city_region_code is null;
 
       update sections_ekatte
       set election_region_code = LPAD(cast(cast(province_code as integer) + 3 as VARCHAR), 2, '0')
@@ -303,7 +296,7 @@ export class Sections1607202587052 implements MigrationInterface {
       where sections.section_code = sections_ekatte.section_code
       and sections.town_code = sections_ekatte.town_code
       and sections.city_region_code = sections_ekatte.city_region_code
-      and sections_ekatte.city_region_code != '00'
+      and sections_ekatte.city_region_code is not null
       and sections_ekatte.town_code = '68134';
     `);
 
