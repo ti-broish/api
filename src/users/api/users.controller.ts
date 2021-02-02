@@ -67,11 +67,8 @@ export class UsersController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: [UserDto.UPDATE, UserDto.MANAGE] }, groups: [UserDto.UPDATE, UserDto.MANAGE], skipMissingProperties: true }))
   async update(@Param('id') id: string, @Body() userDto: UserDto): Promise<UserDto> {
-    console.log(userDto);
     const user = await this.repo.findOneOrFail(id);
-    console.log(user);
     const updatedUser = await this.repo.update(userDto.updateEntity(user, [UserDto.UPDATE, UserDto.MANAGE]));
-    console.log(updatedUser);
 
     return UserDto.fromEntity(updatedUser);
   }
