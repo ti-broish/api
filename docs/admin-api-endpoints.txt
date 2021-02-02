@@ -1,6 +1,7 @@
 GET /users
+GET /users?page=:page
 GET /users/:id
-PUT /users/:id/roles
+PATCH /users/:id
 GET /users.csv (export to the CRM)
 
 GET /posts?listed,published
