@@ -1,10 +1,17 @@
-import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException, Post } from '@nestjs/common';
+import { Ability } from '@casl/ability';
+import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException, Post, UseGuards } from '@nestjs/common';
+import { Action } from 'src/casl/action.enum';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
+import { Protocol } from 'src/protocols/entities/protocol.entity';
+import { Violation } from 'src/violations/entities/violation.entity';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { ProtocolDto } from '../../protocols/api/protocol.dto';
 import { ProtocolsRepository } from '../../protocols/entities/protocols.repository';
 import { ViolationDto } from '../../violations/api/violation.dto';
 import { ViolationsRepository } from '../../violations/entities/violations.repository';
+import { Client } from '../entities/client.entity';
 import { ClientsRepository } from '../entities/clients.repository';
 import { User } from '../entities/user.entity';
 import { UsersRepository } from '../entities/users.repository';
@@ -23,12 +30,16 @@ export class MeController {
 
   @Get()
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, User))
   async get(@InjectUser() user: User): Promise<UserDto> {
     return UserDto.fromEntity(user);
   }
 
   @Patch()
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, User))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: [UserDto.UPDATE] }, groups: [UserDto.UPDATE], skipMissingProperties: true }))
   async patch(@InjectUser() user: User, @Body() userDto: UserDto): Promise<UserDto> {
     const updatedUser = await this.usersRepo.update(userDto.updateEntity(user));
@@ -38,6 +49,8 @@ export class MeController {
 
   @Get('protocols')
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   async protocols(@InjectUser() user: User): Promise<ProtocolDto[]> {
     const protocols = (await this.protocolsRepo.findByAuthor(user)).map(ProtocolDto.fromEntity);
     this.updatePicturesUrl(protocols);
@@ -48,6 +61,8 @@ export class MeController {
 
   @Get('violations')
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   async violations(@InjectUser() user: User): Promise<ViolationDto[]> {
     const violations = (await this.violationsRepo.findByAuthor(user)).map(ViolationDto.fromEntity);
     this.updatePicturesUrl(violations);
@@ -57,12 +72,16 @@ export class MeController {
 
   @Get('clients')
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Client))
   async clients(@InjectUser() user: User): Promise<ClientDto[]> {
     return (await this.clientsRepo.findAllForOwners([user])).map(ClientDto.fromEntity);
   }
 
   @Post('clients')
   @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Client))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
   async registerClient(
     @InjectUser() user: User,
@@ -77,6 +96,8 @@ export class MeController {
 
   @Delete()
   @HttpCode(202)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Delete, User))
   async delete(@InjectUser() user: User): Promise<void> {
     const submittedProtocols = await this.protocolsRepo.findByAuthor(user);
     if (submittedProtocols.length > 0) {

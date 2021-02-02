@@ -1,5 +1,9 @@
-import { Controller, Get, HttpCode, ParseIntPipe, Query } from '@nestjs/common';
+import { Ability } from '@casl/ability';
+import { Controller, Get, HttpCode, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { Action } from 'src/casl/action.enum';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
 import { ApiFirebaseAuth } from '../../auth/decorators/ApiFirebaseAuth.decorator';
 import { Section } from '../entities/section.entity';
 import { SectionsRepository } from '../entities/sections.repository';
@@ -13,6 +17,8 @@ export class SectionsController {
 
   @Get()
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Section))
   @ApiQuery({
     name: 'town',
     description: 'The town code to filter by',

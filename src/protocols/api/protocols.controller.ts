@@ -1,8 +1,14 @@
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException } from '@nestjs/common';
+import { Ability } from '@casl/ability';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException, UseGuards } from '@nestjs/common';
+import { Action } from 'src/casl/action.enum';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { User } from '../../users/entities';
+import { ProtocolResult } from '../entities/protocol-result.entity';
+import { Protocol } from '../entities/protocol.entity';
 import { ProtocolsRepository } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
@@ -16,6 +22,8 @@ export class ProtocolsController {
 
   @Post()
   @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Protocol))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
   async create(
     @Body() protocolDto: ProtocolDto,
@@ -32,6 +40,8 @@ export class ProtocolsController {
 
   @Post(':protocol_id/results')
   @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] } }))
   async createResults(
     @Param('protocol_id') protocolId: string,
@@ -55,6 +65,8 @@ export class ProtocolsController {
 
   @Get(':id')
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   async get(
     @Param('id') id: string,
     @InjectUser() user: User,
@@ -71,6 +83,8 @@ export class ProtocolsController {
 
   @Get(':id/results')
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
   async results(@Param('id') id: string): Promise<ProtocolResultsDto> {
     return ProtocolResultsDto.fromEntity(await this.repo.findOneOrFail(id));
   }
