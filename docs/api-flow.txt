@@ -44,10 +44,10 @@ GET    /election_regions
   }
 ]
 
-# Query towns either by country, receive city regions with them
+# Query towns by country (for towns abroad)
 GET    /towns?country=:country
-# Query towns by election region and municipality
-GET    /towns?election_region=:election_region&municipality=:municipality
+# Query towns by country, election region and municipality (for domestic towns)
+GET    /towns?country=00&election_region=:election_region&municipality=:municipality
 [
   {
     id: 1234,
