@@ -13,6 +13,7 @@ import { ViolationsModule } from './violations/violations.module';
 import { PostsModule } from './posts/posts.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BroadcastsModule } from './broadcasts/broadcasts.module';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { BroadcastsModule } from './broadcasts/broadcasts.module';
     PostsModule,
     BroadcastsModule,
     ScheduleModule.forRoot(),
+    CaslModule,
   ],
 })
 export class AppModule {}
