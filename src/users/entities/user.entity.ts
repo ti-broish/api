@@ -1,5 +1,6 @@
 import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany } from 'typeorm';
 import { ulid } from 'ulid';
+import { Role } from '../../casl/role.enum';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { Client } from './client.entity';
 import { Organization } from './organization.entity';
@@ -39,7 +40,7 @@ export class User {
   hasAgreedToKeepData: boolean;
 
   @Column('simple-json')
-  roles: string[] = ['user'];
+  roles: Role[] = [Role.User];
 
   @OneToMany(() => Client, client => client.owner, {
     cascade: ['remove'],
@@ -48,4 +49,8 @@ export class User {
 
   @CreateDateColumn({ type: 'timestamp' })
   registeredAt: Date;
+
+  hasRole(role: Role): boolean {
+    return this.roles.includes(role);
+  }
 }
