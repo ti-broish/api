@@ -1,0 +1,26 @@
+GET /users
+GET /users/:id
+PUT /users/:id/roles
+GET /users.csv (export to the CRM)
+
+GET /posts?listed,published
+GET /posts/:id
+POST /posts
+PATCH /posts/:id
+GET /broadcasts
+GET /broadcasts/:id
+POST /broadcasts
+
+GET /violations?status,assignee,section,town
+POST /violations/assign
+GET /violations/:id
+GET /violations/:id/comments
+POST /violations/:id/comments
+PATCH /violations/:id
+
+GET /sections?country,election_region,municipality,town,with_protocols,with_published_protocols,with_violations
+
+GET /protocols?author,assignee,section,status
+POST /protocols/assign
+GET /protocols/:id
+PUT /protocols/:id
