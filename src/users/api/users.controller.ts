@@ -49,6 +49,15 @@ export class UsersController {
     }
   }
 
+  @Get(':id')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async get(@Param('id') id: string): Promise<UserDto> {
+    return UserDto.fromEntity(await this.repo.findOneOrFail(id));
+  }
+
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
