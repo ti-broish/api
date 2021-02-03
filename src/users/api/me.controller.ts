@@ -30,16 +30,16 @@ export class MeController {
 
   @Get()
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, User))
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, User))
   async get(@InjectUser() user: User): Promise<UserDto> {
     return UserDto.fromEntity(user);
   }
 
   @Patch()
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, User))
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: Ability) => ability.can(Action.Update, User))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: [UserDto.UPDATE] }, groups: [UserDto.UPDATE], skipMissingProperties: true }))
   async patch(@InjectUser() user: User, @Body() userDto: UserDto): Promise<UserDto> {
     const updatedUser = await this.usersRepo.update(userDto.updateEntity(user));
@@ -49,8 +49,8 @@ export class MeController {
 
   @Get('protocols')
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   async protocols(@InjectUser() user: User): Promise<ProtocolDto[]> {
     const protocols = (await this.protocolsRepo.findByAuthor(user)).map(ProtocolDto.fromEntity);
     this.updatePicturesUrl(protocols);
@@ -61,8 +61,8 @@ export class MeController {
 
   @Get('violations')
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   async violations(@InjectUser() user: User): Promise<ViolationDto[]> {
     const violations = (await this.violationsRepo.findByAuthor(user)).map(ViolationDto.fromEntity);
     this.updatePicturesUrl(violations);
@@ -72,16 +72,16 @@ export class MeController {
 
   @Get('clients')
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Client))
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Client))
   async clients(@InjectUser() user: User): Promise<ClientDto[]> {
     return (await this.clientsRepo.findAllForOwners([user])).map(ClientDto.fromEntity);
   }
 
   @Post('clients')
   @HttpCode(201)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Client))
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: Ability) => ability.can(Action.Create, Client))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
   async registerClient(
     @InjectUser() user: User,
@@ -96,8 +96,8 @@ export class MeController {
 
   @Delete()
   @HttpCode(202)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Delete, User))
+  // @UseGuards(PoliciesGuard)
+  // @CheckPolicies((ability: Ability) => ability.can(Action.Delete, User))
   async delete(@InjectUser() user: User): Promise<void> {
     const submittedProtocols = await this.protocolsRepo.findByAuthor(user);
     if (submittedProtocols.length > 0) {
