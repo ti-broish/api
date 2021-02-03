@@ -38,7 +38,7 @@ export class Protocol {
   })
   data: ProtocolData|null;
 
-  @ManyToOne(() => Section, section => section.protocols)
+  @ManyToOne(() => Section, section => section.protocols, { eager: true })
   section: Section;
 
   @ManyToMany(() => Picture)

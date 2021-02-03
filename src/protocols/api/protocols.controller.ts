@@ -1,8 +1,10 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException, UseGuards, Query } from '@nestjs/common';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
+import { PageDTO } from 'src/utils/page.dto';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -19,6 +21,19 @@ export class ProtocolsController {
     @Inject(ProtocolsRepository) private readonly repo: ProtocolsRepository,
     @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
+
+
+  @Get()
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async index(@Query() query: PageDTO): Promise<Pagination<Protocol>> {
+    const pagination = await paginate(this.repo.getRepo(), { page: query.page, limit: 100, route: '/protocols' });
+    pagination.items.map(ProtocolDto.fromEntity);
+
+    return pagination;
+  }
 
   @Post()
   @HttpCode(201)
@@ -84,7 +99,7 @@ export class ProtocolsController {
   @Get(':id/results')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, ProtocolResult))
   async results(@Param('id') id: string): Promise<ProtocolResultsDto> {
     return ProtocolResultsDto.fromEntity(await this.repo.findOneOrFail(id));
   }

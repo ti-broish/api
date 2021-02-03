@@ -21,7 +21,7 @@ PATCH /violations/:id
 
 GET /sections?country,election_region,municipality,town,with_protocols,with_published_protocols,with_violations
 
-GET /protocols?author,assignee,section,status
+GET /protocols?page=:page,author,assignee,section,status
 POST /protocols/assign
 GET /protocols/:id
 PUT /protocols/:id

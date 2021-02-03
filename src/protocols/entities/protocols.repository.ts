@@ -9,8 +9,12 @@ import { Protocol } from './protocol.entity';
 export class ProtocolsRepository {
   constructor(@InjectRepository(Protocol) private readonly repo: Repository<Protocol>) {}
 
+  getRepo(): Repository<Protocol> {
+    return this.repo;
+  }
+
   findOneOrFail(id: string): Promise<Protocol> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'pictures', 'data', 'results', 'actions', 'actions.actor', 'results.party'] } );
+    return this.repo.findOneOrFail({ where: { id }, relations: ['pictures', 'data', 'results', 'actions', 'actions.actor', 'results.party'] } );
   }
 
   async save(protocol: Protocol): Promise<Protocol> {
@@ -21,7 +25,7 @@ export class ProtocolsRepository {
 
   findByAuthor(author: User): Promise<Protocol[]> {
     return this.repo.find({
-      relations: ['section', 'pictures'],
+      relations: ['pictures'],
       join: {
         alias: 'protocol',
         innerJoin: {
@@ -34,5 +38,9 @@ export class ProtocolsRepository {
           .andWhere('action.action = :action', { action: ProtocolActionType.SEND });
       }
     });
+  }
+
+  async findAll(): Promise<Protocol[]> {
+    return this.repo.find();
   }
 }
