@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { classToPlain, Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsNotEmptyObject, IsNumberString, IsPhoneNumber, IsString, Length, ValidateNested } from 'class-validator';
-import { merge } from 'lodash';
+import { assign, assignWith, merge } from 'lodash';
+import { Role } from 'src/casl/role.enum';
 import { User } from '../entities/user.entity';
 import { OrganizationDto } from './organization.dto';
 import { IsUserExists } from './user-exists.constraint';
@@ -11,8 +12,9 @@ export class UserDto {
   public static readonly READ = 'read';
   public static readonly CREATE = 'create';
   public static readonly UPDATE = 'update';
+  public static readonly MANAGE = 'manage';
 
-  @Expose({ groups: [ 'broadcast.create'] })
+  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.MANAGE] })
   @IsUserExists({ groups: ['broadcast.create'] })
   @IsString({ groups: ['broadcast.create'] })
   @IsNotEmpty({ groups: ['broadcast.create'] })
@@ -68,8 +70,12 @@ export class UserDto {
   @ApiPropertyOptional()
   @Expose({ groups: [UserDto.CREATE] })
   @IsNotEmpty({ groups: [UserDto.CREATE] })
-  @IsBoolean({ groups: [UserDto.CREATE, UserDto.UPDATE] })
+  @IsBoolean({ groups: [UserDto.CREATE] })
   hasAgreedToKeepData: boolean;
+
+  @ApiPropertyOptional()
+  @Expose({ groups: [UserDto.READ, UserDto.MANAGE] })
+  roles: Role[];
 
   public static fromEntity(entity: User): UserDto {
     return plainToClass<UserDto, Partial<User>>(UserDto, entity, {
@@ -84,12 +90,16 @@ export class UserDto {
     });
   }
 
-  public updateEntity(user: User): User {
+  public updateEntity(user: User, groups: string[] = [UserDto.UPDATE]): User {
     const updatedKeys = classToPlain<UserDto>(this, {
       excludeExtraneousValues: false,
-      groups: [UserDto.UPDATE],
+      groups: groups,
     });
 
-    return merge(user, updatedKeys);
+    return assignWith(user, updatedKeys, UserDto.preferOriginalValueIfUpdatedIsUndefined);
+  }
+
+  private static preferOriginalValueIfUpdatedIsUndefined(originalValue: any, newValue: any) {
+    return newValue === undefined ? originalValue : newValue;
   }
 }

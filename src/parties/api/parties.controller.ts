@@ -1,5 +1,10 @@
-import { Controller, Get, HttpCode, Inject, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common';
+import { Action } from 'src/casl/action.enum';
+import { AppAbility } from 'src/casl/casl-ability.factory';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
 import { PartiesRepository } from '../entities/parties.repository';
+import { Party } from '../entities/party.entity';
 import { PartyDto } from './Party.dto';
 
 @Controller('parties')
@@ -8,6 +13,8 @@ export class PartiesController {
 
   @Get()
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Party))
   async index(): Promise<PartyDto[]> {
     return (await this.repo.findAll()).map(PartyDto.fromEntity);
   }

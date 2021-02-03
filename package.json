@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@anchan828/typeorm-decorators": "^0.4.11",
+    "@casl/ability": "^5.2.0",
     "@nestjs/common": "^7.5.4",
     "@nestjs/config": "^0.6.1",
     "@nestjs/core": "^7.5.4",
@@ -54,6 +55,7 @@
     "lodash.merge": "^4.6.2",
     "mime-types": "^2.1.27",
     "nestjs-minio": "^2.0.10",
+    "nestjs-typeorm-paginate": "^2.3.0",
     "npm": "^6.14.9",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",

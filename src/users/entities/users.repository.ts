@@ -10,6 +10,10 @@ export class UsersRepository {
     private repo: Repository<User>,
   ) {}
 
+  getRepo(): Repository<User> {
+    return this.repo;
+  }
+
   findOne(id: string): Promise<User | undefined> {
     return this.repo.findOne({ where: { id }, relations: ['organization'] } );
   }
@@ -24,6 +28,10 @@ export class UsersRepository {
 
   async findByEmail(email: string): Promise<User> {
     return await this.repo.findOne({ email });
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.repo.find();
   }
 
   async save(user: User): Promise<User> {

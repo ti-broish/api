@@ -12,9 +12,10 @@ import { ViolationsModule } from '../violations/violations.module';
 import { IsUserExistsConstraint } from './api/user-exists.constraint';
 import { ClientsRepository } from './entities/clients.repository';
 import { Client } from './entities/client.entity';
+import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Organization, Client]), ProtocolsModule, PicturesModule, ViolationsModule],
+  imports: [TypeOrmModule.forFeature([User, Organization, Client]), CaslModule, ProtocolsModule, PicturesModule, ViolationsModule],
   providers: [UsersRepository, OrganizationsRepository, ClientsRepository, RegistrationService, IsOrganizationExistsConstraint, IsUserExistsConstraint],
   exports: [UsersRepository, ClientsRepository],
   controllers: [UsersController, MeController, OrganizationsController],

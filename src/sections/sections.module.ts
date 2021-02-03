@@ -7,9 +7,10 @@ import { ElectionRegionsRepository } from './entities/electionRegions.repository
 import { TownsRepository } from './entities/towns.repository';
 import { IsSectionExistsConstraint } from './api/section-exists.constraint';
 import { IsTownExistsConstraint } from './api/town-exists.constraint';
+import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Section, Town, Municipality, ElectionRegion, Country])],
+  imports: [TypeOrmModule.forFeature([Section, Town, Municipality, ElectionRegion, Country]), CaslModule],
   providers: [SectionsRepository, CountriesRepository, ElectionRegionsRepository, TownsRepository, IsSectionExistsConstraint, IsTownExistsConstraint],
   exports: [],
   controllers: [SectionsController, CountriesController, ElectionRegionsController, TownsController],

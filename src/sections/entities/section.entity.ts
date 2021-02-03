@@ -35,5 +35,5 @@ export class Section {
   protocols: Protocol[];
 
   @OneToMany(() => Violation, violation => violation.section)
-  violations: Protocol[];
+  violations: Violation[];
 }

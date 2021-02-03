@@ -2,13 +2,15 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { PostsRepository } from './entities/posts.repository';
-import { IsPostExistsConstraint } from '../broadcasts/api/post-exists.constraint';
+import { IsPostExistsConstraint } from './post-exists.constraint';
 import { UsersModule } from '../users/users.module';
-import { PostsController } from '../broadcasts/api/posts.controller';
+import { PostsController } from './posts.controller';
+import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Post]),
+    CaslModule,
     UsersModule,
   ],
   providers: [PostsRepository, IsPostExistsConstraint],

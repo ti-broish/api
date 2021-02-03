@@ -1,4 +1,8 @@
-import { Controller, Get, Post, HttpCode, Query, Param, Body, Inject, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Ability } from '@casl/ability';
+import { Controller, Get, Post, HttpCode, Query, Param, Body, Inject, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common';
+import { Action } from 'src/casl/action.enum';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { User } from '../../users/entities';
 import { Picture } from '../entities/picture.entity';
@@ -18,6 +22,8 @@ export class PicturesController {
   ) {}
 
   @Post()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Picture))
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadFile(@Body() upload: UploadImageDto, @InjectUser() user: User): Promise<PictureDto> {
     let picture = await this.picturesUploader.upload(upload.image);
@@ -31,6 +37,8 @@ export class PicturesController {
 
   @Get(':id')
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Picture))
   async get(@Param('id') id: string): Promise<PictureDto> {
     const picture = await this.repo.findOneOrFail(id);
     const pictureDto = PictureDto.fromEntity(picture);
