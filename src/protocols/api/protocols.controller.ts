@@ -87,9 +87,6 @@ export class ProtocolsController {
     @InjectUser() user: User,
   ): Promise<ProtocolDto> {
     const protocol = await this.repo.findOneOrFail(id);
-    if (protocol.getAuthor().id !== user.id) {
-      throw new ForbiddenException();
-    }
     const dto = ProtocolDto.fromEntity(protocol);
     this.updatePicturesUrl(dto);
 
