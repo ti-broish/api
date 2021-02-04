@@ -1,27 +1,28 @@
-GET /users
-GET /users?page=:page
-GET /users/:id
-PATCH /users/:id
-GET /users.csv (export to the CRM)
 
-GET /posts?listed,published
-GET /posts/:id
-POST /posts
-PATCH /posts/:id
-GET /broadcasts
-GET /broadcasts/:id
-POST /broadcasts
+- [x] GET /users
+- [x] GET /users?page=:page
+- [x] GET /users/:id
+- [x] PATCH /users/:id
+- [ ] GET /users.csv (export to the CRM)
 
-GET /violations?status,assignee,section,town
-POST /violations/assign
-GET /violations/:id
-GET /violations/:id/comments
-POST /violations/:id/comments
-PATCH /violations/:id
+- [ ] GET /posts?listed,published
+- [x] GET /posts/:id
+- [x] POST /posts
+- [ ] PATCH /posts/:id
+- [x] GET /broadcasts
+- [x] GET /broadcasts/:id
+- [x] POST /broadcasts
 
-GET /sections?country,election_region,municipality,town,with_protocols,with_published_protocols,with_violations
+- [ ] GET /violations?status,assignee,section,town
+- [ ] POST /violations/assign
+- [ ] GET /violations/:id
+- [ ] GET /violations/:id/comments
+- [ ] POST /violations/:id/comments
+- [ ] PATCH /violations/:id
 
-GET /protocols?page=:page,author,assignee,section,status
-POST /protocols/assign
-GET /protocols/:id
-PUT /protocols/:id
+- [ ] GET /sections?country,election_region,municipality,town,with_protocols,with_published_protocols,with_violations
+
+- [-] GET /protocols?page=:page,assignee,section,status
+- [ ] POST /protocols/assign
+- [-] GET /protocols/:id
+- [ ] PUT /protocols/:id
