@@ -29,7 +29,7 @@ export class ProtocolsController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(@Query() query: PageDTO): Promise<Pagination<Protocol>> {
-    const pagination = await paginate(this.repo.getRepo(), { page: query.page, limit: 100, route: '/protocols' });
+    const pagination = await paginate(this.repo.getRepo(), { page: query.page, limit: 2, route: '/protocols' });
     pagination.items.map(ProtocolDto.fromEntity);
 
     return pagination;
