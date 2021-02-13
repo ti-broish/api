@@ -54,6 +54,10 @@ export class ProtocolsRepository {
       qb.andWhere('section.id LIKE :section', { section: `${filters.section}%` });
     }
 
+    if (filters.status) {
+      qb.andWhere('protocol.status = :status', { status: filters.status });
+    }
+
     return qb;
   }
 
