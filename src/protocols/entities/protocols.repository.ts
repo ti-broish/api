@@ -43,12 +43,16 @@ export class ProtocolsRepository {
 
   queryBuilderWithFilters(filters: ProtocolFilters): SelectQueryBuilder<Protocol> {
     const qb = this.repo.createQueryBuilder('protocol');
-    if (filters.assignee) {
-      qb.innerJoin('protocol.assignees', "assignee");
-      qb.andWhere('assignee.id = :assignee', { assignee: filters.assignee });
-    }
 
     qb.innerJoinAndSelect('protocol.section', 'section');
+    qb.innerJoinAndSelect('protocol.pictures', 'picture');
+
+    if (filters.assignee) {
+      qb.innerJoin('protocol.assignees', 'assignee');
+      qb.andWhere('assignee.id = :assignee', { assignee: filters.assignee });
+    } else {
+      qb.leftJoinAndSelect('protocol.assignees', 'assignee');
+    }
 
     if (filters.section) {
       qb.andWhere('section.id LIKE :section', { section: `${filters.section}%` });
@@ -56,6 +60,12 @@ export class ProtocolsRepository {
 
     if (filters.status) {
       qb.andWhere('protocol.status = :status', { status: filters.status });
+    }
+
+    if (filters.author) {
+      qb.innerJoin('protocol.actions', 'action');
+      qb.andWhere('action.actor_id = :author', { author: filters.author });
+      qb.andWhere('action.action = :action', { action: ProtocolActionType.SEND });
     }
 
     return qb;

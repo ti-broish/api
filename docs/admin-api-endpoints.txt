@@ -22,7 +22,7 @@
 
 - [ ] GET /sections?country,election_region,municipality,town,with_protocols,with_published_protocols,with_violations
 
-- [-] GET /protocols?page=:page,assignee,section,status
+- [x] GET /protocols?page=:page,assignee,section,status,author
 - [ ] POST /protocols/assign
 - [-] GET /protocols/:id
 - [ ] PUT /protocols/:id

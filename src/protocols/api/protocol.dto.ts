@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
 import { ArrayNotEmpty, IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
+import { UserDto } from 'src/users/api/user.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { SectionDto } from '../../sections/api/section.dto';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
@@ -33,6 +34,11 @@ export class ProtocolDto {
     groups: ['create'],
   })
   pictures: PictureDto[]
+
+  @ApiProperty({ required: true })
+  @Expose({ groups: ['read'] })
+  @Type(() => UserDto)
+  assignees: UserDto[]
 
   @Expose({ groups: ['read'] })
   status: ProtocolStatus;
