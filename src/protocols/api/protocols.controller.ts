@@ -1,11 +1,10 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException, UseGuards, Query, Put, ParseArrayPipe } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, UseGuards, Query, Put, ParseArrayPipe } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { UserDto } from 'src/users/api/user.dto';
-import { PageDTO } from 'src/utils/page.dto';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -104,10 +103,7 @@ export class ProtocolsController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
-  async get(
-    @Param('id') id: string,
-    @InjectUser() user: User,
-  ): Promise<ProtocolDto> {
+  async get(@Param('id') id: string): Promise<ProtocolDto> {
     const protocol = await this.repo.findOneOrFail(id);
     const dto = ProtocolDto.fromEntity(protocol);
     this.updatePicturesUrl(dto);
