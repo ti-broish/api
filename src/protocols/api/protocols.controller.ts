@@ -15,6 +15,7 @@ import { Protocol } from '../entities/protocol.entity';
 import { ProtocolsRepository } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
+import { ProtocolFilters } from './protocols-filters.dto';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -29,8 +30,8 @@ export class ProtocolsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: PageDTO): Promise<Pagination<Protocol>> {
-    const pagination = await paginate(this.repo.getRepo(), { page: query.page, limit: 2, route: '/protocols' });
+  async index(@Query() query: ProtocolFilters): Promise<Pagination<Protocol>> {
+    const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 2, route: '/protocols' });
     pagination.items.map(ProtocolDto.fromEntity);
 
     return pagination;
