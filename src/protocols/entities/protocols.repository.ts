@@ -50,6 +50,10 @@ export class ProtocolsRepository {
 
     qb.innerJoinAndSelect('protocol.section', 'section');
 
+    if (filters.section) {
+      qb.andWhere('section.id LIKE :section', { section: `${filters.section}%` });
+    }
+
     return qb;
   }
 
