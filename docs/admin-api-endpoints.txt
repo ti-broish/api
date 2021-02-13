@@ -24,7 +24,7 @@
 
 - [x] GET /protocols?page=:page,assignee,section,status,author
 - [ ] POST /protocols/assign
-- [-] GET /protocols/:id
+- [x] GET /protocols/:id
 - [ ] PUT /protocols/:id
 - [x] GET /protocols/:id/assignees
 - [x] PUT /protocols/:id/assignees
