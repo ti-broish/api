@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { QueryBuilder, Repository, SelectQueryBuilder } from 'typeorm';
 import { ProtocolActionType } from './protocol-action.entity';
 import { Protocol } from './protocol.entity';
+import { ProtocolFilters } from '../api/protocols-filters.dto';
 
 @Injectable()
 export class ProtocolsRepository {
@@ -14,7 +15,7 @@ export class ProtocolsRepository {
   }
 
   findOneOrFail(id: string): Promise<Protocol> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['pictures', 'data', 'results', 'actions', 'actions.actor', 'results.party'] } );
+    return this.repo.findOneOrFail({ where: { id }, relations: ['pictures', 'data', 'results', 'actions', 'actions.actor', 'results.party', 'assignees'] } );
   }
 
   async save(protocol: Protocol): Promise<Protocol> {
@@ -38,6 +39,18 @@ export class ProtocolsRepository {
           .andWhere('action.action = :action', { action: ProtocolActionType.SEND });
       }
     });
+  }
+
+  queryBuilderWithFilters(filters: ProtocolFilters): SelectQueryBuilder<Protocol> {
+    const qb = this.repo.createQueryBuilder('protocol');
+    if (filters.assignee) {
+      qb.innerJoin('protocol.assignees', "assignee");
+      qb.andWhere('assignee.id = :assignee', { assignee: filters.assignee });
+    }
+
+    qb.innerJoinAndSelect('protocol.section', 'section');
+
+    return qb;
   }
 
   async findAll(): Promise<Protocol[]> {

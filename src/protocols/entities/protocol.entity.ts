@@ -49,6 +49,14 @@ export class Protocol {
   })
   pictures: Picture[];
 
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'protocols_assignees',
+    joinColumn: { name: 'protocol_id' },
+    inverseJoinColumn: { name: 'assignee_id' },
+  })
+  assignees: User[];
+
   @OneToMany(() => ProtocolAction, (action: ProtocolAction) => action.protocol, {
     cascade: ['insert', 'update'],
   })
@@ -82,8 +90,9 @@ export class Protocol {
     this.addAction(ProtocolAction.createSendAction(sender));
   }
 
-  assign(assignee: User): void {
-    this.addAction(ProtocolAction.createAsssignAction(assignee));
+  assign(actor: User, assignees: User[]): void {
+    this.assignees = assignees;
+    this.addAction(ProtocolAction.createAsssignAction(actor, assignees));
   }
 
   populate(actor: User, results: ProtocolResult[], votesData?: ProtocolData): void {

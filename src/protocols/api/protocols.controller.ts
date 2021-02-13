@@ -1,9 +1,10 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, ForbiddenException, UseGuards, Query, Put, ParseArrayPipe } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
+import { UserDto } from 'src/users/api/user.dto';
 import { PageDTO } from 'src/utils/page.dto';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
@@ -14,6 +15,7 @@ import { Protocol } from '../entities/protocol.entity';
 import { ProtocolsRepository } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
+import { ProtocolFilters } from './protocols-filters.dto';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -28,8 +30,8 @@ export class ProtocolsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: PageDTO): Promise<Pagination<Protocol>> {
-    const pagination = await paginate(this.repo.getRepo(), { page: query.page, limit: 2, route: '/protocols' });
+  async index(@Query() query: ProtocolFilters): Promise<Pagination<Protocol>> {
+    const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 2, route: '/protocols' });
     pagination.items.map(ProtocolDto.fromEntity);
 
     return pagination;
@@ -76,6 +78,33 @@ export class ProtocolsController {
     this.updatePicturesUrl(savedDto);
 
     return ProtocolResultsDto.fromEntity(savedProtocol);
+  }
+
+  @Get(':protocol_id/assignees')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  async getAssignees( @Param('protocol_id') protocolId: string ): Promise<UserDto[]> {
+    const protocol = await this.repo.findOneOrFail(protocolId);
+
+    return protocol.assignees.map(UserDto.fromEntity);
+  }
+
+  @Put(':protocol_id/assignees')
+  @HttpCode(202)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
+  async putAssignees(
+    @Param('protocol_id') protocolId: string,
+    @Body(new ParseArrayPipe({ items: UserDto, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] })) assigneeDtos: UserDto[],
+    @InjectUser() user: User,
+  ): Promise<object> {
+    const protocol = await this.repo.findOneOrFail(protocolId);
+    protocol.assign(user, assigneeDtos.map((userDto: UserDto) => userDto.toEntity()));
+    await this.repo.save(protocol);
+
+    return {'status': 'Accepted'};
   }
 
   @Get(':id')

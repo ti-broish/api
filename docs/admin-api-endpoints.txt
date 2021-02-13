@@ -26,3 +26,5 @@
 - [ ] POST /protocols/assign
 - [-] GET /protocols/:id
 - [ ] PUT /protocols/:id
+- [x] GET /protocols/:id/assignees
+- [x] PUT /protocols/:id/assignees

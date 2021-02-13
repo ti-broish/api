@@ -14,10 +14,10 @@ export class UserDto {
   public static readonly UPDATE = 'update';
   public static readonly MANAGE = 'manage';
 
-  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.MANAGE] })
-  @IsUserExists({ groups: ['broadcast.create'] })
-  @IsString({ groups: ['broadcast.create'] })
-  @IsNotEmpty({ groups: ['broadcast.create'] })
+  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.MANAGE, 'assignee'] })
+  @IsUserExists({ groups: ['broadcast.create', 'assignee'] })
+  @IsString({ groups: ['broadcast.create', 'assignee'] })
+  @IsNotEmpty({ groups: ['broadcast.create', 'assignee'] })
   id: string;
 
   @ApiProperty({ required: true })
