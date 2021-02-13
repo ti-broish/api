@@ -42,8 +42,8 @@ export class ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.SEND, actor);
   }
 
-  public static createAsssignAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.ASSIGN, actor);
+  public static createAsssignAction(actor: User, assignees: User[]): ProtocolAction {
+    return ProtocolAction.create(ProtocolActionType.ASSIGN, actor, { assignees: assignees.map(x => x.id) });
   }
 
   public static createRejectAction(actor: User): ProtocolAction {
@@ -66,12 +66,13 @@ export class ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.POPULATE, actor);
   }
 
-  private static create(actionType: ProtocolActionType, actor?: User): ProtocolAction {
+  private static create(actionType: ProtocolActionType, actor?: User, payload?: object): ProtocolAction {
     const action = new ProtocolAction();
     if (actor) {
       action.actor = actor;
     }
     action.action = actionType;
+    action.payload = payload;
 
     return action;
   }

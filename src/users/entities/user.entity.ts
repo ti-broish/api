@@ -1,4 +1,5 @@
-import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany } from 'typeorm';
+import { Protocol } from 'src/protocols/entities/protocol.entity';
+import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { ulid } from 'ulid';
 import { Role } from '../../casl/role.enum';
 import { Picture } from '../../pictures/entities/picture.entity';
@@ -46,6 +47,14 @@ export class User {
     cascade: ['remove'],
   })
   clients: Client[];
+
+  @ManyToMany(() => Protocol)
+  @JoinTable({
+    name: 'protocols_assignees',
+    joinColumn: { name: 'assignee_id' },
+    inverseJoinColumn: { name: 'protocol_id' },
+  })
+  assignedProtocols: Protocol[];
 
   @CreateDateColumn({ type: 'timestamp' })
   registeredAt: Date;
