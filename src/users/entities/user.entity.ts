@@ -31,7 +31,9 @@ export class User {
   @ManyToOne(() => Organization, organization => organization.users)
   organization: Organization;
 
-  @OneToMany(() => Picture, picture => picture.author)
+  @OneToMany(() => Picture, picture => picture.author, {
+    onDelete: 'CASCADE',
+  })
   pictures: Picture[];
 
   @Column({ unique: true })
