@@ -1,8 +1,9 @@
 import { INestApplication } from '@nestjs/common';
-import { NotFoundExceptionFilter } from 'src/exceptions/not-found-exception.filter';
+import { NotFoundExceptionFilter, ProtocolResultsConflictExceptionFilter } from 'src/filters';
 
 export function addExceptionFilters(app: INestApplication) {
   app.useGlobalFilters(
     new NotFoundExceptionFilter(),
+    new ProtocolResultsConflictExceptionFilter()
   );
 }

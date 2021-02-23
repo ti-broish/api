@@ -6,6 +6,7 @@ import { ProtocolResult } from './protocol-result.entity';
 import { Section } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
+import { ProtocolHasResultsException } from './protocol-has-results.exception';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
@@ -96,6 +97,9 @@ export class Protocol {
   }
 
   populate(actor: User, results: ProtocolResult[], votesData?: ProtocolData): void {
+    if (this.hasResults()) {
+      throw new ProtocolHasResultsException(this);
+    }
     this.setResults(results);
     this.setVotesData(votesData);
     this.addAction(ProtocolAction.createPopulateAction(actor));
@@ -136,6 +140,10 @@ export class Protocol {
     this.status = ProtocolStatus.REPLACED;
     this.parent = replacement;
     this.addAction(ProtocolAction.createReplaceAction(actor));
+  }
+
+  hasResults(): boolean {
+    return this.results.length > 0;
   }
 
   private addAction(action: ProtocolAction): void {
