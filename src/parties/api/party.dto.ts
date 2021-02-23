@@ -9,10 +9,10 @@ export class PartyDto {
   @ApiProperty()
   @Expose({ groups: ['read', 'create'] })
   @IsPartyExists({ groups: ['create'] })
-  @IsNumber()
-  @IsNotEmpty()
-  @Min(1)
-  @IsInt()
+  @IsNumber({}, { groups: ['create'] })
+  @IsNotEmpty({ groups: ['create'] })
+  @Min(1, { groups: ['create'] })
+  @IsInt({ groups: ['create'] })
   id: number;
 
   @ApiProperty()
@@ -21,7 +21,15 @@ export class PartyDto {
 
   @ApiProperty()
   @Expose({ groups: ['read'] })
-  displayName: string
+  displayName: string;
+
+  @ApiProperty()
+  @Expose({ groups: ['read'] })
+  isFeatured: boolean;
+
+  @ApiProperty()
+  @Expose({ groups: ['read'] })
+  color: string;
 
   public static fromEntity(entity: Party): PartyDto {
     return plainToClass<PartyDto, Partial<Party>>(PartyDto, entity, {

@@ -13,4 +13,10 @@ export class Party {
 
   @Column()
   displayName: string;
+
+  @Column()
+  isFeatured: boolean;
+
+  @Column()
+  color: string;
 }
