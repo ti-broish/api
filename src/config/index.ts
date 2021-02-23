@@ -1,4 +1,5 @@
-export * from './not-found-exception.filter';
+export * from './exception-filters.config';
+export * from './json.middleware';
 export * from './schema.config';
 export * from './swagger.config';
 export * from './typeorm.config';
