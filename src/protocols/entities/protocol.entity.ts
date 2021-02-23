@@ -96,12 +96,11 @@ export class Protocol {
     this.addAction(ProtocolAction.createAsssignAction(actor, assignees));
   }
 
-  populate(actor: User, results: ProtocolResult[], votesData?: ProtocolData): void {
+  populate(actor: User, results: ProtocolResult[]): void {
     if (this.hasResults()) {
       throw new ProtocolHasResultsException(this);
     }
     this.setResults(results);
-    this.setVotesData(votesData);
     this.addAction(ProtocolAction.createPopulateAction(actor));
   }
 
@@ -159,7 +158,7 @@ export class Protocol {
     this.results = results;
   }
 
-  private setVotesData(data: ProtocolData): void {
+  private setData(data: ProtocolData): void {
     data.protocol = this;
     this.data = data;
   }

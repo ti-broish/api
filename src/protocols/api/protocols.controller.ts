@@ -58,14 +58,14 @@ export class ProtocolsController {
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: [] }))
+  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
   async createResults(
-    @Param('protocol_id') protocolId: string,
+    @Param('id') protocolId: string,
     @Body() resultsDto: ProtocolResultsDto,
     @InjectUser() user: User,
   ): Promise<ProtocolResultsDto> {
     const protocol = await this.repo.findOneOrFail(protocolId);
-    protocol.populate(user, resultsDto.toResults(), resultsDto.toVotersData());
+    protocol.populate(user, resultsDto.toResults());
 
     const savedProtocol = await this.repo.save(protocol);
 

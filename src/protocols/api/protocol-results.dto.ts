@@ -6,33 +6,32 @@ import { ProtocolData } from '../entities/protocol-data.entity';
 import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol } from '../entities/protocol.entity';
 
-@Expose({ groups: ['read', 'create'] })
 export class ProtocolResultDto {
-  @Type(() => PartyDto)
-  @Transform((id: number) => plainToClass(PartyDto, { id }, { groups: ['create'] }), { groups: ['create'] })
+  @Transform((id: number) => plainToClass(PartyDto, { id }, { groups: ['create'] }), { groups: ['create', 'finalize'] })
   @ValidateNested({
-    groups: ['create'],
+    groups: ['create', 'finalize'],
   })
-  @Expose({ groups: ['read', 'create'] })
+  @Type(() => PartyDto)
+  @Expose({ groups: ['read', 'create', 'finalize'] })
   party: PartyDto;
 
-  @IsNumber()
-  @IsNotEmpty()
-  @Min(0)
-  @IsInt()
-  @Expose({ groups: ['read', 'create'] })
+  @IsNumber({}, { groups: ['create', 'finalize'] })
+  @IsNotEmpty({ groups: ['create', 'finalize'] })
+  @Min(0, { groups: ['create', 'finalize'] })
+  @IsInt({ groups: ['create', 'finalize'] })
+  @Expose({ groups: ['read', 'create', 'finalize'] })
   validVotesCount: number;
 
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @IsInt()
-  @Expose({ groups: ['read', 'create'] })
+  @IsOptional({ groups: ['read', 'finalize'] })
+  @IsNumber({}, { groups: ['finalize'] })
+  @Min(0, { groups: ['finalize'] })
+  @IsInt({ groups: ['finalize'] })
+  @Expose({ groups: ['read', 'finalize'] })
   invalidVotesCount?: number;
 
   public toEntity(): ProtocolResult {
     return plainToClass<ProtocolResult, Partial<ProtocolResultDto>>(ProtocolResult, this, {
-      groups: ['create'],
+      groups: ['create', 'finalize'],
     });
   }
 
@@ -44,38 +43,37 @@ export class ProtocolResultDto {
   }
 }
 
-@Expose({ groups: ['read', 'create'] })
 export class ProtocolResultsDto {
-  @IsOptional()
-  @IsNumber()
-  @IsInt()
-  @Min(0)
-  @Expose({ groups: ['read', 'create'] })
+  @IsOptional({ groups: ['read', 'finalize'] })
+  @IsNumber({}, { groups: ['finalize'] })
+  @IsInt({ groups: ['finalize'] })
+  @Min(0, { groups: ['finalize'] })
+  @Expose({ groups: ['read', 'finalize'] })
   validVotesCount?: number;
 
-  @IsOptional()
-  @IsNumber()
-  @IsInt()
-  @Min(0)
-  @Expose({ groups: ['read', 'create'] })
+  @IsOptional({ groups: ['read', 'finalize'] })
+  @IsNumber({}, { groups: ['finalize'] })
+  @IsInt({ groups: ['finalize'] })
+  @Min(0, { groups: ['finalize'] })
+  @Expose({ groups: ['read', 'finalize'] })
   invalidVotesCount?: number;
 
-  @IsOptional()
-  @IsNumber()
-  @IsInt()
-  @Min(0)
-  @Expose({ groups: ['read', 'create'] })
+  @IsOptional({ groups: ['read', 'finalize'] })
+  @IsNumber({}, { groups: ['finalize'] })
+  @IsInt({ groups: ['finalize'] })
+  @Min(0, { groups: ['finalize'] })
+  @Expose({ groups: ['read', 'finalize'] })
   machineVotesCount?: number;
 
   @Type(() => ProtocolResultDto)
-  @IsArray({ groups: ['create'] })
-  @IsNotEmpty({ groups: ['create'] })
-  @ArrayNotEmpty({ groups: ['create'] })
+  @IsNotEmpty({ groups: ['create', 'finalize'] })
+  @IsArray({ groups: ['create', 'finalize'] })
+  @ArrayNotEmpty({ groups: ['create', 'finalize'] })
   @ValidateNested({
     each: true,
-    groups: ['create'],
+    groups: ['create', 'finalize']
   })
-  @Expose({ groups: ['read', 'create'] })
+  @Expose({ groups: ['read', 'create', 'finalize'] })
   results: ProtocolResultDto[] = [];
 
   public static fromEntity(protocol: Protocol): ProtocolResultsDto {
@@ -96,9 +94,9 @@ export class ProtocolResultsDto {
     return this.results.map((resultDto: ProtocolResultDto): ProtocolResult => resultDto.toEntity());
   }
 
-  public toVotersData(): ProtocolData {
+  public toProtocolData(): ProtocolData {
     return plainToClass<ProtocolData, Partial<ProtocolResultsDto>>(ProtocolData, this, {
-      groups: ['create'],
+      groups: ['finalize'],
     });
   }
 }
