@@ -21,6 +21,7 @@ import { User } from '../entities/user.entity';
 import { UsersRepository } from '../entities/users.repository';
 import { ClientDto } from './client.dto';
 import { UserDto } from './user.dto';
+import * as admin from 'firebase-admin';
 
 @Controller('me')
 export class MeController {
@@ -115,7 +116,9 @@ export class MeController {
         'Cannot delete a person record with submitted protocols! User records would be deleted 30 days after the election.'
       ]);
     }
+    const firebaseUid = user.firebaseUid;
     await this.usersRepo.delete(user.id);
+    await admin.auth().deleteUser(firebaseUid);
   }
 
   private updatePictureUrl(picture: PictureDto): void {
