@@ -6,7 +6,7 @@ import { ProtocolResult } from './protocol-result.entity';
 import { Section } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
-import { ProtocolHasResultsException } from './protocol-has-results.exception';
+import { ProtocolStatusException, ProtocolHasResultsException } from './protocol.exceptions';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
@@ -85,7 +85,7 @@ export class Protocol {
 
   setReceivedStatus(sender: User): void {
     if (this.status) {
-      throw new Error('Protocol status cannot be set to received when not empty!');
+      throw new ProtocolStatusException(this, ProtocolStatus.RECEIVED);
     }
     this.status = ProtocolStatus.RECEIVED;
     this.addAction(ProtocolAction.createSendAction(sender));
@@ -107,7 +107,7 @@ export class Protocol {
 
   reject(actor: User): void {
     if (this.status !== ProtocolStatus.RECEIVED) {
-      throw new Error('Protocol status can be set to rejected only if it is received!');
+      throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
     }
 
     this.status = ProtocolStatus.REJECTED;
@@ -116,7 +116,7 @@ export class Protocol {
 
   approve(actor: User): void {
     if (this.status !== ProtocolStatus.RECEIVED) {
-      throw new Error('Protocol status can be set to approved only if it is received!');
+      throw new ProtocolStatusException(this, ProtocolStatus.APPROVED);
     }
 
     this.status = ProtocolStatus.APPROVED;
@@ -125,7 +125,7 @@ export class Protocol {
 
   publish(): void {
     if (this.status !== ProtocolStatus.APPROVED) {
-      throw new Error('Protocol status can be set to published only if it is approved!');
+      throw new ProtocolStatusException(this, ProtocolStatus.PUBLISHED);
     }
 
     this.status = ProtocolStatus.PUBLISHED;
@@ -134,7 +134,7 @@ export class Protocol {
 
   replace(replacement: Protocol, actor: User): void {
     if ([ProtocolStatus.RECEIVED, ProtocolStatus.APPROVED, ProtocolStatus.PUBLISHED]) {
-      throw new Error('Protocol status cannot be replaced!');
+      throw new ProtocolStatusException(this, ProtocolStatus.REPLACED);
     }
 
     this.status = ProtocolStatus.REPLACED;
@@ -153,7 +153,7 @@ export class Protocol {
 
   private setResults(results: ProtocolResult[]): void {
     if (this.getResults().length > 0) {
-      throw new Error('Cannot set results on an populated protocol!');
+      throw new ProtocolHasResultsException(this);
     }
     results.forEach(result => result.protocol = this);
     this.results = results;
