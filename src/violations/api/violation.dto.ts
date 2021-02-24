@@ -1,5 +1,5 @@
 import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsNotEmpty, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsOptional, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
 import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { Violation, ViolationStatus } from '../entities/violation.entity';
@@ -31,8 +31,7 @@ export class ViolationDto{
   @Expose({ groups: ['read', 'create'] })
   @Type(() => PictureDto)
   @Transform((ids: string[]) => Array.isArray(ids) ? ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })): ids, { groups: ['create'] })
-  @IsNotEmpty({ groups: ['create'] })
-  @ArrayNotEmpty({ groups: ['create'] })
+  @IsOptional({ groups: ['create'] })
   @IsArray({ groups: ['create'] })
   @ValidateNested({
     each: true,
