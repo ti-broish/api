@@ -59,7 +59,7 @@ export class ProtocolsController {
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] } }))
+  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: [] }))
   async createResults(
     @Param('protocol_id') protocolId: string,
     @Body() resultsDto: ProtocolResultsDto,
@@ -74,8 +74,6 @@ export class ProtocolsController {
     protocol.populate(user, resultsDto.toResults(), resultsDto.toVotersData());
 
     const savedProtocol = await this.repo.save(protocol);
-    const savedDto = ProtocolDto.fromEntity(savedProtocol);
-    this.updatePicturesUrl(savedDto);
 
     return ProtocolResultsDto.fromEntity(savedProtocol);
   }

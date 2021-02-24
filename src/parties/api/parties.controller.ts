@@ -5,7 +5,7 @@ import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { PartiesRepository } from '../entities/parties.repository';
 import { Party } from '../entities/party.entity';
-import { PartyDto } from './Party.dto';
+import { PartyDto } from './party.dto';
 
 @Controller('parties')
 export class PartiesController {

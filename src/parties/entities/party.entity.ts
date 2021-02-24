@@ -1,12 +1,13 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('parties')
+@Entity('parties', {
+  orderBy: {
+    id: 'ASC',
+  },
+})
 export class Party {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  code: number;
 
   @Column()
   name: string;
