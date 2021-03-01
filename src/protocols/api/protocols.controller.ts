@@ -66,11 +66,6 @@ export class ProtocolsController {
     @InjectUser() user: User,
   ): Promise<ProtocolResultsDto> {
     const protocol = await this.repo.findOneOrFail(protocolId);
-    if (protocol.results.length > 0) {
-      throw new ConflictException([
-        'Cannot populate a populated protocol! You must create a new one.',
-      ]);
-    }
     protocol.populate(user, resultsDto.toResults(), resultsDto.toVotersData());
 
     const savedProtocol = await this.repo.save(protocol);

@@ -1,0 +1,4 @@
+{
+  "PROTOCOL_ALREADY_HAS_RESULTS": "Protocol already has results!",
+  "CANNOT_DELETE_USER_WITH_PROTOCOLS": "Cannot delete a person record with submitted protocols! User records would be deleted 30 days after the election."
+}

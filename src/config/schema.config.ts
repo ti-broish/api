@@ -5,6 +5,7 @@ export const configSchema = Joi.object({
     .valid('development', 'production', 'test', 'provision')
     .default('development'),
   PORT: Joi.number().default(4000),
+  NEST_LANG: Joi.string().default('bg'),
   DATABASE_HOST: Joi.string().hostname().default('localhost'),
   DATABASE_PORT: Joi.number().default(5432),
   DATABASE_USERNAME: Joi.string().required(),
