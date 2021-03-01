@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirebaseAdminCoreModule } from '@tfarras/nestjs-firebase-admin';
@@ -14,10 +15,27 @@ import { PostsModule } from './posts/posts.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BroadcastsModule } from './broadcasts/broadcasts.module';
 import { CaslModule } from './casl/casl.module';
+import { AcceptLanguageResolver, I18nJsonParser, I18nModule } from 'nestjs-i18n';
+import { APP_FILTER } from '@nestjs/core';
+import { NotFoundExceptionFilter } from './filters';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ validationSchema: configSchema }),
+    I18nModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        fallbackLanguage: configService.get('NEST_LANG', 'bg'),
+        parserOptions: {
+          path: path.join(__dirname, '/i18n/'),
+        },
+        resolvers: [
+          AcceptLanguageResolver
+        ],
+      }),
+      parser: I18nJsonParser,
+      inject: [ConfigService],
+    }),
     FirebaseAdminCoreModule.forRootAsync({
       useFactory: () => ({}),
       inject: [ConfigService],
@@ -40,5 +58,11 @@ import { CaslModule } from './casl/casl.module';
     ScheduleModule.forRoot(),
     CaslModule,
   ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: NotFoundExceptionFilter,
+    }
+  ]
 })
 export class AppModule {}

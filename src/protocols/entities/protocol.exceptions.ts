@@ -34,8 +34,8 @@ export class ProtocolStatusException extends Error implements ProtocolException 
 export class ProtocolHasResultsException extends Error implements ProtocolException {
   private protocol: Protocol;
 
-  constructor(protocol: Protocol, message?: string, ) {
-    super(message || `Protocol ${protocol.id} already has its results populated!`);
+  constructor(protocol: Protocol) {
+    super('errors.PROTOCOL_ALREADY_HAS_RESULTS');
     this.protocol = protocol;
     this.name = 'ProtocolHasResultsException';
   }

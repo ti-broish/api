@@ -54,6 +54,7 @@
     "joi": "^17.3.0",
     "lodash.merge": "^4.6.2",
     "mime-types": "^2.1.27",
+    "nestjs-i18n": "^8.0.11",
     "nestjs-minio": "^2.0.10",
     "nestjs-typeorm-paginate": "^2.3.0",
     "npm": "^6.14.9",

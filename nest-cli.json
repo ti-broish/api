@@ -6,9 +6,10 @@
       {
         "name": "@nestjs/swagger",
         "options": {
-          
+
         }
       }
-    ]
+    ],
+    "assets": ["i18n/**/*"]
   }
 }
