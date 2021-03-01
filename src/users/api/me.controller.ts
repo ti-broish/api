@@ -112,7 +112,7 @@ export class MeController {
   async delete(@InjectUser() user: User): Promise<void> {
     const submittedProtocols = await this.protocolsRepo.findByAuthor(user);
     if (submittedProtocols.length > 0) {
-      throw new ConflictException('errors.CANNOT_DELETE_USER_WITH_PROTOCOLS');
+      throw new ConflictException('CANNOT_DELETE_USER_WITH_PROTOCOLS');
     }
     const firebaseUid = user.firebaseUid;
     await this.usersRepo.delete(user.id);

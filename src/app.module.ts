@@ -66,7 +66,7 @@ import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
     {
       provide: APP_FILTER,
       useClass: I18nExceptionsFilter,
-    }
+    },
   ]
 })
 export class AppModule {}

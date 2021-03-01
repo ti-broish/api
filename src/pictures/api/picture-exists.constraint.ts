@@ -25,8 +25,8 @@ export class IsPictureExistsConstraint implements ValidatorConstraintInterface {
     return !!(await this.repo.findOne(pictureId));
   }
 
-  defaultMessage?(validationArguments?: ValidationArguments): string {
-    return `Picture with ID "${validationArguments.value}" does not exist!`;
+  defaultMessage?(): string {
+    return 'Picture with $property "$value" does not exist!';
   }
 }
 
