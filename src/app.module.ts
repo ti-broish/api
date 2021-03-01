@@ -17,7 +17,7 @@ import { BroadcastsModule } from './broadcasts/broadcasts.module';
 import { CaslModule } from './casl/casl.module';
 import { AcceptLanguageResolver, I18nJsonParser, I18nModule } from 'nestjs-i18n';
 import { APP_FILTER } from '@nestjs/core';
-import { NotFoundExceptionFilter } from './filters';
+import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
 
 @Module({
   imports: [
@@ -62,6 +62,10 @@ import { NotFoundExceptionFilter } from './filters';
     {
       provide: APP_FILTER,
       useClass: NotFoundExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: I18nExceptionsFilter,
     }
   ]
 })
