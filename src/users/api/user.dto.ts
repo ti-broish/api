@@ -68,9 +68,9 @@ export class UserDto {
   firebaseUid: string;
 
   @ApiPropertyOptional()
-  @Expose({ groups: [UserDto.CREATE] })
-  @IsNotEmpty({ groups: [UserDto.CREATE] })
-  @IsBoolean({ groups: [UserDto.CREATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @IsNotEmpty({ groups: [UserDto.CREATE, UserDto.UPDATE] })
+  @IsBoolean({ groups: [UserDto.CREATE, UserDto.UPDATE] })
   hasAgreedToKeepData: boolean;
 
   @ApiPropertyOptional()
