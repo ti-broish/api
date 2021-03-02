@@ -7,31 +7,31 @@ import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol } from '../entities/protocol.entity';
 
 export class ProtocolResultDto {
-  @Transform((id: number) => plainToClass(PartyDto, { id }, { groups: ['create'] }), { groups: ['create', 'finalize'] })
+  @Transform((id: number) => plainToClass(PartyDto, { id }, { groups: ['create'] }), { groups: ['create', 'replace'] })
   @ValidateNested({
-    groups: ['create', 'finalize'],
+    groups: ['create', 'replace'],
   })
   @Type(() => PartyDto)
-  @Expose({ groups: ['read', 'create', 'finalize'] })
+  @Expose({ groups: ['read', 'create', 'replace'] })
   party: PartyDto;
 
-  @IsNumber({}, { groups: ['create', 'finalize'] })
-  @IsNotEmpty({ groups: ['create', 'finalize'] })
-  @Min(0, { groups: ['create', 'finalize'] })
-  @IsInt({ groups: ['create', 'finalize'] })
-  @Expose({ groups: ['read', 'create', 'finalize'] })
+  @IsNumber({}, { groups: ['create', 'replace'] })
+  @IsNotEmpty({ groups: ['create', 'replace'] })
+  @Min(0, { groups: ['create', 'replace'] })
+  @IsInt({ groups: ['create', 'replace'] })
+  @Expose({ groups: ['read', 'create', 'replace'] })
   validVotesCount: number;
 
-  @IsOptional({ groups: ['read', 'finalize'] })
-  @IsNumber({}, { groups: ['finalize'] })
-  @Min(0, { groups: ['finalize'] })
-  @IsInt({ groups: ['finalize'] })
-  @Expose({ groups: ['read', 'finalize'] })
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Expose({ groups: ['read', 'replace'] })
   invalidVotesCount?: number;
 
   public toEntity(): ProtocolResult {
     return plainToClass<ProtocolResult, Partial<ProtocolResultDto>>(ProtocolResult, this, {
-      groups: ['create', 'finalize'],
+      groups: ['create', 'replace'],
     });
   }
 
@@ -44,36 +44,36 @@ export class ProtocolResultDto {
 }
 
 export class ProtocolResultsDto {
-  @IsOptional({ groups: ['read', 'finalize'] })
-  @IsNumber({}, { groups: ['finalize'] })
-  @IsInt({ groups: ['finalize'] })
-  @Min(0, { groups: ['finalize'] })
-  @Expose({ groups: ['read', 'finalize'] })
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'replace'] })
   validVotesCount?: number;
 
-  @IsOptional({ groups: ['read', 'finalize'] })
-  @IsNumber({}, { groups: ['finalize'] })
-  @IsInt({ groups: ['finalize'] })
-  @Min(0, { groups: ['finalize'] })
-  @Expose({ groups: ['read', 'finalize'] })
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'replace'] })
   invalidVotesCount?: number;
 
-  @IsOptional({ groups: ['read', 'finalize'] })
-  @IsNumber({}, { groups: ['finalize'] })
-  @IsInt({ groups: ['finalize'] })
-  @Min(0, { groups: ['finalize'] })
-  @Expose({ groups: ['read', 'finalize'] })
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'replace'] })
   machineVotesCount?: number;
 
   @Type(() => ProtocolResultDto)
-  @IsNotEmpty({ groups: ['create', 'finalize'] })
-  @IsArray({ groups: ['create', 'finalize'] })
-  @ArrayNotEmpty({ groups: ['create', 'finalize'] })
+  @IsNotEmpty({ groups: ['create', 'replace'] })
+  @IsArray({ groups: ['create', 'replace'] })
+  @ArrayNotEmpty({ groups: ['create', 'replace'] })
   @ValidateNested({
     each: true,
-    groups: ['create', 'finalize']
+    groups: ['create', 'replace']
   })
-  @Expose({ groups: ['read', 'create', 'finalize'] })
+  @Expose({ groups: ['read', 'create', 'replace'] })
   results: ProtocolResultDto[] = [];
 
   public static fromEntity(protocol: Protocol): ProtocolResultsDto {
@@ -96,7 +96,7 @@ export class ProtocolResultsDto {
 
   public toProtocolData(): ProtocolData {
     return plainToClass<ProtocolData, Partial<ProtocolResultsDto>>(ProtocolData, this, {
-      groups: ['finalize'],
+      groups: ['replace'],
     });
   }
 }

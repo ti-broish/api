@@ -11,7 +11,6 @@ export enum ProtocolActionType {
   PUBLISH = 'publish',
   REPLACE = 'replace',
   POPULATE = 'populate',
-  FINALIZE = 'finalize',
 }
 
 @Entity('protocol_actions')
@@ -65,9 +64,6 @@ export class ProtocolAction {
 
   public static createPopulateAction(actor: User): ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.POPULATE, actor);
-  }
-  public static createFinalizeAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.FINALIZE, actor);
   }
 
   private static create(actionType: ProtocolActionType, actor?: User, payload?: object): ProtocolAction {

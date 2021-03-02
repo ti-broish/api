@@ -105,12 +105,6 @@ export class Protocol {
     this.addAction(ProtocolAction.createPopulateAction(actor));
   }
 
-  finalize(actor: User, results: ProtocolResult[], protocolData: ProtocolData): void {
-    this.setResults(results);
-    this.setData(protocolData);
-    this.addAction(ProtocolAction.createFinalizeAction(actor));
-  }
-
   reject(actor: User): void {
     if (this.status !== ProtocolStatus.RECEIVED) {
       throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
@@ -138,14 +132,28 @@ export class Protocol {
     this.addAction(ProtocolAction.createPublishAction());
   }
 
-  replace(replacement: Protocol, actor: User): void {
-    if ([ProtocolStatus.RECEIVED, ProtocolStatus.APPROVED, ProtocolStatus.PUBLISHED]) {
+  replace(actor: User, section: Section|null, protocolResults: ProtocolResult[], protocolData: ProtocolData): Protocol {
+    if (![
+      ProtocolStatus.RECEIVED,
+      ProtocolStatus.APPROVED,
+      ProtocolStatus.READY,
+      ProtocolStatus.PUBLISHED,
+    ].includes(this.status)) {
       throw new ProtocolStatusException(this, ProtocolStatus.REPLACED);
     }
+    const replacement = new Protocol();
+    replacement.results = protocolResults;
+    replacement.data = protocolData;
+    replacement.section = section || this.section;
+    replacement.status = ProtocolStatus.READY;
+    replacement.pictures = this.pictures;
+    replacement.assignees = this.assignees;
 
     this.status = ProtocolStatus.REPLACED;
     this.parent = replacement;
     this.addAction(ProtocolAction.createReplaceAction(actor));
+
+    return replacement;
   }
 
   hasResults(): boolean {

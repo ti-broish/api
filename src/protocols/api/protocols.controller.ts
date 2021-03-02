@@ -31,7 +31,7 @@ export class ProtocolsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(@Query() query: ProtocolFilters): Promise<Pagination<Protocol>> {
     const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 2, route: '/protocols' });
-    pagination.items.map(ProtocolDto.fromEntity);
+    pagination.items.map((protocol: Protocol) => ProtocolDto.fromEntity(protocol));
 
     return pagination;
   }
@@ -96,6 +96,33 @@ export class ProtocolsController {
     const savedProtocol = await this.repo.save(protocol);
 
     return ProtocolResultsDto.fromEntity(savedProtocol);
+  }
+
+  @Post(':id/replace')
+  @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
+  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['replace'] } }))
+  async replace(
+    @Param('id') protocolId: string,
+    @Body() protocolDto: ProtocolDto,
+    @InjectUser() user: User,
+  ): Promise<ProtocolDto> {
+    const submittedProtocol = protocolDto.toEntity();
+    const prevProtocol = await this.repo.findOneOrFail(protocolId);
+    const nextProtocol = prevProtocol.replace(
+      user,
+      submittedProtocol.section || null,
+      protocolDto.results.toResults(),
+      protocolDto.results.toProtocolData(),
+    );
+    const savedProtocol = await this.repo.save(nextProtocol);
+    await this.repo.save(prevProtocol);
+    const savedDto = ProtocolDto.fromEntity(savedProtocol, ['read.results']);
+    savedDto.results = ProtocolResultsDto.fromEntity(savedProtocol);
+    this.updatePicturesUrl(savedDto);
+
+    return savedDto;
   }
 
   @Get(':id/assignees')
