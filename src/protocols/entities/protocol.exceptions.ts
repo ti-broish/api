@@ -35,7 +35,7 @@ export class ProtocolHasResultsException extends Error implements ProtocolExcept
   private protocol: Protocol;
 
   constructor(protocol: Protocol) {
-    super('errors.PROTOCOL_ALREADY_HAS_RESULTS');
+    super('PROTOCOL_ALREADY_HAS_RESULTS');
     this.protocol = protocol;
     this.name = 'ProtocolHasResultsException';
   }
