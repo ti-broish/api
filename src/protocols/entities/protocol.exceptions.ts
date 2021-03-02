@@ -2,10 +2,7 @@ import { Protocol, ProtocolStatus } from './protocol.entity';
 
 export interface ProtocolException {
   getProtocol(): Protocol;
-
   getMessage(): string;
-
-  getType(): string;
 }
 
 export class ProtocolStatusException extends Error implements ProtocolException {
@@ -13,21 +10,16 @@ export class ProtocolStatusException extends Error implements ProtocolException 
 
   constructor(protocol: Protocol, targetStatus: ProtocolStatus, message?: string) {
     const originalStatus = protocol.status || 'empty';
-    super(message || `Protocol ${protocol.id} status cannot be changed from ${originalStatus} to ${targetStatus}`);
+    super(message || `protocol_cannot_change_status_from_${originalStatus}_to_${targetStatus}`.toUpperCase());
     this.protocol = protocol;
-    this.name = 'ProtocolStatusException';
   }
 
-  getProtocol(): Protocol|null {
-    return this.protocol || null;
+  getProtocol(): Protocol {
+    return this.protocol;
   }
 
   getMessage(): string {
     return this.message;
-  }
-
-  getType(): string {
-    return this.name;
   }
 }
 
@@ -37,18 +29,13 @@ export class ProtocolHasResultsException extends Error implements ProtocolExcept
   constructor(protocol: Protocol) {
     super('PROTOCOL_ALREADY_HAS_RESULTS');
     this.protocol = protocol;
-    this.name = 'ProtocolHasResultsException';
   }
 
-  getProtocol(): Protocol|null {
-    return this.protocol || null;
+  getProtocol(): Protocol {
+    return this.protocol;
   }
 
   getMessage(): string {
     return this.message;
-  }
-
-  getType(): string {
-    return this.name;
   }
 }
