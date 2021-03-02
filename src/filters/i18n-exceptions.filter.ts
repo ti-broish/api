@@ -23,25 +23,23 @@ export class I18nExceptionsFilter extends BaseExceptionFilter {
 
   async catch(exception: Error, host: ArgumentsHost) {
     const context = host.switchToHttp();
-    let statusCode = HttpStatus.CONFLICT;
     const errorType = exception.constructor.name;
     const response = {
-      statusCode,
+      statusCode: HttpStatus.CONFLICT,
       errorType,
       message: exception.message,
       error: errorType
     } as ExceptionResponse;
 
     if (exception instanceof HttpException) {
-      const httpResponse = exception.getResponse() as { message: string, statusCode: number, error: string };
-      statusCode = httpResponse.statusCode;
-      response.message = httpResponse.message;
-      response.error = httpResponse.error;
+      const httpResponse = exception.getResponse() as Pick<ExceptionResponse, "message" | "statusCode" | "error">;
+      Object.assign(response, httpResponse);
     }
+
     response.message = await this.translate(context.getRequest().i18nLang, response.message);
 
     context.getResponse<Response>()
-      .status(statusCode)
+      .status(response.statusCode)
       .json(response);
   }
 
