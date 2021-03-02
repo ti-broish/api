@@ -1,0 +1,85 @@
+POST /protocols/01EZPJD346E3ZQ51NB65QNGSKR/replace HTTP/1.1
+Accept: application/json, */*;q=0.5
+Accept-Encoding: gzip, deflate
+Authorization: Bearer <Firebase UID>
+Connection: keep-alive
+Content-Length: 94
+Content-Type: application/json
+Host: localhost:4000
+User-Agent: HTTPie/2.3.0
+
+{
+    "results": {
+        "results": [
+            {
+                "party": 1,
+                "validVotesCount": 3
+            }
+        ]
+    },
+    "section": {
+        "id": "234615075"
+    }
+}
+
+
+HTTP/1.1 201 Created
+Connection: keep-alive
+Content-Length: 968
+Content-Type: application/json; charset=utf-8
+Date: Tue, 02 Mar 2021 18:04:33 GMT
+ETag: W/"3c8-N1xPisQNGCExkoFGF8m6rW8geu8"
+Keep-Alive: timeout=5
+X-Powered-By: Express
+
+{
+    "assignees": [
+        {
+            "email": "harry@hkdobrev.com",
+            "firebaseUid": "wfWsFvRgncZ71ouaicDDLp0JFP12",
+            "firstName": "Харалан",
+            "hasAgreedToKeepData": true,
+            "id": "01ESB38QG13QT59W2C7682CN87",
+            "lastName": "Добрев",
+            "phone": "+359888386415",
+            "pin": "3441",
+            "roles": [
+                "user",
+                "admin"
+            ]
+        }
+    ],
+    "id": "01EZT1SWNN0MBJ2XD8ZZ8GHZRX",
+    "pictures": [
+        {
+            "id": "01ESBHNRXZZW5A098TY58VWQZX",
+            "path": "01ESBHNRSC7QMZ8DV76XK347KS.png",
+            "sortPosition": 0,
+            "url": "https://d1t.dabulgaria.bg/testphotos/01ESBHNRSC7QMZ8DV76XK347KS.png"
+        }
+    ],
+    "results": {
+        "invalidVotesCount": null,
+        "machineVotesCount": null,
+        "results": [
+            {
+                "invalidVotesCount": null,
+                "party": {
+                    "color": null,
+                    "displayName": "Демократична България",
+                    "id": 1,
+                    "isFeatured": true,
+                    "name": "ДЕМОКРАТИЧНА БЪЛГАРИЯ – ОБЕДИНЕНИЕ (ДА България и ДСБ)"
+                },
+                "validVotesCount": 3
+            }
+        ],
+        "validVotesCount": null
+    },
+    "section": {
+        "code": "075",
+        "id": "234615075",
+        "place": "жк Младост 3 зад блок 318 - 81 СОУ"
+    },
+    "status": "ready"
+}
