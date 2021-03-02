@@ -1,5 +1,4 @@
 import { Catch, ArgumentsHost, HttpStatus, HttpException, HttpServer, Injectable, Inject } from '@nestjs/common';
-import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { Response } from 'express';
 import { I18nService } from 'nestjs-i18n';
