@@ -1,4 +1,28 @@
 {
   "PROTOCOL_ALREADY_HAS_RESULTS": "Protocol already has results!",
-  "CANNOT_DELETE_USER_WITH_PROTOCOLS": "Cannot delete a person record with submitted protocols! User records would be deleted 30 days after the election."
+  "CANNOT_DELETE_USER_WITH_PROTOCOLS": "Cannot delete a person record with submitted protocols! User records would be deleted 30 days after the election.",
+  "USER_DOES_NOT_EXIST": "User doesn't exist",
+  "USER_ID_STRING": "User ID must be a text string",
+  "USER_ID_NOT_EMPTY": "User id is required",
+  "USER_FIRST_NAME_NOT_EMPTY": "First name is required",
+  "USER_FIRST_NAME_STRING": "First name  must be a text string",
+  "USER_FIRST_NAME_LENGTH": "First name трябва да бъде до 100 знака",
+  "USER_LAST_NAME_NOT_EMPTY": "Last name is required",
+  "USER_LAST_NAME_STRING": "Last name  must be a text string",
+  "USER_LAST_NAME_LENGTH": "Last name трябва да бъде до 100 знака",
+  "USER_EMAIL_NOT_EMPTY": "Email address is required",
+  "USER_EMAIL_INVALID": "Email address is invalid",
+  "USER_EMAIL_LENGTH": "Email address трябва да бъде до 100 знака",
+  "USER_PHONE_NOT_EMPTY": "Phone number is required",
+  "USER_PHONE_INVALID": "Phone number is invalid",
+  "USER_PIN_NOT_EMPTY": "Last PIN digits are a required",
+  "USER_PIN_NUMERIC": "Last PIN digits must be only digits",
+  "USER_PIN_LENGTH": "Last PIN digits must be exactly 4",
+  "USER_ORGANIZATION_NOT_EMPTY": "Organization is required",
+  "USER_ORGANIZATION_NOT_EMPTY_OBJECT": "Organization must not be empty",
+  "USER_ORGANIZATION_INVALID": "Organization is not valid",
+  "USER_FIREBASE_UID_NOT_EMPTY": "Firebase UID is required",
+  "USER_HAS_AGREED_TO_KEEP_DATA_NOT_EMPTY": "Agreement to keep data is required",
+  "USER_HAS_AGREED_TO_KEEP_DATA_BOOLEAN": "Agreement to keep data must be a yes/no value"
+
 }

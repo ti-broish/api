@@ -22,7 +22,7 @@ export class IsUserExistsConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage?(validationArguments?: ValidationArguments): string {
-    return `User with ID "${validationArguments.value}" does not exist!`;
+    return `User with $property "$value" does not exist!`;
   }
 }
 
