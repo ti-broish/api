@@ -10,9 +10,10 @@ import { ProtocolStatusException, ProtocolHasResultsException } from './protocol
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
-  APPROVED = 'approved',
-  REPLACED = 'replaced',
   REJECTED = 'rejected',
+  REPLACED = 'replaced',
+  READY = 'ready',
+  APPROVED = 'approved',
   PUBLISHED = 'published',
 };
 
@@ -102,6 +103,12 @@ export class Protocol {
     }
     this.setResults(results);
     this.addAction(ProtocolAction.createPopulateAction(actor));
+  }
+
+  finalize(actor: User, results: ProtocolResult[], protocolData: ProtocolData): void {
+    this.setResults(results);
+    this.setData(protocolData);
+    this.addAction(ProtocolAction.createFinalizeAction(actor));
   }
 
   reject(actor: User): void {
