@@ -54,7 +54,7 @@ export class ProtocolsController {
     return savedDto;
   }
 
-  @Post(':protocol_id/results')
+  @Post(':id/results')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
@@ -72,23 +72,23 @@ export class ProtocolsController {
     return ProtocolResultsDto.fromEntity(savedProtocol);
   }
 
-  @Get(':protocol_id/assignees')
+  @Get(':id/assignees')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async getAssignees( @Param('protocol_id') protocolId: string ): Promise<UserDto[]> {
+  async getAssignees( @Param('id') protocolId: string ): Promise<UserDto[]> {
     const protocol = await this.repo.findOneOrFail(protocolId);
 
     return protocol.assignees.map(UserDto.fromEntity);
   }
 
-  @Put(':protocol_id/assignees')
+  @Put(':id/assignees')
   @HttpCode(202)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
   async putAssignees(
-    @Param('protocol_id') protocolId: string,
+    @Param('id') protocolId: string,
     @Body(new ParseArrayPipe({ items: UserDto, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] })) assigneeDtos: UserDto[],
     @InjectUser() user: User,
   ): Promise<object> {
