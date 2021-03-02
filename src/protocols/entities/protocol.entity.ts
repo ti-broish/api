@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulid';
 import { ProtocolAction, ProtocolActionType } from './protocol-action.entity';
 import { ProtocolData } from './protocol-data.entity';
@@ -10,9 +10,10 @@ import { ProtocolStatusException, ProtocolHasResultsException } from './protocol
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
-  APPROVED = 'approved',
-  REPLACED = 'replaced',
   REJECTED = 'rejected',
+  REPLACED = 'replaced',
+  READY = 'ready',
+  APPROVED = 'approved',
   PUBLISHED = 'published',
 };
 
@@ -96,12 +97,11 @@ export class Protocol {
     this.addAction(ProtocolAction.createAsssignAction(actor, assignees));
   }
 
-  populate(actor: User, results: ProtocolResult[], votesData?: ProtocolData): void {
+  populate(actor: User, results: ProtocolResult[]): void {
     if (this.hasResults()) {
       throw new ProtocolHasResultsException(this);
     }
     this.setResults(results);
-    this.setVotesData(votesData);
     this.addAction(ProtocolAction.createPopulateAction(actor));
   }
 
@@ -132,14 +132,28 @@ export class Protocol {
     this.addAction(ProtocolAction.createPublishAction());
   }
 
-  replace(replacement: Protocol, actor: User): void {
-    if ([ProtocolStatus.RECEIVED, ProtocolStatus.APPROVED, ProtocolStatus.PUBLISHED]) {
+  replace(actor: User, section: Section|null, protocolResults: ProtocolResult[], protocolData: ProtocolData): Protocol {
+    if (![
+      ProtocolStatus.RECEIVED,
+      ProtocolStatus.APPROVED,
+      ProtocolStatus.READY,
+      ProtocolStatus.PUBLISHED,
+    ].includes(this.status)) {
       throw new ProtocolStatusException(this, ProtocolStatus.REPLACED);
     }
+    const replacement = new Protocol();
+    replacement.results = protocolResults;
+    replacement.data = protocolData;
+    replacement.section = section || this.section;
+    replacement.status = ProtocolStatus.READY;
+    replacement.pictures = this.pictures;
+    replacement.assignees = this.assignees;
 
     this.status = ProtocolStatus.REPLACED;
     this.parent = replacement;
     this.addAction(ProtocolAction.createReplaceAction(actor));
+
+    return replacement;
   }
 
   hasResults(): boolean {
@@ -159,7 +173,7 @@ export class Protocol {
     this.results = results;
   }
 
-  private setVotesData(data: ProtocolData): void {
+  private setData(data: ProtocolData): void {
     data.protocol = this;
     this.data = data;
   }

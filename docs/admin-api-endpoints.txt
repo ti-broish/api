@@ -23,8 +23,13 @@
 - [ ] GET /sections?country,election_region,municipality,town,with_protocols,with_published_protocols,with_violations
 
 - [x] GET /protocols?page=:page,assignee,section,status,author
-- [ ] POST /protocols/assign
-- [-] GET /protocols/:id
-- [ ] PUT /protocols/:id
+- [x] POST /protocols
+- [x] GET /protocols/:id
+- [x] POST /protocols/:id/results
+- [x] GET /protocols/:id/results
 - [x] GET /protocols/:id/assignees
 - [x] PUT /protocols/:id/assignees
+- [x] POST /protocols/assign
+- [x] POST /protocols/:id/reject
+- [x] POST /protocols/:id/replace
+- [x] POST /protocols/:id/approve

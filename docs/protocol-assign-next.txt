@@ -1,0 +1,53 @@
+POST /protocols/assign HTTP/1.1
+Accept: */*
+Accept-Encoding: gzip, deflate
+Authorization: Bearer <Firebase UID>
+Connection: keep-alive
+Content-Length: 0
+Host: localhost:4000
+User-Agent: HTTPie/2.3.0
+
+
+
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 611
+Content-Type: application/json; charset=utf-8
+Date: Tue, 02 Mar 2021 18:06:39 GMT
+ETag: W/"263-3f1oH/E7e1QmTToPubtlGAyzjFo"
+Keep-Alive: timeout=5
+X-Powered-By: Express
+
+{
+    "assignees": [
+        {
+            "email": "harry@hkdobrev.com",
+            "firebaseUid": "wfWsFvRgncZ71ouaicDDLp0JFP12",
+            "firstName": "Харалан",
+            "hasAgreedToKeepData": true,
+            "id": "01ESB38QG13QT59W2C7682CN87",
+            "lastName": "Добрев",
+            "phone": "+359888386415",
+            "pin": "3441",
+            "roles": [
+                "user",
+                "admin"
+            ]
+        }
+    ],
+    "id": "01EZT1XKEPZMXVECQF4FE58X1D",
+    "pictures": [
+        {
+            "id": "01ESBHNRXZZW5A098TY58VWQZX",
+            "path": "01ESBHNRSC7QMZ8DV76XK347KS.png",
+            "sortPosition": 0,
+            "url": "https://d1t.dabulgaria.bg/testphotos/01ESBHNRSC7QMZ8DV76XK347KS.png"
+        }
+    ],
+    "section": {
+        "code": "076",
+        "id": "234615076",
+        "place": "жк Младост 3 зад блок 318 - 81 СОУ"
+    },
+    "status": "received"
+}

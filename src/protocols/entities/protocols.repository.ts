@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities';
 import { QueryBuilder, Repository, SelectQueryBuilder } from 'typeorm';
 import { ProtocolActionType } from './protocol-action.entity';
-import { Protocol } from './protocol.entity';
+import { Protocol, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
 
 @Injectable()
@@ -73,5 +73,23 @@ export class ProtocolsRepository {
 
   async findAll(): Promise<Protocol[]> {
     return this.repo.find();
+  }
+
+  async findNextAvailableProtocol(): Promise<Protocol|null> {
+    const qb = this.repo.createQueryBuilder('protocol');
+    qb.innerJoin('protocol.actions', 'action');
+    qb.leftJoin('protocol.assignees', 'assignee');
+    qb.andWhere('assignee.id IS NULL');
+    qb.andWhere('protocol.status = :status', { status: ProtocolStatus.RECEIVED });
+    qb.andWhere('action.action = :action', { action: ProtocolActionType.SEND });
+    qb.addOrderBy('action.timestamp', 'ASC');
+
+    const protocol = await qb.getOne();
+
+    if (!protocol) {
+      return null;
+    }
+
+    return this.findOneOrFail(protocol.id);
   }
 }
