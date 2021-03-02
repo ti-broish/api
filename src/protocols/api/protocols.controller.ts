@@ -54,6 +54,32 @@ export class ProtocolsController {
     return savedDto;
   }
 
+  @Post(':id/reject')
+  @HttpCode(202)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  async reject(@Param('id') id: string, @InjectUser() user: User): Promise<object> {
+    const protocol = await this.repo.findOneOrFail(id);
+    protocol.reject(user);
+
+    await this.repo.save(protocol);
+
+    return {'status': 'Accepted'};
+  }
+
+  @Post(':id/approve')
+  @HttpCode(202)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  async approve(@Param('id') id: string, @InjectUser() user: User): Promise<object> {
+    const protocol = await this.repo.findOneOrFail(id);
+    protocol.approve(user);
+
+    await this.repo.save(protocol);
+
+    return {'status': 'Accepted'};
+  }
+
   @Post(':id/results')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
