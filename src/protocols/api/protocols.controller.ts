@@ -83,7 +83,7 @@ export class ProtocolsController {
   }
 
   @Put(':id/assignees')
-  @HttpCode(202)
+  @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
