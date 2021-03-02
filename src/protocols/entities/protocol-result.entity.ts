@@ -10,7 +10,7 @@ export class ProtocolResult {
   })
   id: string = ulid();
 
-  @ManyToOne(() => Protocol, protocol => protocol.actions)
+  @ManyToOne(() => Protocol, protocol => protocol.results)
   @JoinColumn({
     name: 'protocol_id',
   })

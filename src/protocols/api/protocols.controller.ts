@@ -1,5 +1,6 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, UseGuards, Query, Put, ParseArrayPipe } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, UseGuards, Query, Put, ParseArrayPipe, Res, HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -125,6 +126,28 @@ export class ProtocolsController {
     return savedDto;
   }
 
+  @Post('assign')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  async assign(@InjectUser() user: User, @Res() response: Response): Promise<ProtocolDto | null> {
+    const protocol = await this.repo.findNextAvailableProtocol();
+
+    if (!protocol) {
+      response.status(HttpStatus.NO_CONTENT);
+      response.send('');
+      return null;
+    }
+
+    protocol.assign(user, [user]);
+    const savedProtocol = await this.repo.save(protocol);
+    const savedDto = ProtocolDto.fromEntity(savedProtocol);
+    this.updatePicturesUrl(savedDto);
+
+    response.send(savedDto);
+    return savedDto;
+  }
+
   @Get(':id/assignees')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
@@ -132,7 +155,7 @@ export class ProtocolsController {
   async getAssignees( @Param('id') protocolId: string ): Promise<UserDto[]> {
     const protocol = await this.repo.findOneOrFail(protocolId);
 
-    return protocol.assignees.map(UserDto.fromEntity);
+    return protocol.assignees.map((user: User) => UserDto.fromEntity(user));
   }
 
   @Put(':id/assignees')

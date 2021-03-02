@@ -20,7 +20,7 @@ export class ProtocolAction {
   })
   id: string = ulid();
 
-  @ManyToOne(() => Protocol, protocol => protocol.actions)
+  @ManyToOne(() => Protocol, protocol => protocol.actions, { eager: true })
   @JoinColumn({
     name: 'protocol_id',
   })
