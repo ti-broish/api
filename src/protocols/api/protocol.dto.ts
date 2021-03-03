@@ -55,16 +55,29 @@ export class ProtocolDto {
   })
   results: ProtocolResultsDto;
 
+  private author: UserDto;
+
+  @Expose({ groups: ['protocol.validate'] })
+  getAuthor(): UserDto {
+    return this.author;
+  }
+
   public toEntity(): Protocol {
     return plainToClass<Protocol, Partial<ProtocolDto>>(Protocol, this, {
       groups: ['create', 'replace'],
     });
   }
 
-  public static fromEntity(entity: Protocol, additionalGroups: string[] = []): ProtocolDto {
-    return plainToClass<ProtocolDto, Partial<Protocol>>(ProtocolDto, entity, {
+  public static fromEntity(protocol: Protocol, additionalGroups: string[] = []): ProtocolDto {
+    const protocolDto =  plainToClass<ProtocolDto, Partial<Protocol>>(ProtocolDto, protocol, {
       excludeExtraneousValues: true,
       groups: ['read', ...additionalGroups],
     });
+
+    if (additionalGroups.includes('protocol.validate')) {
+      protocolDto.author = UserDto.fromEntity(protocol.getAuthor(), ['protocol.validate']);
+    }
+
+    return protocolDto;
   }
 }

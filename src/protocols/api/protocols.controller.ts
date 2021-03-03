@@ -181,7 +181,7 @@ export class ProtocolsController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   async get(@Param('id') id: string): Promise<ProtocolDto> {
     const protocol = await this.repo.findOneOrFail(id);
-    const dto = ProtocolDto.fromEntity(protocol);
+    const dto = ProtocolDto.fromEntity(protocol, ['protocol.validate']);
     this.updatePicturesUrl(dto);
 
     return dto;

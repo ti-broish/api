@@ -106,7 +106,7 @@ export class UserDto {
   pin: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate'] })
   @Type(() => OrganizationDto)
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
@@ -146,10 +146,10 @@ export class UserDto {
   @Expose({ groups: [UserDto.READ, UserDto.MANAGE] })
   roles: Role[];
 
-  public static fromEntity(entity: User): UserDto {
+  public static fromEntity(entity: User, groups: string[] = [UserDto.READ]): UserDto {
     return plainToClass<UserDto, Partial<User>>(UserDto, entity, {
       excludeExtraneousValues: true,
-      groups: [UserDto.READ],
+      groups: groups,
     });
   }
 

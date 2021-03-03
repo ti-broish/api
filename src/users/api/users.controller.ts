@@ -65,7 +65,7 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(@Query() query: PageDTO): Promise<Pagination<User>> {
     const pagination = await paginate(this.repo.getRepo(), { page: query.page, limit: 2, route: '/users' });
-    pagination.items.map(UserDto.fromEntity);
+    pagination.items.map((user: User) => UserDto.fromEntity(user));
 
     return pagination;
   }
