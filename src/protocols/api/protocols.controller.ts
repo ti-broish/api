@@ -182,6 +182,7 @@ export class ProtocolsController {
   async get(@Param('id') id: string): Promise<ProtocolDto> {
     const protocol = await this.repo.findOneOrFail(id);
     const dto = ProtocolDto.fromEntity(protocol, ['protocol.validate']);
+    dto.results = ProtocolResultsDto.fromEntity(protocol);
     this.updatePicturesUrl(dto);
 
     return dto;
