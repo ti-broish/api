@@ -16,6 +16,9 @@ export class ProtocolData {
   protocol: Protocol;
 
   @Column()
+  votersCount: number;
+
+  @Column()
   validVotesCount: number;
 
   @Column()

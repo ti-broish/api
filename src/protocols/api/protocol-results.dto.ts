@@ -49,6 +49,13 @@ export class ProtocolResultsDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Expose({ groups: ['read', 'replace'] })
+  votersCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'replace'] })
   validVotesCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
