@@ -59,7 +59,7 @@ export class MeController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async protocols(@InjectUser() user: User, @Query() query: PageDTO): Promise<Pagination<Protocol>> {
     const qb = this.protocolsRepo.queryBuilderWithFilters({ author: user.id } as ProtocolFilters);
-    const pagination = await paginate(qb, { page: query.page, limit: 2, route: '/me/protocols' });
+    const pagination = await paginate(qb, { page: query.page, limit: 100, route: '/me/protocols' });
     pagination.items.map((protocol: Protocol) : ProtocolDto => {
       const protocolDto = ProtocolDto.fromEntity(protocol);
       protocolDto.pictures.forEach(this.updatePictureUrl, this);
