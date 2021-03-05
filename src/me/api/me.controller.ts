@@ -15,12 +15,12 @@ import { ProtocolDto } from '../../protocols/api/protocol.dto';
 import { ProtocolsRepository } from '../../protocols/entities/protocols.repository';
 import { ViolationDto } from '../../violations/api/violation.dto';
 import { ViolationsRepository } from '../../violations/entities/violations.repository';
-import { Client } from '../entities/client.entity';
-import { ClientsRepository } from '../entities/clients.repository';
-import { User } from '../entities/user.entity';
-import { UsersRepository } from '../entities/users.repository';
-import { ClientDto } from './client.dto';
-import { UserDto } from './user.dto';
+import { Client } from '../../users/entities/client.entity';
+import { ClientsRepository } from '../../users/entities/clients.repository';
+import { User } from '../../users/entities/user.entity';
+import { UsersRepository } from '../../users/entities/users.repository';
+import { ClientDto } from '../../users/api/client.dto';
+import { UserDto } from '../../users/api/user.dto';
 import * as admin from 'firebase-admin';
 
 @Controller('me')

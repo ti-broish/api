@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SectionsModule } from './sections/sections.module';
 import { UsersModule } from './users/users.module';
+import { MeModule } from './me/me.module';
 import { PartiesModule } from './parties/parties.module';
 import { configSchema, TypeOrmConfigService } from './config';
 import { PicturesModule } from './pictures/pictures.module';
@@ -48,6 +49,7 @@ import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
       useClass: TypeOrmConfigService,
     }),
     UsersModule,
+    MeModule,
     SectionsModule,
     PartiesModule,
     PicturesModule,
