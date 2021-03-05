@@ -1,11 +1,10 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, ConflictException, UseGuards, Query, Put, ParseArrayPipe, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, UseGuards, Query, Res, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { UserDto } from 'src/users/api/user.dto';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -146,33 +145,6 @@ export class ProtocolsController {
 
     response.send(savedDto);
     return savedDto;
-  }
-
-  @Get(':id/assignees')
-  @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async getAssignees( @Param('id') protocolId: string ): Promise<UserDto[]> {
-    const protocol = await this.repo.findOneOrFail(protocolId);
-
-    return protocol.assignees.map((user: User) => UserDto.fromEntity(user));
-  }
-
-  @Put(':id/assignees')
-  @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
-  async putAssignees(
-    @Param('id') protocolId: string,
-    @Body(new ParseArrayPipe({ items: UserDto, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] })) assigneeDtos: UserDto[],
-    @InjectUser() user: User,
-  ): Promise<object> {
-    const protocol = await this.repo.findOneOrFail(protocolId);
-    protocol.assign(user, assigneeDtos.map((userDto: UserDto) => userDto.toEntity()));
-    await this.repo.save(protocol);
-
-    return {'status': 'Accepted'};
   }
 
   @Get(':id')
