@@ -22,7 +22,8 @@
 
 - [ ] GET /sections?country,election_region,municipality,town,with_protocols,with_published_protocols,with_violations
 
-- [x] GET /protocols?page=:page,assignee,section,status,author
+- [x] GET /protocols?page,assignee,section,status,author
+- [ ] GET /protocols?organization
 - [x] POST /protocols
 - [x] GET /protocols/:id
 - [x] POST /protocols/:id/results
