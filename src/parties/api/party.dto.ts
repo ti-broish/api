@@ -11,7 +11,7 @@ export class PartyDto {
   @IsPartyExists({ groups: ['create'] })
   @IsNumber({}, { groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
-  @Min(1, { groups: ['create'] })
+  @Min(0, { groups: ['create'] })
   @IsInt({ groups: ['create'] })
   id: number;
 
