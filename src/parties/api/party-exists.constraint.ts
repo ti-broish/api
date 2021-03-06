@@ -14,7 +14,7 @@ export class IsPartyExistsConstraint implements ValidatorConstraintInterface {
   constructor(@Inject(PartiesRepository) private readonly repo: PartiesRepository) { }
 
   async validate(partyId?: number): Promise<boolean> {
-    if (!partyId || typeof(partyId) !== 'number' || partyId < 0 ) {
+    if (partyId === null || partyId === false || partyId === undefined || typeof(partyId) !== 'number' || partyId < 0 ) {
       return false;
     }
 
