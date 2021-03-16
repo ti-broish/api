@@ -18,6 +18,12 @@ export class SectionsRepository {
     return this.repo.findOneOrFail(id);
   }
 
+  findOneOrFailWithRelations(id: string): Promise<Section> {
+    return this.repo.findOneOrFail(id, {
+      relations: ['town', 'town.country', 'electionRegion', 'town.municipality', 'cityRegion']
+    });
+  }
+
   findByTownAndCityRegion(townId: number, cityRegionCode?: string): Promise<Section[]> {
     return this.repo.find({
       join: {
