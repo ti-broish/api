@@ -4,6 +4,7 @@ import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator';
 import { Town } from '../entities';
 import { CityRegionDto } from './cityRegion.dto';
 import { CountryDto } from './country.dto';
+import { MunicipalityDto } from './municipality.dto';
 import { IsTownExists } from './town-exists.constraint';
 
 @Exclude()
@@ -30,6 +31,11 @@ export class TownDto {
   @Expose({ groups: ['get'] })
   @Type(() => CountryDto)
   country: CountryDto;
+
+  @ApiProperty()
+  @Expose({ groups: ['get'] })
+  @Type(() => MunicipalityDto)
+  municipality: MunicipalityDto;
 
   public static fromEntity(entity: Town): TownDto {
     return plainToClass<TownDto, Partial<Town>>(TownDto, entity, {
