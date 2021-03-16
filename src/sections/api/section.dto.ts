@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass } from 'class-transformer';
+import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import { IsNotEmpty, IsNumberString, IsOptional, IsString, Length } from 'class-validator';
+import { ElectionRegion } from '../entities';
 import { Section } from '../entities/section.entity';
+import { CityRegionDto } from './cityRegion.dto';
+import { ElectionRegionDto } from './electionRegion.dto';
 import { IsSectionExists } from './section-exists.constraint';
+import { TownDto } from './town.dto';
+
+const allowedGroups = ['read', 'get'];
 
 @Exclude()
 export class SectionDto {
@@ -22,10 +28,25 @@ export class SectionDto {
   @Expose({ groups: ['read'] })
   public place: string;
 
-  public static fromEntity(entity: Section): SectionDto {
+  @Expose({ groups: ['get'] })
+  votersCount: number;
+
+  @Type(() => ElectionRegionDto)
+  @Expose({ groups: ['get'] })
+  electionRegion: ElectionRegionDto;
+
+  @Type(() => TownDto)
+  @Expose({ groups: ['get'] })
+  town: TownDto;
+
+  @Type(() => CityRegionDto)
+  @Expose({ groups: ['get'] })
+  cityRegion: CityRegionDto;
+
+  public static fromEntity(entity: Section, additionalGroups: string[] = ['read']): SectionDto {
     return plainToClass<SectionDto, Partial<Section>>(SectionDto, entity, {
       excludeExtraneousValues: true,
-      groups: ['read'],
+      groups: additionalGroups.filter(value => allowedGroups.includes(value)),
     })
   }
 }
