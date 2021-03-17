@@ -22,6 +22,20 @@ export class ProtocolResultDto {
   @Expose({ groups: ['read', 'create', 'replace'] })
   validVotesCount: number;
 
+  @IsNumber({}, { groups: ['create', 'replace'] })
+  @IsNotEmpty({ groups: ['create', 'replace'] })
+  @Min(0, { groups: ['create', 'replace'] })
+  @IsInt({ groups: ['create', 'replace'] })
+  @Expose({ groups: ['read', 'create', 'replace'] })
+  machineVotesCount?: number;
+
+  @IsNumber({}, { groups: ['create', 'replace'] })
+  @IsNotEmpty({ groups: ['create', 'replace'] })
+  @Min(0, { groups: ['create', 'replace'] })
+  @IsInt({ groups: ['create', 'replace'] })
+  @Expose({ groups: ['read', 'create', 'replace'] })
+  nonMachineVotesCount?: number;
+
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
   @Min(0, { groups: ['replace'] })

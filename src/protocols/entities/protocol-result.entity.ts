@@ -26,6 +26,12 @@ export class ProtocolResult {
   validVotesCount: number;
 
   @Column()
+  machineVotesCount: number;
+
+  @Column()
+  nonMachineVotesCount: number;
+
+  @Column()
   invalidVotesCount: number;
 
   @CreateDateColumn()
