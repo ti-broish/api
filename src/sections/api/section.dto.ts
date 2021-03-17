@@ -31,6 +31,12 @@ export class SectionDto {
   @Expose({ groups: ['get'] })
   votersCount: number;
 
+  @Expose({ groups: ['get'] })
+  isMachine: boolean;
+
+  @Expose({ groups: ['get'] })
+  isMobile: boolean;
+
   @Type(() => ElectionRegionDto)
   @Expose({ groups: ['get'] })
   electionRegion: ElectionRegionDto;

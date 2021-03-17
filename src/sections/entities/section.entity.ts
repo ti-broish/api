@@ -22,6 +22,15 @@ export class Section {
   @Column()
   votersCount: number;
 
+  @Column()
+  isMachine: boolean;
+
+  @Column()
+  isMobile: boolean;
+
+  @Column()
+  isShip: boolean;
+
   @ManyToOne(() => ElectionRegion, electionRegion => electionRegion.sections)
   electionRegion: ElectionRegion;
 
