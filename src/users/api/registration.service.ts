@@ -20,14 +20,21 @@ export default class RegistrationService {
   ): Promise<User> {
     const userSignup = userDto.toEntity();
 
-    if (userSignup.firebaseUid !== firebaseUser.uid || userSignup.email !== firebaseUser.email) {
+    if (userSignup.firebaseUid !== firebaseUser.uid) {
       throw new RegistrationError(
         'RegistrationForbiddenError',
-        'Trying to sign up with data which does not match the Firebase token'
-        );
-      }
+        'Trying to sign up with firebase UID different than the auth token'
+      );
+    }
 
-      if (await this.repo.findByEmail(userSignup.email)) {
+    if (userSignup.email !== firebaseUser.email) {
+      throw new RegistrationError(
+        'RegistrationForbiddenError',
+        `Trying to sign up with email ${userSignup.email} different than the auth token email ${firebaseUser.email}`
+      );
+    }
+
+    if (await this.repo.findByEmail(userSignup.email)) {
       throw new RegistrationError('RegistrationError', 'User email already exists');
     }
 

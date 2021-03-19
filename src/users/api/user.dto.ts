@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { classToPlain, Exclude, Expose, plainToClass, Type } from 'class-transformer';
+import { classToPlain, Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
 import { IsBoolean, IsEmail, IsNotEmpty, IsNotEmptyObject, IsNumberString, IsPhoneNumber, IsString, Length, ValidateNested } from 'class-validator';
 import { assign, assignWith, merge } from 'lodash';
 import { Role } from 'src/casl/role.enum';
@@ -75,6 +75,7 @@ export class UserDto {
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_EMAIL_LENGTH',
   })
+  @Transform((value: string) => value ? value.toLowerCase() : value, { groups: [UserDto.CREATE, UserDto.UPDATE]})
   email: string;
 
   @ApiProperty({ required: true })
