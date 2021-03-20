@@ -29,7 +29,6 @@ export class FirebaseStrategy extends PassportStrategy(FirebaseAuthStrategy, 'fi
       user.isEmailVerified = firebaseUser.email_verified;
       this.usersRepo.save(user);
     }
-    console.log(user.isEmailVerified, firebaseUser.email_verified);
 
     return user;
   }
