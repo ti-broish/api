@@ -20,9 +20,17 @@ export class FirebaseStrategy extends PassportStrategy(FirebaseAuthStrategy, 'fi
     });
   }
 
-  async validate(firebaseUser: FirebaseUser, req?: Request): Promise<User|FirebaseUser> {
+  async validate(firebaseUser: FirebaseUser, req?: Request): Promise<User | null> {
     req.firebaseUser = firebaseUser ?? null;
 
-    return await this.usersRepo.findByFirebaseUid(firebaseUser.uid) ?? null;
+    const user = await this.usersRepo.findByFirebaseUid(firebaseUser.uid) ?? null;
+
+    if (user && firebaseUser.email_verified !== user.isEmailVerified) {
+      user.isEmailVerified = firebaseUser.email_verified;
+      this.usersRepo.save(user);
+    }
+    console.log(user.isEmailVerified, firebaseUser.email_verified);
+
+    return user;
   }
 }
