@@ -4,6 +4,7 @@ import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { Violation, ViolationStatus } from '../entities/violation.entity';
 import { TownDto } from '../../sections/api/town.dto';
+import { UserDto } from 'src/users/api/user.dto';
 
 @Exclude()
 export class ViolationDto{
@@ -47,6 +48,10 @@ export class ViolationDto{
 
   @Expose({ groups: ['read'] })
   status: ViolationStatus;
+
+  @Expose({ groups: ['read'] })
+  @Type(() => UserDto)
+  assignees: UserDto[]
 
   public toEntity(): Violation {
     return plainToClass<Violation, Partial<ViolationDto>>(Violation, this, {
