@@ -40,6 +40,14 @@ export class Violation {
   })
   pictures: Picture[];
 
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'violations_assignees',
+    joinColumn: { name: 'violation_id' },
+    inverseJoinColumn: { name: 'assignee_id' },
+  })
+  assignees: User[];
+
   @OneToMany(() => ViolationUpdate, (update: ViolationUpdate) => update.violation, {
     cascade: ['insert', 'update'],
   })
@@ -61,12 +69,12 @@ export class Violation {
     this.addUpdate(ViolationUpdate.createSendUpdate(sender));
   }
 
-  assign(assignee: User): void {
-    if (this.status !== ViolationStatus.RECEIVED) {
-      throw new Error('Violation can be assigned only if in status received!');
+  assign(actor: User, assignees: User[]): void {
+    if (this.status === ViolationStatus.RECEIVED) {
+      this.status = ViolationStatus.PROCESSING;
     }
-    this.status = ViolationStatus.PROCESSING;
-    this.addUpdate(ViolationUpdate.createAsssignUpdate(assignee));
+    this.assignees = assignees;
+    this.addUpdate(ViolationUpdate.createAsssignUpdate(actor, assignees));
   }
 
   reject(actor: User): void {
