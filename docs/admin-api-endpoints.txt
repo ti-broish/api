@@ -37,17 +37,15 @@
 - [x] POST /protocols/:id/replace
 - [x] POST /protocols/:id/approve
 
-- [ ] GET /violations?page,assignee,section,town,status,author,organization
+- [x] GET /violations?page,assignee,section,town,status,author,organization
 - [x] POST /violations
 - [x] GET /violations/:id
-- [ ] POST /violations/:id/comments
-- [ ] GET /violations/:id/comments
-- [ ] GET /violations/:id/comments/:comment
+- [x] POST /violations/:id/comments
+- [x] GET /violations/:id/comments
 - [ ] GET /violations/:id/assignees
 - [ ] PUT /violations/:id/assignees
 - [ ] POST /violations/:id/assignees
 - [ ] DELETE /violations/:id/assignees/:user
 - [ ] POST /violations/:id/reject
-- [ ] POST /violations/:id/replace
 - [ ] POST /violations/:id/approve
 - [ ] POST /violations/:id/publish
