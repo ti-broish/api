@@ -14,7 +14,6 @@ export class ViolationsRepository {
     return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'town', 'pictures', 'updates', 'updates.actor'] } );
   }
 
-
   queryBuilderWithFilters(filters: ViolationsFilters): SelectQueryBuilder<Violation> {
     const qb = this.repo.createQueryBuilder('violation');
 

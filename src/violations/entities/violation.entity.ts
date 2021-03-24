@@ -4,6 +4,7 @@ import { Section, Town } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
 import { ViolationUpdate, ViolationUpdateType } from './violation-update.entity';
+import { ViolationComment } from './violation-comment.entity';
 
 export enum ViolationStatus {
   RECEIVED = 'received',
@@ -52,6 +53,11 @@ export class Violation {
     cascade: ['insert', 'update'],
   })
   updates: ViolationUpdate[];
+
+  @OneToMany(() => ViolationComment, (comment: ViolationComment) => comment.violation, {
+    cascade: ['update'],
+  })
+  comments: ViolationComment[];
 
   getAuthor(): User {
     return this.updates.find((update: ViolationUpdate) => update.type = ViolationUpdateType.SEND).actor;

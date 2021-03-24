@@ -14,7 +14,7 @@ export class UserDto {
   public static readonly UPDATE = 'update';
   public static readonly MANAGE = 'manage';
 
-  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.MANAGE, 'assignee'] })
+  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.MANAGE, 'assignee', 'violation.comment.read'] })
   @IsUserExists({
     groups: ['broadcast.create', 'assignee'],
     message: 'USER_DOES_NOT_EXIST',
@@ -30,7 +30,7 @@ export class UserDto {
   id: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'violation.comment.read'] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_FIRST_NAME_NOT_EMPTY',
@@ -46,7 +46,7 @@ export class UserDto {
   firstName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'violation.comment.read'] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_LAST_NAME_NOT_EMPTY',
@@ -62,7 +62,7 @@ export class UserDto {
   lastName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'violation.comment.read'] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_EMAIL_NOT_EMPTY',
@@ -79,7 +79,7 @@ export class UserDto {
   email: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'violation.comment.read'] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_PHONE_NOT_EMPTY',
@@ -107,7 +107,7 @@ export class UserDto {
   pin: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate'] })
+  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate', 'violation.comment.read'] })
   @Type(() => OrganizationDto)
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
@@ -144,7 +144,7 @@ export class UserDto {
   hasAgreedToKeepData: boolean;
 
   @ApiPropertyOptional()
-  @Expose({ groups: [UserDto.READ, UserDto.MANAGE] })
+  @Expose({ groups: [UserDto.READ, UserDto.MANAGE, 'violation.comment.read'] })
   roles: Role[];
 
   public static fromEntity(entity: User, groups: string[] = [UserDto.READ]): UserDto {
