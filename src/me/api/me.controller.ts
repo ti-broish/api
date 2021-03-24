@@ -1,13 +1,11 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException, Post, UseGuards, Query } from '@nestjs/common';
-import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException, Post, UseGuards } from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { ProtocolFilters } from 'src/protocols/api/protocols-filters.dto';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
-import { PageDTO } from 'src/utils/page.dto';
 import { Violation } from 'src/violations/entities/violation.entity';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -57,17 +55,14 @@ export class MeController {
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async protocols(@InjectUser() user: User, @Query() query: PageDTO): Promise<Pagination<Protocol>> {
-    const qb = this.protocolsRepo.queryBuilderWithFilters({ author: user.id } as ProtocolFilters);
-    const pagination = await paginate(qb, { page: query.page, limit: 20, route: '/me/protocols' });
-    pagination.items.map((protocol: Protocol) : ProtocolDto => {
+  async protocols(@InjectUser() user: User): Promise<ProtocolDto[]> {
+    const protocols = await this.protocolsRepo.queryBuilderWithFilters({ author: user.id } as ProtocolFilters).getMany();
+    return protocols.map((protocol: Protocol) : ProtocolDto => {
       const protocolDto = ProtocolDto.fromEntity(protocol);
       protocolDto.pictures.forEach(this.updatePictureUrl, this);
 
       return protocolDto;
     });
-
-    return pagination;
   }
 
   @Get('violations')
