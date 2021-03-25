@@ -47,6 +47,8 @@ export class ViolationCommentsController {
 
   @Post()
   @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
   async create(
     @Body() violationCommentDto: ViolationCommentDto,

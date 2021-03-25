@@ -1,5 +1,5 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, UsePipes, ValidationPipe, Inject, ForbiddenException, UseGuards, Query, Patch } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Body, UsePipes, ValidationPipe, Inject, UseGuards, Query, Patch } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -44,6 +44,8 @@ export class ViolationsController {
 
   @Post()
   @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Violation))
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
   async create(
     @Body() violationDto: ViolationDto,
@@ -59,14 +61,13 @@ export class ViolationsController {
 
   @Get(':id')
   @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   async get(
     @Param('id') id: string,
     @InjectUser() user: User,
   ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
-    if (violation.getAuthor().id !== user.id) {
-      throw new ForbiddenException();
-    }
     const dto = ViolationDto.fromEntity(violation, ['violation.process', UserDto.AUTHOR_READ]);
     this.updatePicturesUrl(dto);
 
