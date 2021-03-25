@@ -28,14 +28,21 @@ export class ViolationCommentsController {
   async index(
     @Query() query: PageDTO,
     @Param('violation') violationId: string,
-  ): Promise<ViolationCommentDto[]> {
+  ): Promise<Pagination<ViolationCommentDto>> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     const pagination = await paginate(this.violationCommentsRepo.queryBuilderForViolation(violation), {
       page: query.page,
       limit: 20,
       route: `/violations/${violationId}/comments`,
     });
-    return pagination.items.map((violationComment: ViolationComment) => ViolationCommentDto.fromEntity(violationComment));
+
+    return new Pagination<ViolationCommentDto>(
+      await Promise.all(pagination.items.map(async (violationComment: ViolationComment) =>
+        ViolationCommentDto.fromEntity(violationComment)
+      )),
+      pagination.meta,
+      pagination.links,
+    );
   }
 
   @Post()
