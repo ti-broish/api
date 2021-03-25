@@ -11,7 +11,7 @@ export class ViolationsRepository {
   constructor(@InjectRepository(Violation) private readonly repo: Repository<Violation>) {}
 
   findOneOrFail(id: string): Promise<Violation> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'town', 'pictures', 'updates', 'updates.actor', 'assignees'] } );
+    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'town', 'pictures', 'updates', 'updates.actor', 'updates.actor.organization', 'assignees'] } );
   }
 
   queryBuilderWithFilters(filters: ViolationsFilters): SelectQueryBuilder<Violation> {
@@ -19,6 +19,9 @@ export class ViolationsRepository {
 
     qb.leftJoinAndSelect('violation.section', 'section');
     qb.innerJoinAndSelect('violation.town', 'town');
+    qb.innerJoinAndSelect('violation.updates', 'update');
+    qb.innerJoinAndSelect('update.actor', 'actor');
+    qb.innerJoinAndSelect('actor.organization', 'organization');
     qb.leftJoinAndSelect('violation.pictures', 'picture');
 
     if (filters.assignee) {
