@@ -79,7 +79,7 @@ export class CaslAbilityFactory {
       // TODO: Read own protocols and their status and actions taken
       // can(Action.Read, Protocol, { 'actions.actor.id': user.id, 'actions.type': ProtocolActionType.SEND });
       can(Action.Read, Party);
-      can(Action.Read, Violation, { status: ViolationStatus.PUBLISHED });
+      can(Action.Read, Violation, { isPublished: true });
       // TODO: Read own violations and violation updates
       // can(Action.Read, Violation, { 'updates.actor.id': user.id });
       can([Action.Read, Action.Update], User, { id: user.id });
