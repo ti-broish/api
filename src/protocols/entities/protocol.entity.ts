@@ -81,7 +81,7 @@ export class Protocol {
   }
 
   getAuthor(): User {
-    return this.actions.find((action: ProtocolAction) => action.action = ProtocolActionType.SEND).actor;
+    return this.actions.find((action: ProtocolAction) => action.action === ProtocolActionType.SEND).actor;
   }
 
   setReceivedStatus(sender: User): void {

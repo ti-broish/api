@@ -63,7 +63,7 @@ export class Violation {
   comments: ViolationComment[];
 
   getAuthor(): User {
-    return this.updates.find((update: ViolationUpdate) => update.type = ViolationUpdateType.SEND).actor;
+    return this.updates.find((update: ViolationUpdate) => update.type === ViolationUpdateType.SEND).actor;
   }
 
   public getUpdates(): ViolationUpdate[] {
