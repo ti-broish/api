@@ -9,7 +9,7 @@ import { ViolationComment } from './violation-comment.entity';
 export enum ViolationStatus {
   RECEIVED = 'received',
   PROCESSING = 'processing',
-  ACCEPTED = 'accepted',
+  PROCESSED = 'processed',
   REJECTED = 'rejected',
   PUBLISHED = 'published',
 };

@@ -47,5 +47,5 @@
 - [x] POST /violations/:id/assignees
 - [x] DELETE /violations/:id/assignees/:user
 - [ ] POST /violations/:id/reject
-- [ ] POST /violations/:id/approve
+- [ ] POST /violations/:id/process
 - [ ] POST /violations/:id/publish
