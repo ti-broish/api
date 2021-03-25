@@ -42,10 +42,10 @@
 - [x] GET /violations/:id
 - [x] POST /violations/:id/comments
 - [x] GET /violations/:id/comments
-- [ ] GET /violations/:id/assignees
-- [ ] PUT /violations/:id/assignees
-- [ ] POST /violations/:id/assignees
-- [ ] DELETE /violations/:id/assignees/:user
+- [x] GET /violations/:id/assignees
+- [x] PUT /violations/:id/assignees
+- [x] POST /violations/:id/assignees
+- [x] DELETE /violations/:id/assignees/:user
 - [ ] POST /violations/:id/reject
 - [ ] POST /violations/:id/approve
 - [ ] POST /violations/:id/publish
