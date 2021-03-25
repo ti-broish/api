@@ -2,6 +2,7 @@ import { Catch, ArgumentsHost, HttpStatus, HttpException, HttpServer, Injectable
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core';
 import { Response } from 'express';
 import { I18nService } from 'nestjs-i18n';
+import { ViolationPublishingException, ViolationStatusException } from 'src/violations/entities/violation.exceptions';
 import { ProtocolHasResultsException, ProtocolStatusException } from '../protocols/entities/protocol.exceptions';
 
 interface ExceptionResponse {
@@ -11,7 +12,7 @@ interface ExceptionResponse {
   statusCode: number,
 }
 
-@Catch(ProtocolHasResultsException, ProtocolStatusException, HttpException)
+@Catch(ProtocolHasResultsException, ProtocolStatusException, ViolationStatusException, ViolationPublishingException, HttpException)
 @Injectable()
 export class I18nExceptionsFilter extends BaseExceptionFilter {
   private readonly i18n: I18nService;

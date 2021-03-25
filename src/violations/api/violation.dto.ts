@@ -1,5 +1,5 @@
 import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsOptional, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsBoolean, IsNotEmpty, IsOptional, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
 import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { Violation, ViolationStatus } from '../entities/violation.entity';
@@ -49,6 +49,10 @@ export class ViolationDto{
 
   @Expose({ groups: ['read'] })
   status: ViolationStatus;
+
+  @Expose({ groups: ['read', 'isPublishedUpdate'] })
+  @IsBoolean({ groups: ['isPublishedUpdate']})
+  isPublished: boolean;
 
   @Expose({ groups: [UserDto.AUTHOR_READ] })
   @Type(() => UserDto)

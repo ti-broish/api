@@ -53,11 +53,11 @@ export class ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.PROCESS, actor);
   }
 
-  public static createPublishUpdate(actor?: User): ViolationUpdate {
+  public static createPublishUpdate(actor: User): ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.PUBLISH, actor);
   }
 
-  public static createUnpublishUpdate(actor?: User): ViolationUpdate {
+  public static createUnpublishUpdate(actor: User): ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.UNPUBLISH, actor);
   }
 

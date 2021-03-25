@@ -5,6 +5,7 @@ import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
 import { ViolationUpdate, ViolationUpdateType } from './violation-update.entity';
 import { ViolationComment } from './violation-comment.entity';
+import { ViolationPublishingException, ViolationStatusException } from './violation.exceptions';
 
 export enum ViolationStatus {
   RECEIVED = 'received',
@@ -71,7 +72,7 @@ export class Violation {
 
   setReceivedStatus(sender: User): void {
     if (this.status) {
-      throw new Error('Violation status cannot be set to received when not empty!');
+      throw new ViolationStatusException(this, ViolationStatus.RECEIVED);
     }
     this.status = ViolationStatus.RECEIVED;
     this.addUpdate(ViolationUpdate.createSendUpdate(sender));
@@ -87,7 +88,7 @@ export class Violation {
 
   reject(actor: User): void {
     if (this.status !== ViolationStatus.PROCESSING) {
-      throw new Error('Violation can be rejected only if it is in processing!');
+      throw new ViolationStatusException(this, ViolationStatus.REJECTED);
     }
 
     this.status = ViolationStatus.REJECTED;
@@ -96,33 +97,33 @@ export class Violation {
 
   process(actor: User): void {
     if (this.status !== ViolationStatus.PROCESSING) {
-      throw new Error('Violation can be processed only if it is in processing!');
+      throw new ViolationStatusException(this, ViolationStatus.PROCESSED);
     }
 
     this.status = ViolationStatus.PROCESSED;
     this.addUpdate(ViolationUpdate.createProcessUpdate(actor));
   }
 
-  publish(): void {
+  publish(user: User): void {
     if (![ViolationStatus.PROCESSING, ViolationStatus.PROCESSED]) {
-      throw new Error('Violation can be published only if it is in processing or processed!');
+      throw ViolationPublishingException.forInvalidStatus(this);
     }
 
     if (this.isPublished) {
-      throw new Error('You cannot publish an already published violation!');
+      throw ViolationPublishingException.forInvalidPublishedState(this);
     }
 
     this.isPublished = true;
-    this.addUpdate(ViolationUpdate.createPublishUpdate());
+    this.addUpdate(ViolationUpdate.createPublishUpdate(user));
   }
 
-  unpublish(): void {
+  unpublish(user: User): void {
     if (!this.isPublished) {
-      throw new Error('Violation is not published!');
+      throw ViolationPublishingException.forInvalidPublishedState(this);
     }
 
     this.isPublished = false;
-    this.addUpdate(ViolationUpdate.createUnpublishUpdate());
+    this.addUpdate(ViolationUpdate.createUnpublishUpdate(user));
   }
 
   private addUpdate(update: ViolationUpdate): void {

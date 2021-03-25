@@ -46,6 +46,6 @@
 - [x] PUT /violations/:id/assignees
 - [x] POST /violations/:id/assignees
 - [x] DELETE /violations/:id/assignees/:user
-- [ ] POST /violations/:id/reject
-- [ ] POST /violations/:id/process
-- [ ] PATCH /violations/:id
+- [x] POST /violations/:id/reject
+- [x] POST /violations/:id/process
+- [x] PATCH /violations/:id
