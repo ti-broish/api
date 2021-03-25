@@ -4,11 +4,12 @@ import { Section, Town } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
 import { ViolationUpdate, ViolationUpdateType } from './violation-update.entity';
+import { ViolationComment } from './violation-comment.entity';
 
 export enum ViolationStatus {
   RECEIVED = 'received',
   PROCESSING = 'processing',
-  ACCEPTED = 'accepted',
+  PROCESSED = 'processed',
   REJECTED = 'rejected',
   PUBLISHED = 'published',
 };
@@ -40,10 +41,23 @@ export class Violation {
   })
   pictures: Picture[];
 
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'violations_assignees',
+    joinColumn: { name: 'violation_id' },
+    inverseJoinColumn: { name: 'assignee_id' },
+  })
+  assignees: User[];
+
   @OneToMany(() => ViolationUpdate, (update: ViolationUpdate) => update.violation, {
     cascade: ['insert', 'update'],
   })
   updates: ViolationUpdate[];
+
+  @OneToMany(() => ViolationComment, (comment: ViolationComment) => comment.violation, {
+    cascade: ['update'],
+  })
+  comments: ViolationComment[];
 
   getAuthor(): User {
     return this.updates.find((update: ViolationUpdate) => update.type = ViolationUpdateType.SEND).actor;
@@ -61,12 +75,12 @@ export class Violation {
     this.addUpdate(ViolationUpdate.createSendUpdate(sender));
   }
 
-  assign(assignee: User): void {
-    if (this.status !== ViolationStatus.RECEIVED) {
-      throw new Error('Violation can be assigned only if in status received!');
+  assign(actor: User, assignees: User[]): void {
+    if (this.status === ViolationStatus.RECEIVED) {
+      this.status = ViolationStatus.PROCESSING;
     }
-    this.status = ViolationStatus.PROCESSING;
-    this.addUpdate(ViolationUpdate.createAsssignUpdate(assignee));
+    this.assignees = assignees;
+    this.addUpdate(ViolationUpdate.createAsssignUpdate(actor, assignees));
   }
 
   reject(actor: User): void {

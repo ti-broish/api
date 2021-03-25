@@ -36,7 +36,7 @@ export class MeController {
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Read, User))
   async get(@InjectUser() user: User): Promise<UserDto> {
-    return UserDto.fromEntity(user);
+    return UserDto.fromEntity(user, [UserDto.READ, UserDto.ME_READ]);
   }
 
   @Patch()
@@ -70,7 +70,8 @@ export class MeController {
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   async violations(@InjectUser() user: User): Promise<ViolationDto[]> {
-    const violations = (await this.violationsRepo.findByAuthor(user)).map(ViolationDto.fromEntity);
+    const violations = (await this.violationsRepo.findByAuthor(user))
+      .map((violation: Violation): ViolationDto => ViolationDto.fromEntity(violation));
     violations.forEach(dto => dto.pictures.forEach(this.updatePictureUrl, this), this);
 
     return violations;

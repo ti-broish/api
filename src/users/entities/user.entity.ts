@@ -1,4 +1,5 @@
 import { Protocol } from 'src/protocols/entities/protocol.entity';
+import { Violation } from 'src/violations/entities/violation.entity';
 import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { ulid } from 'ulid';
 import { Role } from '../../casl/role.enum';
@@ -60,6 +61,14 @@ export class User {
     inverseJoinColumn: { name: 'protocol_id' },
   })
   assignedProtocols: Protocol[];
+
+  @ManyToMany(() => Protocol)
+  @JoinTable({
+    name: 'violations_assignees',
+    joinColumn: { name: 'assignee_id' },
+    inverseJoinColumn: { name: 'violation_id' },
+  })
+  assignedViolations: Violation[];
 
   @CreateDateColumn({ type: 'timestamp' })
   registeredAt: Date;

@@ -49,7 +49,7 @@ export class CaslAbilityFactory {
     }
 
     if (user.hasRole(Role.Lawyer) || user.hasRole(Role.Admin)) {
-      can([Action.Read, Action.Publish], Violation);
+      can([Action.Read, Action.Update, Action.Publish], Violation);
       // TODO: Lawyers can access all protocols submitted to sections with violations
       // can(Action.Read, Protocol, { "section.violations" : null });
       // TODO: only user with violations

@@ -1,10 +1,18 @@
-import { Controller, Get, Post, HttpCode, Param, Body, UsePipes, ValidationPipe, Inject, ForbiddenException } from '@nestjs/common';
+import { Ability } from '@casl/ability';
+import { Controller, Get, Post, HttpCode, Param, Body, UsePipes, ValidationPipe, Inject, ForbiddenException, UseGuards, Query } from '@nestjs/common';
+import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Action } from 'src/casl/action.enum';
+import { CheckPolicies } from 'src/casl/check-policies.decorator';
+import { PoliciesGuard } from 'src/casl/policies.guard';
+import { UserDto } from 'src/users/api/user.dto';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { User } from '../../users/entities';
+import { Violation } from '../entities/violation.entity';
 import { ViolationsRepository } from '../entities/violations.repository';
 import { ViolationDto } from './violation.dto';
+import { ViolationsFilters } from './violations-filters.dto';
 
 @Controller('violations')
 export class ViolationsController {
@@ -12,6 +20,17 @@ export class ViolationsController {
     @Inject(ViolationsRepository) private readonly repo: ViolationsRepository,
     @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
+
+
+  @Get()
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async index(@Query() query: ViolationsFilters): Promise<ViolationDto[]> {
+    const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 20, route: '/violations' });
+    return pagination.items.map((violation: Violation) => ViolationDto.fromEntity(violation, ['violation.process', UserDto.AUTHOR_READ]));
+  }
 
   @Post()
   @HttpCode(201)
@@ -22,7 +41,7 @@ export class ViolationsController {
   ): Promise<ViolationDto> {
     const violation = violationDto.toEntity();
     violation.setReceivedStatus(user);
-    const savedDto = ViolationDto.fromEntity(await this.repo.save(violation));
+    const savedDto = ViolationDto.fromEntity(await this.repo.save(violation), ['violation.process', UserDto.AUTHOR_READ]);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
@@ -38,7 +57,7 @@ export class ViolationsController {
     if (violation.getAuthor().id !== user.id) {
       throw new ForbiddenException();
     }
-    const dto = ViolationDto.fromEntity(violation);
+    const dto = ViolationDto.fromEntity(violation, ['violation.process', UserDto.AUTHOR_READ]);
     this.updatePicturesUrl(dto);
 
     return dto;

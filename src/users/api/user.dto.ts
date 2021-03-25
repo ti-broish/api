@@ -10,11 +10,14 @@ import { IsUserExists } from './user-exists.constraint';
 @Exclude()
 export class UserDto {
   public static readonly READ = 'read';
+  public static readonly ADMIN_READ = 'admin_read';
+  public static readonly ME_READ = 'me_read';
+  public static readonly AUTHOR_READ = 'author_read';
   public static readonly CREATE = 'create';
   public static readonly UPDATE = 'update';
   public static readonly MANAGE = 'manage';
 
-  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.MANAGE, 'assignee'] })
+  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.MANAGE, 'assignee', UserDto.AUTHOR_READ] })
   @IsUserExists({
     groups: ['broadcast.create', 'assignee'],
     message: 'USER_DOES_NOT_EXIST',
@@ -30,7 +33,7 @@ export class UserDto {
   id: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_FIRST_NAME_NOT_EMPTY',
@@ -46,7 +49,7 @@ export class UserDto {
   firstName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_LAST_NAME_NOT_EMPTY',
@@ -62,7 +65,7 @@ export class UserDto {
   lastName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_EMAIL_NOT_EMPTY',
@@ -79,7 +82,7 @@ export class UserDto {
   email: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_PHONE_NOT_EMPTY',
@@ -91,7 +94,7 @@ export class UserDto {
   phone: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ,  UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_PIN_NOT_EMPTY',
@@ -107,7 +110,7 @@ export class UserDto {
   pin: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate'] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate', UserDto.AUTHOR_READ] })
   @Type(() => OrganizationDto)
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
@@ -124,7 +127,7 @@ export class UserDto {
   organization: OrganizationDto;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_FIREBASE_UID_NOT_EMPTY',
@@ -132,7 +135,7 @@ export class UserDto {
   firebaseUid: string;
 
   @ApiPropertyOptional()
-  @Expose({ groups: [UserDto.READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE] })
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_HAS_AGREED_TO_KEEP_DATA_NOT_EMPTY',
@@ -144,7 +147,7 @@ export class UserDto {
   hasAgreedToKeepData: boolean;
 
   @ApiPropertyOptional()
-  @Expose({ groups: [UserDto.READ, UserDto.MANAGE] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.MANAGE, UserDto.AUTHOR_READ] })
   roles: Role[];
 
   public static fromEntity(entity: User, groups: string[] = [UserDto.READ]): UserDto {

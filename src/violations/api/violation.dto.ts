@@ -4,6 +4,8 @@ import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { Violation, ViolationStatus } from '../entities/violation.entity';
 import { TownDto } from '../../sections/api/town.dto';
+import { UserDto } from 'src/users/api/user.dto';
+import { ViolationUpdateDto } from './violation-update.dto';
 
 @Exclude()
 export class ViolationDto{
@@ -48,16 +50,38 @@ export class ViolationDto{
   @Expose({ groups: ['read'] })
   status: ViolationStatus;
 
+  @Expose({ groups: [UserDto.AUTHOR_READ] })
+  @Type(() => UserDto)
+  assignees: UserDto[];
+
+  @Expose({ groups: ['violation.process'] })
+  @Type(() => ViolationUpdateDto)
+  updates: ViolationUpdateDto[];
+
+  private author: UserDto;
+
+  @Expose({ groups: [UserDto.AUTHOR_READ] })
+  @Type(() => UserDto)
+  getAuthor(): UserDto {
+    return this.author;
+  }
+
   public toEntity(): Violation {
     return plainToClass<Violation, Partial<ViolationDto>>(Violation, this, {
       groups: ['create'],
     });
   }
 
-  public static fromEntity(entity: Violation): ViolationDto {
-    return plainToClass<ViolationDto, Partial<Violation>>(ViolationDto, entity, {
+  public static fromEntity(violation: Violation, additionalGroups: string[] = []): ViolationDto {
+    const violationDto = plainToClass<ViolationDto, Partial<Violation>>(ViolationDto, violation, {
       excludeExtraneousValues: true,
-      groups: ['read'],
+      groups: ['read', ...additionalGroups],
     });
+
+    if (additionalGroups.includes(UserDto.AUTHOR_READ)) {
+      violationDto.author = UserDto.fromEntity(violation.getAuthor(), [UserDto.AUTHOR_READ]);
+    }
+
+    return violationDto;
   }
 }

@@ -5,6 +5,7 @@ import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
+import { UserDto } from 'src/users/api/user.dto';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -29,11 +30,9 @@ export class ProtocolsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: ProtocolFilters): Promise<Pagination<Protocol>> {
+  async index(@Query() query: ProtocolFilters): Promise<ProtocolDto[]> {
     const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 20, route: '/protocols' });
-    pagination.items.map((protocol: Protocol) => ProtocolDto.fromEntity(protocol));
-
-    return pagination;
+    return pagination.items.map((protocol: Protocol) => ProtocolDto.fromEntity(protocol, [UserDto.AUTHOR_READ, 'protocol.validate']));
   }
 
   @Post()
@@ -48,7 +47,7 @@ export class ProtocolsController {
     const protocol = protocolDto.toEntity();
     protocol.setReceivedStatus(user);
 
-    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol));
+    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol), [UserDto.AUTHOR_READ]);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
@@ -153,7 +152,7 @@ export class ProtocolsController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   async get(@Param('id') id: string): Promise<ProtocolDto> {
     const protocol = await this.repo.findOneOrFail(id);
-    const dto = ProtocolDto.fromEntity(protocol, ['protocol.validate']);
+    const dto = ProtocolDto.fromEntity(protocol, ['protocol.validate', UserDto.AUTHOR_READ, 'get']);
     dto.results = ProtocolResultsDto.fromEntity(protocol);
     this.updatePicturesUrl(dto);
 

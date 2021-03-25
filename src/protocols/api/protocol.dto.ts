@@ -39,7 +39,7 @@ export class ProtocolDto {
   pictures: PictureDto[]
 
   @ApiProperty({ required: true })
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: [UserDto.AUTHOR_READ] })
   @Type(() => UserDto)
   assignees: UserDto[]
 
@@ -50,7 +50,6 @@ export class ProtocolDto {
   @Type(() => ProtocolResultsDto)
   @IsNotEmpty({ groups: ['replace'] })
   @ValidateNested({
-    // each: true,
     groups: ['replace'],
   })
   results: ProtocolResultsDto;
@@ -58,6 +57,7 @@ export class ProtocolDto {
   private author: UserDto;
 
   @Expose({ groups: ['protocol.validate'] })
+  @Type(() => UserDto)
   getAuthor(): UserDto {
     return this.author;
   }
@@ -69,7 +69,7 @@ export class ProtocolDto {
   }
 
   public static fromEntity(protocol: Protocol, additionalGroups: string[] = []): ProtocolDto {
-    const protocolDto =  plainToClass<ProtocolDto, Partial<Protocol>>(ProtocolDto, protocol, {
+    const protocolDto = plainToClass<ProtocolDto, Partial<Protocol>>(ProtocolDto, protocol, {
       excludeExtraneousValues: true,
       groups: ['read', ...additionalGroups],
     });

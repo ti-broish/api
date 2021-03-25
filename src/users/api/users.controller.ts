@@ -55,7 +55,7 @@ export class UsersController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
   @UsePipes(new ValidationPipe({ transform: true }))
   async get(@Param('id') id: string): Promise<UserDto> {
-    return UserDto.fromEntity(await this.repo.findOneOrFail(id));
+    return UserDto.fromEntity(await this.repo.findOneOrFail(id), [UserDto.ADMIN_READ]);
   }
 
   @Get()
