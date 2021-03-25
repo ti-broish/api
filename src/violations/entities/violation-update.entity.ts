@@ -7,8 +7,9 @@ export enum ViolationUpdateType {
   SEND = 'send',
   ASSIGN = 'assign',
   REJECT = 'reject',
-  ACCEPT = 'accept',
+  PROCESS = 'process',
   PUBLISH = 'publish',
+  UNPUBLISH = 'unpublish',
 }
 
 @Entity('violation_updates')
@@ -48,12 +49,16 @@ export class ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.REJECT, actor);
   }
 
-  public static createAcceptUpdate(actor: User): ViolationUpdate {
-    return ViolationUpdate.create(ViolationUpdateType.ACCEPT, actor);
+  public static createProcessUpdate(actor: User): ViolationUpdate {
+    return ViolationUpdate.create(ViolationUpdateType.PROCESS, actor);
   }
 
   public static createPublishUpdate(actor?: User): ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.PUBLISH, actor);
+  }
+
+  public static createUnpublishUpdate(actor?: User): ViolationUpdate {
+    return ViolationUpdate.create(ViolationUpdateType.UNPUBLISH, actor);
   }
 
   private static create(updateType: ViolationUpdateType, actor?: User, payload?: object): ViolationUpdate {

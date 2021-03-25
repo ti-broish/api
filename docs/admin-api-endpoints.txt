@@ -48,4 +48,4 @@
 - [x] DELETE /violations/:id/assignees/:user
 - [ ] POST /violations/:id/reject
 - [ ] POST /violations/:id/process
-- [ ] POST /violations/:id/publish
+- [ ] PATCH /violations/:id

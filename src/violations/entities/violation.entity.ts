@@ -11,7 +11,6 @@ export enum ViolationStatus {
   PROCESSING = 'processing',
   PROCESSED = 'processed',
   REJECTED = 'rejected',
-  PUBLISHED = 'published',
 };
 
 @Entity('violations')
@@ -26,6 +25,9 @@ export class Violation {
 
   @Column({ type: 'varchar' })
   status: ViolationStatus;
+
+  @Column({ type: 'boolean' })
+  isPublished: boolean;
 
   @ManyToOne(() => Section, section => section.violations)
   section?: Section;
@@ -92,22 +94,35 @@ export class Violation {
     this.addUpdate(ViolationUpdate.createRejectUpdate(actor));
   }
 
-  accept(actor: User): void {
+  process(actor: User): void {
     if (this.status !== ViolationStatus.PROCESSING) {
-      throw new Error('Violation can be accepted only if it is in processing!');
+      throw new Error('Violation can be processed only if it is in processing!');
     }
 
-    this.status = ViolationStatus.ACCEPTED;
-    this.addUpdate(ViolationUpdate.createAcceptUpdate(actor));
+    this.status = ViolationStatus.PROCESSED;
+    this.addUpdate(ViolationUpdate.createProcessUpdate(actor));
   }
 
   publish(): void {
-    if (this.status !== ViolationStatus.ACCEPTED) {
-      throw new Error('Violation can be published only if it is approved!');
+    if (![ViolationStatus.PROCESSING, ViolationStatus.PROCESSED]) {
+      throw new Error('Violation can be published only if it is in processing or processed!');
     }
 
-    this.status = ViolationStatus.PUBLISHED;
+    if (this.isPublished) {
+      throw new Error('You cannot publish an already published violation!');
+    }
+
+    this.isPublished = true;
     this.addUpdate(ViolationUpdate.createPublishUpdate());
+  }
+
+  unpublish(): void {
+    if (!this.isPublished) {
+      throw new Error('Violation is not published!');
+    }
+
+    this.isPublished = false;
+    this.addUpdate(ViolationUpdate.createUnpublishUpdate());
   }
 
   private addUpdate(update: ViolationUpdate): void {
