@@ -27,9 +27,16 @@ export class ViolationsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: ViolationsFilters): Promise<ViolationDto[]> {
+  async index(@Query() query: ViolationsFilters): Promise<Pagination<ViolationDto>> {
     const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 20, route: '/violations' });
-    return pagination.items.map((violation: Violation) => ViolationDto.fromEntity(violation, ['violation.process', UserDto.AUTHOR_READ]));
+
+    return new Pagination<ViolationDto>(
+      await Promise.all(pagination.items.map(async (violation: Violation) =>
+        ViolationDto.fromEntity(violation, ['violation.process', UserDto.AUTHOR_READ])
+      )),
+      pagination.meta,
+      pagination.links,
+    );
   }
 
   @Post()
