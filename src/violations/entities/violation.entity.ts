@@ -92,6 +92,9 @@ export class Violation {
     }
 
     this.status = ViolationStatus.REJECTED;
+    if (this.isPublished) {
+      this.unpublish(actor);
+    }
     this.addUpdate(ViolationUpdate.createRejectUpdate(actor));
   }
 
