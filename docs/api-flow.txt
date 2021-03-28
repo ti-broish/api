@@ -14,6 +14,7 @@ DELETE /me
 GET    /posts
 # Get details for a specific post
 GET    /posts/:post
+POST /posts
 
 # Create a new broadcast for a push notification
 POST   /broadcasts
