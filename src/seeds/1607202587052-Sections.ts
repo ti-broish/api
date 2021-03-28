@@ -4,7 +4,7 @@ import {MigrationInterface, QueryRunner} from 'typeorm';
 export class Sections1607202587052 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`ROLLBACK;`);
+    await queryRunner.query(`COMMIT;`);
     await queryRunner.query(`
       create table if not exists "sections_seed" (
         "country_code" char(2),
@@ -28,10 +28,10 @@ export class Sections1607202587052 implements MigrationInterface {
       );
     `);
 
-    // await queryRunner.query(await csvToSql(
-    //   __dirname + '/parl-2021-04-04/sections-2021-04-04.csv',
-    //   'sections_seed',
-    // ));
+    await queryRunner.query(await csvToSql(
+      __dirname + '/parl-2021-04-04/sections-2021-04-04.csv',
+      'sections_seed',
+    ));
 
     await queryRunner.query(`START TRANSACTION;`);
 
