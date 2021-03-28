@@ -38,7 +38,7 @@ export class UsersController {
       }
       const user = await this.registration.register(firebaseUser, userDto);
 
-      return UserDto.fromEntity(user);
+      return UserDto.fromEntity(user, [UserDto.ME_READ]);
     } catch (error) {
       console.error(error);
       if (error instanceof RegistrationError) {
