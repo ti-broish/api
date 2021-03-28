@@ -40,7 +40,7 @@ export function csvToSql(
   options: { delimiter?: string, escape?: string, columns?: boolean|string[] } = {}
 ): Promise<string> {
   const { delimiter = ',', escape = '"', columns = true } = options;
-  const parseRowsToObjects = parse({ delimiter, escape, columns: columns });
+  const parseRowsToObjects = parse({ delimiter, escape, columns });
   const transformRecordsToSqlInserts = createRecordsToInsertsTransformer(tableName);
 
   return streamToString(
