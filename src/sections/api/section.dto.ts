@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import { IsNotEmpty, IsNumberString, IsOptional, IsString, Length } from 'class-validator';
+import { StreamDto } from 'src/streams/api/stream.dto';
 import { ElectionRegion } from '../entities';
 import { Section } from '../entities/section.entity';
 import { CityRegionDto } from './cityRegion.dto';
@@ -13,11 +14,11 @@ const allowedGroups = ['read', 'get'];
 @Exclude()
 export class SectionDto {
   @ApiProperty()
-  @Expose({ groups: ['read', 'create', 'replace'] })
-  @IsSectionExists({ groups: ['create', 'replace'] })
-  @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH, { groups: ['create', 'replace'] })
-  @IsString({ groups: ['create', 'replace'] })
-  @IsNumberString({ no_symbols: true }, { groups: ['create', 'replace'] })
+  @Expose({ groups: ['read', 'create', StreamDto.CREATE, 'replace'] })
+  @IsSectionExists({ groups: ['create', StreamDto.CREATE, 'replace'] })
+  @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH, { groups: ['create', StreamDto.CREATE, 'replace'] })
+  @IsString({ groups: ['create', StreamDto.CREATE, 'replace'] })
+  @IsNumberString({ no_symbols: true }, { groups: ['create', StreamDto.CREATE, 'replace'] })
   public id: string;
 
   @ApiProperty()
@@ -38,15 +39,15 @@ export class SectionDto {
   isMobile: boolean;
 
   @Type(() => ElectionRegionDto)
-  @Expose({ groups: ['get'] })
+  @Expose({ groups: ['get', StreamDto.READ] })
   electionRegion: ElectionRegionDto;
 
   @Type(() => TownDto)
-  @Expose({ groups: ['get'] })
+  @Expose({ groups: ['get', StreamDto.READ] })
   town: TownDto;
 
   @Type(() => CityRegionDto)
-  @Expose({ groups: ['get'] })
+  @Expose({ groups: ['get', StreamDto.READ] })
   cityRegion: CityRegionDto;
 
   public static fromEntity(entity: Section, additionalGroups: string[] = ['read']): SectionDto {

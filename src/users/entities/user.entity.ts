@@ -1,6 +1,8 @@
 import { Protocol } from 'src/protocols/entities/protocol.entity';
+import { Section } from 'src/sections/entities';
+import { Stream } from 'src/streams/entities/stream.entity';
 import { Violation } from 'src/violations/entities/violation.entity';
-import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn } from 'typeorm';
 import { ulid } from 'ulid';
 import { Role } from '../../casl/role.enum';
 import { Picture } from '../../pictures/entities/picture.entity';
@@ -47,7 +49,7 @@ export class User {
   isEmailVerified: boolean = false;
 
   @Column('simple-json')
-  roles: Role[] = [Role.User];
+  roles: Role[] = [Role.User, Role.Streamer];
 
   @OneToMany(() => Client, client => client.owner, {
     cascade: ['remove'],
@@ -69,6 +71,15 @@ export class User {
     inverseJoinColumn: { name: 'violation_id' },
   })
   assignedViolations: Violation[];
+
+  @OneToOne(() => Stream, {
+    cascade: ['update'],
+  })
+  @JoinColumn()
+  stream: Stream;
+
+  @ManyToOne(() => Section)
+  section: Section;
 
   @CreateDateColumn({ type: 'timestamp' })
   registeredAt: Date;

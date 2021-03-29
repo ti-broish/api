@@ -9,9 +9,18 @@ import { ClientsRepository } from '../users/entities/clients.repository';
 import { Client } from '../users/entities/client.entity';
 import { CaslModule } from '../casl/casl.module';
 import { UsersModule } from 'src/users/users.module';
+import { StreamsModule } from 'src/streams/streams.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Client]), UsersModule, CaslModule, ProtocolsModule, PicturesModule, ViolationsModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Client]),
+    UsersModule,
+    CaslModule,
+    ProtocolsModule,
+    PicturesModule,
+    ViolationsModule,
+    StreamsModule,
+  ],
   providers: [ClientsRepository],
   exports: [ClientsRepository],
   controllers: [MeController],

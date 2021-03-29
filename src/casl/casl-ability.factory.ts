@@ -13,11 +13,13 @@ import { Violation, ViolationStatus } from 'src/violations/entities/violation.en
 import { Organization, User } from "../users/entities";
 import { Action } from "./action.enum";
 import { Client } from 'src/users/entities/client.entity';
+import { Stream } from 'src/streams/entities/stream.entity';
 
 type Subjects =
     typeof User | typeof Organization | typeof Client | User | Organization | Client
   | typeof Post | typeof Broadcast | Post | Broadcast
   | typeof Picture | Picture
+  | typeof Stream | Stream
   | typeof Protocol | typeof ProtocolData | typeof ProtocolResult | Protocol | ProtocolData | ProtocolResult
   | typeof Section | typeof CityRegion | typeof Town | typeof Municipality | typeof ElectionRegion | typeof Country | Section | CityRegion | Town | Municipality | ElectionRegion | Country
   | typeof Party | Party
@@ -50,10 +52,12 @@ export class CaslAbilityFactory {
 
     if (user.hasRole(Role.Lawyer) || user.hasRole(Role.Admin)) {
       can([Action.Read, Action.Update, Action.Publish, Action.Manage], Violation);
-      // TODO: Lawyers can access all protocols submitted to sections with violations
-      // can(Action.Read, Protocol, { "section.violations" : null });
-      // TODO: only user with violations
-      // can(Action.Read, User)
+      // Lawyers can access all protocols submitted to sections with violations
+      can(Action.Read, [User, Picture, Protocol]);
+    }
+
+    if (user.hasRole(Role.Streamer) || user.hasRole(Role.Admin)) {
+      can([Action.Create], Stream);
     }
 
     if (user.hasRole(Role.Validator) || user.hasRole(Role.ExternalValidator) || user.hasRole(Role.Admin)) {
@@ -72,7 +76,7 @@ export class CaslAbilityFactory {
     }
 
     // Check for the default role so we can revoke access to people
-    if (user.hasRole(Role.User) || user.hasRole(Role.Admin)) {
+    if (user.hasRole(Role.User)) {
       can(Action.Read, Organization);
       can(Action.Read, [Section, CityRegion, Town, Municipality, ElectionRegion, Country]);
       can(Action.Create, [Picture, Protocol, ProtocolResult]);

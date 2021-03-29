@@ -3,5 +3,6 @@ export enum Role {
   Validator = 'validator',
   ExternalValidator = 'external-validator',
   Lawyer = 'lawyer',
+  Streamer = 'streamer',
   Admin = 'admin',
 }

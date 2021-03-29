@@ -12,7 +12,7 @@ import { CaslModule } from 'src/casl/casl.module';
 @Module({
   imports: [TypeOrmModule.forFeature([Section, Town, Municipality, ElectionRegion, Country]), CaslModule],
   providers: [SectionsRepository, CountriesRepository, ElectionRegionsRepository, TownsRepository, IsSectionExistsConstraint, IsTownExistsConstraint],
-  exports: [],
+  exports: [SectionsRepository],
   controllers: [SectionsController, CountriesController, ElectionRegionsController, TownsController],
 })
 export class SectionsModule {}

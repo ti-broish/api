@@ -102,3 +102,11 @@ GET    /reports?author=:user
 GET    /pictures?protocol=:protocol
 # Retrieve pictures attached to a report
 GET    /pictures?report=:report
+
+POST /streams
+
+GET /me/stream
+POST /me/stream/start
+POST /me/stream/stop
+
+POST /streams/:id

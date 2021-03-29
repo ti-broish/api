@@ -1,5 +1,5 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, Delete, Inject, Patch, Body, UsePipes, ValidationPipe, ConflictException, Post, UseGuards, ForbiddenException } from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -20,15 +20,20 @@ import { UsersRepository } from '../../users/entities/users.repository';
 import { ClientDto } from '../../users/api/client.dto';
 import { UserDto } from '../../users/api/user.dto';
 import * as admin from 'firebase-admin';
+import { ApiResponse } from '@nestjs/swagger';
+import { StreamsRepository } from 'src/streams/entities/streams.repository';
+import { StreamDto } from 'src/streams/api/stream.dto';
+import { Stream } from 'src/streams/entities/stream.entity';
 
 @Controller('me')
 export class MeController {
   constructor(
-    @Inject(UsersRepository) private readonly usersRepo: UsersRepository,
-    @Inject(ClientsRepository) private readonly clientsRepo: ClientsRepository,
-    @Inject(ProtocolsRepository) private readonly protocolsRepo: ProtocolsRepository,
-    @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
-    @Inject(PicturesUrlGenerator) private readonly picturesUrlGenerator: PicturesUrlGenerator,
+    private readonly usersRepo: UsersRepository,
+    private readonly clientsRepo: ClientsRepository,
+    private readonly protocolsRepo: ProtocolsRepository,
+    private readonly violationsRepo: ViolationsRepository,
+    private readonly streamsRepo: StreamsRepository,
+    private readonly picturesUrlGenerator: PicturesUrlGenerator,
   ) { }
 
   @Get()
@@ -100,6 +105,38 @@ export class MeController {
 
     return ClientDto.fromEntity(await this.clientsRepo.save(client));
   }
+
+  @Get('stream')
+  @HttpCode(200)
+  @ApiResponse({ status: 200, description: 'You can use the stream to send in video'})
+  @ApiResponse({ status: 401, description: 'You have not authenticated properly'})
+  @ApiResponse({ status: 403, description: 'You are not allowed to stream'})
+  @ApiResponse({ status: 409, description: 'You cannot stream yet - you should either select a section first or wait for the end of election day'})
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
+  async stream(
+    @InjectUser() user: User
+  ): Promise<StreamDto> {
+    const stream = await this.streamsRepo.findForUser(user);
+
+    if (!stream) {
+      throw new ConflictException('You cannot stream yet - you should either select a section first or wait for the end of election day');
+    }
+
+    return StreamDto.fromEntity(stream);
+  }
+
+  @Post('stream/start')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
+  streamStart(): void {}
+
+  @Post('stream/stop')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
+  streamStop(): void {}
 
   @Delete()
   @HttpCode(202)

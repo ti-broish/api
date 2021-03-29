@@ -19,6 +19,7 @@ import { CaslModule } from './casl/casl.module';
 import { AcceptLanguageResolver, I18nJsonParser, I18nModule } from 'nestjs-i18n';
 import { APP_FILTER } from '@nestjs/core';
 import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
+import { StreamsModule } from './streams/streams.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
     BroadcastsModule,
     ScheduleModule.forRoot(),
     CaslModule,
+    StreamsModule,
   ],
   providers: [
     {

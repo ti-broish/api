@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator';
+import { StreamDto } from 'src/streams/api/stream.dto';
 import { Town } from '../entities';
 import { CityRegionDto } from './cityRegion.dto';
 import { CountryDto } from './country.dto';
@@ -28,12 +29,12 @@ export class TownDto {
   cityRegions: CityRegionDto[];
 
   @ApiProperty()
-  @Expose({ groups: ['get'] })
+  @Expose({ groups: ['get', StreamDto.READ] })
   @Type(() => CountryDto)
   country: CountryDto;
 
   @ApiProperty()
-  @Expose({ groups: ['get'] })
+  @Expose({ groups: ['get', StreamDto.READ] })
   @Type(() => MunicipalityDto)
   municipality: MunicipalityDto;
 
