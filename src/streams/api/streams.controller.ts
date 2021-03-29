@@ -32,7 +32,6 @@ export class StreamsController {
     const section = await this.sectionsRepo.findOneOrFailWithRelations(streamDto.toEntity().section.id);
     stream.assign(user, section);
     await this.usersRepo.save(user);
-    console.log(stream);
 
     return StreamDto.fromEntity(stream, ['read', StreamDto.READ]);
   }
