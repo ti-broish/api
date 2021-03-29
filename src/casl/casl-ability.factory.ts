@@ -79,7 +79,7 @@ export class CaslAbilityFactory {
     if (user.hasRole(Role.User)) {
       can(Action.Read, Organization);
       can(Action.Read, [Section, CityRegion, Town, Municipality, ElectionRegion, Country]);
-      can(Action.Create, [Picture, Protocol, ProtocolResult]);
+      can(Action.Create, [Picture, Protocol, ProtocolResult, Violation]);
       // TODO: Read own protocols and their status and actions taken
       // can(Action.Read, Protocol, { 'actions.actor.id': user.id, 'actions.type': ProtocolActionType.SEND });
       can(Action.Read, Party);
