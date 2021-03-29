@@ -67,5 +67,6 @@
   "VIOLATION_IS_ALREADY_PUBLISHED": "Сигналът вече е публикуван",
   "VIOLATION_IS_ALREADY_UNPUBLISHED": "Сигналът вече е непубликуван",
   "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_RECEIVED": "Сигналът не може да бъде публикуван когато е тепърва получен",
-  "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_REJECTED": "Сигналът не може да бъде публикуван когато е отхвърлен"
+  "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_REJECTED": "Сигналът не може да бъде публикуван когато е отхвърлен",
+  "STREAM_NOT_ASSIGNED_STREAM": "Не можете да излъчвате - трябва да сте селектирали секция и да е след края на изборния ден"
 }

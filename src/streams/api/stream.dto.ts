@@ -23,6 +23,9 @@ export class StreamDto {
   @Expose({ groups: [StreamDto.WATCH] })
   broadcastUrl: string;
 
+  @Expose({ groups: [StreamDto.READ] })
+  viewUrl: string;
+
   @ApiProperty({ required: true })
   @Expose({ groups: [StreamDto.READ, StreamDto.CREATE] })
   @Type(() => SectionDto)

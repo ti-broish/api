@@ -67,5 +67,6 @@
   "VIOLATION_IS_ALREADY_PUBLISHED": "Violation is already published",
   "VIOLATION_IS_ALREADY_UNPUBLISHED": "Violation is already unpublished",
   "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_RECEIVED": "Violation cannot be published when it is just received",
-  "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_REJECTED": "Violation cannot be published when it is rejected"
+  "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_REJECTED": "Violation cannot be published when it is rejected",
+  "STREAM_NOT_ASSIGNED_STREAM": "You cannot stream yet - you should either select a section first or wait for the end of election day"
 }
