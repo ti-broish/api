@@ -17,6 +17,10 @@ export class OrganizationDto {
   @Expose({ groups: ['read', 'protocol.validate'] })
   name: string;
 
+  @ApiProperty()
+  @Expose({ groups: ['read', 'protocol.validate'] })
+  type: string;
+
   public static fromEntity(entity: Organization): OrganizationDto {
     return plainToClass<OrganizationDto, Partial<Organization>>(OrganizationDto, entity, {
       excludeExtraneousValues: true,
