@@ -71,7 +71,9 @@ export class Protocol {
   })
   results: ProtocolResult[];
 
-  @ManyToOne(() => Protocol)
+  @ManyToOne(() => Protocol, {
+    cascade: ['insert'],
+  })
   parent: Protocol;
 
   public getResults(): ProtocolResult[] {
@@ -134,7 +136,7 @@ export class Protocol {
     this.addAction(ProtocolAction.createPublishAction());
   }
 
-  replace(actor: User, section: Section|null, protocolResults: ProtocolResult[], protocolData: ProtocolData): Protocol {
+  replace(actor: User, replacement: Protocol): Protocol {
     if (![
       ProtocolStatus.RECEIVED,
       ProtocolStatus.APPROVED,
@@ -143,12 +145,9 @@ export class Protocol {
     ].includes(this.status)) {
       throw new ProtocolStatusException(this, ProtocolStatus.REPLACED);
     }
-    const replacement = new Protocol();
-    replacement.results = protocolResults;
-    replacement.data = protocolData;
-    replacement.section = section || this.section;
+    replacement.setReceivedStatus(actor);
+    replacement.section = replacement.section || this.section;
     replacement.status = ProtocolStatus.READY;
-    replacement.pictures = this.pictures;
     replacement.assignees = this.assignees;
 
     this.status = ProtocolStatus.REPLACED;

@@ -16,6 +16,9 @@ export class Picture implements PathInterface {
   @Column()
   sortPosition: number = 0;
 
+  @Column()
+  rotation: number = 0;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 

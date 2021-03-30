@@ -111,19 +111,13 @@ export class ProtocolsController {
   @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['replace'] } }))
   async replace(
     @Param('id') protocolId: string,
-    @Body() protocolDto: ProtocolDto,
+    @Body() replacementDto: ProtocolDto,
     @InjectUser() user: User,
   ): Promise<ProtocolDto> {
-    const submittedProtocol = protocolDto.toEntity();
+    const replacement = replacementDto.toEntity(['replace']);
     const prevProtocol = await this.repo.findOneOrFail(protocolId);
-    const nextProtocol = prevProtocol.replace(
-      user,
-      submittedProtocol.section || null,
-      protocolDto.results.toResults(),
-      protocolDto.results.toProtocolData(),
-    );
+    const nextProtocol = prevProtocol.replace(user, replacement);
     const savedProtocol = await this.repo.save(nextProtocol);
-    await this.repo.save(prevProtocol);
     const savedDto = ProtocolDto.fromEntity(savedProtocol, ['read.results']);
     savedDto.results = ProtocolResultsDto.fromEntity(savedProtocol);
     this.updatePicturesUrl(savedDto);

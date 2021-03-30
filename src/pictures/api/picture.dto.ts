@@ -8,10 +8,10 @@ import { IsPictureExists } from './picture-exists.constraint';
 @Exclude()
 export class PictureDto implements PathInterface {
   @ApiProperty()
-  @Expose({ groups: [ 'read', 'create'] })
-  @IsPictureExists({ groups: ['create'] })
-  @IsString({ groups: ['create'] })
-  @IsNotEmpty({ groups: ['create'] })
+  @Expose({ groups: [ 'read', 'create', 'replace'] })
+  @IsPictureExists({ groups: ['create', 'replace'] })
+  @IsString({ groups: ['create', 'replace'] })
+  @IsNotEmpty({ groups: ['create', 'replace'] })
   id: string;
 
   @ApiProperty()
@@ -20,6 +20,9 @@ export class PictureDto implements PathInterface {
 
   @Expose({ groups: ['read'] })
   path: string;
+
+  @Expose({ groups: ['read', 'replace'] })
+  rotation: number;
 
   public static fromEntity(entity: Picture): PictureDto {
     return plainToClass<PictureDto, Partial<Picture>>(PictureDto, entity, {

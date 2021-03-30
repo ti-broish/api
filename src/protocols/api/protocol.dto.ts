@@ -26,7 +26,7 @@ export class ProtocolDto {
   section: SectionDto;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: ['read', 'create'] })
+  @Expose({ groups: ['read', 'create', 'replace'] })
   @Transform((ids: string[]) => Array.isArray(ids) ? ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })) : ids, { groups: ['create'] })
   @Type(() => PictureDto)
   @IsOptional({ groups: ['replace'] })
@@ -63,9 +63,9 @@ export class ProtocolDto {
     return this.author;
   }
 
-  public toEntity(): Protocol {
+  public toEntity(groups: string[] = ['create']): Protocol {
     const protocol = plainToClass<Protocol, Partial<ProtocolDto>>(Protocol, this, {
-      groups: ['create', 'replace'],
+      groups: groups,
     });
 
     let sortPosition = 1;
@@ -76,7 +76,10 @@ export class ProtocolDto {
       return picture;
     }, []);
 
-    console.log(protocol.pictures);
+    if (protocol.results) {
+      protocol.results = this.results.toResults();
+      protocol.data = this.results.toProtocolData()
+    }
 
     return protocol;
   }
