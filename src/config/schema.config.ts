@@ -19,4 +19,5 @@ export const configSchema = Joi.object({
   MINIO_ACCESS_KEY: Joi.string().required(),
   MINIO_SECRET_KEY: Joi.string().required(),
   MINIO_PICTURES_BUCKET: Joi.string().required(),
+  API_DOCS: Joi.boolean().default(false)
 });
