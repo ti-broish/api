@@ -19,5 +19,6 @@ export const configSchema = Joi.object({
   MINIO_ACCESS_KEY: Joi.string().required(),
   MINIO_SECRET_KEY: Joi.string().required(),
   MINIO_PICTURES_BUCKET: Joi.string().required(),
-  API_DOCS: Joi.boolean().default(false)
+  API_DOCS: Joi.boolean().default(false),
+  CANONICAL_RESULTS: Joi.string().default('https://tibroish.bg/results/parliament2021-04-04/'),
 });

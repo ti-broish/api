@@ -49,4 +49,14 @@ export class Stream {
     user.section = section;
     user.stream = this;
   }
+
+  get viewUrl(): string | null {
+    if (!this.section) {
+      return null;
+    }
+
+    const resultsUrl = process.env.CANONICAL_RESULTS.replace(/\/$/, '');
+
+    return `${resultsUrl}/${this.section.id}`;
+  }
 }

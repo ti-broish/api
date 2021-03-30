@@ -24,7 +24,7 @@ export class StreamDto {
   broadcastUrl: string;
 
   @Expose({ groups: [StreamDto.READ] })
-  viewUrl: string;
+  viewUrl?: string;
 
   @ApiProperty({ required: true })
   @Expose({ groups: [StreamDto.READ, StreamDto.CREATE] })
