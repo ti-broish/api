@@ -31,6 +31,7 @@
   "dependencies": {
     "@anchan828/typeorm-decorators": "^0.4.11",
     "@casl/ability": "^5.2.0",
+    "@nestjs/cli": "^7.6.0",
     "@nestjs/common": "^7.5.4",
     "@nestjs/config": "^0.6.1",
     "@nestjs/core": "^7.5.4",
@@ -71,7 +72,6 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^7.5.1",
     "@nestjs/schematics": "^7.1.3",
     "@nestjs/testing": "^7.5.4",
     "@types/cron": "^1.7.2",
