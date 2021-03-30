@@ -8,9 +8,7 @@ import { I18nService } from 'nestjs-i18n';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  if (app.get(ConfigService).get<boolean>('API_DOCS', false)) {
-    setUpSwagger(app);
-  }
+  setUpSwagger(app);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalInterceptors(new TranslateStatusInterceptor(app.get(I18nService)));
   app.use(jsonMiddleware)
