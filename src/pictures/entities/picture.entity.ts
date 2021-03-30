@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne, AfterLoad } from 'typeorm';
 import { ulid } from 'ulid';
 import { User } from '../../users/entities';
 import { PathInterface } from '../path.interface';
 
-@Entity('pictures')
+@Entity('pictures', { orderBy: { sortPosition: 'ASC' } })
 export class Picture implements PathInterface {
   @PrimaryColumn('char', {
     length: 26,

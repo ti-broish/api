@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import { AfterLoad, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulid';
 import { Section, Town } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
@@ -36,7 +36,9 @@ export class Violation {
   @ManyToOne(() => Town, town => town.violations)
   town: Town;
 
-  @ManyToMany(() => Picture)
+  @ManyToMany(() => Picture, {
+    cascade: ['insert', 'update']
+  })
   @JoinTable({
     name: 'violations_pictures',
     joinColumn: { name: 'violation_id' },
@@ -132,5 +134,12 @@ export class Violation {
   private addUpdate(update: ViolationUpdate): void {
     update.violation = this;
     this.updates = (this.updates || []).concat([update]);
+  }
+
+  @AfterLoad()
+  sortAttributes() {
+    if (this?.pictures?.length) {
+      this.pictures.sort((a, b) => Math.sign(a.sortPosition - b.sortPosition));
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { Picture } from 'src/pictures/entities/picture.entity';
 import { UserDto } from 'src/users/api/user.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { SectionDto } from '../../sections/api/section.dto';
@@ -63,9 +64,21 @@ export class ProtocolDto {
   }
 
   public toEntity(): Protocol {
-    return plainToClass<Protocol, Partial<ProtocolDto>>(Protocol, this, {
+    const protocol = plainToClass<Protocol, Partial<ProtocolDto>>(Protocol, this, {
       groups: ['create', 'replace'],
     });
+
+    let sortPosition = 1;
+    protocol.pictures = protocol.pictures.map((picture: Picture): Picture => {
+      picture.sortPosition = sortPosition;
+      sortPosition++;
+
+      return picture;
+    }, []);
+
+    console.log(protocol.pictures);
+
+    return protocol;
   }
 
   public static fromEntity(protocol: Protocol, additionalGroups: string[] = []): ProtocolDto {

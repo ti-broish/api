@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import { AfterLoad, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
 import { ulid } from 'ulid';
 import { ProtocolAction, ProtocolActionType } from './protocol-action.entity';
 import { ProtocolData } from './protocol-data.entity';
@@ -43,7 +43,9 @@ export class Protocol {
   @ManyToOne(() => Section, section => section.protocols, { eager: true })
   section: Section;
 
-  @ManyToMany(() => Picture)
+  @ManyToMany(() => Picture, {
+    cascade: ['insert', 'update']
+  })
   @JoinTable({
     name: 'protocols_pictures',
     joinColumn: { name: 'protocol_id' },
@@ -176,5 +178,12 @@ export class Protocol {
   private setData(data: ProtocolData): void {
     data.protocol = this;
     this.data = data;
+  }
+
+  @AfterLoad()
+  sortAttributes() {
+    if (this?.pictures?.length) {
+      this.pictures.sort((a, b) => Math.sign(a.sortPosition - b.sortPosition));
+    }
   }
 }

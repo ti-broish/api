@@ -21,10 +21,6 @@ export class PictureDto implements PathInterface {
   @Expose({ groups: ['read'] })
   path: string;
 
-  @ApiProperty()
-  @Expose({ groups: ['read'] })
-  sortPosition: number;
-
   public static fromEntity(entity: Picture): PictureDto {
     return plainToClass<PictureDto, Partial<Picture>>(PictureDto, entity, {
       excludeExtraneousValues: true,

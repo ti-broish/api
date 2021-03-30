@@ -6,6 +6,7 @@ import { Violation, ViolationStatus } from '../entities/violation.entity';
 import { TownDto } from '../../sections/api/town.dto';
 import { UserDto } from 'src/users/api/user.dto';
 import { ViolationUpdateDto } from './violation-update.dto';
+import { Picture } from 'src/pictures/entities/picture.entity';
 
 @Exclude()
 export class ViolationDto{
@@ -71,9 +72,19 @@ export class ViolationDto{
   }
 
   public toEntity(): Violation {
-    return plainToClass<Violation, Partial<ViolationDto>>(Violation, this, {
+    const violation = plainToClass<Violation, Partial<ViolationDto>>(Violation, this, {
       groups: ['create'],
     });
+
+    let sortPosition = 1;
+    violation.pictures = violation.pictures.map((picture: Picture): Picture => {
+      picture.sortPosition = sortPosition;
+      sortPosition++;
+
+      return picture;
+    }, []);
+
+    return violation;
   }
 
   public static fromEntity(violation: Violation, additionalGroups: string[] = []): ViolationDto {
