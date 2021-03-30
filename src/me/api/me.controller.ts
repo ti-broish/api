@@ -9,12 +9,14 @@ import { User } from '../../users/entities/user.entity';
 import { UsersRepository } from '../../users/entities/users.repository';
 import { UserDto } from '../../users/api/user.dto';
 import * as admin from 'firebase-admin';
+import { ViolationsRepository } from 'src/violations/entities/violations.repository';
 
 @Controller('me')
 export class MeController {
   constructor(
     private readonly usersRepo: UsersRepository,
     private readonly protocolsRepo: ProtocolsRepository,
+    private readonly violationsRepo: ViolationsRepository,
   ) {}
 
   @Get()
@@ -42,9 +44,12 @@ export class MeController {
   // @CheckPolicies((ability: Ability) => ability.can(Action.Delete, User))
   async delete(@InjectUser() user: User): Promise<void> {
     const submittedProtocols = await this.protocolsRepo.findByAuthor(user);
-    if (submittedProtocols.length > 0) {
-      throw new ConflictException('CANNOT_DELETE_USER_WITH_PROTOCOLS');
+    const submittedViolations = await this.violationsRepo.findByAuthor(user);
+
+    if (submittedProtocols.length > 0 || submittedViolations.length > 0) {
+      throw new ConflictException('CANNOT_DELETE_USER_WITH_PROTOCOLS_OR_VIOLATIONS');
     }
+
     const firebaseUid = user.firebaseUid;
     await this.usersRepo.delete(user.id);
     await admin.auth().deleteUser(firebaseUid);

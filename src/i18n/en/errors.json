@@ -1,6 +1,6 @@
 {
   "PROTOCOL_ALREADY_HAS_RESULTS": "Protocol already has results!",
-  "CANNOT_DELETE_USER_WITH_PROTOCOLS": "Cannot delete a person record with submitted protocols! User records would be deleted 30 days after the election.",
+  "CANNOT_DELETE_USER_WITH_PROTOCOLS_OR_VIOLATIONS": "Cannot delete a person record with submitted protocols! User records would be deleted 30 days after the election.",
   "USER_DOES_NOT_EXIST": "User doesn't exist",
   "USER_ID_STRING": "User ID must be a text string",
   "USER_ID_NOT_EMPTY": "User id is required",
