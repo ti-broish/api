@@ -1,0 +1,16 @@
+{
+  "VIOLATION_RECEIVED": "Received",
+  "VIOLATION_PROCESSING": "Processing",
+  "VIOLATION_PROCESSED": "Processed",
+  "VIOLATION_REJECTED": "Rejected",
+  "PROTOCOL_RECEIVED": "Received",
+  "PROTOCOL_REJECTED": "Rejected",
+  "PROTOCOL_REPLACED": "Replaced",
+  "PROTOCOL_READY": "Ready",
+  "PROTOCOL_APPROVED": "Approved",
+  "PROTOCOL_PUBLISHED": "Published",
+  "BROADCAST_PENDING": "Pending",
+  "BROADCAST_PROCESSING": "Processing",
+  "BROADCAST_PUBLISHED": "Published",
+  "BROADCAST_DISCARDED": "Discarded"
+}

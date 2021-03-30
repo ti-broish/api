@@ -1,0 +1,16 @@
+{
+  "VIOLATION_RECEIVED": "Получен",
+  "VIOLATION_PROCESSING": "Обработва се",
+  "VIOLATION_PROCESSED": "Обработен",
+  "VIOLATION_REJECTED": "Отхвърлен",
+  "PROTOCOL_RECEIVED": "Получен",
+  "PROTOCOL_REJECTED": "Отхвърлен",
+  "PROTOCOL_REPLACED": "Заменен",
+  "PROTOCOL_READY": "Попълнен",
+  "PROTOCOL_APPROVED": "Одобрен",
+  "PROTOCOL_PUBLISHED": "Публикуван",
+  "BROADCAST_PENDING": "В изчакване",
+  "BROADCAST_PROCESSING": "Обработва се",
+  "BROADCAST_PUBLISHED": "Публикувано",
+  "BROADCAST_DISCARDED": "Отхвърлено"
+}
