@@ -5,7 +5,7 @@ import { ulid } from "ulid";
 export class AddStreams1616992561879 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(await csvToSql(
+      (await csvToSql(
         __dirname + '/parl-2021-04-04/streams.csv',
         'streams',
         {
@@ -13,7 +13,7 @@ export class AddStreams1616992561879 implements MigrationInterface {
             return ulid();
           }
         }
-      ));
+      )).split(';').map(async (sql) => await queryRunner.query(sql));
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
