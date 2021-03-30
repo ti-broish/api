@@ -28,10 +28,10 @@ export class Sections1607202587052 implements MigrationInterface {
       );
     `);
 
-    await queryRunner.query(await csvToSql(
+    (await csvToSql(
       __dirname + '/parl-2021-04-04/sections-2021-04-04.csv',
       'sections_seed',
-    ));
+    )).split(';').map(async (sql) => await queryRunner.query(sql));
 
     await queryRunner.query(`START TRANSACTION;`);
 

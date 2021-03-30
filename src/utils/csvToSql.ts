@@ -4,6 +4,10 @@ import { createReadStream, PathLike } from 'fs';
 import { Stream } from 'stream';
 
 const escValue = (value: string): string => {
+  if (value === 'NULL') {
+    return value;
+  }
+
   return "'" + value.replace(/'/g, "''") + "'";
 }
 
