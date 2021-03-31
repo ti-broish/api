@@ -73,4 +73,10 @@ import { StreamsModule } from './streams/streams.module';
     },
   ]
 })
-export class AppModule {}
+export class AppModule {
+  onApplicationBootstrap() {
+    if (process.send) {
+      process.send('ready');
+    }
+  }
+}
