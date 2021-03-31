@@ -23,17 +23,24 @@ export class BroadcastsPublishTask {
   })
   async triggerNotifications() {
     const broadcasts = await this.broadcastsRepo.findAllToBePublishedAndPending();
+
+    if (broadcasts.length === 0) {
+      return;
+    }
+
     broadcasts.forEach((broadcast: Broadcast) => {
       broadcast.process();
     });
     this.entityManager.save(broadcasts);
     const notifications = await Promise.all(broadcasts.map(async (broadcast: Broadcast) => this.convertBroadcastToNotification(broadcast)));
+
     try {
       // TODO: add proper logging with an external logger
-      firebase.messaging().sendAll(notifications);
+      await firebase.messaging().sendAll(notifications);
     } catch (error) {
       console.error(error);
     }
+
     broadcasts.forEach((broadcast: Broadcast) => {
       broadcast.publish();
     });
