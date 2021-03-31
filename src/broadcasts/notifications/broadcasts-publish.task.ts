@@ -32,7 +32,7 @@ export class BroadcastsPublishTask {
       // TODO: add proper logging with an external logger
       firebase.messaging().sendAll(notifications);
     } catch (error) {
-
+      console.error(error);
     }
     broadcasts.forEach((broadcast: Broadcast) => {
       broadcast.publish();
