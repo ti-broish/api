@@ -24,7 +24,7 @@ module.exports = {
       path : '/var/www/ti-broish-demo',
       'post-setup': 'ls -la',
       // 'pre-deploy-local': 'npm run build',
-      'post-deploy' : 'npm ci --omit=dev && npm run build && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/ && npm run migration:run && pm2 reload demo-ecosystem.config.js --env production',
+      'post-deploy' : 'npm ci --omit=dev && npm run build && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/ && NODE_ENV=production npm run migration:run && pm2 reload demo-ecosystem.config.js --env production',
       'pre-setup': ''
     }
   }
