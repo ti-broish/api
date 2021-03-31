@@ -16,17 +16,21 @@ export class TranslateStatusInterceptor implements NestInterceptor {
     return next
       .handle()
       .pipe(map(async(response) => {
-        return await this.translateStatus(response, context.switchToHttp().getRequest().i18nLang);
+        return await this.translateStatus(context.switchToHttp().getRequest().i18nLang, response);
       } ));
   }
 
-  private async translateStatus(object: ResponseObject|ResponseObject[], lang: string): Promise<ResponseObject|ResponseObject[]> {
+  private async translateStatus(lang: string, object?: ResponseObject|ResponseObject[]|null|undefined): Promise<ResponseObject|ResponseObject[]|null|undefined> {
+    if (!object) {
+      return object;
+    }
+
     if (Array.isArray(object)) {
-      return await Promise.all(object.map((item: ResponseObject): Promise<ResponseObject> => this.translateStatus(item, lang)));
+      return await Promise.all(object.map((item: ResponseObject): Promise<ResponseObject> => this.translateStatus(lang, item)));
     }
 
     if (object.items && Array.isArray(object.items)) {
-      object.items = await this.translateStatus(object.items, lang);
+      object.items = await this.translateStatus(lang, object.items);
 
       return object;
     }
