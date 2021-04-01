@@ -15,12 +15,6 @@ export class CityRegionResultsDto {
 
   addresses: Map<string, AddressDto>;
 
-  validVotes: number;
-
-  invalidVotes: number;
-
-  voters: number;
-
   abroad: boolean = false;
 
   crumbs: BreadcrumbDto[];

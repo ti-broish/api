@@ -17,15 +17,6 @@ export class ElectionRegionResultsDto {
   @Expose({ groups: ['details'] })
   admunits: Map<string, AdmUnitResultsDto> = new Map<string, AdmUnitResultsDto>();
 
-  @Expose({ groups: ['list', 'details'] })
-  validVotes?: number = null;
-
-  @Expose({ groups: ['list', 'details'] })
-  invalidVotes?: number = null;
-
-  @Expose({ groups: ['list', 'details'] })
-  voters?: number = null;
-
   @Expose({ name: 'isAbroad', groups: ['list'] })
   abroad: boolean = false;
 

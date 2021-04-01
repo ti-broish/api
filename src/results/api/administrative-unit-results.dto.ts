@@ -13,12 +13,6 @@ export class AdmUnitResultsDto {
 
   towns: TownResultsDto[];
 
-  validVotes: number;
-
-  invalidVotes: number;
-
-  voters: number;
-
   abroad: boolean = false;
 
   crumbs: BreadcrumbDto[];

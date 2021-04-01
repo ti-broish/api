@@ -11,5 +11,5 @@ export class SectionResultsDto extends PickType(SectionDetailsResultDto, [
 ] as const) {
 
   @Expose()
-  stats: Pick<StatsDto, 'protocolsReceived' | 'protocolsValidated'>;
+  stats: Omit<StatsDto, 'sectionsCount' | 'sectionsWithResults'>;
 }
