@@ -1,7 +1,7 @@
 import { Ability } from '@casl/ability';
 import { Controller, Post, HttpCode, Body, Inject, ValidationPipe, UsePipes, HttpException, HttpStatus, Get, UseGuards, Query, ParseIntPipe, Patch, Param } from '@nestjs/common';
-import { FirebaseUser } from '@tfarras/nestjs-firebase-admin';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { FirebaseUser } from 'src/auth/firebase';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';

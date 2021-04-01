@@ -3,13 +3,8 @@ import { JwtFromRequestFunction } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-strategy';
 import { Request } from 'express';
-import {
-  FirebaseUser,
-  UNAUTHORIZED,
-  FIREBASE_AUTH
-} from '@tfarras/nestjs-firebase-auth';
-import { FirebaseAuthStrategyOptions } from './options.interface';
 import * as admin from 'firebase-admin';
+import { FirebaseAuthStrategyOptions, FirebaseUser, FIREBASE_AUTH, UNAUTHORIZED } from '.';
 
 export class FirebaseAuthStrategy extends PassportStrategy(Strategy, 'firebase-auth') {
   readonly name = FIREBASE_AUTH;

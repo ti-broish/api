@@ -1,9 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FirebaseUser } from "@tfarras/nestjs-firebase-admin";
 import { UserDto } from "./user.dto";
 import { User } from "../entities";
 import { UsersRepository } from "../entities/users.repository";
+import { FirebaseUser } from "src/auth/firebase";
 
 export class RegistrationError implements Error {
   constructor(public name: string, public message: string) {}

@@ -43,7 +43,6 @@
     "@nestjs/typeorm": "^7.1.5",
     "@sindresorhus/slugify": "^1.1.0",
     "@tfarras/nestjs-firebase-admin": "^1.0.1",
-    "@tfarras/nestjs-firebase-auth": "^1.0.0",
     "@types/joi": "^14.3.4",
     "base64-img": "^1.0.4",
     "body-parser": "^1.19.0",
