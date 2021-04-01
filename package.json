@@ -30,7 +30,7 @@
     "firebase:token": "node ./scripts/get-token.js"
   },
   "dependencies": {
-    "@anchan828/typeorm-decorators": "^0.4.11",
+    "@anchan828/typeorm-decorators": "^0.4.22",
     "@casl/ability": "^5.2.0",
     "@nestjs/cli": "^7.6.0",
     "@nestjs/common": "^7.5.4",
