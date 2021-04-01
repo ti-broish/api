@@ -18,7 +18,7 @@ export class ProtocolDto {
   @Expose({ groups: ['read', 'create', 'replace'] })
   @Type(() => SectionDto)
   @IsOptional({ groups: ['replace'] })
-  @Transform((id: string) => plainToClass(SectionDto, { id }, { groups: ['create'] }), { groups: ['create'] })
+  @Transform(({ value }) => plainToClass(SectionDto, { value }, { groups: ['create'] }), { groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
   @ValidateNested({
     groups: ['create', 'replace'],
@@ -27,7 +27,7 @@ export class ProtocolDto {
 
   @ApiProperty({ required: true })
   @Expose({ groups: ['read', 'create', 'replace'] })
-  @Transform((ids: string[]) => Array.isArray(ids) ? ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })) : ids, { groups: ['create'] })
+  @Transform(({ value }) => Array.isArray(value) ? value.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })) : value, { groups: ['create'] })
   @Type(() => PictureDto)
   @IsOptional({ groups: ['replace'] })
   @IsArray({ groups: ['create'] })

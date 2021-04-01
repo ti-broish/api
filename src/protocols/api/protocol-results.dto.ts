@@ -7,7 +7,7 @@ import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol } from '../entities/protocol.entity';
 
 export class ProtocolResultDto {
-  @Transform((id: number) => plainToClass(PartyDto, { id }, { groups: ['create'] }), { groups: ['create', 'replace'] })
+  @Transform(({ value }) => plainToClass(PartyDto, { value }, { groups: ['create'] }), { groups: ['create', 'replace'] })
   @ValidateNested({
     groups: ['create', 'replace'],
   })

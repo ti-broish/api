@@ -1,0 +1,13 @@
+1. Get protocols (A) with approved status with their sections and section relations.
+2. Mark the protocols (A) as "publishing".
+3. Get all the sections for the protocols (A).
+4. Find the country, election region, municipality and city region of the sections of protocols (A).
+5. Get all the protocols (B) from these countries, election regions, municipalities, city regions which are "published" or "publishing".
+6. Combine protocols (A) and protocols (B) excluding where A is taking precedence for the sections = (A|B).
+7. Tabulate the results for the sections from protocols (A).
+8. Tabulate the results for the countries, municipalities, election regions and all of the results (A|B).
+9. Generate json for the sections (A).
+10. Generate json for the countries, municipalities, election regions and all of the results (A|B).
+11. Push the json files to the file storage.
+12. Mark the protocols (A) as "published".
+13. Mark protocols (B) which are from the same section as (A) as "replaced" (B&A).

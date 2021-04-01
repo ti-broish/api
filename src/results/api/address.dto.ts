@@ -1,0 +1,3 @@
+class AddressDto {
+  sections: string[];
+}

@@ -1,0 +1,6 @@
+/results
+/results/:election_region_id
+/results/:election_region_id:country_id
+/results/:election_region_id:municipality_id
+/results/:election_region_id:municipality_id:city_region_id
+/results/:election_region_id:municipality_id:city_region_id:section_code

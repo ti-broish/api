@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities';
-import { QueryBuilder, Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder, getConnection, In, Brackets } from 'typeorm';
 import { ProtocolActionType } from './protocol-action.entity';
 import { Protocol, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
@@ -94,5 +94,54 @@ export class ProtocolsRepository {
     }
 
     return this.findOneOrFail(protocol.id);
+  }
+
+  async findApprovedProtocols(): Promise<Protocol[]> {
+    const qb = this.repo.createQueryBuilder('protocol');
+    qb.innerJoinAndSelect('protocol.results', 'results');
+    qb.innerJoinAndSelect('protocol.section', 'section');
+    qb.innerJoinAndSelect('section.election_region', 'election_region');
+    qb.innerJoinAndSelect('section.town', 'town');
+    qb.innerJoinAndSelect('town.municipality', 'municipality');
+    qb.innerJoinAndSelect('town.country', 'country');
+    qb.innerJoinAndSelect('section.cityRegion', 'cityRegion');
+    qb.andWhere('protocol.status = :status', { status: ProtocolStatus.APPROVED });
+
+    return qb.getMany();
+  }
+
+  async findPublishedProtocolsFrom(partialSectionIds: string[]): Promise<Protocol[]> {
+    const qb = this.repo.createQueryBuilder('protocol');
+    qb.innerJoinAndSelect('protocol.results', 'results');
+    qb.innerJoinAndSelect('protocol.section', 'section');
+    qb.andWhere(new Brackets((qbNested: SelectQueryBuilder<Protocol>) => {
+      partialSectionIds.forEach((partialSectionId: string) => {
+        qbNested.orWhere('section.id LIKE :sectionId', { sectionId: `${partialSectionId}%` });
+      });
+    }));
+    qb.andWhere('protocol.status = :status', { status: ProtocolStatus.PUBLISHED });
+
+    return qb.getMany();
+  }
+
+  async markProtocolsAsPublishing(protocols: Protocol[]): Promise<void> {
+    this.markProtocolsAs(ProtocolStatus.PUBLISHING, protocols);
+  }
+
+  async markProtocolsAsPublished(protocols: Protocol[]): Promise<void> {
+    this.markProtocolsAs(ProtocolStatus.PUBLISHED, protocols);
+  }
+
+  async markProtocolsAsReplaced(protocols: Protocol[]): Promise<void> {
+    this.markProtocolsAs(ProtocolStatus.REPLACED, protocols);
+  }
+
+  private async markProtocolsAs(status: ProtocolStatus, protocols: Protocol[]): Promise<void> {
+    await getConnection()
+      .createQueryBuilder()
+      .update(Protocol)
+      .set({ status })
+      .where({ id: In(protocols.map((protocol: Protocol) => protocol.id)) })
+      .execute();
   }
 }

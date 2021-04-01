@@ -35,6 +35,6 @@ export class PartyDto {
     return plainToClass<PartyDto, Partial<Party>>(PartyDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
-    })
+    });
   }
 }

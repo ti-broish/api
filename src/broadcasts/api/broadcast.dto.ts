@@ -43,7 +43,7 @@ export class BroadcastDto {
   @IsArray()
   @ArrayNotEmpty({ always: true })
   @Type(() => UserDto)
-  @Transform((ids: string[]) => Array.isArray(ids) ? ids.map(id => plainToClass(UserDto, { id }, { groups: ['broadcast.create'] })) : ids, { groups: ['create'] })
+  @Transform(({ value }) => Array.isArray(value) ? value.map(id => plainToClass(UserDto, { id }, { groups: ['broadcast.create'] })) : value, { groups: ['create'] })
   @ValidateNested({
     always: true,
     each: true,
@@ -57,7 +57,7 @@ export class BroadcastDto {
     message: 'either $property or url must be populated',
   })
   @Transform(
-    (value: any, broadcast: Broadcast) => broadcast.data && broadcast.data.type === BroadcastType.POST
+    ({obj: broadcast }: {obj: Broadcast}) => broadcast.data && broadcast.data.type === BroadcastType.POST
       ? plainToClass<PostDto, Partial<PostDto>>(PostDto, { id: broadcast.data.postId }, { groups: ['read'] })
       : null,
     { groups: ['read']
@@ -84,7 +84,7 @@ export class BroadcastDto {
     message: '$property must a valid full HTTPs URL address',
   })
   @Transform(
-    (value: any, broadcast: Broadcast) => broadcast.data && broadcast.data.type === BroadcastType.URL
+    ({obj: broadcast }: {obj: Broadcast}) => broadcast.data && broadcast.data.type === BroadcastType.URL
       ? broadcast.data.url
       : null,
     { groups: ['read']

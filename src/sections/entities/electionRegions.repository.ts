@@ -7,6 +7,10 @@ import { ElectionRegion } from './electionRegion.entity';
 export class ElectionRegionsRepository {
   constructor(@InjectRepository(ElectionRegion) private repo: Repository<ElectionRegion>) {}
 
+  async findOneOrFail(code: string): Promise<ElectionRegion> {
+    return this.repo.findOneOrFail({ where: { code } });
+  }
+
   findAll(): Promise<ElectionRegion[]> {
     return this.repo.find();
   }

@@ -20,6 +20,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
 import { StreamsModule } from './streams/streams.module';
 import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module';
+import { ResultsModule } from './results/results.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module';
     ScheduleModule.forRoot(),
     CaslModule,
     StreamsModule,
+    ResultsModule,
   ],
   providers: [
     {

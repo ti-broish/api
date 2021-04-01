@@ -78,7 +78,7 @@ export class UserDto {
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_EMAIL_LENGTH',
   })
-  @Transform((value: string) => value ? value.toLowerCase() : value, { groups: [UserDto.CREATE, UserDto.UPDATE]})
+  @Transform(({ value }) => value ? value.toLowerCase() : value, { groups: [UserDto.CREATE, UserDto.UPDATE]})
   email: string;
 
   @ApiProperty({ required: true })

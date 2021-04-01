@@ -14,6 +14,15 @@ export class PartiesRepository {
     return this.repo.find();
   }
 
+  findAllForResults(): Promise<Party[]> {
+    return this.repo.find({
+      where: [
+        { isFeatured: true },
+        { id: 0 },
+      ],
+    });
+  }
+
   findOne(id: number): Promise<Party> {
     return this.repo.findOne(id);
   }

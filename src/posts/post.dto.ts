@@ -36,7 +36,7 @@ export class PostDto {
   @Expose({ groups: ['read', 'create', 'update'] })
   @Type(() => PictureDto)
   @IsOptional()
-  @Transform((id: string) => id ? plainToClass(PictureDto, { id }, { groups: ['create', 'update'] }) : id, { groups: ['create', 'update'] })
+  @Transform(({ value }) => value ? plainToClass(PictureDto, { value }, { groups: ['create', 'update'] }) : value, { groups: ['create', 'update'] })
   @ValidateNested({
     groups: ['create', 'update'],
   })
