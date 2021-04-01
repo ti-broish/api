@@ -19,6 +19,8 @@ export class ElectionRegion {
   @OneToMany(() => Section, section => section.electionRegion)
   public readonly sections: Section[];
 
+  sectionsCount: number;
+
   @ManyToMany(() => Municipality, municipality => municipality.electionRegions)
   @JoinTable({
     name: 'election_regions_municipalities',

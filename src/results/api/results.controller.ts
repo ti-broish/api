@@ -27,10 +27,9 @@ export class ResultsController {
     total.electionType = ElectionType.PARLIAMENT;
     total.parties = (await this.partiesRepo.findAllForResults())
       .map((party: Party): PartyDto => PartyDto.fromEntity(party));
-    total.regions = (await this.electionRegionsRepo.findAll())
+    total.regions = (await this.electionRegionsRepo.findAllWithStats())
       .map((electionRegion: ElectionRegion) => ElectionRegionResultsDto.fromEntity(electionRegion))
       .reduce((acc: any, electionRegion: Partial<ElectionRegionResultsDto>): Map<string, Partial<ElectionRegionResultsDto>> => {
-        console.log(electionRegion);
         acc[electionRegion.number] = electionRegion;
         return acc;
       }, {});
@@ -69,7 +68,9 @@ export class ResultsController {
   }
 
   private async getElectionRegionResults(id: string): Promise<ElectionRegionResultsDto> {
-    return ElectionRegionResultsDto.fromEntity(await this.getElectionRegion(id));
+    const electionRegion = await this.electionRegionsRepo.findOneWithStatsOrFail(id);
+
+    return ElectionRegionResultsDto.fromEntity(electionRegion, ['list', 'details']);
   }
 
   private async getCountryOrMunicipalityResults(id: string): Promise<AdmUnitResultsDto> {

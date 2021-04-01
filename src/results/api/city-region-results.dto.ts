@@ -1,5 +1,7 @@
+import { Expose } from "class-transformer";
 import { BreadcrumbDto } from "./breadcrumb.dto";
 import { SectionResultsDto } from "./section-results.dto";
+import { StatsDto } from "./stats.dto";
 import { TownResultsDto } from "./town-results.dto";
 
 export class CityRegionResultsDto {
@@ -23,4 +25,6 @@ export class CityRegionResultsDto {
 
   crumbs: BreadcrumbDto[];
 
+  @Expose()
+  stats: StatsDto = new StatsDto();
 }

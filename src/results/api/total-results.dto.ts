@@ -1,6 +1,7 @@
 import { Exclude, Expose, Type } from "class-transformer";
 import { ElectionRegionResultsDto } from "./election-region-results.dto";
 import { PartyDto } from "./party.dto";
+import { StatsDto } from "./stats.dto";
 
 export enum ElectionType {
   PARLIAMENT = 'national-parliament',
@@ -22,14 +23,7 @@ export class TotalResultsDto {
   parties: PartyDto[];
 
   @Expose()
-  regions: Map<string, Pick<ElectionRegionResultsDto,
-  'name'
-  | 'number'
-  | 'abroad'
-  | 'results'
-  | 'validVotes'
-  | 'invalidVotes'
-  | 'voters'>>;
+  regions: Map<string, Omit<ElectionRegionResultsDto, 'admUnits'>>;
 
   @Expose()
   validVotes: number = null;
@@ -39,4 +33,7 @@ export class TotalResultsDto {
 
   @Expose()
   voters: number = null;
+
+  @Expose()
+  stats: StatsDto = new StatsDto();
 }
