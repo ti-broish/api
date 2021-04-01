@@ -387,7 +387,7 @@ Temporary Items
 
 =======
 # Local
-/.env
+/.env*
 /dist/
-/firebase.json
+/firebase*.json
 /var/uploads/*
