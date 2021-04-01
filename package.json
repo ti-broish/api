@@ -56,7 +56,7 @@
     "lodash.merge": "^4.6.2",
     "mime-types": "^2.1.27",
     "nestjs-i18n": "^8.0.11",
-    "nestjs-minio": "^2.0.10",
+    "nestjs-minio": "^2.1.7",
     "nestjs-typeorm-paginate": "^2.3.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
