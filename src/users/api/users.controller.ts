@@ -1,10 +1,10 @@
 import { Ability } from '@casl/ability';
 import { Controller, Post, HttpCode, Body, Inject, ValidationPipe, UsePipes, HttpException, HttpStatus, Get, UseGuards, Query, ParseIntPipe, Patch, Param } from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { FirebaseUser } from 'src/auth/firebase';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
+import { FirebaseUser } from 'src/firebase';
 import { PageDTO } from 'src/utils/page.dto';
 import { AllowOnlyFirebaseUser, InjectFirebaseUser, InjectUser } from '../../auth/decorators';
 import { User } from '../entities';

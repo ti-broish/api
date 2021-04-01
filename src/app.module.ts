@@ -1,7 +1,6 @@
 import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { FirebaseAdminCoreModule } from '@tfarras/nestjs-firebase-admin';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SectionsModule } from './sections/sections.module';
@@ -20,6 +19,7 @@ import { AcceptLanguageResolver, I18nJsonParser, I18nModule } from 'nestjs-i18n'
 import { APP_FILTER } from '@nestjs/core';
 import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
 import { StreamsModule } from './streams/streams.module';
+import { FirebaseAdminCoreModule } from './firebase';
 
 @Module({
   imports: [
