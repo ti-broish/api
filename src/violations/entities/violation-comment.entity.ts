@@ -3,7 +3,9 @@ import { ulid } from 'ulid';
 import { User } from '../../users/entities';
 import { Violation } from './violation.entity';
 
-@Entity('violation_comments')
+@Entity('violation_comments', {
+  orderBy: { createdAt: 'DESC' },
+})
 export class ViolationComment {
   @PrimaryColumn('char', {
     length: 26,
