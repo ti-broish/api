@@ -29,7 +29,7 @@ export class StreamDto {
   @ApiProperty({ required: true })
   @Expose({ groups: [StreamDto.READ, StreamDto.CREATE] })
   @Type(() => SectionDto)
-  @Transform(({ value }) => plainToClass(SectionDto, { value }, { groups: [StreamDto.CREATE] }), { groups: [StreamDto.CREATE] })
+  @Transform(({ value: id }) => plainToClass(SectionDto, { id }, { groups: [StreamDto.CREATE] }), { groups: [StreamDto.CREATE] })
   @IsNotEmpty({ groups: [StreamDto.CREATE] })
   @ValidateNested({
     groups: [StreamDto.CREATE],

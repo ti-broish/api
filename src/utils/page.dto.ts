@@ -3,8 +3,8 @@ import { Transform } from 'class-transformer';
 
 export class PageDTO {
     @Optional()
-    @Transform(({ value }: { value: string }) => {
-        const page = parseInt(value, 10);
+    @Transform(({ value: pageParam }: { value: string }) => {
+        const page = parseInt(pageParam, 10);
         if (isNaN(page)) {
           return 0;
         }

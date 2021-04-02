@@ -43,7 +43,7 @@ export class BroadcastDto {
   @IsArray()
   @ArrayNotEmpty({ always: true })
   @Type(() => UserDto)
-  @Transform(({ value }) => Array.isArray(value) ? value.map(id => plainToClass(UserDto, { id }, { groups: ['broadcast.create'] })) : value, { groups: ['create'] })
+  @Transform(({ value: ids }) => Array.isArray(ids) ? ids.map(id => plainToClass(UserDto, { id }, { groups: ['broadcast.create'] })) : ids, { groups: ['create'] })
   @ValidateNested({
     always: true,
     each: true,

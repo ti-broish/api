@@ -16,7 +16,7 @@ export class ViolationDto{
   @Expose({ groups: ['read', 'create'] })
   @Type(() => SectionDto)
   @ValidateIf((violationDto: ViolationDto) => violationDto.town !== undefined)
-  @Transform(({ value }) => value ? plainToClass(SectionDto, { value }, { groups: ['create'] }) : undefined, { groups: ['create'] })
+  @Transform(({ value: id }) => id ? plainToClass(SectionDto, { id }, { groups: ['create'] }) : undefined, { groups: ['create'] })
   @ValidateNested({
     groups: ['create'],
   })
@@ -24,7 +24,7 @@ export class ViolationDto{
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => TownDto)
-  @Transform(({ value }) => plainToClass(TownDto, { value }, { groups: ['create'] }), { groups: ['create'] })
+  @Transform(({ value: id }) => plainToClass(TownDto, { id }, { groups: ['create'] }), { groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
   @ValidateNested({
     groups: ['create'],
@@ -33,7 +33,7 @@ export class ViolationDto{
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => PictureDto)
-  @Transform(({ value } : { value: string[] }) => Array.isArray(value) ? value.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })): value, { groups: ['create'] })
+  @Transform(({ value: ids } : { value: string[] }) => Array.isArray(ids) ? ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })): ids, { groups: ['create'] })
   @IsOptional({ groups: ['create'] })
   @IsArray({ groups: ['create'] })
   @ValidateNested({
@@ -77,7 +77,7 @@ export class ViolationDto{
     });
 
     let sortPosition = 1;
-    violation.pictures = violation.pictures.map((picture: Picture): Picture => {
+    violation.pictures = (violation.pictures || []).map((picture: Picture): Picture => {
       picture.sortPosition = sortPosition;
       sortPosition++;
 

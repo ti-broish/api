@@ -19,6 +19,7 @@ async function bootstrap() {
   if (config.get('NODE_ENV') === 'production') {
     app.enableShutdownHooks([ShutdownSignal.SIGINT, ShutdownSignal.SIGTERM]);
   }
+  app.enableCors();
   await app.listen(config.get<number>('PORT', 3000));
 }
 bootstrap();
