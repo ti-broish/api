@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { StatsDto } from 'src/results/api/stats.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { ElectionRegion } from './electionRegion.entity';
 
@@ -30,7 +31,7 @@ export class ElectionRegionsRepository {
       .getRawOne();
 
     const [electionRegionResult, statsResult] = await Promise.all([electionRegion, stats]);
-    electionRegionResult.stats = statsResult;
+    electionRegionResult.stats = Object.fromEntries((Object.entries(statsResult).map(([key, value]: [string, string]) => [key, parseInt(value, 10)])));
 
     return electionRegionResult;
   }
