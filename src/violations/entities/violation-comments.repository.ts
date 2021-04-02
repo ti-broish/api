@@ -17,6 +17,7 @@ export class ViolationCommentsRepository {
 
     qb.innerJoinAndSelect('violation_comment.violation', 'violation');
     qb.innerJoinAndSelect('violation_comment.author', 'author');
+    qb.andWhere('violation.id = :violationId', { violationId: violation.id });
 
     return qb;
   }
