@@ -1,23 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { ElectionRegion } from './electionRegion.entity';
 
 @Injectable()
 export class ElectionRegionsRepository {
-  constructor(@InjectRepository(ElectionRegion) private repo: Repository<ElectionRegion>) {}
+  constructor(
+    @InjectRepository(ElectionRegion) private repo: Repository<ElectionRegion>,
+    private entityManager: EntityManager,
+  ) {}
 
   async findOneOrFail(code: string): Promise<ElectionRegion> {
     return this.repo.findOneOrFail({ where: { code } });
   }
 
   async findOneWithStatsOrFail(code: string): Promise<ElectionRegion> {
+    const electionRegion = this.repo.createQueryBuilder('electionRegions')
+      .innerJoin('electionRegions.sections', 'sections')
+      .whereInIds([code])
+      .groupBy('electionRegions.id')
+      .getOneOrFail();
+
+    const stats = this.entityManager.createQueryBuilder(this.repo.queryRunner)
+      .addSelect('sum(sections.voters_count)', 'voters')
+      .addSelect('count(sections.id)', 'sectionsCount')
+      .from('sections', 'sections')
+      .andWhere('sections.election_region_id = :code', { code })
+      .groupBy('sections.election_region_id')
+      .getRawOne();
+
+    const [electionRegionResult, statsResult] = await Promise.all([electionRegion, stats]);
+    electionRegionResult.stats = statsResult;
+
+    return electionRegionResult;
+  }
+
+  async findOneWithMunicipalitiesOrFail(code: string): Promise<ElectionRegion> {
     const qb = this.repo.createQueryBuilder('electionRegions');
 
-    qb.innerJoin('electionRegions.sections', 'sections');
-    qb.loadRelationCountAndMap('electionRegions.sectionsCount', 'electionRegions.sections');
+    qb.innerJoinAndSelect('electionRegions.municipalities', 'municipalities');
     qb.whereInIds([code]);
-    qb.groupBy('electionRegions.id');
 
     return qb.getOneOrFail();
   }

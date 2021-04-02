@@ -18,4 +18,10 @@ export class CityRegion {
 
   @OneToMany(() => Section, section => section.cityRegion)
   sections: Section[];
+
+  constructor(name: string, code: string, towns: Town[]) {
+    this.name = name;
+    this.code = code;
+    this.towns = towns;
+  }
 }

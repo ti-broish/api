@@ -1,11 +1,12 @@
-import { Exclude, Expose, plainToClass } from "class-transformer";
-import { ElectionRegion } from "src/sections/entities";
+import { Exclude, Expose, plainToClass, Transform, TransformOptions } from "class-transformer";
+import { Country, ElectionRegion, Municipality } from "src/sections/entities";
 import { AdmUnitResultsDto } from "./administrative-unit-results.dto";
 import { StatsDto } from "./stats.dto";
 
 @Exclude()
 export class ElectionRegionResultsDto {
   @Expose({ name: 'code', groups: ['list', 'details'] })
+  @Transform(({value: number}: {value: string}) => parseInt(number, 10))
   number: number;
 
   @Expose({ groups: ['list', 'details'] })
@@ -15,7 +16,7 @@ export class ElectionRegionResultsDto {
   results: number[] = [];
 
   @Expose({ groups: ['details'] })
-  admunits: Map<string, AdmUnitResultsDto> = new Map<string, AdmUnitResultsDto>();
+  admUnits: Map<string, AdmUnitResultsDto>;
 
   @Expose({ name: 'isAbroad', groups: ['list'] })
   abroad: boolean = false;
@@ -23,16 +24,20 @@ export class ElectionRegionResultsDto {
   @Expose({ groups: ['list', 'details'] })
   stats: StatsDto = new StatsDto();
 
-  public static fromEntity(entity: ElectionRegion, groups = ['list']): ElectionRegionResultsDto {
-    const electionRegionDto = plainToClass<ElectionRegionResultsDto, Partial<ElectionRegion>>(ElectionRegionResultsDto, entity, {
-      exposeDefaultValues: true,
+  public static fromEntity(electionRegion: ElectionRegion, groups: string[] = ['list']): ElectionRegionResultsDto {
+    const electionRegionDto = plainToClass<ElectionRegionResultsDto, Partial<ElectionRegion>>(ElectionRegionResultsDto, electionRegion, {
+      // exposeDefaultValues: true,
       groups,
     });
 
-    const picked = (({ sectionsCount }) => ({ sectionsCount }))(entity);
-    electionRegionDto.stats = plainToClass<StatsDto, any>(StatsDto, picked, {
-      groups,
-    });
+    electionRegionDto.admUnits = null;
+    if (groups.includes('details')) {
+      const admUnits = (electionRegion.isAbroad ? electionRegion.countries : electionRegion.municipalities) as Array<Country | Municipality>;
+      electionRegionDto.admUnits = admUnits.reduce((acc: any, unit: Municipality | Country) => {
+        acc[unit.code] = AdmUnitResultsDto.fromEntity(unit);
+        return acc;
+      }, {});
+    }
 
     return electionRegionDto;
   }

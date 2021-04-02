@@ -1,4 +1,6 @@
 import { Exclude, Expose, Type } from "class-transformer";
+import { Party } from "src/parties/entities/party.entity";
+import { ElectionRegion } from "src/sections/entities";
 import { ElectionRegionResultsDto } from "./election-region-results.dto";
 import { PartyDto } from "./party.dto";
 import { StatsDto } from "./stats.dto";
@@ -26,14 +28,24 @@ export class TotalResultsDto {
   regions: Map<string, Omit<ElectionRegionResultsDto, 'admUnits'>>;
 
   @Expose()
-  validVotes: number = null;
-
-  @Expose()
-  invalidVotes: number = null;
-
-  @Expose()
-  voters: number = null;
-
-  @Expose()
   stats: StatsDto = new StatsDto();
+
+  public static create(
+    electionType: ElectionType,
+    parties: Party[],
+    electionRegions: ElectionRegion[],
+  ): TotalResultsDto {
+    const total = new TotalResultsDto();
+    total.electionType = electionType;
+    total.parties = parties.map((party: Party): PartyDto => PartyDto.fromEntity(party));
+
+    total.regions = electionRegions
+      .reduce((acc: any, electionRegion: ElectionRegion): Map<string, Partial<ElectionRegionResultsDto>> => {
+        const electionRegionDto = ElectionRegionResultsDto.fromEntity(electionRegion)
+        acc[electionRegion.id] = electionRegionDto;
+        return acc;
+      }, {});
+
+    return total;
+  }
 }

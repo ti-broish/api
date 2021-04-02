@@ -1,4 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
+import { CityRegion } from './cityRegion.entity';
 import { ElectionRegion } from './electionRegion.entity';
 import { Town } from './town.entity';
 
@@ -16,6 +18,11 @@ export class Municipality {
   @ManyToMany(() => ElectionRegion, electionRegion => electionRegion.municipalities)
   readonly electionRegions: ElectionRegion[];
 
-  @OneToMany(() => Town, town => town.country)
+  @OneToMany(() => Town, town => town.municipality)
   readonly towns: Town[];
+
+  sectionsCount: number;
+
+  @ApiProperty({ type: () => CityRegion })
+  cityRegions: Record<string, CityRegion> = {};
 }

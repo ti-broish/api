@@ -11,6 +11,9 @@ export class Town {
   readonly id: number;
 
   @Column()
+  readonly code: number;
+
+  @Column()
   readonly name: string;
 
   @ManyToOne(() => Country, country => country.towns)
@@ -25,7 +28,7 @@ export class Town {
     joinColumn: { name: 'town_id' },
     inverseJoinColumn: { name: 'city_region_id' },
   })
-  readonly cityRegions: CityRegion[];
+  cityRegions: CityRegion[];
 
   @OneToMany(() => Section, section => section.town)
   readonly sections: Section[];

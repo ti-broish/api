@@ -10,4 +10,14 @@ export class CountriesRepository {
   findAll(): Promise<Country[]> {
     return this.repo.find();
   }
+
+  async findAllAbroadWithStats(): Promise<Country[]> {
+    const qb = this.repo.createQueryBuilder('countries');
+
+    // qb.loadRelationCountAndMap('sectionsCount', 'countries.sections');
+    qb.andWhere('countries.isAbroad = :isAbroad', { isAbroad: true });
+    qb.groupBy('countries.id');
+
+    return qb.getMany();
+  }
 }
