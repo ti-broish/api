@@ -11,16 +11,36 @@ export class MunicipalitiesRepository {
   constructor(@InjectRepository(Municipality) private repo: Repository<Municipality>) {}
 
   async findOneWithStatsOrFail(electionRegion: ElectionRegion, code: string): Promise<Municipality> {
-    const qb = this.repo.createQueryBuilder('municipalities');
+    const municipality = await this.repo.createQueryBuilder('municipalities')
+      .innerJoin('municipalities.electionRegions', 'electionRegions')
+      .innerJoinAndSelect('municipalities.towns', 'towns')
+      .innerJoinAndSelect('towns.sections', 'sections')
+      .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
+      .leftJoin('cityRegions.sections', 'cityRegionSections')
+      .loadRelationCountAndMap('sectons.sectionsCount', 'municipalities.towns')
+      .andWhere('electionRegions.id = :electionRegionId', { electionRegionId: electionRegion.id })
+      .andWhere('municipalities.code = :code', { code })
+      .andWhere(new Brackets(qba => {
+        qba.andWhere('cityRegionSections.election_region_id = :electionRegionId', { electionRegionId: electionRegion.id });
+        qba.orWhere('cityRegionSections.id is null');
+      }))
+      .getOneOrFail();
 
-    qb.innerJoin('municipalities.electionRegions', 'electionRegions');
-    qb.innerJoin('municipalities.towns', 'towns');
-    qb.innerJoin('towns.sections', 'sections');
-    qb.loadRelationCountAndMap('sectons.sectionsCount', 'municipalities.towns');
-    qb.andWhere('electionRegions.id = :electionRegionId', { electionRegionId: electionRegion.id });
-    qb.andWhere('municipalities.code = :code', { code });
+    municipality.cityRegions = municipality.towns.reduce((acc: Record<string, CityRegion>, town: Town) => {
+      town.cityRegions.forEach((cityRegion: CityRegion) => {
+        if (!acc[cityRegion.code]) {
+          acc[cityRegion.code] = cityRegion;
+        }
+        if (!acc[cityRegion.code].towns) {
+          acc[cityRegion.code].towns = [];
+        }
+        acc[cityRegion.code].towns.push(town);
+      });
+      delete town.cityRegions;
+      return acc;
+    }, {});
 
-    return qb.getOneOrFail();
+    return municipality;
   }
 
   async findFromElectionRegionWithCityRegionsAndStats(electionRegionId: number): Promise<Municipality[]> {

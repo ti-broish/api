@@ -77,16 +77,22 @@ export class ResultsController {
   }
 
   private async getCountryOrMunicipalityResults(id: string): Promise<AdmUnitResultsDto> {
-    const electionRegion = await this.getElectionRegion(id.replace(/^(\d{2})/, '$1'));
+    const electionRegion = await this.getElectionRegion(id.replace(/^(\d{2}).*/, '$1'));
+    const admUnitCode = id.replace(/^\d{2}(\d{2})/, '$1');
     if (electionRegion.isAbroad) {
-      return this.getCountryResults(id.replace(/^\d{2}(\d{2})/, '$1'));
+      return this.getCountryResults(admUnitCode);
     }
 
-    return this.getMunicipalityResults(id);
+    return this.getMunicipalityResults(electionRegion, admUnitCode);
   }
 
-  private async getMunicipalityResults(id: string): Promise<AdmUnitResultsDto> {
-    return new AdmUnitResultsDto();
+  private async getMunicipalityResults(electionRegion: ElectionRegion, id: string): Promise<AdmUnitResultsDto> {
+    const municipality = await this.municipalitiesRepo.findOneWithStatsOrFail(electionRegion, id);
+    const municipalityDto = AdmUnitResultsDto.fromEntity(municipality);
+
+    municipalityDto.crumbs = [{ name: electionRegion.name, unit: electionRegion.code }];
+
+    return municipalityDto;
   }
 
   private async getCountryResults(id: string): Promise<AdmUnitResultsDto> {
