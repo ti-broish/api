@@ -25,7 +25,7 @@ export class AdmUnitResultsDto {
       })
     return districts;
   }, { groups: ['list', 'details'] })
-  districts: Map<string, Pick<CityRegionResultsDto, 'name' | 'towns'>>;
+  districts: Record<string, Pick<CityRegionResultsDto, 'name' | 'towns'>>;
 
   @Expose({ groups: ['list', 'details'] })
   abroad: boolean = false;

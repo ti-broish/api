@@ -25,7 +25,7 @@ export class TotalResultsDto {
   parties: PartyDto[];
 
   @Expose()
-  regions: Map<string, Omit<ElectionRegionResultsDto, 'admUnits'>>;
+  regions: Record<string, Omit<ElectionRegionResultsDto, 'admUnits'>>;
 
   @Expose()
   stats: StatsDto = new StatsDto();
@@ -40,7 +40,7 @@ export class TotalResultsDto {
     total.parties = parties.map((party: Party): PartyDto => PartyDto.fromEntity(party));
 
     total.regions = electionRegions
-      .reduce((acc: any, electionRegion: ElectionRegion): Map<string, Partial<ElectionRegionResultsDto>> => {
+      .reduce((acc: any, electionRegion: ElectionRegion): Record<string, Partial<ElectionRegionResultsDto>> => {
         const electionRegionDto = ElectionRegionResultsDto.fromEntity(electionRegion)
         acc[electionRegion.id] = electionRegionDto;
         return acc;

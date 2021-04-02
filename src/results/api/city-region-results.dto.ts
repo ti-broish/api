@@ -14,18 +14,18 @@ export class CityRegionResultsDto {
   results: number[];
 
   @Expose({ groups: ['townsList'] })
-  @Transform(({ value: towns = [], options }: { value: Town[], options: TransformOptions }): Map<string, TownResultsDto> => {
-    return towns.reduce((acc: any, town: Town): Map<string, TownResultsDto> => {
+  @Transform(({ value: towns = [], options }: { value: Town[], options: TransformOptions }): Record<string, TownResultsDto> => {
+    return towns.reduce((acc: any, town: Town): Record<string, TownResultsDto> => {
       acc[town.code] = TownResultsDto.fromEntity(town, options);
       return acc;
-    }, new Map<string, TownResultsDto>())
+    }, {})
   })
-  towns: Map<string, TownResultsDto>;
+  towns: Record<string, TownResultsDto>;
 
   @Expose({ groups: ['list', 'details'] })
-  sections: Map<string, SectionResultsDto>;
+  sections: Record<string, SectionResultsDto>;
 
-  addresses: Map<string, AddressDto>;
+  addresses: Record<string, AddressDto>;
 
   @Expose({ groups: ['list', 'details'] })
   abroad: boolean = false;

@@ -16,7 +16,7 @@ export class ElectionRegionResultsDto {
   results: number[] = [];
 
   @Expose({ groups: ['details'] })
-  admUnits: Map<string, AdmUnitResultsDto>;
+  admUnits: Record<string, AdmUnitResultsDto>;
 
   @Expose({ name: 'isAbroad', groups: ['list'] })
   abroad: boolean = false;
