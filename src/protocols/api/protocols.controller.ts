@@ -130,7 +130,7 @@ export class ProtocolsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   async assign(@InjectUser() user: User, @Res() response: Response): Promise<ProtocolDto | null> {
-    const protocol = await this.repo.findNextAvailableProtocol();
+    const protocol = await this.repo.findNextAvailableProtocol(user);
 
     if (!protocol) {
       response.status(HttpStatus.NO_CONTENT);

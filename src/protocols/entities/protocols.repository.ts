@@ -78,14 +78,25 @@ export class ProtocolsRepository {
     return this.repo.find();
   }
 
-  async findNextAvailableProtocol(): Promise<Protocol|null> {
-    const qb = this.repo.createQueryBuilder('protocol');
-    qb.innerJoin('protocol.actions', 'action');
-    qb.leftJoin('protocol.assignees', 'assignee');
-    qb.andWhere('assignee.id IS NULL');
-    qb.andWhere('protocol.status = :status', { status: ProtocolStatus.RECEIVED });
-    qb.andWhere('action.action = :action', { action: ProtocolActionType.SEND });
-    qb.addOrderBy('action.timestamp', 'ASC');
+  async findNextAvailableProtocol(user: User): Promise<Protocol|null> {
+    const allAssignedProtocols = (await this.repo.createQueryBuilder('protocol')
+      .select('protocol.id')
+      .innerJoin('protocol.actions', 'action_assign')
+      .andWhere('action_assign.action = :assignAction', { assignAction: ProtocolActionType.ASSIGN })
+      .andWhere('action_assign.actor_id = :assignActorId', { assignActorId: user.id })
+      .getRawMany()).map(protocol => protocol.protocol_id);
+
+    const qb = this.repo.createQueryBuilder('protocol')
+      .innerJoin('protocol.actions', 'action_send')
+      .leftJoin('protocol.assignees', 'assignee')
+      .andWhere('assignee.id IS NULL')
+      .andWhere('protocol.status = :status', { status: ProtocolStatus.RECEIVED })
+      .andWhere('action_send.action = :sendAction', { sendAction: ProtocolActionType.SEND })
+      .addOrderBy('action_send.timestamp', 'ASC')
+      .limit(1);
+    if (allAssignedProtocols.length > 0) {
+      qb.andWhere('protocol.id not in (:...allAssignedProtocols)', { allAssignedProtocols });
+    }
 
     const protocol = await qb.getOne();
 
