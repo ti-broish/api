@@ -17,7 +17,16 @@ export class UserDto {
   public static readonly UPDATE = 'update';
   public static readonly MANAGE = 'manage';
 
-  @Expose({ groups: [ 'broadcast.create', UserDto.READ, UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.MANAGE, 'assignee', UserDto.AUTHOR_READ] })
+  @Expose({ groups: [
+    'broadcast.create',
+    UserDto.READ,
+    UserDto.ME_READ,
+    UserDto.ADMIN_READ,
+    UserDto.MANAGE,
+    'assignee',
+    UserDto.AUTHOR_READ,
+    'violation.process',
+  ] })
   @IsUserExists({
     groups: ['broadcast.create', 'assignee'],
     message: 'USER_DOES_NOT_EXIST',
@@ -33,7 +42,14 @@ export class UserDto {
   id: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
+  @Expose({ groups: [
+    UserDto.ME_READ,
+    UserDto.ADMIN_READ,
+    UserDto.CREATE,
+    UserDto.UPDATE,
+    UserDto.AUTHOR_READ,
+    'violation.process',
+  ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_FIRST_NAME_NOT_EMPTY',
@@ -49,7 +65,14 @@ export class UserDto {
   firstName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
+  @Expose({ groups: [
+    UserDto.ME_READ,
+    UserDto.ADMIN_READ,
+    UserDto.CREATE,
+    UserDto.UPDATE,
+    UserDto.AUTHOR_READ,
+    'violation.process',
+  ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_LAST_NAME_NOT_EMPTY',
@@ -65,7 +88,14 @@ export class UserDto {
   lastName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
+  @Expose({ groups: [
+    UserDto.ME_READ,
+    UserDto.ADMIN_READ,
+    UserDto.CREATE,
+    UserDto.UPDATE,
+    UserDto.AUTHOR_READ,
+    'violation.process',
+  ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_EMAIL_NOT_EMPTY',
@@ -82,7 +112,14 @@ export class UserDto {
   email: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, UserDto.AUTHOR_READ] })
+  @Expose({ groups: [
+    UserDto.ME_READ,
+    UserDto.ADMIN_READ,
+    UserDto.CREATE,
+    UserDto.UPDATE,
+    UserDto.AUTHOR_READ,
+    'violation.process',
+  ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_PHONE_NOT_EMPTY',
@@ -110,7 +147,7 @@ export class UserDto {
   pin: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate', UserDto.AUTHOR_READ] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate', UserDto.AUTHOR_READ, 'violation.process'] })
   @Type(() => OrganizationDto)
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
