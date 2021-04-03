@@ -25,7 +25,6 @@ export class UserDto {
     UserDto.MANAGE,
     'assignee',
     UserDto.AUTHOR_READ,
-    'violation.process',
   ] })
   @IsUserExists({
     groups: ['broadcast.create', 'assignee'],
@@ -48,7 +47,6 @@ export class UserDto {
     UserDto.CREATE,
     UserDto.UPDATE,
     UserDto.AUTHOR_READ,
-    'violation.process',
   ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
@@ -71,7 +69,6 @@ export class UserDto {
     UserDto.CREATE,
     UserDto.UPDATE,
     UserDto.AUTHOR_READ,
-    'violation.process',
   ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
@@ -94,7 +91,6 @@ export class UserDto {
     UserDto.CREATE,
     UserDto.UPDATE,
     UserDto.AUTHOR_READ,
-    'violation.process',
   ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
@@ -118,7 +114,6 @@ export class UserDto {
     UserDto.CREATE,
     UserDto.UPDATE,
     UserDto.AUTHOR_READ,
-    'violation.process',
   ] })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
@@ -147,7 +142,7 @@ export class UserDto {
   pin: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate', UserDto.AUTHOR_READ, 'violation.process'] })
+  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate', UserDto.AUTHOR_READ] })
   @Type(() => OrganizationDto)
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
