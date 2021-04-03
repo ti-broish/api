@@ -1,7 +1,5 @@
 export class StatsDto {
-  protocolsReceived?: number = 0;
-
-  protocolsValidated?: number = 0;
+  sectionsWithProtocols?: number = 0;
 
   sectionsCount?: number = 0;
 

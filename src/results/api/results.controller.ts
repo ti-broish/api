@@ -88,7 +88,7 @@ export class ResultsController {
 
   private async getMunicipalityResults(electionRegion: ElectionRegion, id: string): Promise<AdmUnitResultsDto> {
     const municipality = await this.municipalitiesRepo.findOneWithStatsOrFail(electionRegion, id);
-    const municipalityDto = AdmUnitResultsDto.fromEntity(municipality);
+    const municipalityDto = AdmUnitResultsDto.fromEntity(municipality, ['list', 'details']);
 
     municipalityDto.crumbs = [{ name: electionRegion.name, unit: electionRegion.code }];
 

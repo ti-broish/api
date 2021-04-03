@@ -17,7 +17,6 @@ export class MunicipalitiesRepository {
       .innerJoinAndSelect('towns.sections', 'sections')
       .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
       .leftJoin('cityRegions.sections', 'cityRegionSections')
-      .loadRelationCountAndMap('sectons.sectionsCount', 'municipalities.towns')
       .andWhere('electionRegions.id = :electionRegionId', { electionRegionId: electionRegion.id })
       .andWhere('municipalities.code = :code', { code })
       .andWhere(new Brackets(qba => {
