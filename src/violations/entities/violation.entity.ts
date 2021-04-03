@@ -14,7 +14,7 @@ export enum ViolationStatus {
   REJECTED = 'rejected',
 };
 
-@Entity('violations')
+@Entity('violations', { orderBy: { id: 'DESC' } })
 export class Violation {
   @PrimaryColumn('char', {
     length: 26,
