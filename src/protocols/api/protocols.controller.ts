@@ -16,14 +16,18 @@ import { ProtocolsRepository } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 import { ProtocolFilters } from './protocols-filters.dto';
+import { MailerService } from "@nestjs-modules/mailer";
+import { ConfigService } from "@nestjs/config";
+import { Public } from "../../auth/decorators";
 
 @Controller('protocols')
 export class ProtocolsController {
   constructor(
     @Inject(ProtocolsRepository) private readonly repo: ProtocolsRepository,
     @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
+    private readonly mailer: MailerService,
+    private readonly config: ConfigService,
   ) {}
-
 
   @Get()
   @HttpCode(200)
@@ -58,6 +62,32 @@ export class ProtocolsController {
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
+  }
+
+  @Post(':id/resend')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  async resend(@Param('id') id: string, @InjectUser() user: User): Promise<object> {
+    // reject protocol
+    const protocol = await this.repo.findOneOrFail(id);
+    protocol.reject(user);
+    await this.repo.save(protocol);
+
+    // notify user to resend protocol
+    const author: User = protocol.getAuthor();
+    await this.mailer.sendMail({
+      to: author.email,
+      from: `${this.config.get('SMTP_USER')}@${this.config.get('SMTP_DOMAIN')}`,
+      subject: 'Моля, изпратете протокола отново.',
+      text: `Здравейте, ${author.firstName} ${author.lastName}!
+
+Вие сте били защитник на вота в секция 1234567890. Получихме протокола, но целостта му е нарушена и/или изпратените снимки са нечетими, поради което не можем да го валидираме. Моля, снимайте всички страници на протокола отново и ни го изпратете през приложението.
+
+Благодарим ви!
+Екипът на Ти броиш.`,
+    });
+
+    return { status: 'User Notified' };
   }
 
   @Post(':id/reject')

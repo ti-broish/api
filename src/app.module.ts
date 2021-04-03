@@ -21,6 +21,7 @@ import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
 import { StreamsModule } from './streams/streams.module';
 import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module';
 import { ResultsModule } from './results/results.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { ResultsModule } from './results/results.module';
     CaslModule,
     StreamsModule,
     ResultsModule,
+    EmailModule,
   ],
   providers: [
     {
