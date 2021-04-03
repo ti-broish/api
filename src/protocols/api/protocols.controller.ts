@@ -16,12 +16,16 @@ import { ProtocolsRepository } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 import { ProtocolFilters } from './protocols-filters.dto';
+import { ViolationDto } from "../../violations/api/violation.dto";
+import { ViolationsRepository } from "../../violations/entities/violations.repository";
+import { TownDto } from "../../sections/api/town.dto";
 
 @Controller('protocols')
 export class ProtocolsController {
   constructor(
     @Inject(ProtocolsRepository) private readonly repo: ProtocolsRepository,
     @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
+    @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
   ) {}
 
 
@@ -58,6 +62,38 @@ export class ProtocolsController {
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
+  }
+
+  @Post(':id/approve-with-violation')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  async approveNotify(
+    @Param('id') id: string,
+    @Body('description') description: string,
+    @Body('town') town: TownDto,
+    @InjectUser() user: User,
+  ): Promise<object> {
+    const protocol = await this.repo.findOneOrFail(id);
+
+    // approve and save protocol
+    protocol.approve(user);
+    await this.repo.save(protocol);
+
+    // build violation from protocol
+    const violationDto = ViolationDto.fromProtocol(protocol);
+    violationDto.description = description;
+    violationDto.town = protocol.section.town;
+    violationDto.town = town;
+    const violation = violationDto.toEntity();
+    violation.setReceivedStatus(user);
+
+    // save violation
+    const savedEntity = await this.violationsRepo.save(violation);
+    const savedDto = ViolationDto.fromEntity(savedEntity, ['violation.process', UserDto.AUTHOR_READ]);
+    this.updatePicturesUrl(savedDto);
+
+    return {'status': 'Accepted and Violation Sent'};
   }
 
   @Post(':id/reject')
@@ -168,7 +204,7 @@ export class ProtocolsController {
     return ProtocolResultsDto.fromEntity(await this.repo.findOneOrFail(id));
   }
 
-  private updatePicturesUrl(protocolDto: ProtocolDto) {
+  private updatePicturesUrl(protocolDto: ProtocolDto|ViolationDto) {
     protocolDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
 
     return protocolDto;
