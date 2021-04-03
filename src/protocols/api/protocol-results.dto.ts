@@ -1,6 +1,5 @@
 import { Expose, plainToClass, Transform, Type } from 'class-transformer';
 import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, Min, ValidateNested } from 'class-validator';
-import { Party } from 'src/parties/entities/party.entity';
 import { PartyDto } from '../../parties/api/party.dto';
 import { ProtocolData } from '../entities/protocol-data.entity';
 import { ProtocolResult } from '../entities/protocol-result.entity';

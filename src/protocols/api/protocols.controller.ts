@@ -6,6 +6,7 @@ import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { UserDto } from 'src/users/api/user.dto';
+import { EntityNotFoundError } from 'typeorm';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -130,20 +131,33 @@ export class ProtocolsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   async assign(@InjectUser() user: User, @Res() response: Response): Promise<ProtocolDto | null> {
-    const protocol = await this.repo.findNextAvailableProtocol(user);
+    let protocol: Protocol;
+    try {
+      protocol = await this.repo.findAssignedPendingProtocol(user);
+    } catch(error: any) {
+      if (!(error instanceof EntityNotFoundError)) {
+        throw error;
+      }
 
-    if (!protocol) {
-      response.status(HttpStatus.NO_CONTENT);
-      response.send('');
-      return null;
+      try {
+        protocol = await this.repo.findNextAvailableProtocol(user);
+        protocol.assign(user, [user]);
+        protocol = await this.repo.save(protocol);
+      } catch(error) {
+        if (!(error instanceof EntityNotFoundError)) {
+          throw error;
+        }
+
+        response.status(HttpStatus.NO_CONTENT);
+        response.send('');
+        return null;
+      }
     }
 
-    protocol.assign(user, [user]);
-    const savedProtocol = await this.repo.save(protocol);
-    const savedDto = ProtocolDto.fromEntity(savedProtocol);
+    const savedDto = ProtocolDto.fromEntity(protocol);
     this.updatePicturesUrl(savedDto);
-
     response.send(savedDto);
+
     return savedDto;
   }
 

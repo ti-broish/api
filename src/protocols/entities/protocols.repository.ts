@@ -78,7 +78,7 @@ export class ProtocolsRepository {
     return this.repo.find();
   }
 
-  async findNextAvailableProtocol(user: User): Promise<Protocol|null> {
+  async findNextAvailableProtocol(user: User): Promise<Protocol> {
     const allAssignedProtocols = (await this.repo.createQueryBuilder('protocol')
       .select('protocol.id')
       .innerJoin('protocol.actions', 'action_assign')
@@ -94,17 +94,23 @@ export class ProtocolsRepository {
       .andWhere('action_send.action = :sendAction', { sendAction: ProtocolActionType.SEND })
       .addOrderBy('action_send.timestamp', 'ASC')
       .limit(1);
+
     if (allAssignedProtocols.length > 0) {
       qb.andWhere('protocol.id not in (:...allAssignedProtocols)', { allAssignedProtocols });
     }
 
-    const protocol = await qb.getOne();
+    return this.findOneOrFail((await qb.getOneOrFail()).id);
+  }
 
-    if (!protocol) {
-      return null;
-    }
+  async findAssignedPendingProtocol(user: User): Promise<Protocol> {
+    const qb = this.repo.createQueryBuilder('protocol')
+      .innerJoin('protocol.assignees', 'assignee')
+      .andWhere('assignee.id = :assigneeId', { assigneeId: user.id })
+      .andWhere('protocol.status = :received', { received: ProtocolStatus.RECEIVED })
+      .limit(1)
+      .orderBy('protocol.id', 'ASC');
 
-    return this.findOneOrFail(protocol.id);
+    return this.findOneOrFail((await qb.getOneOrFail()).id);
   }
 
   async findApprovedProtocols(): Promise<Protocol[]> {

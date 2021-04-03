@@ -1,5 +1,5 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, UseGuards, Put, ParseArrayPipe, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, UseGuards, Put, ParseArrayPipe, Delete, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -37,6 +37,9 @@ export class ProtocolAssigneesController {
     @Body(new ParseArrayPipe({ items: UserDto, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] })) assigneeDtos: UserDto[],
     @InjectUser() user: User,
   ): Promise<object> {
+    if (assigneeDtos.length > 1) {
+      throw new BadRequestException('CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL');
+    }
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     protocol.assign(user, assigneeDtos.map((userDto: UserDto) => userDto.toEntity()));
     await this.protocolsRepo.save(protocol);
@@ -55,6 +58,9 @@ export class ProtocolAssigneesController {
     @InjectUser() actor: User,
   ): Promise<object> {
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
+    if (protocol.assignees.length > 0) {
+      throw new BadRequestException('CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL');
+    }
     protocol.assign(actor, [...protocol.assignees, assigneeDto.toEntity()]);
     await this.protocolsRepo.save(protocol);
 
