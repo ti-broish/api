@@ -69,7 +69,7 @@ export class ProtocolDto {
     });
 
     let sortPosition = 1;
-    protocol.pictures = protocol.pictures.map((picture: Picture): Picture => {
+    protocol.pictures = (protocol.pictures || []).map((picture: Picture): Picture => {
       picture.sortPosition = sortPosition;
       sortPosition++;
 
