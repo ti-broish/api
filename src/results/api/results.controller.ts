@@ -6,7 +6,6 @@ import { MunicipalitiesRepository } from 'src/sections/entities/municipalities.r
 import { ElectionType } from './total-results.dto';
 import { PartiesRepository } from 'src/parties/entities/parties.repository';
 import { CountriesRepository } from 'src/sections/entities/countries.repository';
-import { I18nService } from 'nestjs-i18n';
 import { CityRegionsRepository } from 'src/sections/entities/cityRegions.repository';
 import { SectionsRepository } from 'src/sections/entities/sections.repository';
 
@@ -29,6 +28,33 @@ export enum NodesType {
   DISTRICTS = 'districts',
   ADDRESSES = 'addresses',
   SECTIONS = 'sections',
+};
+
+const mapToType = (item: ElectionRegion|Country|Municipality|Town|CityRegion|Section|string): NodeType => {
+  if (item instanceof ElectionRegion) {
+    return NodeType.ELECTION_REGION;
+  }
+  if (item instanceof Country) {
+    return NodeType.COUNTRY;
+  }
+  if (item instanceof Municipality) {
+    return NodeType.MUNICIPALITY;
+  }
+  if (item instanceof Town) {
+    return NodeType.TOWN;
+  }
+  if (item instanceof CityRegion) {
+    return NodeType.DISTRICT;
+  }
+  if (item instanceof Section) {
+    return NodeType.SECTION;
+  }
+
+  if (typeof item === 'string') {
+    return NodeType.ADDRESS;
+  }
+
+  throw new Error('Unexpected node type');
 };
 
 const stats = {
@@ -62,7 +88,7 @@ const groupByPlaceReducer = (acc: Record<string, Section[]>, section: Section) =
 
 const sectionMapper = ({ code, id, votersCount }) => ({
   id: code,
-  segment: `${id}`,
+  segment: id,
   name: `Секция ${code}`,
   type: NodeType.SECTION,
   results: [],
@@ -76,14 +102,33 @@ const sectionMapper = ({ code, id, votersCount }) => ({
 
 const mapSections = ([place, sections]: [string, Section[]]) => ({
   name: place,
-  type: NodeType.ADDRESS,
+  type: mapToType(place),
   nodesType: NodesType.SECTIONS,
   nodes: sections.map(sectionMapper)
 });
 
 const groupSectionsByPlaceReducer = (sections: Section[]) => Object.entries(sections.reduce(groupByPlaceReducer, {})).map(mapSections);
 
-const isMunicipalityShown = (municipality: Municipality) => municipality.towns.length === 1 || municipality.electionRegions.length > 1;
+const isMunicipalityHidden = (municipality: Municipality) => (municipality.towns.length === 1 && municipality.towns[0].cityRegions.length > 0) || municipality.electionRegions.length > 1;
+
+const makeSegment = (items: {code: string}[]) => items.reduce((acc, x) => `${acc}${x.code}`, '')
+
+const makeCrumbs = (items: any[]) => items
+  .filter(x => !!x)
+  .reduce((crumbs: Record<string, string>[], item) => {
+    crumbs.push({
+      segment: item instanceof Section
+        ? item.id
+        : (crumbs.reduce((acc, x) => `${acc}${x.segment}`, '') + item.code),
+      name: item.name,
+      type: mapToType(item),
+    });
+    return crumbs;
+  }, [{
+    segment: '',
+    name: 'Парламентарни избори 04.04.2021',
+    type: NodeType.ELECTION,
+  }]);
 
 @Controller('results')
 @Public()
@@ -95,7 +140,6 @@ export class ResultsController {
     private readonly countriesRepo: CountriesRepository,
     private readonly cityRegionsRepo: CityRegionsRepository,
     private readonly sectionsRepo: SectionsRepository,
-    private readonly i18n: I18nService,
   ) {}
 
   @Get('meta.json')
@@ -103,7 +147,7 @@ export class ResultsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async meta(): Promise<Record<string, any>> {
     return {
-      name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
+      name: 'Парламентарни избори 04.04.2021',
       parties: (await this.partiesRepo.findAllForResults())
         .map(({ id, name, displayName, color }) => (
         { id, name: name.replace(/\d+\.\s+(.*)/, '$1'), displayName: displayName.replace(/\d+\.\s+(.*)/, '$1'), color })
@@ -118,7 +162,7 @@ export class ResultsController {
     return {
       id: null,
       segment: "",
-      name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
+      name: 'Парламентарни избори 04.04.2021',
       type: NodeType.ELECTION,
       results: [],
       stats,
@@ -128,9 +172,9 @@ export class ResultsController {
       nodes: (await this.electionRegionsRepo.findAllWithStats()).map(electionRegion => (
         {
           id: electionRegion.code,
-          segment: electionRegion.code,
+          segment: makeSegment([electionRegion]),
           name: electionRegion.name,
-          type: NodeType.ELECTION_REGION,
+          type: mapToType(electionRegion),
           results: [],
           stats,
         }
@@ -148,7 +192,7 @@ export class ResultsController {
       throw new NotFoundException();
     }
 
-    const segments = segment.split(/^(\d{2})(\d{2})?(\d{2})?(\d{3})?$/).filter(x => x);
+    const segments = segment.split(/^(\d{2})(\d{2})?(\d{2})?(\d{3})?$/).filter(x => !!x);
 
     const electionRegionCode = segments.shift();
     const electionRegion = await this.electionRegionsRepo.findOneOrFail(electionRegionCode);
@@ -198,9 +242,9 @@ export class ResultsController {
     if (electionRegion.isAbroad) {
       nodes = (await this.countriesRepo.findAllAbroadWithStats()).map(country => ({
         id: country.code,
-        segment: `${electionRegion.id}${country.code}`,
+        segment: makeSegment([electionRegion, country]),
         name: country.name,
-        type: NodeType.COUNTRY,
+        type: mapToType(country),
         results: [],
         stats,
       }));
@@ -213,9 +257,9 @@ export class ResultsController {
           const districts = municipalities[0].towns.reduce(townsToCityRegionsReducer, {});
           nodes = Object.entries(districts).map(([code, district]) => ({
             id: code,
-            segment: `${electionRegion.code}${municipalities[0].code}${code}`,
+            segment: makeSegment([electionRegion, municipalities[0], district]),
             name: district.name,
-            type: NodeType.DISTRICT,
+            type: mapToType(district),
             results: [],
             stats,
           }));
@@ -253,24 +297,18 @@ export class ResultsController {
       id: electionRegion.code,
       segment: `${electionRegion.code}`,
       name: electionRegion.name,
-      type: NodeType.ELECTION_REGION,
+      type: mapToType(electionRegion),
       results: [],
       stats: {
         sectionsWithProtocols: 0,
-        sectionsCount: 0,
+        sectionsCount: electionRegion.stats.sectionsCount,
         sectionsWithResults: 0,
-        voters: 0,
+        voters: electionRegion.stats.voters,
         validVotes: 0,
         invalidVotes: 0,
         violationsCount: 0
       },
-      crumbs: [
-        {
-          segment: '',
-          name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
-          type: NodeType.ELECTION,
-        }
-      ],
+      crumbs: makeCrumbs([]),
       abroad: electionRegion.isAbroad,
       nodesType,
       nodes,
@@ -278,31 +316,21 @@ export class ResultsController {
   }
 
   private async getMunicipalityResults(electionRegion: ElectionRegion, municipality: Municipality): Promise<Record<string, any>> {
-    if (isMunicipalityShown(municipality)) {
+    if (isMunicipalityHidden(municipality)) {
       throw new NotFoundException();
     }
     municipality = await this.municipalitiesRepo.findOneWithStatsOrFail(electionRegion, municipality);
 
     const { code, name } = municipality;
+
     return {
       id: code,
       segment: `${electionRegion.code}${code}`,
       name,
-      type: NodeType.MUNICIPALITY,
+      type: mapToType(municipality),
       results: [],
       stats,
-      crumbs: [
-        {
-          segment: '',
-          name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
-          type: NodeType.ELECTION,
-        },
-        {
-          segment: `${electionRegion.code}`,
-          name: electionRegion.name,
-          type: NodeType.ELECTION_REGION,
-        }
-      ],
+      crumbs: makeCrumbs([electionRegion]),
       abroad: false,
       nodesType: NodesType.TOWNS,
       nodes: municipality.towns.map(({ code: id, name, sections }) => ({
@@ -318,7 +346,7 @@ export class ResultsController {
   private async getCountryResults(electionRegion: ElectionRegion, country: Country): Promise<Record<string, any>> {
     return {
       id: country.code,
-      segment: `${electionRegion.code}${country.code}`,
+      segment: makeSegment([electionRegion, country]),
       name: country.name,
       type: NodeType.COUNTRY,
       results: [],
@@ -331,18 +359,7 @@ export class ResultsController {
         invalidVotes: 0,
         violationsCount: 0
       },
-      crumbs: [
-        {
-          segment: '',
-          name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
-          type: NodeType.ELECTION,
-        },
-        {
-          segment: `${electionRegion.code}`,
-          name: electionRegion.name,
-          type: NodeType.ELECTION_REGION,
-        }
-      ],
+      crumbs: makeCrumbs([electionRegion]),
       abroad: true,
       nodesType: NodesType.TOWNS,
       nodes: country.towns.map(({ code, name, sections }) => ({
@@ -356,26 +373,7 @@ export class ResultsController {
   }
 
   private async getCityRegionResults(electionRegion: ElectionRegion, municipality: Municipality, district: CityRegion): Promise<Record<string, any>> {
-    const crumbs = [
-      {
-        segment: '',
-        name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
-        type: NodeType.ELECTION,
-      },
-      {
-        segment: `${electionRegion.code}`,
-        name: electionRegion.name,
-        type: NodeType.ELECTION_REGION,
-      }
-    ];
-    if (isMunicipalityShown(municipality)) {
-      crumbs.push({
-        segment: `${electionRegion.code}${municipality.code}`,
-        name: electionRegion.name,
-        type: NodeType.ELECTION_REGION,
-      });
-    }
-
+    const crumbs = makeCrumbs([electionRegion, !isMunicipalityHidden(municipality) ? municipality : null]);
     let nodesType: NodesType, nodes: any[];
 
     if (municipality.electionRegions.length > 1) {
@@ -394,7 +392,7 @@ export class ResultsController {
 
     return {
       id: district.code,
-      segment: `${electionRegion.code}${municipality.code}${district.code}`,
+      segment: makeSegment([electionRegion, municipality, district]),
       name: district.name,
       type: NodeType.DISTRICT,
       results: [],
@@ -409,28 +407,7 @@ export class ResultsController {
   private async getSectionResults(electionRegion: ElectionRegion, unit: Country | Municipality, district: CityRegion | null, section: Section): Promise<Record<string, any>> {
     return {
       ...sectionMapper(section),
-      crumbs: [
-        {
-          segment: '',
-          name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
-          type: NodeType.ELECTION,
-        },
-        {
-          segment: `${electionRegion.code}`,
-          name: electionRegion.name,
-          type: NodeType.ELECTION_REGION,
-        },
-        {
-          segment: `${electionRegion.code}${unit.code}`,
-          name: unit.name,
-          type: unit instanceof Country ? NodeType.COUNTRY : NodeType.MUNICIPALITY,
-        },
-        district ? {
-          segment: `${electionRegion.code}${unit.code}${district.code}`,
-          name: district.name,
-          type: NodeType.DISTRICT,
-        } : null
-      ].filter(x => !!x),
+      crumbs: makeCrumbs([electionRegion, unit, district]),
       abroad: electionRegion.isAbroad,
       place: section.place,
       town: {

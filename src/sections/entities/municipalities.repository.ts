@@ -15,6 +15,7 @@ export class MunicipalitiesRepository {
       .innerJoin('municipality.electionRegions', 'electionRegion')
       .innerJoinAndSelect('municipality.electionRegions', 'electionRegions')
       .innerJoinAndSelect('municipality.towns', 'towns')
+      .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
       .andWhere('electionRegion.id = :electionRegionId', { electionRegionId: electionRegion.id })
       .andWhere('municipality.code = :code', { code })
       .getOneOrFail();
