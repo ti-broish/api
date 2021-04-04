@@ -106,7 +106,7 @@ export class ResultsController {
       name: await this.i18n.translate(`results.META_NAME_${ElectionType.PARLIAMENT.toUpperCase()}`),
       parties: (await this.partiesRepo.findAllForResults())
         .map(({ id, name, displayName, color }) => (
-        { id, name, displayName, color })
+        { id, name: name.replace(/\d+\.\s+(.*)/, '$1'), displayName: displayName.replace(/\d+\.\s+(.*)/, '$1'), color })
       )
     };
   }
