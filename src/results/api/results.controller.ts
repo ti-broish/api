@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Param, ValidationPipe, UsePipes, NotFoundException } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param, ValidationPipe, UsePipes, NotFoundException, Header } from '@nestjs/common';
 import { Public } from 'src/auth/decorators';
 import { CityRegion, Country, ElectionRegion, Municipality, Section, Town } from 'src/sections/entities';
 import { ElectionRegionsRepository } from 'src/sections/entities/electionRegions.repository';
@@ -130,6 +130,7 @@ export class ResultsController {
 
   @Get('meta.json')
   @HttpCode(200)
+  @Header('Cache-Control', 'max-age: 60')
   @UsePipes(new ValidationPipe({ transform: true }))
   async meta(): Promise<Record<string, any>> {
     return {
@@ -143,6 +144,7 @@ export class ResultsController {
 
   @Get('index.json')
   @HttpCode(200)
+  @Header('Cache-Control', 'max-age: 60')
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(): Promise<Record<string, any>> {
     const stats = await this.sectionsRepo.getStatsFor();
@@ -174,6 +176,7 @@ export class ResultsController {
 
   @Get(':segment.json')
   @HttpCode(200)
+  @Header('Cache-Control', 'max-age: 60')
   @UsePipes(new ValidationPipe({ transform: true }))
   async subset(
     @Param('segment') segment: string
