@@ -77,13 +77,13 @@ const groupByPlaceReducer = (acc: Record<string, Section[]>, section: Section) =
   return acc;
 };
 
-const sectionMapper = ({ code, id, votersCount, stats }) => ({
+const sectionMapper = ({ code, id, stats, results }) => ({
   id: code,
   segment: id,
   name: `Секция ${code}`,
   type: NodeType.SECTION,
-  results: [],
   stats,
+  results,
 });
 
 const mapSections = ([place, sections]: [string, Section[]]) => ({
@@ -318,7 +318,7 @@ export class ResultsController {
       segment: `${electionRegion.code}${code}`,
       name,
       type: mapToType(municipality),
-      results: [],
+      results: await this.sectionsRepo.getResultsFor(`${electionRegion.code}${code}`) || [],
       stats: await this.sectionsRepo.getStatsFor(`${electionRegion.code}${code}`),
       crumbs: makeCrumbs([electionRegion]),
       abroad: false,
@@ -346,7 +346,7 @@ export class ResultsController {
       segment: makeSegment([electionRegion, country]),
       name: country.name,
       type: NodeType.COUNTRY,
-      results: [],
+      results: await this.sectionsRepo.getResultsFor(makeSegment([electionRegion, country])),
       stats: await this.sectionsRepo.getStatsFor(makeSegment([electionRegion, country])),
       crumbs: makeCrumbs([electionRegion]),
       abroad: true,
