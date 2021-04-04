@@ -20,14 +20,14 @@ export class MunicipalitiesRepository {
       .getOneOrFail();
   }
 
-  async findOneWithStatsOrFail(electionRegion: ElectionRegion, municipality: Municipality): Promise<Municipality> {
+  async findOneWithStatsOrFail(electionRegion: ElectionRegion, id: number): Promise<Municipality> {
     return this.repo.createQueryBuilder('municipalities')
     .innerJoinAndSelect('municipalities.electionRegions', 'electionRegions')
     .innerJoinAndSelect('municipalities.towns', 'towns')
     .innerJoinAndSelect('towns.sections', 'sections')
     .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
     .leftJoin('cityRegions.sections', 'cityRegionSections')
-    .andWhere('municipalities.id = :id', { id: municipality.id })
+    .andWhere('municipalities.id = :id', { id })
     .andWhere(new Brackets(qba => {
       qba.andWhere('cityRegionSections.election_region_id = :electionRegionId', { electionRegionId: electionRegion.id });
       qba.orWhere('cityRegionSections.id is null');
