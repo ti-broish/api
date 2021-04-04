@@ -73,7 +73,7 @@ export class Protocol {
   results: ProtocolResult[];
 
   @ManyToOne(() => Protocol, {
-    cascade: ['insert'],
+    cascade: ['insert', 'update'],
   })
   parent: Protocol;
 
