@@ -105,7 +105,9 @@ export class SectionsRepository {
         return statsData.reduce((_, singleStat) => {
           const seg = singleStat.segment;
           delete singleStat.segment;
-          acc[seg] = objectValuesToInt(Object.assign(acc[seg] || new StatsDto(), singleStat));
+          const item = acc[seg];
+          objectValuesToInt(Object.assign({}, item, singleStat));
+          acc[seg] = item;
           return acc;
         })
       }, {});
