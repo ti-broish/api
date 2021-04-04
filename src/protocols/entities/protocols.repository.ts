@@ -15,7 +15,10 @@ export class ProtocolsRepository {
   }
 
   findOneOrFail(id: string): Promise<Protocol> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['pictures', 'data', 'results', 'actions', 'actions.actor', 'actions.actor.organization', 'results.party', 'assignees'] } );
+    return this.repo.findOneOrFail({
+      where: { id },
+      relations: ['pictures', 'data', 'results', 'actions', 'actions.actor', 'actions.actor.organization', 'results.party', 'assignees']
+    });
   }
 
   async save(protocol: Protocol): Promise<Protocol> {

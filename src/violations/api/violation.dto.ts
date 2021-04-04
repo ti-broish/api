@@ -7,6 +7,8 @@ import { TownDto } from '../../sections/api/town.dto';
 import { UserDto } from 'src/users/api/user.dto';
 import { ViolationUpdateDto } from './violation-update.dto';
 import { Picture } from 'src/pictures/entities/picture.entity';
+import { Protocol } from "../../protocols/entities/protocol.entity";
+import { ProtocolDto } from "../../protocols/api/protocol.dto";
 
 @Exclude()
 export class ViolationDto{
@@ -85,6 +87,14 @@ export class ViolationDto{
     }, []);
 
     return violation;
+  }
+
+  public static fromProtocol(protocol: Protocol): ViolationDto {
+    const protocolDto = ProtocolDto.fromEntity(protocol);
+    const violationDto = new ViolationDto();
+    violationDto.section = protocolDto.section;
+    violationDto.pictures = protocolDto.pictures;
+    return violationDto;
   }
 
   public static fromEntity(violation: Violation, additionalGroups: string[] = []): ViolationDto {
