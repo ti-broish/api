@@ -154,6 +154,7 @@ export class ProtocolsController {
     const replacement = replacementDto.toEntity(['replace']);
     const prevProtocol = await this.repo.findOneOrFail(protocolId);
     const nextProtocol = prevProtocol.replace(user, replacement);
+    await this.repo.save(prevProtocol);
     const savedProtocol = await this.repo.save(nextProtocol);
     const savedDto = ProtocolDto.fromEntity(savedProtocol, ['read.results']);
     savedDto.results = ProtocolResultsDto.fromEntity(savedProtocol);
