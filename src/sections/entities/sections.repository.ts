@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { string } from 'joi';
 import { zipWith } from 'lodash';
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity';
 import { StatsDto } from 'src/results/api/stats.dto';
@@ -51,7 +52,7 @@ export class SectionsRepository {
     return this.repo.find({ where: { electionRegion } });
   }
 
-  async getResultsFor(segment: string = ''): Promise<number[]> {
+  async getResultsFor(segment: string = '', groupBySegment: number = 0): Promise<number[] | Record<string, number[]>> {
     const qb = this.repo.createQueryBuilder('sections').select([]);
     qb.addSelect('results.party_id', 'party_id');
     qb.addSelect('SUM(results.validVotesCount)', 'validVotesCount');
@@ -60,10 +61,24 @@ export class SectionsRepository {
     }
     qb.innerJoin('sections.protocols', 'protocols');
     qb.innerJoin('protocols.results', 'results');
-    qb.where('protocols.status = :published', { published: ProtocolStatus.PUBLISHED });
-    qb.groupBy('results.party_id');
+    qb.where('protocols.status = :approved', { approved: ProtocolStatus.APPROVED });
+    if (groupBySegment > 0) {
+      qb
+        .addSelect('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
+        .groupBy('LEFT(sections.id, :groupBySegment)')
+        .setParameters({ groupBySegment });
+    }
+    qb.addGroupBy('results.party_id');
 
-    return await qb.getRawOne() || [];
+    const rawResults = await qb.getRawMany();
+    if (groupBySegment === 0) {
+      return rawResults.reduce((acc, { party_id, validVotesCount }) => acc.concat([party_id, parseInt(validVotesCount, 10)]),[]);
+    }
+
+    return rawResults.reduce((acc, result) => {
+      acc[result.segment] = (acc[result.segment] || []).concat([result.party_id, parseInt(result.validVotesCount, 10)]);
+      return acc;
+    }, {});
   }
 
   async getStatsFor(segment: string = '', groupBySegment: number = 0): Promise<StatsDto | Record<string, StatsDto>[]> {

@@ -48,4 +48,5 @@ export class Section {
   violations: Violation[];
 
   stats: StatsDto;
+  results: number[];
 }
