@@ -57,11 +57,11 @@ export class SectionsRepository {
     qb.addSelect('results.party_id', 'party_id');
     qb.addSelect('SUM(results.validVotesCount)', 'validVotesCount');
     if (segment.length > 0) {
-      qb.where('sections.id like :segment', { segment: `${segment}%` });
+      qb.andWhere('sections.id like :segment', { segment: `${segment}%` });
     }
     qb.innerJoin('sections.protocols', 'protocols');
     qb.innerJoin('protocols.results', 'results');
-    qb.where('protocols.status = :published', { published: ProtocolStatus.PUBLISHED });
+    qb.andWhere('protocols.status = :published', { published: ProtocolStatus.PUBLISHED });
     if (groupBySegment > 0) {
       qb
         .addSelect('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
