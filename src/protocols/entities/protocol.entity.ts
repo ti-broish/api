@@ -151,9 +151,9 @@ export class Protocol {
     replacement.status = ProtocolStatus.READY;
     replacement.assignees = this.assignees;
 
-    this.status = ProtocolStatus.REPLACED;
+    this.status = ProtocolStatus.PUBLISHED;
     this.parent = replacement;
-    this.addAction(ProtocolAction.createReplaceAction(actor));
+    this.addAction(ProtocolAction.createPublishAction(actor));
 
     return replacement;
   }
