@@ -15,25 +15,18 @@ export class ElectionRegionsRepository {
     return this.repo.findOneOrFail({ where: { code } });
   }
 
-  async findOneWithStatsOrFail(code: string): Promise<ElectionRegion> {
-    const electionRegion = this.repo.createQueryBuilder('electionRegions')
-      .innerJoin('electionRegions.sections', 'sections')
-      .whereInIds([code])
-      .groupBy('electionRegions.id')
-      .getOneOrFail();
-
-    const stats = this.entityManager.createQueryBuilder(this.repo.queryRunner)
+  async findOneWithStatsOrFail(electionRegion: ElectionRegion): Promise<ElectionRegion> {
+    const stats = await this.entityManager.createQueryBuilder(this.repo.queryRunner)
       .addSelect('sum(sections.voters_count)', 'voters')
       .addSelect('count(sections.id)', 'sectionsCount')
       .from('sections', 'sections')
-      .andWhere('sections.election_region_id = :code', { code })
+      .andWhere('sections.election_region_id = :id', { id: electionRegion.id })
       .groupBy('sections.election_region_id')
       .getRawOne();
 
-    const [electionRegionResult, statsResult] = await Promise.all([electionRegion, stats]);
-    electionRegionResult.stats = Object.fromEntries((Object.entries(statsResult).map(([key, value]: [string, string]) => [key, parseInt(value, 10)])));
+    electionRegion.stats = Object.fromEntries((Object.entries(stats).map(([key, value]: [string, string]) => [key, parseInt(value, 10)])));
 
-    return electionRegionResult;
+    return electionRegion;
   }
 
   async findOneWithMunicipalitiesOrFail(code: string): Promise<ElectionRegion> {
@@ -55,6 +48,7 @@ export class ElectionRegionsRepository {
     qb.innerJoin('electionRegions.sections', 'sections');
     qb.loadRelationCountAndMap('electionRegions.sectionsCount', 'electionRegions.sections');
     qb.groupBy('electionRegions.id');
+    qb.orderBy('electionRegions.id', 'ASC');
 
     return qb.getMany();
   }

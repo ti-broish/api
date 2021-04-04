@@ -11,12 +11,18 @@ export class CountriesRepository {
     return this.repo.find();
   }
 
-  async findAllAbroadWithStats(): Promise<Country[]> {
-    const qb = this.repo.createQueryBuilder('countries');
+  findOneOrFail(code: string): Promise<Country> {
+    return this.repo.createQueryBuilder('country')
+      .innerJoinAndSelect('country.towns', 'towns')
+      .innerJoinAndSelect('towns.sections', 'sections')
+      .andWhere('country.code = :code', { code })
+      .getOneOrFail();
+  }
 
-    // qb.loadRelationCountAndMap('sectionsCount', 'countries.sections');
-    qb.andWhere('countries.isAbroad = :isAbroad', { isAbroad: true });
-    qb.groupBy('countries.id');
+  async findAllAbroadWithStats(): Promise<Country[]> {
+    const qb = this.repo.createQueryBuilder('countries')
+      .andWhere('countries.isAbroad = :isAbroad', { isAbroad: true })
+      .orderBy('countries.code', 'ASC');
 
     return qb.getMany();
   }
