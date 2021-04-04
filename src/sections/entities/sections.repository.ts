@@ -85,7 +85,7 @@ export class SectionsRepository {
     const statsQueries = [
       this.qbStats(segment, groupBySegment).addSelect('SUM(sections.voters_count)', 'voters'),
       this.qbStats(segment, groupBySegment)
-        .addSelect('COUNT(sections.id)', 'sectionsWithResults')
+        .addSelect('COUNT(distinct sections.id)', 'sectionsWithResults')
         .addSelect('COALESCE(SUM(results.validVotesCount), 0)', 'validVotes')
         .addSelect('COALESCE(SUM(results.invalidVotesCount), 0)', 'invalidVotes')
         .innerJoin('sections.protocols', 'protocols', 'protocols.status = :published', { published: ProtocolStatus.PUBLISHED })
