@@ -20,11 +20,9 @@ export class CountriesRepository {
   }
 
   async findAllAbroadWithStats(): Promise<Country[]> {
-    const qb = this.repo.createQueryBuilder('countries');
-
-    // qb.loadRelationCountAndMap('sectionsCount', 'countries.sections');
-    qb.andWhere('countries.isAbroad = :isAbroad', { isAbroad: true });
-    qb.groupBy('countries.id');
+    const qb = this.repo.createQueryBuilder('countries')
+      .andWhere('countries.isAbroad = :isAbroad', { isAbroad: true })
+      .orderBy('countries.code', 'ASC');
 
     return qb.getMany();
   }

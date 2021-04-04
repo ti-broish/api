@@ -197,8 +197,8 @@ export class ResultsController {
     let nodesType: NodesType, nodes: any[];
     if (electionRegion.isAbroad) {
       nodes = (await this.countriesRepo.findAllAbroadWithStats()).map(country => ({
-        id: country.id,
-        segment: `${electionRegion.id}${country.id}`,
+        id: country.code,
+        segment: `${electionRegion.id}${country.code}`,
         name: country.name,
         type: NodeType.COUNTRY,
         results: [],
