@@ -5,6 +5,7 @@ import { Repository, SelectQueryBuilder, getConnection, In, Brackets } from 'typ
 import { ProtocolActionType } from './protocol-action.entity';
 import { Protocol, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
+import { shuffle } from 'lodash';
 
 @Injectable()
 export class ProtocolsRepository {
@@ -96,13 +97,21 @@ export class ProtocolsRepository {
       .andWhere('protocol.status = :status', { status: ProtocolStatus.RECEIVED })
       .andWhere('action_send.action = :sendAction', { sendAction: ProtocolActionType.SEND })
       .addOrderBy('action_send.timestamp', 'ASC')
-      .limit(1);
+      .limit(100);
 
     if (allAssignedProtocols.length > 0) {
       qb.andWhere('protocol.id not in (:...allAssignedProtocols)', { allAssignedProtocols });
     }
 
-    return this.findOneOrFail((await qb.getOneOrFail()).id);
+    const batch = await qb.getMany();
+
+    if (batch.length === 0) {
+      throw new Error('Cannot find an available protocol for you!');
+    }
+
+    const selected = shuffle<Protocol>(batch)[0];
+
+    return this.findOneOrFail(selected.id);
   }
 
   async findAssignedPendingProtocol(user: User): Promise<Protocol> {
