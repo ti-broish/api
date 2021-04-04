@@ -4,6 +4,7 @@ import { Protocol } from '../../protocols/entities/protocol.entity';
 import { CityRegion } from './cityRegion.entity';
 import { ElectionRegion } from './electionRegion.entity';
 import { Town } from './town.entity';
+import { StatsDto } from 'src/results/api/stats.dto';
 
 @Entity('sections')
 export class Section {
@@ -45,4 +46,6 @@ export class Section {
 
   @OneToMany(() => Violation, violation => violation.section)
   violations: Violation[];
+
+  stats: StatsDto;
 }

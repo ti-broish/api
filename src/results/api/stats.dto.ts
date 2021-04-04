@@ -1,4 +1,6 @@
 export class StatsDto {
+  violationsCount?: number = 0;
+
   sectionsWithProtocols?: number = 0;
 
   sectionsCount?: number = 0;
