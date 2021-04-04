@@ -61,7 +61,7 @@ export class SectionsRepository {
     }
     qb.innerJoin('sections.protocols', 'protocols');
     qb.innerJoin('protocols.results', 'results');
-    qb.where('protocols.status = :approved', { approved: ProtocolStatus.APPROVED });
+    qb.where('protocols.status = :published', { published: ProtocolStatus.PUBLISHED });
     if (groupBySegment > 0) {
       qb
         .addSelect('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
