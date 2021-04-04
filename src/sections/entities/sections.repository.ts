@@ -101,14 +101,22 @@ export class SectionsRepository {
     const stats = await Promise.all(rawResults);
 
     if (groupBySegment > 0) {
-      return stats.filter(x => x.length > 0).reduce((acc, statsData) => {
-        return statsData.reduce((_, singleStat) => {
-          const seg = singleStat.segment;
-          delete singleStat.segment;
-          acc[seg] = objectValuesToInt(Object.assign(acc[seg] || new StatsDto(), singleStat));
-          return acc;
-        })
-      }, {});
+      const output = {};
+
+      stats.filter(x => x.length > 0).forEach(stat => {
+        stat.forEach(singleStat => {
+            if (!output[singleStat.segment]) {
+              output[singleStat.segment] = new StatsDto();
+            }
+
+            Object.keys(singleStat).forEach(key => {
+              output[singleStat.segment][key] = parseInt(singleStat[key], 10);
+            });
+            delete singleStat.segment;
+        });
+
+        return output;
+      });
     }
 
     return objectValuesToInt(stats.reduce((acc, x) => Object.assign(acc, x), {} as StatsDto));
