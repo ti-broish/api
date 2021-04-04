@@ -114,9 +114,9 @@ export class SectionsRepository {
             });
             delete singleStat.segment;
         });
-
-        return output;
       });
+
+      return output;
     }
 
     return objectValuesToInt(stats.reduce((acc, x) => Object.assign(acc, x), {} as StatsDto));
