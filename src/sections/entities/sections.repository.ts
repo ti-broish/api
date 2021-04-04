@@ -15,7 +15,7 @@ export class SectionsRepository {
   }
 
   findOneOrFail(id: string): Promise<Section> {
-    return this.repo.findOneOrFail(id);
+    return this.repo.findOneOrFail(id, { relations: ['town'] });
   }
 
   findOneOrFailWithRelations(id: string): Promise<Section> {

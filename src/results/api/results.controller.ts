@@ -433,6 +433,10 @@ export class ResultsController {
       ].filter(x => !!x),
       abroad: electionRegion.isAbroad,
       place: section.place,
+      town: {
+        id: section.town.code,
+        name: section.town.name,
+      }
     };
   }
 }
