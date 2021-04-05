@@ -12,7 +12,7 @@ import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { User } from '../../users/entities';
 import { ProtocolResult } from '../entities/protocol-result.entity';
-import { Protocol } from '../entities/protocol.entity';
+import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
 import { EmptyPersonalProtocolQueue, ProtocolsRepository } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
@@ -20,11 +20,13 @@ import { ProtocolFilters } from './protocols-filters.dto';
 import { ViolationDto } from "../../violations/api/violation.dto";
 import { ViolationsRepository } from "../../violations/entities/violations.repository";
 import { TownDto } from "../../sections/api/town.dto";
+import { SectionsRepository } from 'src/sections/entities/sections.repository';
 
 @Controller('protocols')
 export class ProtocolsController {
   constructor(
     @Inject(ProtocolsRepository) private readonly repo: ProtocolsRepository,
+    @Inject(SectionsRepository) private readonly sectionsRepo: SectionsRepository,
     @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
     @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
   ) {}
@@ -153,7 +155,9 @@ export class ProtocolsController {
   ): Promise<ProtocolDto> {
     const replacement = replacementDto.toEntity(['replace']);
     const prevProtocol = await this.repo.findOneOrFail(protocolId);
-    const nextProtocol = prevProtocol.replace(user, replacement);
+    console.debug(prevProtocol.section, this.sectionsRepo, this.sectionsRepo.hasPublishedProtocol);
+    const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(prevProtocol.section);
+    const nextProtocol = prevProtocol.replace(user, replacement, hasPublishedProtocol ? ProtocolStatus.APPROVED : ProtocolStatus.PUBLISHED);
     await this.repo.save(prevProtocol);
     const savedProtocol = await this.repo.save(nextProtocol);
     const savedDto = ProtocolDto.fromEntity(savedProtocol, ['read.results']);

@@ -9,6 +9,7 @@ import { Protocol } from './entities/protocol.entity';
 import { ProtocolsRepository } from './entities/protocols.repository';
 import { Violation } from "../violations/entities/violation.entity";
 import { ViolationsModule } from "../violations/violations.module";
+import { SectionsModule } from 'src/sections/sections.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ViolationsModule } from "../violations/violations.module";
     CaslModule,
     PicturesModule,
     UsersModule,
+    SectionsModule,
     ViolationsModule,
   ],
   controllers: [ProtocolsController, ProtocolAssigneesController],

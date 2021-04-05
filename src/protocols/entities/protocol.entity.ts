@@ -137,7 +137,7 @@ export class Protocol {
     this.addAction(ProtocolAction.createPublishAction());
   }
 
-  replace(actor: User, replacement: Protocol): Protocol {
+  replace(actor: User, replacement: Protocol, replacementStatus: ProtocolStatus = ProtocolStatus.PUBLISHED): Protocol {
     if (![
       ProtocolStatus.RECEIVED,
       ProtocolStatus.APPROVED,
@@ -148,7 +148,7 @@ export class Protocol {
     }
     replacement.setReceivedStatus(actor);
     replacement.section = replacement.section || this.section;
-    replacement.status = ProtocolStatus.PUBLISHED;
+    replacement.status = replacementStatus;
     replacement.assignees = this.assignees;
 
     this.status = ProtocolStatus.REPLACED;

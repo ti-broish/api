@@ -52,6 +52,15 @@ export class SectionsRepository {
     return this.repo.find({ where: { electionRegion } });
   }
 
+  async hasPublishedProtocol(section: Section): Promise<boolean> {
+    return !!(await this.repo.createQueryBuilder('sections')
+      .innerJoin('sections.protocols', 'protocols')
+      .andWhere('sections.id = :sectionId', { sectionId: section.id })
+      .andWhere('protocols.status = :published', { published: ProtocolStatus.PUBLISHED })
+      .limit(1)
+      .getOne());
+  }
+
   async getResultsFor(segment: string = '', groupBySegment: number = 0): Promise<number[] | Record<string, number[]>> {
     const qb = this.repo.createQueryBuilder('sections').select([]);
     qb.addSelect('results.party_id', 'party_id');
