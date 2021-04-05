@@ -18,7 +18,7 @@ export enum ProtocolStatus {
   PUBLISHED = 'published',
 };
 
-enum ProtocolOrigin {
+export enum ProtocolOrigin {
   TI_BROISH = 'ti-broish',
   CIK = 'cik',
 };
