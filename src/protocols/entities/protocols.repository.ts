@@ -7,6 +7,7 @@ import { Protocol, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
 import { shuffle } from 'lodash';
 
+export class EmptyPersonalProtocolQueue extends Error {}
 @Injectable()
 export class ProtocolsRepository {
   constructor(@InjectRepository(Protocol) private readonly repo: Repository<Protocol>) {}
@@ -106,7 +107,7 @@ export class ProtocolsRepository {
     const batch = await qb.getMany();
 
     if (batch.length === 0) {
-      throw new Error('Cannot find an available protocol for you!');
+      throw new EmptyPersonalProtocolQueue('Cannot find an available protocol for you!');
     }
 
     const selected = shuffle<Protocol>(batch)[0];

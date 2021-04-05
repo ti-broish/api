@@ -13,7 +13,7 @@ import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.serv
 import { User } from '../../users/entities';
 import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol } from '../entities/protocol.entity';
-import { ProtocolsRepository } from '../entities/protocols.repository';
+import { EmptyPersonalProtocolQueue, ProtocolsRepository } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 import { ProtocolFilters } from './protocols-filters.dto';
@@ -181,7 +181,7 @@ export class ProtocolsController {
         protocol.assign(user, [user]);
         protocol = await this.repo.save(protocol);
       } catch(error) {
-        if (!(error instanceof EntityNotFoundError)) {
+        if (!(error instanceof EntityNotFoundError) && !(error instanceof EmptyPersonalProtocolQueue)) {
           throw error;
         }
 
