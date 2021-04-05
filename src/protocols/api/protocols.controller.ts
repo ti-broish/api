@@ -155,7 +155,6 @@ export class ProtocolsController {
   ): Promise<ProtocolDto> {
     const replacement = replacementDto.toEntity(['replace']);
     const prevProtocol = await this.repo.findOneOrFail(protocolId);
-    console.debug(prevProtocol.section, this.sectionsRepo, this.sectionsRepo.hasPublishedProtocol);
     const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(prevProtocol.section);
     const nextProtocol = prevProtocol.replace(user, replacement, hasPublishedProtocol ? ProtocolStatus.APPROVED : ProtocolStatus.PUBLISHED);
     await this.repo.save(prevProtocol);
