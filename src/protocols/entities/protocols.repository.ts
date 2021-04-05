@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities';
 import { Repository, SelectQueryBuilder, getConnection, In, Brackets } from 'typeorm';
 import { ProtocolActionType } from './protocol-action.entity';
-import { Protocol, ProtocolStatus } from './protocol.entity';
+import { Protocol, ProtocolOrigin, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
 import { shuffle } from 'lodash';
 
@@ -75,6 +75,8 @@ export class ProtocolsRepository {
       qb.andWhere('action.actor_id = :author', { author: filters.author });
       qb.andWhere('action.action = :action', { action: ProtocolActionType.SEND });
     }
+
+    qb.andWhere('protocol.origin = :origin', { origin: ProtocolOrigin.TI_BROISH });
 
     return qb;
   }
