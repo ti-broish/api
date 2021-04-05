@@ -148,10 +148,10 @@ export class Protocol {
     }
     replacement.setReceivedStatus(actor);
     replacement.section = replacement.section || this.section;
-    replacement.status = ProtocolStatus.READY;
+    replacement.status = ProtocolStatus.PUBLISHED;
     replacement.assignees = this.assignees;
 
-    this.status = ProtocolStatus.PUBLISHED;
+    this.status = ProtocolStatus.REPLACED;
     this.parent = replacement;
     this.addAction(ProtocolAction.createPublishAction(actor));
 
