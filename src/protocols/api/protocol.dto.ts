@@ -8,6 +8,9 @@ import { SectionDto } from '../../sections/api/section.dto';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
 import { ProtocolResultDto, ProtocolResultsDto } from './protocol-results.dto';
 
+export enum ProtocolStatusOverride {
+  PROCESSED = 'processed',
+}
 @Exclude()
 export class ProtocolDto {
   @ApiProperty()
@@ -45,7 +48,7 @@ export class ProtocolDto {
   assignees: UserDto[]
 
   @Expose({ groups: ['read'] })
-  status: ProtocolStatus;
+  status: ProtocolStatus | ProtocolStatusOverride;
 
   @Expose({ groups: ['replace', 'read.results'] })
   @Type(() => ProtocolResultsDto)

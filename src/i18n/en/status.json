@@ -7,6 +7,7 @@
   "PROTOCOL_REJECTED": "Rejected",
   "PROTOCOL_REPLACED": "Replaced",
   "PROTOCOL_READY": "Ready",
+  "PROTOCOL_PROCESSED": "Processed",
   "PROTOCOL_APPROVED": "Approved",
   "PROTOCOL_PUBLISHED": "Published",
   "BROADCAST_PENDING": "Pending",

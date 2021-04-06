@@ -8,7 +8,7 @@ import { ProtocolFilters } from 'src/protocols/api/protocols-filters.dto';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
-import { ProtocolDto } from '../../protocols/api/protocol.dto';
+import { ProtocolDto, ProtocolStatusOverride } from '../../protocols/api/protocol.dto';
 import { ProtocolsRepository } from '../../protocols/entities/protocols.repository';
 import { User } from '../../users/entities/user.entity';
 
@@ -29,6 +29,7 @@ export class MeProtocolsController {
     return protocols.map((protocol: Protocol) : ProtocolDto => {
       const protocolDto = ProtocolDto.fromEntity(protocol);
       protocolDto.pictures.forEach(this.updatePictureUrl, this);
+      protocolDto.status = ProtocolStatusOverride.PROCESSED;
 
       return protocolDto;
     });
