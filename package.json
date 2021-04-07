@@ -1,5 +1,5 @@
 {
-  "name": "@dabulgaria/ti-broish-api",
+  "name": "@ti-broish/api",
   "description": "Ti Broish API built with Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
@@ -124,12 +124,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Da-Bulgaria/ti-broish-api.git"
+    "url": "git+https://github.com/ti-broish/api.git"
   },
   "keywords": [],
   "author": "",
   "bugs": {
-    "url": "https://github.com/Da-Bulgaria/ti-broish-api/issues"
+    "url": "https://github.com/ti-broish/api/issues"
   },
-  "homepage": "https://github.com/Da-Bulgaria/ti-broish-api#readme"
+  "homepage": "https://tibroish.bg"
 }
