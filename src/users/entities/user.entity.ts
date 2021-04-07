@@ -53,6 +53,7 @@ export class User {
 
   @OneToMany(() => Client, client => client.owner, {
     cascade: ['remove'],
+    onDelete: 'CASCADE',
   })
   clients: Client[];
 
