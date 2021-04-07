@@ -185,5 +185,9 @@ export class Protocol {
     if (this?.pictures?.length) {
       this.pictures.sort((a, b) => Math.sign(a.sortPosition - b.sortPosition));
     }
+
+    if (this?.results?.length) {
+      this.results.sort((a, b) => Math.sign(a?.party.id - b?.party.id));
+    }
   }
 }
