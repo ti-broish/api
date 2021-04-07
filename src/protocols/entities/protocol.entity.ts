@@ -187,7 +187,7 @@ export class Protocol {
     }
 
     if (this?.results?.length) {
-      this.results.sort((a, b) => Math.sign(a?.party.id - b?.party.id));
+      this.results.sort((a, b) => Math.sign(a?.party?.id - b?.party?.id));
     }
   }
 }
