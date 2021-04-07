@@ -20,7 +20,7 @@ module.exports = {
       user : 'hkdobrev',
       host : ['ti-broish-api'],
       ref  : 'origin/main',
-      repo : 'git@github.com:Da-Bulgaria/ti-broish-api.git',
+      repo : 'git@github.com:ti-broish/api.git',
       path : '/var/www/ti-broish-demo',
       'post-setup': 'ls -la',
       'pre-deploy' : 'npm ci --omit=dev && npm run build && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/ && NODE_ENV=production npm run migration:run && pm2 startOrReload demo-ecosystem.config.js --env production',
