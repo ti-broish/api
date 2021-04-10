@@ -148,7 +148,7 @@ export class UserDto {
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_ORGANIZATION_NOT_EMPTY',
   })
-  @IsNotEmptyObject({
+  @IsNotEmptyObject({ nullable: true }, {
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_ORGANIZATION_NOT_EMPTY_OBJECT',
   })

@@ -32,7 +32,7 @@ const createRecordsToInsertsTransformer = (tableName: string, emptyColumnCallbac
     callback(null, insert
       .replace(':columns', Object.keys(record).map(escSymbol).join(', '))
       .replace(':values', Object.entries(record).map(([key, value]) => {
-        const str = value.trim();
+        const str = (''+value).trim();
 
         return escValue(str.length > 0 ? str : emptyColumnCallback(key));
       }).join(', ')));
