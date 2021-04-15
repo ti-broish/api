@@ -16,11 +16,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { BroadcastsModule } from './broadcasts/broadcasts.module';
 import { CaslModule } from './casl/casl.module';
 import { AcceptLanguageResolver, I18nJsonParser, I18nModule } from 'nestjs-i18n';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
 import { StreamsModule } from './streams/streams.module';
 import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module';
 import { ResultsModule } from './results/results.module';
+import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor';
 
 @Module({
   imports: [
@@ -72,6 +73,10 @@ import { ResultsModule } from './results/results.module';
     {
       provide: APP_FILTER,
       useClass: I18nExceptionsFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TranslateStatusInterceptor,
     },
   ]
 })
