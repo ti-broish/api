@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import { setUpSwagger, jsonMiddleware } from './config';
+import { setUpSwagger, setBodySize } from './config';
 import { ShutdownSignal } from '@nestjs/common';
 
 async function bootstrap() {
@@ -12,7 +12,7 @@ async function bootstrap() {
     setUpSwagger(app);
   }
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
-  app.use(jsonMiddleware)
+  setBodySize(app);
   if (config.get('NODE_ENV') === 'production') {
     app.enableShutdownHooks([ShutdownSignal.SIGINT, ShutdownSignal.SIGTERM]);
   }

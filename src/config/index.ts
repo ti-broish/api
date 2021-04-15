@@ -1,3 +1,4 @@
+export * from './body-size.config';
 export * from './json.middleware';
 export * from './schema.config';
 export * from './swagger.config';
