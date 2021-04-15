@@ -17,7 +17,7 @@ const escValue = (value: string | number): string => {
   return "'" + (''+value).replace(/'/g, "''") + "'";
 };
 
-const insertTemplate = `INSERT INTO :table (:columns) values (:values);\n`;
+const insertTemplate = `INSERT INTO :table (:columns) values (:values);`;
 const inserterFactory = (tableName: string) => {
   const insert = insertTemplate.replace(':table', escSymbol(tableName));
 
