@@ -1,4 +1,5 @@
 export * from './body-size.config';
+export * from './cors.config';
 export * from './graceful-shutdown.config';
 export * from './json.middleware';
 export * from './schema.config';

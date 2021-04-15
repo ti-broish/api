@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
-import { setUpSwagger, setBodySize, enableGracefulShutfown, useContainerForValidator } from './config';
+import { setUpSwagger, enableCors, setBodySize, enableGracefulShutfown, useContainerForValidator } from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +12,7 @@ async function bootstrap() {
   useContainerForValidator(app.select(AppModule));
   setBodySize(app);
   enableGracefulShutfown(app);
+  enableCors(app);
   await app.listen(config.get<number>('PORT', 3000));
 }
 bootstrap();
