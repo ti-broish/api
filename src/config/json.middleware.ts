@@ -1,3 +1,3 @@
-import * as bodyParser from 'body-parser';
+import * as express from 'express';
 
-export const jsonMiddleware = bodyParser.json({ limit: '50mb' });
+export const jsonMiddleware = express.json({ limit: '50mb' });
