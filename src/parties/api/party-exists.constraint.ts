@@ -11,10 +11,12 @@ import { PartiesRepository } from '../entities/parties.repository';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsPartyExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(PartiesRepository) private readonly repo: PartiesRepository) { }
+  constructor(
+    @Inject(PartiesRepository) private readonly repo: PartiesRepository,
+  ) {}
 
   async validate(partyId?: number): Promise<boolean> {
-    if (partyId === null || typeof(partyId) !== 'number' || partyId < 0 ) {
+    if (partyId === null || typeof partyId !== 'number' || partyId < 0) {
       return false;
     }
 

@@ -13,7 +13,14 @@ import { ClientsRepository } from './entities/clients.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Organization, Client]), CaslModule],
-  providers: [UsersRepository, OrganizationsRepository, ClientsRepository, RegistrationService, IsOrganizationExistsConstraint, IsUserExistsConstraint],
+  providers: [
+    UsersRepository,
+    OrganizationsRepository,
+    ClientsRepository,
+    RegistrationService,
+    IsOrganizationExistsConstraint,
+    IsUserExistsConstraint,
+  ],
   exports: [UsersRepository, ClientsRepository],
   controllers: [UsersController, OrganizationsController],
 })

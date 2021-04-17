@@ -1,12 +1,18 @@
 import { Section } from 'src/sections/entities';
 import { User } from 'src/users/entities';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { Stream } from './stream.entity';
 
 @Entity('stream_chunks')
 export class StreamChunk {
-
   @PrimaryColumn('char', {
     length: 26,
   })

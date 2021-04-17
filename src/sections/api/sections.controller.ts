@@ -1,5 +1,13 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -12,7 +20,6 @@ import { SectionDto } from './section.dto';
 @Controller('sections')
 @ApiFirebaseAuth()
 export class SectionsController {
-
   constructor(private readonly repo: SectionsRepository) {}
 
   @Get()
@@ -31,22 +38,28 @@ export class SectionsController {
     required: false,
     type: String,
   })
-  @ApiResponse({ status: 200, description: 'Successful query of sections'})
+  @ApiResponse({ status: 200, description: 'Successful query of sections' })
   async query(
     @Query('town', ParseIntPipe) townId: number,
     @Query('city_region') cityRegionCode?: string,
   ): Promise<SectionDto[]> {
-    return (await this.repo.findByTownAndCityRegion(townId, cityRegionCode)).map((section: Section) => SectionDto.fromEntity(section));
+    return (
+      await this.repo.findByTownAndCityRegion(townId, cityRegionCode)
+    ).map((section: Section) => SectionDto.fromEntity(section));
   }
 
   @Get(':section')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Section))
-  @ApiResponse({ status: 200, description: 'Successful retrieval of a section'})
-  async get(
-    @Param('section') sectionCode?: string,
-  ): Promise<SectionDto> {
-    return SectionDto.fromEntity(await this.repo.findOneOrFailWithRelations(sectionCode), ['read', 'get']);
+  @ApiResponse({
+    status: 200,
+    description: 'Successful retrieval of a section',
+  })
+  async get(@Param('section') sectionCode?: string): Promise<SectionDto> {
+    return SectionDto.fromEntity(
+      await this.repo.findOneOrFailWithRelations(sectionCode),
+      ['read', 'get'],
+    );
   }
 }

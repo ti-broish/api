@@ -1,6 +1,23 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { classToPlain, Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { IsBoolean, IsEmail, IsNotEmpty, IsNotEmptyObject, IsNumberString, IsPhoneNumber, IsString, Length, ValidateNested } from 'class-validator';
+import {
+  classToPlain,
+  Exclude,
+  Expose,
+  plainToClass,
+  Transform,
+  Type,
+} from 'class-transformer';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsNumberString,
+  IsPhoneNumber,
+  IsString,
+  Length,
+  ValidateNested,
+} from 'class-validator';
 import { assign, assignWith, merge } from 'lodash';
 import { Role } from 'src/casl/role.enum';
 import { User } from '../entities/user.entity';
@@ -17,15 +34,17 @@ export class UserDto {
   public static readonly UPDATE = 'update';
   public static readonly MANAGE = 'manage';
 
-  @Expose({ groups: [
-    'broadcast.create',
-    UserDto.READ,
-    UserDto.ME_READ,
-    UserDto.ADMIN_READ,
-    UserDto.MANAGE,
-    'assignee',
-    UserDto.AUTHOR_READ,
-  ] })
+  @Expose({
+    groups: [
+      'broadcast.create',
+      UserDto.READ,
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.MANAGE,
+      'assignee',
+      UserDto.AUTHOR_READ,
+    ],
+  })
   @IsUserExists({
     groups: ['broadcast.create', 'assignee'],
     message: 'USER_DOES_NOT_EXIST',
@@ -41,13 +60,15 @@ export class UserDto {
   id: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [
-    UserDto.ME_READ,
-    UserDto.ADMIN_READ,
-    UserDto.CREATE,
-    UserDto.UPDATE,
-    UserDto.AUTHOR_READ,
-  ] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.CREATE,
+      UserDto.UPDATE,
+      UserDto.AUTHOR_READ,
+    ],
+  })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_FIRST_NAME_NOT_EMPTY',
@@ -63,13 +84,15 @@ export class UserDto {
   firstName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [
-    UserDto.ME_READ,
-    UserDto.ADMIN_READ,
-    UserDto.CREATE,
-    UserDto.UPDATE,
-    UserDto.AUTHOR_READ,
-  ] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.CREATE,
+      UserDto.UPDATE,
+      UserDto.AUTHOR_READ,
+    ],
+  })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_LAST_NAME_NOT_EMPTY',
@@ -85,36 +108,45 @@ export class UserDto {
   lastName: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [
-    UserDto.ME_READ,
-    UserDto.ADMIN_READ,
-    UserDto.CREATE,
-    UserDto.UPDATE,
-    UserDto.AUTHOR_READ,
-  ] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.CREATE,
+      UserDto.UPDATE,
+      UserDto.AUTHOR_READ,
+    ],
+  })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_EMAIL_NOT_EMPTY',
   })
-  @IsEmail({}, {
-    groups: [UserDto.CREATE, UserDto.UPDATE],
-    message: 'USER_EMAIL_INVALID',
-  })
+  @IsEmail(
+    {},
+    {
+      groups: [UserDto.CREATE, UserDto.UPDATE],
+      message: 'USER_EMAIL_INVALID',
+    },
+  )
   @Length(1, 100, {
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_EMAIL_LENGTH',
   })
-  @Transform(({ value: email }) => email ? email.toLowerCase() : email, { groups: [UserDto.CREATE, UserDto.UPDATE]})
+  @Transform(({ value: email }) => (email ? email.toLowerCase() : email), {
+    groups: [UserDto.CREATE, UserDto.UPDATE],
+  })
   email: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [
-    UserDto.ME_READ,
-    UserDto.ADMIN_READ,
-    UserDto.CREATE,
-    UserDto.UPDATE,
-    UserDto.AUTHOR_READ,
-  ] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.CREATE,
+      UserDto.UPDATE,
+      UserDto.AUTHOR_READ,
+    ],
+  })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_PHONE_NOT_EMPTY',
@@ -126,15 +158,25 @@ export class UserDto {
   phone: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.CREATE,
+      UserDto.UPDATE,
+    ],
+  })
   @IsNotEmpty({
     groups: [UserDto.CREATE],
     message: 'USER_PIN_NOT_EMPTY',
   })
-  @IsNumberString({}, {
-    groups: [UserDto.CREATE, UserDto.UPDATE],
-    message: 'USER_PIN_NUMERIC',
-  })
+  @IsNumberString(
+    {},
+    {
+      groups: [UserDto.CREATE, UserDto.UPDATE],
+      message: 'USER_PIN_NUMERIC',
+    },
+  )
   @Length(4, 4, {
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_PIN_LENGTH',
@@ -142,16 +184,28 @@ export class UserDto {
   pin: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE, 'protocol.validate', UserDto.AUTHOR_READ] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.CREATE,
+      UserDto.UPDATE,
+      'protocol.validate',
+      UserDto.AUTHOR_READ,
+    ],
+  })
   @Type(() => OrganizationDto)
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_ORGANIZATION_NOT_EMPTY',
   })
-  @IsNotEmptyObject({ nullable: true }, {
-    groups: [UserDto.CREATE, UserDto.UPDATE],
-    message: 'USER_ORGANIZATION_NOT_EMPTY_OBJECT',
-  })
+  @IsNotEmptyObject(
+    { nullable: true },
+    {
+      groups: [UserDto.CREATE, UserDto.UPDATE],
+      message: 'USER_ORGANIZATION_NOT_EMPTY_OBJECT',
+    },
+  )
   @ValidateNested({
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_ORGANIZATION_INVALID',
@@ -167,7 +221,14 @@ export class UserDto {
   firebaseUid: string;
 
   @ApiPropertyOptional()
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.CREATE, UserDto.UPDATE] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.CREATE,
+      UserDto.UPDATE,
+    ],
+  })
   @IsNotEmpty({
     groups: [UserDto.CREATE, UserDto.UPDATE],
     message: 'USER_HAS_AGREED_TO_KEEP_DATA_NOT_EMPTY',
@@ -179,10 +240,20 @@ export class UserDto {
   hasAgreedToKeepData: boolean;
 
   @ApiPropertyOptional()
-  @Expose({ groups: [UserDto.ME_READ, UserDto.ADMIN_READ, UserDto.MANAGE, UserDto.AUTHOR_READ] })
+  @Expose({
+    groups: [
+      UserDto.ME_READ,
+      UserDto.ADMIN_READ,
+      UserDto.MANAGE,
+      UserDto.AUTHOR_READ,
+    ],
+  })
   roles: Role[];
 
-  public static fromEntity(entity: User, groups: string[] = [UserDto.READ]): UserDto {
+  public static fromEntity(
+    entity: User,
+    groups: string[] = [UserDto.READ],
+  ): UserDto {
     return plainToClass<UserDto, Partial<User>>(UserDto, entity, {
       excludeExtraneousValues: true,
       groups: groups,
@@ -201,10 +272,17 @@ export class UserDto {
       groups: groups,
     });
 
-    return assignWith(user, updatedKeys, UserDto.preferOriginalValueIfUpdatedIsUndefined);
+    return assignWith(
+      user,
+      updatedKeys,
+      UserDto.preferOriginalValueIfUpdatedIsUndefined,
+    );
   }
 
-  private static preferOriginalValueIfUpdatedIsUndefined(originalValue: any, newValue: any) {
+  private static preferOriginalValueIfUpdatedIsUndefined(
+    originalValue: any,
+    newValue: any,
+  ) {
     return newValue === undefined ? originalValue : newValue;
   }
 }

@@ -2,7 +2,7 @@ const fs = require('fs');
 const dotenv = require('dotenv');
 const FirebaseTokenGetter = require('firebase-idtoken-getter');
 
-const envConfig = dotenv.parse(fs.readFileSync('./.env'))
+const envConfig = dotenv.parse(fs.readFileSync('./.env'));
 
 const FirebaseTokenGetterObject = new FirebaseTokenGetter(
   envConfig.GOOGLE_APPLICATION_CREDENTIALS,
@@ -16,9 +16,8 @@ const getIdtoken = async () => {
     const token = await FirebaseTokenGetterObject.createIdTokenBycustomToken();
     console.log(token);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     process.exit(1);
   }
-}
+};
 getIdtoken();
-

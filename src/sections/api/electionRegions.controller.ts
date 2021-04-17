@@ -9,7 +9,6 @@ import { ElectionRegionDto } from './electionRegion.dto';
 
 @Controller('election_regions')
 export class ElectionRegionsController {
-
   constructor(private readonly repo: ElectionRegionsRepository) {}
 
   @Get()
@@ -17,6 +16,8 @@ export class ElectionRegionsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, ElectionRegion))
   async index(): Promise<ElectionRegionDto[]> {
-    return (await this.repo.findAllWithMunicipalities()).map(ElectionRegionDto.fromEntity);
+    return (await this.repo.findAllWithMunicipalities()).map(
+      ElectionRegionDto.fromEntity,
+    );
   }
 }

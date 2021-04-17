@@ -1,6 +1,18 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import {
+  Exclude,
+  Expose,
+  plainToClass,
+  Transform,
+  Type,
+} from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 import { Picture } from 'src/pictures/entities/picture.entity';
 import { UserDto } from 'src/users/api/user.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
@@ -21,7 +33,10 @@ export class ProtocolDto {
   @Expose({ groups: ['read', 'create', 'replace'] })
   @Type(() => SectionDto)
   @IsOptional({ groups: ['replace'] })
-  @Transform(({ value: id }) => plainToClass(SectionDto, { id }, { groups: ['create'] }), { groups: ['create'] })
+  @Transform(
+    ({ value: id }) => plainToClass(SectionDto, { id }, { groups: ['create'] }),
+    { groups: ['create'] },
+  )
   @IsNotEmpty({ groups: ['create'] })
   @ValidateNested({
     groups: ['create', 'replace'],
@@ -30,7 +45,15 @@ export class ProtocolDto {
 
   @ApiProperty({ required: true })
   @Expose({ groups: ['read', 'create', 'replace'] })
-  @Transform(({ value: ids }) => Array.isArray(ids) ? ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })) : ids, { groups: ['create'] })
+  @Transform(
+    ({ value: ids }) =>
+      Array.isArray(ids)
+        ? ids.map((id) =>
+            plainToClass(PictureDto, { id }, { groups: ['create'] }),
+          )
+        : ids,
+    { groups: ['create'] },
+  )
   @Type(() => PictureDto)
   @IsOptional({ groups: ['replace'] })
   @IsArray({ groups: ['create'] })
@@ -40,12 +63,12 @@ export class ProtocolDto {
     each: true,
     groups: ['create'],
   })
-  pictures: PictureDto[]
+  pictures: PictureDto[];
 
   @ApiProperty({ required: true })
   @Expose({ groups: [UserDto.AUTHOR_READ] })
   @Type(() => UserDto)
-  assignees: UserDto[]
+  assignees: UserDto[];
 
   @Expose({ groups: ['read'] })
   status: ProtocolStatus | ProtocolStatusOverride;
@@ -67,34 +90,50 @@ export class ProtocolDto {
   }
 
   public toEntity(groups: string[] = ['create']): Protocol {
-    const protocol = plainToClass<Protocol, Partial<ProtocolDto>>(Protocol, this, {
-      groups: groups,
-    });
+    const protocol = plainToClass<Protocol, Partial<ProtocolDto>>(
+      Protocol,
+      this,
+      {
+        groups: groups,
+      },
+    );
 
     let sortPosition = 1;
-    protocol.pictures = (protocol.pictures || []).map((picture: Picture): Picture => {
-      picture.sortPosition = sortPosition;
-      sortPosition++;
+    protocol.pictures = (protocol.pictures || []).map(
+      (picture: Picture): Picture => {
+        picture.sortPosition = sortPosition;
+        sortPosition++;
 
-      return picture;
-    }, []);
+        return picture;
+      },
+      [],
+    );
 
     if (protocol.results) {
       protocol.results = this.results.toResults();
-      protocol.data = this.results.toProtocolData()
+      protocol.data = this.results.toProtocolData();
     }
 
     return protocol;
   }
 
-  public static fromEntity(protocol: Protocol, additionalGroups: string[] = []): ProtocolDto {
-    const protocolDto = plainToClass<ProtocolDto, Partial<Protocol>>(ProtocolDto, protocol, {
-      excludeExtraneousValues: true,
-      groups: ['read', ...additionalGroups],
-    });
+  public static fromEntity(
+    protocol: Protocol,
+    additionalGroups: string[] = [],
+  ): ProtocolDto {
+    const protocolDto = plainToClass<ProtocolDto, Partial<Protocol>>(
+      ProtocolDto,
+      protocol,
+      {
+        excludeExtraneousValues: true,
+        groups: ['read', ...additionalGroups],
+      },
+    );
 
     if (additionalGroups.includes('protocol.validate')) {
-      protocolDto.author = UserDto.fromEntity(protocol.getAuthor(), ['protocol.validate']);
+      protocolDto.author = UserDto.fromEntity(protocol.getAuthor(), [
+        'protocol.validate',
+      ]);
     }
 
     return protocolDto;

@@ -9,7 +9,7 @@ import { PartyDto } from './party.dto';
 
 @Controller('parties')
 export class PartiesController {
-  constructor(private readonly repo: PartiesRepository) { }
+  constructor(private readonly repo: PartiesRepository) {}
 
   @Get()
   @HttpCode(200)

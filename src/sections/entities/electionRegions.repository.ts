@@ -15,8 +15,11 @@ export class ElectionRegionsRepository {
     return this.repo.findOneOrFail({ where: { code } });
   }
 
-  async findOneWithStatsOrFail(electionRegion: ElectionRegion): Promise<ElectionRegion> {
-    const stats = await this.entityManager.createQueryBuilder(this.repo.queryRunner)
+  async findOneWithStatsOrFail(
+    electionRegion: ElectionRegion,
+  ): Promise<ElectionRegion> {
+    const stats = await this.entityManager
+      .createQueryBuilder(this.repo.queryRunner)
       .addSelect('sum(sections.voters_count)', 'voters')
       .addSelect('count(sections.id)', 'sectionsCount')
       .from('sections', 'sections')
@@ -24,7 +27,12 @@ export class ElectionRegionsRepository {
       .groupBy('sections.election_region_id')
       .getRawOne();
 
-    electionRegion.stats = Object.fromEntries((Object.entries(stats).map(([key, value]: [string, string]) => [key, parseInt(value, 10)])));
+    electionRegion.stats = Object.fromEntries(
+      Object.entries(stats).map(([key, value]: [string, string]) => [
+        key,
+        parseInt(value, 10),
+      ]),
+    );
 
     return electionRegion;
   }
@@ -46,7 +54,10 @@ export class ElectionRegionsRepository {
     const qb = this.repo.createQueryBuilder('electionRegions');
 
     qb.innerJoin('electionRegions.sections', 'sections');
-    qb.loadRelationCountAndMap('electionRegions.sectionsCount', 'electionRegions.sections');
+    qb.loadRelationCountAndMap(
+      'electionRegions.sectionsCount',
+      'electionRegions.sections',
+    );
     qb.groupBy('electionRegions.id');
     qb.orderBy('electionRegions.id', 'ASC');
 
@@ -54,6 +65,6 @@ export class ElectionRegionsRepository {
   }
 
   findAllWithMunicipalities(): Promise<ElectionRegion[]> {
-    return this.repo.find({ relations: ['municipalities' ]});
+    return this.repo.find({ relations: ['municipalities'] });
   }
 }

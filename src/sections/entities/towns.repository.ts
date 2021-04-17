@@ -38,12 +38,30 @@ export class TownsRepository {
         qb.where('country.code = :countryCode', { countryCode });
 
         if (electionRegionCode && municipalityCode) {
-          qb.innerJoin('town.municipality', 'municipality', 'municipality.code = :municipalityCode', { municipalityCode });
-          qb.innerJoin('municipality.electionRegions', 'electionRegions', 'electionRegions.code = :electionRegionCode', { electionRegionCode });
-          qb.innerJoin('town.sections', 'section', 'section.election_region_id = electionRegions.id');
-          qb.leftJoinAndSelect('town.cityRegions', 'city_region', 'city_region.id = "section"."city_region_id"');
+          qb.innerJoin(
+            'town.municipality',
+            'municipality',
+            'municipality.code = :municipalityCode',
+            { municipalityCode },
+          );
+          qb.innerJoin(
+            'municipality.electionRegions',
+            'electionRegions',
+            'electionRegions.code = :electionRegionCode',
+            { electionRegionCode },
+          );
+          qb.innerJoin(
+            'town.sections',
+            'section',
+            'section.election_region_id = electionRegions.id',
+          );
+          qb.leftJoinAndSelect(
+            'town.cityRegions',
+            'city_region',
+            'city_region.id = "section"."city_region_id"',
+          );
         }
-      }
+      },
     });
   }
 }

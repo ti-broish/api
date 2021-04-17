@@ -12,7 +12,7 @@
 
 Пуснете [Docker][] и изпълнете следните команди:
 
-``` shell
+```shell
 # Clone the project
 git clone git@github.com:Da-Bulgaria/ti-broish-api.git
 cd ti-broish-api
@@ -30,7 +30,7 @@ npm run migration:run && npm run seed:run
 
 Свалете Service account JSON файл от Firebase и го запазете като `firebase.json` в проекта.
 
-``` shell
+```shell
 # Copy the environment configuration template
 cp .env.schema .env
 ```
@@ -45,17 +45,18 @@ cp .env.schema .env
 - `FIREBASE_UID`
 
 След това можете лесно да генерирате ключ със следната команда:
-``` shell
+
+```shell
 npm run firebase:token
 ```
 
 ## Стартиране
 
-``` shell
+```shell
 npm run start
 ```
 
-##  API Документация
+## API Документация
 
 Ти Броиш REST API- използва Swagger OpenAPI стандарта.
 След като стартирате приложението можете да намерите API документация на:
@@ -65,14 +66,14 @@ npm run start
 
 ## Разработване
 
-``` shell
+```shell
 # watch mode
 npm run start:dev
 ```
 
 ## Тестове
 
-``` shell
+```shell
 # unit tests
 npm run test
 
@@ -91,4 +92,4 @@ npm run test:cov
 
 Кодът на Ти Броиш е лицензиран под [MIT лиценз](https://github.com/nestjs/nest/blob/master/LICENSE).
 
-[Docker]: https://www.docker.com/products/docker-desktop
+[docker]: https://www.docker.com/products/docker-desktop

@@ -1,23 +1,36 @@
-import { Inject } from "@nestjs/common";
-import { Protocol } from "src/protocols/entities/protocol.entity";
-import { ProtocolsRepository } from "src/protocols/entities/protocols.repository";
-import { CityRegion, Country, ElectionRegion, Municipality, Section } from "src/sections/entities";
+import { Inject } from '@nestjs/common';
+import { Protocol } from 'src/protocols/entities/protocol.entity';
+import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository';
+import {
+  CityRegion,
+  Country,
+  ElectionRegion,
+  Municipality,
+  Section,
+} from 'src/sections/entities';
 
 function uniquePredicate(value: any, index: number, self: any[]) {
   return self.indexOf(value) === index;
 }
 
 export class TabulationService {
-
-  constructor(@Inject(ProtocolsRepository) private readonly protocolsRepo: ProtocolsRepository) {}
+  constructor(
+    @Inject(ProtocolsRepository)
+    private readonly protocolsRepo: ProtocolsRepository,
+  ) {}
 
   async tabulate(): Promise<void> {
     const approvedProtocols = await this.getApprovedProtocols();
-    const sections = approvedProtocols.map((protocol: Protocol) => protocol.section);
-    const electionRegionIds = sections.map((section: Section) => section.id.substr(0, 2)).filter(uniquePredicate);
-    const publishedProtocols = await this.protocolsRepo.findPublishedProtocolsFrom(electionRegionIds);
-    const
-      countries: Country[] = [],
+    const sections = approvedProtocols.map(
+      (protocol: Protocol) => protocol.section,
+    );
+    const electionRegionIds = sections
+      .map((section: Section) => section.id.substr(0, 2))
+      .filter(uniquePredicate);
+    const publishedProtocols = await this.protocolsRepo.findPublishedProtocolsFrom(
+      electionRegionIds,
+    );
+    const countries: Country[] = [],
       electionRegions: ElectionRegion[] = [],
       municipalities: Municipality[] = [],
       cityRegions: CityRegion[] = [];

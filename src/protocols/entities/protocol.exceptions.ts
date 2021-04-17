@@ -5,12 +5,21 @@ export interface ProtocolException {
   getMessage(): string;
 }
 
-export class ProtocolStatusException extends Error implements ProtocolException {
+export class ProtocolStatusException
+  extends Error
+  implements ProtocolException {
   private protocol: Protocol;
 
-  constructor(protocol: Protocol, targetStatus: ProtocolStatus, message?: string) {
+  constructor(
+    protocol: Protocol,
+    targetStatus: ProtocolStatus,
+    message?: string,
+  ) {
     const originalStatus = protocol.status || 'empty';
-    super(message || `protocol_cannot_change_status_from_${originalStatus}_to_${targetStatus}`.toUpperCase());
+    super(
+      message ||
+        `protocol_cannot_change_status_from_${originalStatus}_to_${targetStatus}`.toUpperCase(),
+    );
     this.protocol = protocol;
   }
 
@@ -23,7 +32,9 @@ export class ProtocolStatusException extends Error implements ProtocolException 
   }
 }
 
-export class ProtocolHasResultsException extends Error implements ProtocolException {
+export class ProtocolHasResultsException
+  extends Error
+  implements ProtocolException {
   private protocol: Protocol;
 
   constructor(protocol: Protocol) {

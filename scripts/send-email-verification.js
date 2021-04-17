@@ -1,6 +1,6 @@
-const admin = require('firebase-admin')
-const firebase = require('firebase')
-const serviceAccount = require("../firebase.json");
+const admin = require('firebase-admin');
+const firebase = require('firebase');
+const serviceAccount = require('../firebase.json');
 
 require('dotenv').config();
 
@@ -18,8 +18,8 @@ const auth = firebase.auth();
 const emailUser = async (email) => {
   try {
     const userRecord = await adminAuth.getUserByEmail(email);
-    const token = await adminAuth.createCustomToken(userRecord.uid)
-    await auth.signInWithCustomToken(token)
+    const token = await adminAuth.createCustomToken(userRecord.uid);
+    await auth.signInWithCustomToken(token);
     const currentUser = auth.currentUser;
     await currentUser.sendEmailVerification();
     console.log('email sent to', email);

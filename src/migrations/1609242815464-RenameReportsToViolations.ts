@@ -1,9 +1,9 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class RenameReportsToViolations1609242815464 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+export class RenameReportsToViolations1609242815464
+  implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         alter table "reports" rename to "violations";
         alter table "report_updates" rename to "violation_updates";
         alter table "reports_pictures" rename to "violations_pictures";
@@ -16,10 +16,10 @@ export class RenameReportsToViolations1609242815464 implements MigrationInterfac
         alter index "report_updates_report_id_type_timestamp_key" rename to "violation_updates_violation_id_type_timestamp_key";
         alter table "violations_pictures" rename constraint "reports_pictures_pkey" to "violations_pictures_pkey";
       `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         alter table "violations_pictures" rename constraint "violations_pictures_pkey" to "reports_pictures_pkey";
         alter index "violation_updates_violation_id_type_timestamp_key" rename to "report_updates_report_id_type_timestamp_key";
         alter index "violation_updates_violation_id_timestamp_key" rename to "report_updates_report_id_timestamp_key";
@@ -32,6 +32,5 @@ export class RenameReportsToViolations1609242815464 implements MigrationInterfac
         alter table "violation_updates" rename to "report_updates";
         alter table "violations_pictures" rename to "reports_pictures";
       `);
-    }
-
+  }
 }

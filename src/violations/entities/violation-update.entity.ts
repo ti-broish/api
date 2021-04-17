@@ -1,5 +1,12 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { ulid } from "ulid";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
+import { ulid } from 'ulid';
 import { User } from '../../users/entities';
 import { Violation } from './violation.entity';
 
@@ -19,7 +26,7 @@ export class ViolationUpdate {
   })
   id: string = ulid();
 
-  @ManyToOne(() => Violation, violation => violation.updates)
+  @ManyToOne(() => Violation, (violation) => violation.updates)
   @JoinColumn({
     name: 'violation_id',
   })
@@ -41,8 +48,13 @@ export class ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.SEND, actor);
   }
 
-  public static createAsssignUpdate(actor: User, assignees: User[]): ViolationUpdate {
-    return ViolationUpdate.create(ViolationUpdateType.ASSIGN, actor, { assignees: assignees.map(x => x.id) });
+  public static createAsssignUpdate(
+    actor: User,
+    assignees: User[],
+  ): ViolationUpdate {
+    return ViolationUpdate.create(ViolationUpdateType.ASSIGN, actor, {
+      assignees: assignees.map((x) => x.id),
+    });
   }
 
   public static createRejectUpdate(actor: User): ViolationUpdate {
@@ -61,7 +73,11 @@ export class ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.UNPUBLISH, actor);
   }
 
-  private static create(updateType: ViolationUpdateType, actor?: User, payload?: object): ViolationUpdate {
+  private static create(
+    updateType: ViolationUpdateType,
+    actor?: User,
+    payload?: object,
+  ): ViolationUpdate {
     const update = new ViolationUpdate();
     if (actor) {
       update.actor = actor;

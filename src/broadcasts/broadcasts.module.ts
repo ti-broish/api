@@ -8,11 +8,7 @@ import { BroadcastsPublishTask } from './notifications/broadcasts-publish.task';
 import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Broadcast]),
-    CaslModule,
-    UsersModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Broadcast]), CaslModule, UsersModule],
   providers: [BroadcastsRepository, BroadcastsPublishTask],
   exports: [],
   controllers: [BroadcastsController],

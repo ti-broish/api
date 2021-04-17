@@ -17,7 +17,7 @@ export class Country {
   @Column()
   public readonly isAbroad: boolean;
 
-  @OneToMany(() => Town, town => town.country)
+  @OneToMany(() => Town, (town) => town.country)
   public readonly towns: Town[];
 
   sectionsCount: number;

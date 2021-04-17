@@ -32,12 +32,12 @@ export class PostsRepository {
 
     return this.repo.find({
       where: {
-        publishAt: Raw(alias => `${alias} <= :date`, { date }),
+        publishAt: Raw((alias) => `${alias} <= :date`, { date }),
         isListed: true,
       },
       order: {
         publishAt: 'DESC',
-      }
+      },
     });
   }
 

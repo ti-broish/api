@@ -5,7 +5,7 @@ import { OrganizationDto } from './organization.dto';
 
 @Controller('organizations')
 export class OrganizationsController {
-  constructor(private readonly repo: OrganizationsRepository) { }
+  constructor(private readonly repo: OrganizationsRepository) {}
 
   @Get()
   @Public()

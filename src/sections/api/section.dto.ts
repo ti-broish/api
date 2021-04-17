@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
-import { IsNotEmpty, IsNumberString, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { StreamDto } from 'src/streams/api/stream.dto';
 import { ElectionRegion } from '../entities';
 import { Section } from '../entities/section.entity';
@@ -16,9 +22,14 @@ export class SectionDto {
   @ApiProperty()
   @Expose({ groups: ['read', 'create', StreamDto.CREATE, 'replace'] })
   @IsSectionExists({ groups: ['create', StreamDto.CREATE, 'replace'] })
-  @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH, { groups: ['create', StreamDto.CREATE, 'replace'] })
+  @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH, {
+    groups: ['create', StreamDto.CREATE, 'replace'],
+  })
   @IsString({ groups: ['create', StreamDto.CREATE, 'replace'] })
-  @IsNumberString({ no_symbols: true }, { groups: ['create', StreamDto.CREATE, 'replace'] })
+  @IsNumberString(
+    { no_symbols: true },
+    { groups: ['create', StreamDto.CREATE, 'replace'] },
+  )
   public id: string;
 
   @ApiProperty()
@@ -50,10 +61,13 @@ export class SectionDto {
   @Expose({ groups: ['get', StreamDto.READ] })
   cityRegion: CityRegionDto;
 
-  public static fromEntity(entity: Section, additionalGroups: string[] = ['read']): SectionDto {
+  public static fromEntity(
+    entity: Section,
+    additionalGroups: string[] = ['read'],
+  ): SectionDto {
     return plainToClass<SectionDto, Partial<Section>>(SectionDto, entity, {
       excludeExtraneousValues: true,
-      groups: additionalGroups.filter(value => allowedGroups.includes(value)),
-    })
+      groups: additionalGroups.filter((value) => allowedGroups.includes(value)),
+    });
   }
 }

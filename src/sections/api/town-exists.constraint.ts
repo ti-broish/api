@@ -11,14 +11,16 @@ import { TownsRepository } from '../entities/towns.repository';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsTownExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(TownsRepository) private readonly repo: TownsRepository) { }
+  constructor(
+    @Inject(TownsRepository) private readonly repo: TownsRepository,
+  ) {}
 
   async validate(townId?: number): Promise<boolean> {
     if (!townId) {
       return true;
     }
 
-    if (typeof(townId) !== 'number' || townId <= 0 ) {
+    if (typeof townId !== 'number' || townId <= 0) {
       return false;
     }
 

@@ -8,11 +8,7 @@ import { PostsController } from './posts.controller';
 import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Post]),
-    CaslModule,
-    UsersModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Post]), CaslModule, UsersModule],
   providers: [PostsRepository, IsPostExistsConstraint],
   exports: [],
   controllers: [PostsController],

@@ -8,7 +8,6 @@ import { StatsDto } from 'src/results/api/stats.dto';
 
 @Entity('sections')
 export class Section {
-
   public static readonly SECTION_ID_LENGTH = 9;
 
   @PrimaryColumn('char', { length: Section.SECTION_ID_LENGTH })
@@ -32,19 +31,19 @@ export class Section {
   @Column()
   isShip: boolean;
 
-  @ManyToOne(() => ElectionRegion, electionRegion => electionRegion.sections)
+  @ManyToOne(() => ElectionRegion, (electionRegion) => electionRegion.sections)
   electionRegion: ElectionRegion;
 
-  @ManyToOne(() => Town, town => town.sections)
+  @ManyToOne(() => Town, (town) => town.sections)
   town: Town;
 
-  @ManyToOne(() => CityRegion, cityRegion => cityRegion.sections)
+  @ManyToOne(() => CityRegion, (cityRegion) => cityRegion.sections)
   cityRegion: CityRegion;
 
-  @OneToMany(() => Protocol, protocol => protocol.section)
+  @OneToMany(() => Protocol, (protocol) => protocol.section)
   protocols: Protocol[];
 
-  @OneToMany(() => Violation, violation => violation.section)
+  @OneToMany(() => Violation, (violation) => violation.section)
   violations: Violation[];
 
   stats: StatsDto;

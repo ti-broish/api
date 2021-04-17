@@ -8,13 +8,28 @@ import { ViolationsFilters } from '../api/violations-filters.dto';
 
 @Injectable()
 export class ViolationsRepository {
-  constructor(@InjectRepository(Violation) private readonly repo: Repository<Violation>) {}
+  constructor(
+    @InjectRepository(Violation) private readonly repo: Repository<Violation>,
+  ) {}
 
   findOneOrFail(id: string): Promise<Violation> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['section', 'town', 'pictures', 'updates', 'updates.actor', 'updates.actor.organization', 'assignees'] } );
+    return this.repo.findOneOrFail({
+      where: { id },
+      relations: [
+        'section',
+        'town',
+        'pictures',
+        'updates',
+        'updates.actor',
+        'updates.actor.organization',
+        'assignees',
+      ],
+    });
   }
 
-  queryBuilderWithFilters(filters: ViolationsFilters): SelectQueryBuilder<Violation> {
+  queryBuilderWithFilters(
+    filters: ViolationsFilters,
+  ): SelectQueryBuilder<Violation> {
     const qb = this.repo.createQueryBuilder('violation');
 
     qb.leftJoinAndSelect('violation.section', 'section');
@@ -32,7 +47,9 @@ export class ViolationsRepository {
     }
 
     if (filters.section) {
-      qb.andWhere('section.id LIKE :section', { section: `${filters.section}%` });
+      qb.andWhere('section.id LIKE :section', {
+        section: `${filters.section}%`,
+      });
     }
 
     if (filters.status) {
@@ -45,16 +62,22 @@ export class ViolationsRepository {
 
     if (filters.author || filters.organization) {
       qb.innerJoin('violation.updates', 'update_send');
-      qb.andWhere('update_send.type = :update', { update: ViolationUpdateType.SEND });
+      qb.andWhere('update_send.type = :update', {
+        update: ViolationUpdateType.SEND,
+      });
 
       if (filters.author) {
-        qb.andWhere('update_send.actor_id = :author', { author: filters.author });
+        qb.andWhere('update_send.actor_id = :author', {
+          author: filters.author,
+        });
       }
 
       if (filters.organization) {
         qb.innerJoin('update_send.actor', 'sender');
         qb.innerJoin('sender.organization', 'organization');
-        qb.andWhere('organization.id = :organization', { organization: filters.organization });
+        qb.andWhere('organization.id = :organization', {
+          organization: filters.organization,
+        });
       }
     }
 
@@ -73,14 +96,14 @@ export class ViolationsRepository {
       join: {
         alias: 'violation',
         innerJoin: {
-          update: 'violation.updates'
-        }
+          update: 'violation.updates',
+        },
       },
       where: (qb: SelectQueryBuilder<Violation>) => {
-        qb
-          .where('update.actor_id = :authorId', { authorId: author.id })
-          .andWhere('update.type = :type', { type: ViolationUpdateType.SEND });
-      }
+        qb.where('update.actor_id = :authorId', {
+          authorId: author.id,
+        }).andWhere('update.type = :type', { type: ViolationUpdateType.SEND });
+      },
     });
   }
 }

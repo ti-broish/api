@@ -1,18 +1,33 @@
-import { AfterLoad, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  AfterLoad,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { Section, Town } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
-import { ViolationUpdate, ViolationUpdateType } from './violation-update.entity';
+import {
+  ViolationUpdate,
+  ViolationUpdateType,
+} from './violation-update.entity';
 import { ViolationComment } from './violation-comment.entity';
-import { ViolationPublishingException, ViolationStatusException } from './violation.exceptions';
+import {
+  ViolationPublishingException,
+  ViolationStatusException,
+} from './violation.exceptions';
 
 export enum ViolationStatus {
   RECEIVED = 'received',
   PROCESSING = 'processing',
   PROCESSED = 'processed',
   REJECTED = 'rejected',
-};
+}
 
 @Entity('violations', { orderBy: { id: 'DESC' } })
 export class Violation {
@@ -30,14 +45,14 @@ export class Violation {
   @Column({ type: 'boolean' })
   isPublished: boolean;
 
-  @ManyToOne(() => Section, section => section.violations)
+  @ManyToOne(() => Section, (section) => section.violations)
   section?: Section;
 
-  @ManyToOne(() => Town, town => town.violations)
+  @ManyToOne(() => Town, (town) => town.violations)
   town: Town;
 
   @ManyToMany(() => Picture, {
-    cascade: ['insert', 'update']
+    cascade: ['insert', 'update'],
   })
   @JoinTable({
     name: 'violations_pictures',
@@ -54,18 +69,28 @@ export class Violation {
   })
   assignees: User[];
 
-  @OneToMany(() => ViolationUpdate, (update: ViolationUpdate) => update.violation, {
-    cascade: ['insert', 'update'],
-  })
+  @OneToMany(
+    () => ViolationUpdate,
+    (update: ViolationUpdate) => update.violation,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
   updates: ViolationUpdate[];
 
-  @OneToMany(() => ViolationComment, (comment: ViolationComment) => comment.violation, {
-    cascade: ['update'],
-  })
+  @OneToMany(
+    () => ViolationComment,
+    (comment: ViolationComment) => comment.violation,
+    {
+      cascade: ['update'],
+    },
+  )
   comments: ViolationComment[];
 
   getAuthor(): User {
-    return this.updates.find((update: ViolationUpdate) => update.type === ViolationUpdateType.SEND).actor;
+    return this.updates.find(
+      (update: ViolationUpdate) => update.type === ViolationUpdateType.SEND,
+    ).actor;
   }
 
   public getUpdates(): ViolationUpdate[] {

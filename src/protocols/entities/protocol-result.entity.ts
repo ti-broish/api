@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { Protocol } from './protocol.entity';
 import { Party } from '../../parties/entities/party.entity';
@@ -10,7 +17,7 @@ export class ProtocolResult {
   })
   id: string = ulid();
 
-  @ManyToOne(() => Protocol, protocol => protocol.results)
+  @ManyToOne(() => Protocol, (protocol) => protocol.results)
   @JoinColumn({
     name: 'protocol_id',
   })

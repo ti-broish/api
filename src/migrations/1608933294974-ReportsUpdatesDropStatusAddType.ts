@@ -1,9 +1,9 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class ReportsUpdatesDropStatusAddType1608933294974 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+export class ReportsUpdatesDropStatusAddType1608933294974
+  implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         drop index "report_updates_status_key";
         drop index "report_updates_actor_id_timestamp_key";
         alter table "report_updates"
@@ -14,10 +14,10 @@ export class ReportsUpdatesDropStatusAddType1608933294974 implements MigrationIn
         drop type "report_status";
         create index "report_updates_report_id_type_timestamp_key" on "report_updates" ("report_id", "type", "timestamp");
       `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         drop index "report_updates_report_id_type_timestamp_key";
         create type "report_status" AS ENUM('pending', 'processing', 'processed', 'rejected');
         alter table "report_updates"
@@ -28,5 +28,5 @@ export class ReportsUpdatesDropStatusAddType1608933294974 implements MigrationIn
         create index "report_updates_actor_id_timestamp_key" on "report_updates" ("actor_id", "timestamp");
         create index "report_updates_status_key" on "report_updates" ("status");
       `);
-    }
+  }
 }

@@ -1,5 +1,5 @@
 import { Optional } from '@nestjs/common';
-import { PageDTO } from "src/utils/page.dto";
+import { PageDTO } from 'src/utils/page.dto';
 import { ViolationStatus } from '../entities/violation.entity';
 
 export class ViolationsFilters extends PageDTO {

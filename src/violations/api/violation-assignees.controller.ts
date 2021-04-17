@@ -1,5 +1,20 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, UseGuards, Put, ParseArrayPipe, Delete, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  HttpCode,
+  Param,
+  Body,
+  ValidationPipe,
+  UsePipes,
+  Inject,
+  UseGuards,
+  Put,
+  ParseArrayPipe,
+  Delete,
+  NotFoundException,
+} from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -13,7 +28,8 @@ import { ViolationsRepository } from '../entities/violations.repository';
 @Controller('violations')
 export class ViolationAssigneesController {
   constructor(
-    @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
+    @Inject(ViolationsRepository)
+    private readonly violationsRepo: ViolationsRepository,
     @Inject(UsersRepository) private readonly usersRepo: UsersRepository,
   ) {}
 
@@ -21,7 +37,9 @@ export class ViolationAssigneesController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  async getAssignees( @Param('violation') violationId: string ): Promise<UserDto[]> {
+  async getAssignees(
+    @Param('violation') violationId: string,
+  ): Promise<UserDto[]> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
 
     return violation.assignees.map((user: User) => UserDto.fromEntity(user));
@@ -31,24 +49,46 @@ export class ViolationAssigneesController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['assignee'] },
+      groups: ['assignee'],
+    }),
+  )
   async putAssignees(
     @Param('violation') violationId: string,
-    @Body(new ParseArrayPipe({ items: UserDto, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] })) assigneeDtos: UserDto[],
+    @Body(
+      new ParseArrayPipe({
+        items: UserDto,
+        transformOptions: { groups: ['assignee'] },
+        groups: ['assignee'],
+      }),
+    )
+    assigneeDtos: UserDto[],
     @InjectUser() user: User,
   ): Promise<object> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
-    violation.assign(user, assigneeDtos.map((userDto: UserDto) => userDto.toEntity()));
+    violation.assign(
+      user,
+      assigneeDtos.map((userDto: UserDto) => userDto.toEntity()),
+    );
     await this.violationsRepo.save(violation);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
 
   @Post(':violation/assignees')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['assignee'] },
+      groups: ['assignee'],
+    }),
+  )
   async addAssignee(
     @Param('violation') violationId: string,
     @Body() assigneeDto: UserDto,
@@ -58,14 +98,20 @@ export class ViolationAssigneesController {
     violation.assign(actor, [...violation.assignees, assigneeDto.toEntity()]);
     await this.violationsRepo.save(violation);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
 
   @Delete(':violation/assignees/:assignee')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['assignee'] },
+      groups: ['assignee'],
+    }),
+  )
   async deleteAssignee(
     @Param('violation') violationId: string,
     @Param('assignee') assigneeId: string,
@@ -74,7 +120,9 @@ export class ViolationAssigneesController {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
     const assignees = violation.assignees;
-    const foundIndex = assignees.findIndex((user: User) => user.id === assigneeToBeDeleted.id);
+    const foundIndex = assignees.findIndex(
+      (user: User) => user.id === assigneeToBeDeleted.id,
+    );
     if (foundIndex < 0) {
       throw new NotFoundException('ASSIGNEE_NOT_FOUND');
     }
@@ -82,6 +130,6 @@ export class ViolationAssigneesController {
     violation.assign(user, assignees);
     await this.violationsRepo.save(violation);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
 }

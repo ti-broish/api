@@ -11,10 +11,12 @@ import { UsersRepository } from '../entities/users.repository';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsUserExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(UsersRepository) private readonly repo: UsersRepository) { }
+  constructor(
+    @Inject(UsersRepository) private readonly repo: UsersRepository,
+  ) {}
 
   async validate(userId?: string): Promise<boolean> {
-    if (!userId || typeof(userId) !== 'string') {
+    if (!userId || typeof userId !== 'string') {
       return false;
     }
 

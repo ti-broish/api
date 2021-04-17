@@ -1,5 +1,14 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, Body, UsePipes, ValidationPipe, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -17,17 +26,25 @@ export class MeClientsController {
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Client))
   async index(@InjectUser() user: User): Promise<ClientDto[]> {
-    return (await this.clientsRepo.findAllForOwners([user])).map(ClientDto.fromEntity);
+    return (await this.clientsRepo.findAllForOwners([user])).map(
+      ClientDto.fromEntity,
+    );
   }
 
   @Post()
   @HttpCode(201)
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Create, Client))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['create'] },
+      groups: ['create'],
+    }),
+  )
   async create(
     @InjectUser() user: User,
-    @Body() clientDto: ClientDto
+    @Body() clientDto: ClientDto,
   ): Promise<ClientDto> {
     const client = clientDto.toEntity();
     client.activate();

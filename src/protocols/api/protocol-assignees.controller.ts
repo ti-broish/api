@@ -1,5 +1,21 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, UseGuards, Put, ParseArrayPipe, Delete, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  HttpCode,
+  Param,
+  Body,
+  ValidationPipe,
+  UsePipes,
+  Inject,
+  UseGuards,
+  Put,
+  ParseArrayPipe,
+  Delete,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -13,7 +29,8 @@ import { ProtocolsRepository } from '../entities/protocols.repository';
 @Controller('protocols')
 export class ProtocolAssigneesController {
   constructor(
-    @Inject(ProtocolsRepository) private readonly protocolsRepo: ProtocolsRepository,
+    @Inject(ProtocolsRepository)
+    private readonly protocolsRepo: ProtocolsRepository,
     @Inject(UsersRepository) private readonly usersRepo: UsersRepository,
   ) {}
 
@@ -21,7 +38,9 @@ export class ProtocolAssigneesController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async getAssignees( @Param('protocol') protocolId: string ): Promise<UserDto[]> {
+  async getAssignees(
+    @Param('protocol') protocolId: string,
+  ): Promise<UserDto[]> {
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
 
     return protocol.assignees.map((user: User) => UserDto.fromEntity(user));
@@ -31,27 +50,51 @@ export class ProtocolAssigneesController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['assignee'] },
+      groups: ['assignee'],
+    }),
+  )
   async putAssignees(
     @Param('protocol') protocolId: string,
-    @Body(new ParseArrayPipe({ items: UserDto, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] })) assigneeDtos: UserDto[],
+    @Body(
+      new ParseArrayPipe({
+        items: UserDto,
+        transformOptions: { groups: ['assignee'] },
+        groups: ['assignee'],
+      }),
+    )
+    assigneeDtos: UserDto[],
     @InjectUser() user: User,
   ): Promise<object> {
     if (assigneeDtos.length > 1) {
-      throw new BadRequestException('CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL');
+      throw new BadRequestException(
+        'CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL',
+      );
     }
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
-    protocol.assign(user, assigneeDtos.map((userDto: UserDto) => userDto.toEntity()));
+    protocol.assign(
+      user,
+      assigneeDtos.map((userDto: UserDto) => userDto.toEntity()),
+    );
     await this.protocolsRepo.save(protocol);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
 
   @Post(':protocol/assignees')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['assignee'] },
+      groups: ['assignee'],
+    }),
+  )
   async addAssignee(
     @Param('protocol') protocolId: string,
     @Body() assigneeDto: UserDto,
@@ -59,20 +102,27 @@ export class ProtocolAssigneesController {
   ): Promise<object> {
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     if (protocol.assignees.length > 0) {
-      throw new BadRequestException('CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL');
+      throw new BadRequestException(
+        'CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL',
+      );
     }
     protocol.assign(actor, [...protocol.assignees, assigneeDto.toEntity()]);
     await this.protocolsRepo.save(protocol);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
-
 
   @Delete(':protocol/assignees/:assignee')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['assignee'] }, groups: ['assignee'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['assignee'] },
+      groups: ['assignee'],
+    }),
+  )
   async deleteAssignee(
     @Param('protocol') protocolId: string,
     @Param('assignee') assigneeId: string,
@@ -81,7 +131,9 @@ export class ProtocolAssigneesController {
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
     const assignees = protocol.assignees;
-    const foundIndex = assignees.findIndex((user: User) => user.id === assigneeToBeDeleted.id);
+    const foundIndex = assignees.findIndex(
+      (user: User) => user.id === assigneeToBeDeleted.id,
+    );
     if (foundIndex < 0) {
       throw new NotFoundException('ASSIGNEE_NOT_FOUND');
     }
@@ -89,6 +141,6 @@ export class ProtocolAssigneesController {
     protocol.assign(user, assignees);
     await this.protocolsRepo.save(protocol);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
 }

@@ -4,7 +4,7 @@ import { Client } from '../entities/client.entity';
 import { UserDto } from './user.dto';
 
 @Exclude()
-export class ClientDto{
+export class ClientDto {
   @Expose({ groups: ['read'] })
   id: string;
 

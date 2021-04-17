@@ -5,9 +5,7 @@
     "plugins": [
       {
         "name": "@nestjs/swagger",
-        "options": {
-
-        }
+        "options": {}
       }
     ],
     "assets": ["i18n/**/*"]

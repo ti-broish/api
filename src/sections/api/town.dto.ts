@@ -42,6 +42,6 @@ export class TownDto {
     return plainToClass<TownDto, Partial<Town>>(TownDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
-    })
+    });
   }
 }

@@ -1,5 +1,17 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Query, Param, Body, Inject, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  HttpCode,
+  Query,
+  Param,
+  Body,
+  Inject,
+  UsePipes,
+  ValidationPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -14,18 +26,22 @@ import { UploadImageDto } from './upload-image.dto';
 
 @Controller('pictures')
 export class PicturesController {
-
   constructor(
-    @Inject(PicturesUploader) private readonly picturesUploader: PicturesUploader,
+    @Inject(PicturesUploader)
+    private readonly picturesUploader: PicturesUploader,
     @Inject(PicturesRepository) private readonly repo: PicturesRepository,
-    @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
+    @Inject(PicturesUrlGenerator)
+    private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
 
   @Post()
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, Picture))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async uploadFile(@Body() upload: UploadImageDto, @InjectUser() user: User): Promise<PictureDto> {
+  async uploadFile(
+    @Body() upload: UploadImageDto,
+    @InjectUser() user: User,
+  ): Promise<PictureDto> {
     let picture = await this.picturesUploader.upload(upload.image);
     picture.author = user;
 
@@ -47,4 +63,3 @@ export class PicturesController {
     return pictureDto;
   }
 }
-

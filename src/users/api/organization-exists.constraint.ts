@@ -10,11 +10,15 @@ import { OrganizationsRepository } from '../entities/organizations.repository';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
-export class IsOrganizationExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(OrganizationsRepository) private readonly repo: OrganizationsRepository) { }
+export class IsOrganizationExistsConstraint
+  implements ValidatorConstraintInterface {
+  constructor(
+    @Inject(OrganizationsRepository)
+    private readonly repo: OrganizationsRepository,
+  ) {}
 
   async validate(organizationId: number): Promise<boolean> {
-    if (!organizationId || typeof(organizationId) !== 'number') {
+    if (!organizationId || typeof organizationId !== 'number') {
       return false;
     }
 

@@ -15,15 +15,21 @@ export class UsersRepository {
   }
 
   findOne(id: string): Promise<User | undefined> {
-    return this.repo.findOne({ where: { id }, relations: ['organization'] } );
+    return this.repo.findOne({ where: { id }, relations: ['organization'] });
   }
 
   findOneOrFail(id: string): Promise<User> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['organization'] } );
+    return this.repo.findOneOrFail({
+      where: { id },
+      relations: ['organization'],
+    });
   }
 
   async findByFirebaseUid(firebaseUid: string): Promise<User> {
-    return await this.repo.findOne({ where: { firebaseUid }, relations: ['organization'] });
+    return await this.repo.findOne({
+      where: { firebaseUid },
+      relations: ['organization'],
+    });
   }
 
   async findByEmail(email: string): Promise<User> {

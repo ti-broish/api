@@ -13,8 +13,17 @@ import { ViolationsRepository } from './entities/violations.repository';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Violation, ViolationComment, ViolationUpdate]), CaslModule, PicturesModule, UsersModule],
-  controllers: [ViolationsController, ViolationCommentsController, ViolationAssigneesController],
+  imports: [
+    TypeOrmModule.forFeature([Violation, ViolationComment, ViolationUpdate]),
+    CaslModule,
+    PicturesModule,
+    UsersModule,
+  ],
+  controllers: [
+    ViolationsController,
+    ViolationCommentsController,
+    ViolationAssigneesController,
+  ],
   providers: [ViolationsRepository, ViolationCommentsRepository],
   exports: [ViolationsRepository, ViolationCommentsRepository],
 })

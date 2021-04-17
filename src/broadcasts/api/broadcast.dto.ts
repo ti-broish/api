@@ -1,7 +1,29 @@
-import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsDate, IsIn, IsNotEmpty, IsUrl, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
+import {
+  Exclude,
+  Expose,
+  plainToClass,
+  Transform,
+  Type,
+} from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsDate,
+  IsIn,
+  IsNotEmpty,
+  IsUrl,
+  MaxLength,
+  MinLength,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
 import { UserDto } from 'src/users/api/user.dto';
-import { Broadcast, BroadcastStatus, BroadcastTopic, BroadcastType } from '../entities/broadcast.entity';
+import {
+  Broadcast,
+  BroadcastStatus,
+  BroadcastTopic,
+  BroadcastType,
+} from '../entities/broadcast.entity';
 import { PostDto } from '../../posts/post.dto';
 
 @Exclude()
@@ -27,8 +49,15 @@ export class BroadcastDto {
   status: BroadcastStatus;
 
   @Expose({ groups: ['read', 'broadcast.create'] })
-  @ValidateIf((broadcast) => broadcast.users === undefined || broadcast.topics !== undefined, { always: true })
-  @IsNotEmpty({ always: true, message: 'at least one of "topics" or "users" should be populated' })
+  @ValidateIf(
+    (broadcast) =>
+      broadcast.users === undefined || broadcast.topics !== undefined,
+    { always: true },
+  )
+  @IsNotEmpty({
+    always: true,
+    message: 'at least one of "topics" or "users" should be populated',
+  })
   @IsArray({ always: true })
   @ArrayNotEmpty({ always: true })
   @IsIn(Object.values(BroadcastTopic), {
@@ -38,12 +67,27 @@ export class BroadcastDto {
   topics: BroadcastTopic[];
 
   @Expose({ groups: ['read', 'broadcast.create'] })
-  @ValidateIf((broadcast) => broadcast.users !== undefined || broadcast.topics === undefined, { always: true })
-  @IsNotEmpty({ always: true, message: 'at least one of "topics" or "users" should be populated' })
+  @ValidateIf(
+    (broadcast) =>
+      broadcast.users !== undefined || broadcast.topics === undefined,
+    { always: true },
+  )
+  @IsNotEmpty({
+    always: true,
+    message: 'at least one of "topics" or "users" should be populated',
+  })
   @IsArray()
   @ArrayNotEmpty({ always: true })
   @Type(() => UserDto)
-  @Transform(({ value: ids }) => Array.isArray(ids) ? ids.map(id => plainToClass(UserDto, { id }, { groups: ['broadcast.create'] })) : ids, { groups: ['create'] })
+  @Transform(
+    ({ value: ids }) =>
+      Array.isArray(ids)
+        ? ids.map((id) =>
+            plainToClass(UserDto, { id }, { groups: ['broadcast.create'] }),
+          )
+        : ids,
+    { groups: ['create'] },
+  )
   @ValidateNested({
     always: true,
     each: true,
@@ -57,11 +101,16 @@ export class BroadcastDto {
     message: 'either $property or url must be populated',
   })
   @Transform(
-    ({obj: broadcast }: {obj: Broadcast}) => broadcast.data && broadcast.data.type === BroadcastType.POST
-      ? plainToClass<PostDto, Partial<PostDto>>(PostDto, { id: broadcast.data.postId }, { groups: ['read'] })
-      : null,
-    { groups: ['read']
-  })
+    ({ obj: broadcast }: { obj: Broadcast }) =>
+      broadcast.data && broadcast.data.type === BroadcastType.POST
+        ? plainToClass<PostDto, Partial<PostDto>>(
+            PostDto,
+            { id: broadcast.data.postId },
+            { groups: ['read'] },
+          )
+        : null,
+    { groups: ['read'] },
+  )
   @Type(() => PostDto)
   @ValidateNested({
     always: true,
@@ -74,21 +123,25 @@ export class BroadcastDto {
     always: true,
     message: 'either $property or post must be populated',
   })
-  @IsUrl({
-    require_tld: true,
-    protocols: ['https'],
-    require_protocol: true,
-    disallow_auth: true
-  }, {
-    always: true,
-    message: '$property must a valid full HTTPs URL address',
-  })
+  @IsUrl(
+    {
+      require_tld: true,
+      protocols: ['https'],
+      require_protocol: true,
+      disallow_auth: true,
+    },
+    {
+      always: true,
+      message: '$property must a valid full HTTPs URL address',
+    },
+  )
   @Transform(
-    ({obj: broadcast }: {obj: Broadcast}) => broadcast.data && broadcast.data.type === BroadcastType.URL
-      ? broadcast.data.url
-      : null,
-    { groups: ['read']
-  })
+    ({ obj: broadcast }: { obj: Broadcast }) =>
+      broadcast.data && broadcast.data.type === BroadcastType.URL
+        ? broadcast.data.url
+        : null,
+    { groups: ['read'] },
+  )
   url: string;
 
   @Expose({ groups: ['read', 'broadcast.create'] })
@@ -97,15 +150,19 @@ export class BroadcastDto {
   publishAt: Date;
 
   public toEntity(): Broadcast {
-    const broadcast = plainToClass<Broadcast, Partial<BroadcastDto>>(Broadcast, this, {
-      groups: ['broadcast.create'],
-    });
+    const broadcast = plainToClass<Broadcast, Partial<BroadcastDto>>(
+      Broadcast,
+      this,
+      {
+        groups: ['broadcast.create'],
+      },
+    );
 
     if (this.post) {
       broadcast.data = {
         type: BroadcastType.POST,
         postId: this.post.id,
-      }
+      };
     } else if (this.url) {
       broadcast.data = {
         type: BroadcastType.URL,
@@ -117,9 +174,13 @@ export class BroadcastDto {
   }
 
   public static fromEntity(entity: Broadcast): BroadcastDto {
-    return plainToClass<BroadcastDto, Partial<Broadcast>>(BroadcastDto, entity, {
-      excludeExtraneousValues: true,
-      groups: ['read'],
-    })
+    return plainToClass<BroadcastDto, Partial<Broadcast>>(
+      BroadcastDto,
+      entity,
+      {
+        excludeExtraneousValues: true,
+        groups: ['read'],
+      },
+    );
   }
 }

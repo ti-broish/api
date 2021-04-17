@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { User } from '../../users/entities';
 import { Violation } from './violation.entity';
@@ -15,7 +22,7 @@ export class ViolationComment {
   @Column({ type: 'text' })
   text: string;
 
-  @ManyToOne(() => Violation, violation => violation.comments)
+  @ManyToOne(() => Violation, (violation) => violation.comments)
   @JoinColumn({
     name: 'violation_id',
   })

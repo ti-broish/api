@@ -1,7 +1,6 @@
-import { BreadcrumbDto } from "./breadcrumb.dto";
+import { BreadcrumbDto } from './breadcrumb.dto';
 
 export class SectionDetailsResultDto {
-
   results: number[];
 
   number: string;
@@ -18,7 +17,7 @@ export class SectionDetailsResultDto {
 
   ship: boolean = false;
 
-  totalBallots: number|null;
+  totalBallots: number | null;
 
   voters: number;
 

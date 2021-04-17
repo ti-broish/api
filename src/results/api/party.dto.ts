@@ -1,5 +1,5 @@
-import { Exclude, Expose, plainToClass } from "class-transformer";
-import { Party } from "src/parties/entities/party.entity";
+import { Exclude, Expose, plainToClass } from 'class-transformer';
+import { Party } from 'src/parties/entities/party.entity';
 
 @Exclude()
 export class PartyDto {
