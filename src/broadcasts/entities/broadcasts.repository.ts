@@ -25,7 +25,9 @@ export class BroadcastsRepository {
     });
   }
 
-  findAllToBePublishedAndPending(publishedBeforeDate?: Date): Promise<Broadcast[]> {
+  findAllToBePublishedAndPending(
+    publishedBeforeDate?: Date,
+  ): Promise<Broadcast[]> {
     if (publishedBeforeDate === undefined) {
       publishedBeforeDate = new Date();
     }
@@ -34,12 +36,12 @@ export class BroadcastsRepository {
     return this.repo.find({
       relations: ['users'],
       where: {
-        publishAt: Raw(alias => `${alias} <= :date`, { date }),
+        publishAt: Raw((alias) => `${alias} <= :date`, { date }),
         status: BroadcastStatus.PENDING,
       },
       order: {
         publishAt: 'ASC',
-      }
+      },
     });
   }
 

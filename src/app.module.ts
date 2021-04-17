@@ -15,7 +15,11 @@ import { PostsModule } from './posts/posts.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BroadcastsModule } from './broadcasts/broadcasts.module';
 import { CaslModule } from './casl/casl.module';
-import { AcceptLanguageResolver, I18nJsonParser, I18nModule } from 'nestjs-i18n';
+import {
+  AcceptLanguageResolver,
+  I18nJsonParser,
+  I18nModule,
+} from 'nestjs-i18n';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
 import { StreamsModule } from './streams/streams.module';
@@ -33,9 +37,7 @@ import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
         parserOptions: {
           path: path.join(__dirname, '/i18n/'),
         },
-        resolvers: [
-          AcceptLanguageResolver
-        ],
+        resolvers: [AcceptLanguageResolver],
       }),
       parser: I18nJsonParser,
       inject: [ConfigService],
@@ -78,7 +80,7 @@ import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
       provide: APP_INTERCEPTOR,
       useClass: TranslateStatusInterceptor,
     },
-  ]
+  ],
 })
 export class AppModule {
   onApplicationBootstrap() {

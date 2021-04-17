@@ -1,5 +1,19 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, ValidationPipe, UsePipes, Inject, UseGuards, Query, Res, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  HttpCode,
+  Param,
+  Body,
+  ValidationPipe,
+  UsePipes,
+  Inject,
+  UseGuards,
+  Query,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
@@ -13,37 +27,52 @@ import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.serv
 import { User } from '../../users/entities';
 import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
-import { EmptyPersonalProtocolQueue, ProtocolsRepository } from '../entities/protocols.repository';
+import {
+  EmptyPersonalProtocolQueue,
+  ProtocolsRepository,
+} from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 import { ProtocolFilters } from './protocols-filters.dto';
-import { ViolationDto } from "../../violations/api/violation.dto";
-import { ViolationsRepository } from "../../violations/entities/violations.repository";
-import { TownDto } from "../../sections/api/town.dto";
+import { ViolationDto } from '../../violations/api/violation.dto';
+import { ViolationsRepository } from '../../violations/entities/violations.repository';
+import { TownDto } from '../../sections/api/town.dto';
 import { SectionsRepository } from 'src/sections/entities/sections.repository';
 
 @Controller('protocols')
 export class ProtocolsController {
   constructor(
     @Inject(ProtocolsRepository) private readonly repo: ProtocolsRepository,
-    @Inject(SectionsRepository) private readonly sectionsRepo: SectionsRepository,
-    @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
-    @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
+    @Inject(SectionsRepository)
+    private readonly sectionsRepo: SectionsRepository,
+    @Inject(PicturesUrlGenerator)
+    private readonly urlGenerator: PicturesUrlGenerator,
+    @Inject(ViolationsRepository)
+    private readonly violationsRepo: ViolationsRepository,
   ) {}
-
 
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: ProtocolFilters): Promise<Pagination<ProtocolDto>> {
-    const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 100, route: '/protocols' });
+  async index(
+    @Query() query: ProtocolFilters,
+  ): Promise<Pagination<ProtocolDto>> {
+    const pagination = await paginate(
+      this.repo.queryBuilderWithFilters(query),
+      { page: query.page, limit: 100, route: '/protocols' },
+    );
 
     return new Pagination<ProtocolDto>(
-      await Promise.all(pagination.items.map(async (protocol: Protocol) =>
-        ProtocolDto.fromEntity(protocol, [UserDto.AUTHOR_READ, 'protocol.validate'])
-      )),
+      await Promise.all(
+        pagination.items.map(async (protocol: Protocol) =>
+          ProtocolDto.fromEntity(protocol, [
+            UserDto.AUTHOR_READ,
+            'protocol.validate',
+          ]),
+        ),
+      ),
       pagination.meta,
       pagination.links,
     );
@@ -53,7 +82,13 @@ export class ProtocolsController {
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, Protocol))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['create'] },
+      groups: ['create'],
+    }),
+  )
   async create(
     @Body() protocolDto: ProtocolDto,
     @InjectUser() user: User,
@@ -61,7 +96,9 @@ export class ProtocolsController {
     const protocol = protocolDto.toEntity();
     protocol.setReceivedStatus(user);
 
-    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol), [UserDto.AUTHOR_READ]);
+    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol), [
+      UserDto.AUTHOR_READ,
+    ]);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
@@ -93,43 +130,60 @@ export class ProtocolsController {
 
     // save violation
     const savedEntity = await this.violationsRepo.save(violation);
-    const savedDto = ViolationDto.fromEntity(savedEntity, ['violation.process', UserDto.AUTHOR_READ]);
+    const savedDto = ViolationDto.fromEntity(savedEntity, [
+      'violation.process',
+      UserDto.AUTHOR_READ,
+    ]);
     this.updatePicturesUrl(savedDto);
 
-    return {'status': 'Accepted and Violation Sent'};
+    return { status: 'Accepted and Violation Sent' };
   }
 
   @Post(':id/reject')
   @HttpCode(202)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async reject(@Param('id') id: string, @InjectUser() user: User): Promise<object> {
+  async reject(
+    @Param('id') id: string,
+    @InjectUser() user: User,
+  ): Promise<object> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.reject(user);
 
     await this.repo.save(protocol);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
 
   @Post(':id/approve')
   @HttpCode(202)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async approve(@Param('id') id: string, @InjectUser() user: User): Promise<object> {
+  async approve(
+    @Param('id') id: string,
+    @InjectUser() user: User,
+  ): Promise<object> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.approve(user);
 
     await this.repo.save(protocol);
 
-    return {'status': 'Accepted'};
+    return { status: 'Accepted' };
   }
 
   @Post(':id/results')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
+  @CheckPolicies((ability: Ability) =>
+    ability.can(Action.Create, ProtocolResult),
+  )
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['create'] },
+      groups: ['create'],
+    }),
+  )
   async createResults(
     @Param('id') protocolId: string,
     @Body() resultsDto: ProtocolResultsDto,
@@ -146,8 +200,15 @@ export class ProtocolsController {
   @Post(':id/replace')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, ProtocolResult))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['replace'] } }))
+  @CheckPolicies((ability: Ability) =>
+    ability.can(Action.Create, ProtocolResult),
+  )
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['replace'] },
+    }),
+  )
   async replace(
     @Param('id') protocolId: string,
     @Body() replacementDto: ProtocolDto,
@@ -155,8 +216,14 @@ export class ProtocolsController {
   ): Promise<ProtocolDto> {
     const replacement = replacementDto.toEntity(['replace']);
     const prevProtocol = await this.repo.findOneOrFail(protocolId);
-    const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(prevProtocol.section);
-    const nextProtocol = prevProtocol.replace(user, replacement, hasPublishedProtocol ? ProtocolStatus.APPROVED : ProtocolStatus.PUBLISHED);
+    const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(
+      prevProtocol.section,
+    );
+    const nextProtocol = prevProtocol.replace(
+      user,
+      replacement,
+      hasPublishedProtocol ? ProtocolStatus.APPROVED : ProtocolStatus.PUBLISHED,
+    );
     await this.repo.save(prevProtocol);
     const savedProtocol = await this.repo.save(nextProtocol);
     const savedDto = ProtocolDto.fromEntity(savedProtocol, ['read.results']);
@@ -170,11 +237,14 @@ export class ProtocolsController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async assign(@InjectUser() user: User, @Res() response: Response): Promise<ProtocolDto | null> {
+  async assign(
+    @InjectUser() user: User,
+    @Res() response: Response,
+  ): Promise<ProtocolDto | null> {
     let protocol: Protocol;
     try {
       protocol = await this.repo.findAssignedPendingProtocol(user);
-    } catch(error: any) {
+    } catch (error: any) {
       if (!(error instanceof EntityNotFoundError)) {
         throw error;
       }
@@ -183,8 +253,11 @@ export class ProtocolsController {
         protocol = await this.repo.findNextAvailableProtocol(user);
         protocol.assign(user, [user]);
         protocol = await this.repo.save(protocol);
-      } catch(error) {
-        if (!(error instanceof EntityNotFoundError) && !(error instanceof EmptyPersonalProtocolQueue)) {
+      } catch (error) {
+        if (
+          !(error instanceof EntityNotFoundError) &&
+          !(error instanceof EmptyPersonalProtocolQueue)
+        ) {
           throw error;
         }
 
@@ -207,7 +280,11 @@ export class ProtocolsController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   async get(@Param('id') id: string): Promise<ProtocolDto> {
     const protocol = await this.repo.findOneOrFail(id);
-    const dto = ProtocolDto.fromEntity(protocol, ['protocol.validate', UserDto.AUTHOR_READ, 'get']);
+    const dto = ProtocolDto.fromEntity(protocol, [
+      'protocol.validate',
+      UserDto.AUTHOR_READ,
+      'get',
+    ]);
     dto.results = ProtocolResultsDto.fromEntity(protocol);
     this.updatePicturesUrl(dto);
 
@@ -222,8 +299,11 @@ export class ProtocolsController {
     return ProtocolResultsDto.fromEntity(await this.repo.findOneOrFail(id));
   }
 
-  private updatePicturesUrl(protocolDto: ProtocolDto|ViolationDto) {
-    protocolDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
+  private updatePicturesUrl(protocolDto: ProtocolDto | ViolationDto) {
+    protocolDto.pictures.forEach(
+      (picture: PictureDto) =>
+        (picture.url = this.urlGenerator.getUrl(picture)),
+    );
 
     return protocolDto;
   }

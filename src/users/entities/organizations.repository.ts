@@ -14,7 +14,7 @@ export class OrganizationsRepository {
     return this.repo.find();
   }
 
-  findOne(id: number): Promise<Organization|null> {
+  findOne(id: number): Promise<Organization | null> {
     return this.repo.findOne(id);
   }
 }

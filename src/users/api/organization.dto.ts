@@ -8,7 +8,15 @@ import { UserDto } from './user.dto';
 @Exclude()
 export class OrganizationDto {
   @ApiProperty()
-  @Expose({ groups: ['read', 'create', 'update', 'protocol.validate', UserDto.AUTHOR_READ] })
+  @Expose({
+    groups: [
+      'read',
+      'create',
+      'update',
+      'protocol.validate',
+      UserDto.AUTHOR_READ,
+    ],
+  })
   @IsNumber({}, { groups: ['create', 'update'] })
   @IsNotEmpty({ groups: ['create', 'update'] })
   @IsOrganizationExists({ groups: ['create', 'update'] })
@@ -23,9 +31,13 @@ export class OrganizationDto {
   type: string;
 
   public static fromEntity(entity: Organization): OrganizationDto {
-    return plainToClass<OrganizationDto, Partial<Organization>>(OrganizationDto, entity, {
-      excludeExtraneousValues: true,
-      groups: ['read'],
-    })
+    return plainToClass<OrganizationDto, Partial<Organization>>(
+      OrganizationDto,
+      entity,
+      {
+        excludeExtraneousValues: true,
+        groups: ['read'],
+      },
+    );
   }
 }

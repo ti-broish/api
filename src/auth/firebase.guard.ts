@@ -1,11 +1,15 @@
-import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { AuthGuard } from "@nestjs/passport";
-import { Request } from "express";
-import { resolve } from "path";
-import { Observable } from "rxjs";
-import { ALLOW_ONLY_FIREBASE_USER } from "./decorators/allow-only-firebase-user.decorator";
-import { IS_PUBLIC_KEY } from "./decorators/public.decorator";
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
+import { resolve } from 'path';
+import { Observable } from 'rxjs';
+import { ALLOW_ONLY_FIREBASE_USER } from './decorators/allow-only-firebase-user.decorator';
+import { IS_PUBLIC_KEY } from './decorators/public.decorator';
 
 /**
  * All controllers use this authentication guard by default.
@@ -32,10 +36,10 @@ export class FirebaseGuard extends AuthGuard('firebase') {
     // If AllowOnlyFirebaseUser() decorator is set on controller
     // authentication would allow it if the firebase user is valid
     // even if the user does not exist in the database
-    const allowOnlyFirebaseUser = !!this.reflector.getAllAndOverride<boolean>(ALLOW_ONLY_FIREBASE_USER, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const allowOnlyFirebaseUser = !!this.reflector.getAllAndOverride<boolean>(
+      ALLOW_ONLY_FIREBASE_USER,
+      [context.getHandler(), context.getClass()],
+    );
 
     let guardResultOrPromise = super.canActivate(context);
 
@@ -44,7 +48,10 @@ export class FirebaseGuard extends AuthGuard('firebase') {
     }
 
     if (typeof guardResultOrPromise === 'boolean') {
-      return guardResultOrPromise && !!context.switchToHttp().getRequest().firebaseUser;
+      return (
+        guardResultOrPromise &&
+        !!context.switchToHttp().getRequest().firebaseUser
+      );
     }
 
     if (guardResultOrPromise instanceof Observable) {

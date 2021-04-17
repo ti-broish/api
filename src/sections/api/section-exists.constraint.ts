@@ -12,14 +12,19 @@ import { SectionsRepository } from '../entities/sections.repository';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsSectionExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(SectionsRepository) private readonly repo: SectionsRepository) { }
+  constructor(
+    @Inject(SectionsRepository) private readonly repo: SectionsRepository,
+  ) {}
 
   async validate(sectionId?: string): Promise<boolean> {
     if (!sectionId) {
       return true;
     }
 
-    if (typeof(sectionId) !== 'string' || sectionId.length !== Section.SECTION_ID_LENGTH ) {
+    if (
+      typeof sectionId !== 'string' ||
+      sectionId.length !== Section.SECTION_ID_LENGTH
+    ) {
       return false;
     }
 

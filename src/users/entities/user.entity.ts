@@ -2,7 +2,18 @@ import { Protocol } from 'src/protocols/entities/protocol.entity';
 import { Section } from 'src/sections/entities';
 import { Stream } from 'src/streams/entities/stream.entity';
 import { Violation } from 'src/violations/entities/violation.entity';
-import { Entity, Column, ManyToOne, CreateDateColumn, PrimaryColumn, OneToMany, ManyToMany, JoinTable, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  PrimaryColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { Role } from '../../casl/role.enum';
 import { Picture } from '../../pictures/entities/picture.entity';
@@ -31,10 +42,10 @@ export class User {
   @Column()
   pin: string;
 
-  @ManyToOne(() => Organization, organization => organization.users)
+  @ManyToOne(() => Organization, (organization) => organization.users)
   organization: Organization;
 
-  @OneToMany(() => Picture, picture => picture.author, {
+  @OneToMany(() => Picture, (picture) => picture.author, {
     onDelete: 'CASCADE',
   })
   pictures: Picture[];
@@ -51,7 +62,7 @@ export class User {
   @Column('simple-json')
   roles: Role[] = [Role.User, Role.Streamer];
 
-  @OneToMany(() => Client, client => client.owner, {
+  @OneToMany(() => Client, (client) => client.owner, {
     cascade: ['remove'],
     onDelete: 'CASCADE',
   })

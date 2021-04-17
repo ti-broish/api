@@ -1,5 +1,18 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, UsePipes, ValidationPipe, Inject, UseGuards, Query, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  HttpCode,
+  Param,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  Inject,
+  UseGuards,
+  Query,
+  Patch,
+} from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -18,25 +31,35 @@ import { ViolationsFilters } from './violations-filters.dto';
 export class ViolationsController {
   constructor(
     @Inject(ViolationsRepository) private readonly repo: ViolationsRepository,
-    @Inject(PicturesUrlGenerator) private readonly urlGenerator: PicturesUrlGenerator,
+    @Inject(PicturesUrlGenerator)
+    private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
-
 
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: ViolationsFilters): Promise<Pagination<ViolationDto>> {
-    const pagination = await paginate(this.repo.queryBuilderWithFilters(query), { page: query.page, limit: 100, route: '/violations' });
+  async index(
+    @Query() query: ViolationsFilters,
+  ): Promise<Pagination<ViolationDto>> {
+    const pagination = await paginate(
+      this.repo.queryBuilderWithFilters(query),
+      { page: query.page, limit: 100, route: '/violations' },
+    );
 
     return new Pagination<ViolationDto>(
-      await Promise.all(pagination.items.map(async (violation: Violation) => {
-        const dto = ViolationDto.fromEntity(violation, ['violation.process', UserDto.AUTHOR_READ])
-        this.updatePicturesUrl(dto);
+      await Promise.all(
+        pagination.items.map(async (violation: Violation) => {
+          const dto = ViolationDto.fromEntity(violation, [
+            'violation.process',
+            UserDto.AUTHOR_READ,
+          ]);
+          this.updatePicturesUrl(dto);
 
-        return dto;
-      })),
+          return dto;
+        }),
+      ),
       pagination.meta,
       pagination.links,
     );
@@ -46,14 +69,23 @@ export class ViolationsController {
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, Violation))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['create'] },
+      groups: ['create'],
+    }),
+  )
   async create(
     @Body() violationDto: ViolationDto,
     @InjectUser() user: User,
   ): Promise<ViolationDto> {
     const violation = violationDto.toEntity();
     violation.setReceivedStatus(user);
-    const savedDto = ViolationDto.fromEntity(await this.repo.save(violation), ['violation.process', UserDto.AUTHOR_READ]);
+    const savedDto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'violation.process',
+      UserDto.AUTHOR_READ,
+    ]);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
@@ -68,22 +100,30 @@ export class ViolationsController {
     @InjectUser() user: User,
   ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
-    const dto = ViolationDto.fromEntity(violation, ['violation.process', UserDto.AUTHOR_READ]);
+    const dto = ViolationDto.fromEntity(violation, [
+      'violation.process',
+      UserDto.AUTHOR_READ,
+    ]);
     this.updatePicturesUrl(dto);
 
     return dto;
   }
 
-
   @Post(':id/reject')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  async reject(@Param('id') id: string, @InjectUser() user: User): Promise<ViolationDto> {
+  async reject(
+    @Param('id') id: string,
+    @InjectUser() user: User,
+  ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
     violation.reject(user);
 
-    const dto = ViolationDto.fromEntity(await this.repo.save(violation), ['violation.process', UserDto.AUTHOR_READ]);
+    const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'violation.process',
+      UserDto.AUTHOR_READ,
+    ]);
     this.updatePicturesUrl(dto);
 
     return dto;
@@ -93,11 +133,17 @@ export class ViolationsController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  async process(@Param('id') id: string, @InjectUser() user: User): Promise<object> {
+  async process(
+    @Param('id') id: string,
+    @InjectUser() user: User,
+  ): Promise<object> {
     const violation = await this.repo.findOneOrFail(id);
     violation.process(user);
 
-    const dto = ViolationDto.fromEntity(await this.repo.save(violation), ['violation.process', UserDto.AUTHOR_READ]);
+    const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'violation.process',
+      UserDto.AUTHOR_READ,
+    ]);
     this.updatePicturesUrl(dto);
 
     return dto;
@@ -107,11 +153,18 @@ export class ViolationsController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['isPublishedUpdate'] }, groups: ['isPublishedUpdate'], skipMissingProperties: true }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['isPublishedUpdate'] },
+      groups: ['isPublishedUpdate'],
+      skipMissingProperties: true,
+    }),
+  )
   async patch(
     @Param('id') id: string,
     @InjectUser() user: User,
-    @Body() violationDto: ViolationDto
+    @Body() violationDto: ViolationDto,
   ): Promise<object> {
     const violation = await this.repo.findOneOrFail(id);
     if (violationDto.isPublished) {
@@ -120,14 +173,20 @@ export class ViolationsController {
       violation.unpublish(user);
     }
 
-    const dto = ViolationDto.fromEntity(await this.repo.save(violation), ['violation.process', UserDto.AUTHOR_READ]);
+    const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'violation.process',
+      UserDto.AUTHOR_READ,
+    ]);
     this.updatePicturesUrl(dto);
 
     return dto;
   }
 
   private updatePicturesUrl(violationDto: ViolationDto) {
-    violationDto.pictures.forEach((picture: PictureDto) => picture.url = this.urlGenerator.getUrl(picture));
+    violationDto.pictures.forEach(
+      (picture: PictureDto) =>
+        (picture.url = this.urlGenerator.getUrl(picture)),
+    );
 
     return violationDto;
   }

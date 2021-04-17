@@ -7,8 +7,8 @@ import { ProtocolAssigneesController } from './api/protocol-assignees.controller
 import { ProtocolsController } from './api/protocols.controller';
 import { Protocol } from './entities/protocol.entity';
 import { ProtocolsRepository } from './entities/protocols.repository';
-import { Violation } from "../violations/entities/violation.entity";
-import { ViolationsModule } from "../violations/violations.module";
+import { Violation } from '../violations/entities/violation.entity';
+import { ViolationsModule } from '../violations/violations.module';
 import { SectionsModule } from 'src/sections/sections.module';
 
 @Module({

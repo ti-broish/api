@@ -5,12 +5,21 @@ export interface ViolationException {
   getMessage(): string;
 }
 
-export class ViolationStatusException extends Error implements ViolationException {
+export class ViolationStatusException
+  extends Error
+  implements ViolationException {
   private violation: Violation;
 
-  constructor(violation: Violation, targetStatus: ViolationStatus, message?: string) {
+  constructor(
+    violation: Violation,
+    targetStatus: ViolationStatus,
+    message?: string,
+  ) {
     const originalStatus = violation.status || 'empty';
-    super(message || `violation_cannot_change_status_from_${originalStatus}_to_${targetStatus}`.toUpperCase());
+    super(
+      message ||
+        `violation_cannot_change_status_from_${originalStatus}_to_${targetStatus}`.toUpperCase(),
+    );
     this.violation = violation;
   }
 
@@ -23,7 +32,9 @@ export class ViolationStatusException extends Error implements ViolationExceptio
   }
 }
 
-export class ViolationPublishingException extends Error implements ViolationException {
+export class ViolationPublishingException
+  extends Error
+  implements ViolationException {
   private violation: Violation;
 
   constructor(violation: Violation, message: string) {
@@ -31,15 +42,25 @@ export class ViolationPublishingException extends Error implements ViolationExce
     this.violation = violation;
   }
 
-  public static forInvalidPublishedState(violation: Violation): ViolationPublishingException {
+  public static forInvalidPublishedState(
+    violation: Violation,
+  ): ViolationPublishingException {
     const publishedStatus = violation.isPublished ? 'PUBLISHED' : 'UNPUBLISHED';
 
-    return new ViolationPublishingException(violation, `VIOLATION_IS_ALREADY_${publishedStatus}`);
+    return new ViolationPublishingException(
+      violation,
+      `VIOLATION_IS_ALREADY_${publishedStatus}`,
+    );
   }
 
-  public static forInvalidStatus(violation: Violation): ViolationPublishingException {
+  public static forInvalidStatus(
+    violation: Violation,
+  ): ViolationPublishingException {
     const status = violation.status.toUpperCase();
-    return new ViolationPublishingException(violation, `VIOLATION_CANNOT_BE_PUBLISHED_WHEN_${status}`);
+    return new ViolationPublishingException(
+      violation,
+      `VIOLATION_CANNOT_BE_PUBLISHED_WHEN_${status}`,
+    );
   }
 
   getViolation(): Violation {
@@ -50,4 +71,3 @@ export class ViolationPublishingException extends Error implements ViolationExce
     return this.message;
   }
 }
-

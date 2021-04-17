@@ -14,6 +14,10 @@ export class MunicipalityDto {
   name: string;
 
   public static fromEntity(entity: Municipality): MunicipalityDto {
-    return plainToClass<MunicipalityDto, Partial<Municipality>>(MunicipalityDto, entity, { excludeExtraneousValues: true })
+    return plainToClass<MunicipalityDto, Partial<Municipality>>(
+      MunicipalityDto,
+      entity,
+      { excludeExtraneousValues: true },
+    );
   }
 }

@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  ManyToOne,
+  ManyToMany,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { User } from '.';
 import { Broadcast } from '../../broadcasts/entities/broadcast.entity';
@@ -13,7 +20,7 @@ export class Client {
   @Column()
   token: string;
 
-  @ManyToOne(() => User, owner => owner.clients)
+  @ManyToOne(() => User, (owner) => owner.clients)
   owner: User;
 
   @Column({ type: 'boolean' })

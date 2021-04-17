@@ -11,8 +11,18 @@ import { IsPictureExistsConstraint } from './api/picture-exists.constraint';
 import { CaslModule } from 'src/casl/casl.module';
 
 @Module({
-  imports: [ConfigModule, FilesModule, TypeOrmModule.forFeature([Picture]), CaslModule],
-  providers: [PicturesRepository, PicturesUploader, PicturesUrlGenerator, IsPictureExistsConstraint],
+  imports: [
+    ConfigModule,
+    FilesModule,
+    TypeOrmModule.forFeature([Picture]),
+    CaslModule,
+  ],
+  providers: [
+    PicturesRepository,
+    PicturesUploader,
+    PicturesUrlGenerator,
+    IsPictureExistsConstraint,
+  ],
   exports: [PicturesRepository, PicturesUrlGenerator],
   controllers: [PicturesController],
 })

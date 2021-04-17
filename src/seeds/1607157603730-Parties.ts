@@ -1,9 +1,8 @@
-import {MigrationInterface, QueryRunner} from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Parties1607157603730 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         INSERT INTO "parties" ("id", "name", "display_name", "is_featured", "color") VALUES
         ('0', 'Не подкрепям никого', 'Не подкрепям никого', 'f', NULL),
         ('1', '1. ПП ВМРО – БЪЛГАРСКО НАЦИОНАЛНО ДВИЖЕНИЕ', '1. ВМРО', 't', '111111'),
@@ -37,9 +36,9 @@ export class Parties1607157603730 implements MigrationInterface {
         ('29', '29. ПП „ИМА ТАКЪВ НАРОД“', '29. Има Такъв Народ', 't', 'FFC300'),
         ('30', '30. ПП „ПРЯКА ДЕМОКРАЦИЯ“', '30. Пряка Демокрация', 'f', NULL);
       `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-      queryRunner.query(`TRUNCATE TABLE "parties" RESTART IDENTITY CASCADE`);
-    }
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    queryRunner.query(`TRUNCATE TABLE "parties" RESTART IDENTITY CASCADE`);
+  }
 }

@@ -4,9 +4,17 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-strategy';
 import { Request } from 'express';
 import * as admin from 'firebase-admin';
-import { FirebaseAuthStrategyOptions, FirebaseUser, FIREBASE_AUTH, UNAUTHORIZED } from '.';
+import {
+  FirebaseAuthStrategyOptions,
+  FirebaseUser,
+  FIREBASE_AUTH,
+  UNAUTHORIZED,
+} from '.';
 
-export class FirebaseAuthStrategy extends PassportStrategy(Strategy, 'firebase-auth') {
+export class FirebaseAuthStrategy extends PassportStrategy(
+  Strategy,
+  'firebase-auth',
+) {
   readonly name = FIREBASE_AUTH;
   private checkRevoked = false;
   private passReqToCallback = false;
@@ -19,7 +27,9 @@ export class FirebaseAuthStrategy extends PassportStrategy(Strategy, 'firebase-a
     super();
 
     if (!options.extractor) {
-      throw new Error('\n Extractor is not a function. You should provide an extractor. \n Read the docs: https://github.com/tfarras/nestjs-firebase-auth#readme');
+      throw new Error(
+        '\n Extractor is not a function. You should provide an extractor. \n Read the docs: https://github.com/tfarras/nestjs-firebase-auth#readme',
+      );
     }
 
     this.extractor = options.extractor;
@@ -41,21 +51,29 @@ export class FirebaseAuthStrategy extends PassportStrategy(Strategy, 'firebase-a
     }
 
     try {
-      admin.auth()
+      admin
+        .auth()
         .verifyIdToken(idToken, this.checkRevoked)
-        .then((res) => this.validateDecodedIdToken(res, this.passReqToCallback ? req : undefined))
+        .then((res) =>
+          this.validateDecodedIdToken(
+            res,
+            this.passReqToCallback ? req : undefined,
+          ),
+        )
         .catch((err) => {
           this.fail({ err }, 401);
         });
-    }
-    catch (e) {
+    } catch (e) {
       this.logger.error(e);
 
       this.fail(e, 401);
     }
   }
 
-  private async validateDecodedIdToken(decodedIdToken: FirebaseUser, req?: Request) {
+  private async validateDecodedIdToken(
+    decodedIdToken: FirebaseUser,
+    req?: Request,
+  ) {
     const result = this.passReqToCallback
       ? await this.validate(decodedIdToken, req)
       : await this.validate(decodedIdToken);

@@ -17,6 +17,8 @@ export class CountryDto extends Country {
   isAbroad: boolean;
 
   public static fromEntity(entity: Country): CountryDto {
-    return plainToClass<CountryDto, Partial<Country>>(CountryDto, entity, { excludeExtraneousValues: true })
+    return plainToClass<CountryDto, Partial<Country>>(CountryDto, entity, {
+      excludeExtraneousValues: true,
+    });
   }
 }

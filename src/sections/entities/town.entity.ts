@@ -1,5 +1,13 @@
 import { Violation } from '../../violations/entities/violation.entity';
-import { Entity, Column, OneToMany, ManyToOne, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { CityRegion } from './cityRegion.entity';
 import { Country } from './country.entity';
 import { Municipality } from './municipality.entity';
@@ -16,13 +24,13 @@ export class Town {
   @Column()
   readonly name: string;
 
-  @ManyToOne(() => Country, country => country.towns)
+  @ManyToOne(() => Country, (country) => country.towns)
   readonly country: Country;
 
-  @ManyToOne(() => Municipality, municipality => municipality.towns)
+  @ManyToOne(() => Municipality, (municipality) => municipality.towns)
   readonly municipality: Municipality;
 
-  @ManyToMany(() => CityRegion, cityRegion => cityRegion.towns)
+  @ManyToMany(() => CityRegion, (cityRegion) => cityRegion.towns)
   @JoinTable({
     name: 'city_regions_towns',
     joinColumn: { name: 'town_id' },
@@ -30,9 +38,9 @@ export class Town {
   })
   cityRegions: CityRegion[];
 
-  @OneToMany(() => Section, section => section.town)
+  @OneToMany(() => Section, (section) => section.town)
   readonly sections: Section[];
 
-  @OneToMany(() => Violation, violation => violation.town)
+  @OneToMany(() => Violation, (violation) => violation.town)
   readonly violations: Violation[];
 }

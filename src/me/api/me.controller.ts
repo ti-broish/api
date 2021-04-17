@@ -1,5 +1,16 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, Delete, Patch, Body, UsePipes, ValidationPipe, ConflictException, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Delete,
+  Patch,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  ConflictException,
+  UseGuards,
+} from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -31,8 +42,18 @@ export class MeController {
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Update, User))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: [UserDto.UPDATE] }, groups: [UserDto.UPDATE], skipMissingProperties: true }))
-  async patch(@InjectUser() user: User, @Body() userDto: UserDto): Promise<UserDto> {
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: [UserDto.UPDATE] },
+      groups: [UserDto.UPDATE],
+      skipMissingProperties: true,
+    }),
+  )
+  async patch(
+    @InjectUser() user: User,
+    @Body() userDto: UserDto,
+  ): Promise<UserDto> {
     const updatedUser = await this.usersRepo.update(userDto.updateEntity(user));
 
     return UserDto.fromEntity(updatedUser);
@@ -47,7 +68,9 @@ export class MeController {
     const submittedViolations = await this.violationsRepo.findByAuthor(user);
 
     if (submittedProtocols.length > 0 || submittedViolations.length > 0) {
-      throw new ConflictException('CANNOT_DELETE_USER_WITH_PROTOCOLS_OR_VIOLATIONS');
+      throw new ConflictException(
+        'CANNOT_DELETE_USER_WITH_PROTOCOLS_OR_VIOLATIONS',
+      );
     }
 
     const firebaseUid = user.firebaseUid;

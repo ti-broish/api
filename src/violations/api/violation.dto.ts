@@ -1,5 +1,21 @@
-import { Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsBoolean, IsNotEmpty, IsOptional, MaxLength, MinLength, ValidateIf, ValidateNested } from 'class-validator';
+import {
+  Exclude,
+  Expose,
+  plainToClass,
+  Transform,
+  Type,
+} from 'class-transformer';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  MaxLength,
+  MinLength,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
 import { SectionDto } from '../../sections/api/section.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { Violation, ViolationStatus } from '../entities/violation.entity';
@@ -7,18 +23,22 @@ import { TownDto } from '../../sections/api/town.dto';
 import { UserDto } from 'src/users/api/user.dto';
 import { ViolationUpdateDto } from './violation-update.dto';
 import { Picture } from 'src/pictures/entities/picture.entity';
-import { Protocol } from "../../protocols/entities/protocol.entity";
-import { ProtocolDto } from "../../protocols/api/protocol.dto";
+import { Protocol } from '../../protocols/entities/protocol.entity';
+import { ProtocolDto } from '../../protocols/api/protocol.dto';
 
 @Exclude()
-export class ViolationDto{
+export class ViolationDto {
   @Expose({ groups: ['read'] })
   id: string;
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => SectionDto)
   @ValidateIf((violationDto: ViolationDto) => violationDto.town !== undefined)
-  @Transform(({ value: id }) => id ? plainToClass(SectionDto, { id }, { groups: ['create'] }) : undefined, { groups: ['create'] })
+  @Transform(
+    ({ value: id }) =>
+      id ? plainToClass(SectionDto, { id }, { groups: ['create'] }) : undefined,
+    { groups: ['create'] },
+  )
   @ValidateNested({
     groups: ['create'],
   })
@@ -26,7 +46,10 @@ export class ViolationDto{
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => TownDto)
-  @Transform(({ value: id }) => plainToClass(TownDto, { id }, { groups: ['create'] }), { groups: ['create'] })
+  @Transform(
+    ({ value: id }) => plainToClass(TownDto, { id }, { groups: ['create'] }),
+    { groups: ['create'] },
+  )
   @IsNotEmpty({ groups: ['create'] })
   @ValidateNested({
     groups: ['create'],
@@ -35,7 +58,15 @@ export class ViolationDto{
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => PictureDto)
-  @Transform(({ value: ids } : { value: string[] }) => Array.isArray(ids) ? ids.map(id => plainToClass(PictureDto, { id }, { groups: ['create'] })): ids, { groups: ['create'] })
+  @Transform(
+    ({ value: ids }: { value: string[] }) =>
+      Array.isArray(ids)
+        ? ids.map((id) =>
+            plainToClass(PictureDto, { id }, { groups: ['create'] }),
+          )
+        : ids,
+    { groups: ['create'] },
+  )
   @IsOptional({ groups: ['create'] })
   @IsArray({ groups: ['create'] })
   @ValidateNested({
@@ -54,7 +85,7 @@ export class ViolationDto{
   status: ViolationStatus;
 
   @Expose({ groups: ['read', 'isPublishedUpdate'] })
-  @IsBoolean({ groups: ['isPublishedUpdate']})
+  @IsBoolean({ groups: ['isPublishedUpdate'] })
   isPublished: boolean;
 
   @Expose({ groups: [UserDto.AUTHOR_READ] })
@@ -74,17 +105,24 @@ export class ViolationDto{
   }
 
   public toEntity(): Violation {
-    const violation = plainToClass<Violation, Partial<ViolationDto>>(Violation, this, {
-      groups: ['create'],
-    });
+    const violation = plainToClass<Violation, Partial<ViolationDto>>(
+      Violation,
+      this,
+      {
+        groups: ['create'],
+      },
+    );
 
     let sortPosition = 1;
-    violation.pictures = (violation.pictures || []).map((picture: Picture): Picture => {
-      picture.sortPosition = sortPosition;
-      sortPosition++;
+    violation.pictures = (violation.pictures || []).map(
+      (picture: Picture): Picture => {
+        picture.sortPosition = sortPosition;
+        sortPosition++;
 
-      return picture;
-    }, []);
+        return picture;
+      },
+      [],
+    );
 
     return violation;
   }
@@ -97,14 +135,23 @@ export class ViolationDto{
     return violationDto;
   }
 
-  public static fromEntity(violation: Violation, additionalGroups: string[] = []): ViolationDto {
-    const violationDto = plainToClass<ViolationDto, Partial<Violation>>(ViolationDto, violation, {
-      excludeExtraneousValues: true,
-      groups: ['read', ...additionalGroups],
-    });
+  public static fromEntity(
+    violation: Violation,
+    additionalGroups: string[] = [],
+  ): ViolationDto {
+    const violationDto = plainToClass<ViolationDto, Partial<Violation>>(
+      ViolationDto,
+      violation,
+      {
+        excludeExtraneousValues: true,
+        groups: ['read', ...additionalGroups],
+      },
+    );
 
     if (additionalGroups.includes(UserDto.AUTHOR_READ)) {
-      violationDto.author = UserDto.fromEntity(violation.getAuthor(), [UserDto.AUTHOR_READ]);
+      violationDto.author = UserDto.fromEntity(violation.getAuthor(), [
+        UserDto.AUTHOR_READ,
+      ]);
     }
 
     return violationDto;

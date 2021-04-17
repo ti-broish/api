@@ -1,12 +1,24 @@
 import { Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsNumber, IsOptional, Min, ValidateNested } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 import { PartyDto } from '../../parties/api/party.dto';
 import { ProtocolData } from '../entities/protocol-data.entity';
 import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol } from '../entities/protocol.entity';
 
 export class ProtocolResultDto {
-  @Transform(({ value: id }) => plainToClass(PartyDto, { id }, { groups: ['create'] }), { groups: ['create', 'replace'] })
+  @Transform(
+    ({ value: id }) => plainToClass(PartyDto, { id }, { groups: ['create'] }),
+    { groups: ['create', 'replace'] },
+  )
   @ValidateNested({
     groups: ['create', 'replace'],
   })
@@ -45,16 +57,24 @@ export class ProtocolResultDto {
   invalidVotesCount?: number;
 
   public toEntity(): ProtocolResult {
-    return plainToClass<ProtocolResult, Partial<ProtocolResultDto>>(ProtocolResult, this, {
-      groups: ['create', 'replace'],
-    });
+    return plainToClass<ProtocolResult, Partial<ProtocolResultDto>>(
+      ProtocolResult,
+      this,
+      {
+        groups: ['create', 'replace'],
+      },
+    );
   }
 
   public static fromEntity(entity: ProtocolResult): ProtocolResultDto {
-    return plainToClass<ProtocolResultDto, Partial<Protocol>>(ProtocolResultDto, entity, {
-      excludeExtraneousValues: true,
-      groups: ['read'],
-    });
+    return plainToClass<ProtocolResultDto, Partial<Protocol>>(
+      ProtocolResultDto,
+      entity,
+      {
+        excludeExtraneousValues: true,
+        groups: ['read'],
+      },
+    );
   }
 }
 
@@ -93,32 +113,45 @@ export class ProtocolResultsDto {
   @ArrayNotEmpty({ groups: ['create', 'replace'] })
   @ValidateNested({
     each: true,
-    groups: ['create', 'replace']
+    groups: ['create', 'replace'],
   })
   @Expose({ groups: ['read', 'create', 'replace'] })
   results: ProtocolResultDto[] = [];
 
   public static fromEntity(protocol: Protocol): ProtocolResultsDto {
-    const resultsDto = protocol.data ?
-      plainToClass<ProtocolResultsDto, Partial<ProtocolData>>(ProtocolResultsDto, protocol.data, {
-        excludeExtraneousValues: true,
-        groups: ['read'],
-      })
+    const resultsDto = protocol.data
+      ? plainToClass<ProtocolResultsDto, Partial<ProtocolData>>(
+          ProtocolResultsDto,
+          protocol.data,
+          {
+            excludeExtraneousValues: true,
+            groups: ['read'],
+          },
+        )
       : new ProtocolResultsDto();
-    resultsDto.results = protocol.getResults().map(
-      (result: ProtocolResult): ProtocolResultDto => ProtocolResultDto.fromEntity(result)
-    );
+    resultsDto.results = protocol
+      .getResults()
+      .map(
+        (result: ProtocolResult): ProtocolResultDto =>
+          ProtocolResultDto.fromEntity(result),
+      );
 
     return resultsDto;
   }
 
   public toResults(): ProtocolResult[] {
-    return this.results.map((resultDto: ProtocolResultDto): ProtocolResult => resultDto.toEntity());
+    return this.results.map(
+      (resultDto: ProtocolResultDto): ProtocolResult => resultDto.toEntity(),
+    );
   }
 
   public toProtocolData(): ProtocolData {
-    return plainToClass<ProtocolData, Partial<ProtocolResultsDto>>(ProtocolData, this, {
-      groups: ['replace'],
-    });
+    return plainToClass<ProtocolData, Partial<ProtocolResultsDto>>(
+      ProtocolData,
+      this,
+      {
+        groups: ['replace'],
+      },
+    );
   }
 }

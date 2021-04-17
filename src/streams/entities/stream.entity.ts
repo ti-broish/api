@@ -1,12 +1,20 @@
 import { Section } from 'src/sections/entities';
 import { User } from 'src/users/entities';
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { StreamChunk } from './stream-chunk.entity';
 
 @Entity('streams')
 export class Stream {
-
   @PrimaryColumn('char', {
     length: 26,
   })
@@ -15,7 +23,10 @@ export class Stream {
   @ManyToOne(() => Section)
   section?: Section;
 
-  @OneToMany(() => StreamChunk, (streamChunk: StreamChunk) => streamChunk.stream)
+  @OneToMany(
+    () => StreamChunk,
+    (streamChunk: StreamChunk) => streamChunk.stream,
+  )
   chunks: StreamChunk[];
 
   @OneToOne(() => User, (user: User) => user.stream)

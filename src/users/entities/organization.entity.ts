@@ -1,11 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
 import { User } from './user.entity';
 
 export enum OrganizationType {
   PARTY = 'party',
   COMMISSION = 'commission',
   WATCHERS = 'watchers',
-};
+}
 @Entity('organizations', {
   orderBy: { id: 'ASC' },
 })
@@ -16,7 +22,7 @@ export class Organization {
   @Column()
   name: string;
 
-  @OneToMany(() => User, user => user.organization)
+  @OneToMany(() => User, (user) => user.organization)
   users: User[];
 
   @Column()

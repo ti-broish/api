@@ -8,7 +8,13 @@ import { Client } from '../users/entities/client.entity';
 import { CaslModule } from '../casl/casl.module';
 import { UsersModule } from 'src/users/users.module';
 import { StreamsModule } from 'src/streams/streams.module';
-import { MeClientsController, MeController, MeProtocolsController, MeStreamController, MeViolationController } from './api';
+import {
+  MeClientsController,
+  MeController,
+  MeProtocolsController,
+  MeStreamController,
+  MeViolationController,
+} from './api';
 
 @Module({
   imports: [
@@ -20,7 +26,13 @@ import { MeClientsController, MeController, MeProtocolsController, MeStreamContr
     ViolationsModule,
     StreamsModule,
   ],
-  controllers: [MeProtocolsController, MeViolationController, MeClientsController, MeStreamController, MeController],
+  controllers: [
+    MeProtocolsController,
+    MeViolationController,
+    MeClientsController,
+    MeStreamController,
+    MeController,
+  ],
   providers: [],
   exports: [],
 })

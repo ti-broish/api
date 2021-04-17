@@ -14,7 +14,7 @@ const escValue = (value: string | number): string => {
     return value;
   }
 
-  return "'" + (''+value).replace(/'/g, "''") + "'";
+  return "'" + ('' + value).replace(/'/g, "''") + "'";
 };
 
 const insertTemplate = `INSERT INTO :table (:columns) values (:values);`;
@@ -24,7 +24,12 @@ const inserterFactory = (tableName: string) => {
   return (record: Record<string, string | number>): string => {
     return insert
       .replace(':columns', Object.keys(record).map(escSymbol).join(', '))
-      .replace(':values', Object.entries(record).map(([key, value]) => escValue(value)).join(', '));
+      .replace(
+        ':values',
+        Object.entries(record)
+          .map(([key, value]) => escValue(value))
+          .join(', '),
+      );
   };
 };
 
@@ -33,33 +38,53 @@ const protocolDataInsert = inserterFactory('protocol_data');
 const protocolActionInsert = inserterFactory('protocol_actions');
 const protocolResultsInsert = inserterFactory('protocol_results');
 
-parser.on('data', ({ section: section_id, results }: { section: string, results: number[] }) => {
-  const protocol_id = ulid();
-  console.log(protocolInsert({
-    id: protocol_id,
-    origin,
-    section_id,
-    status: 'approved',
-  }));
-  console.log(protocolDataInsert({
-    id: ulid(),
-    protocol_id,
-    valid_votes_count: results.reduce((sum: number, result: number) => sum + result, 0),
-  }));
-  console.log(protocolActionInsert({
-    id: ulid(),
-    protocol_id,
-    actor_id,
-    action: 'send',
-  }));
-  Object.entries(results).forEach(([party_id, valid_votes_count]) => {
-    console.log(protocolResultsInsert({
-      id: ulid(),
-      protocol_id,
-      party_id,
-      valid_votes_count,
-    }));
-  })
-});
+parser.on(
+  'data',
+  ({
+    section: section_id,
+    results,
+  }: {
+    section: string;
+    results: number[];
+  }) => {
+    const protocol_id = ulid();
+    console.log(
+      protocolInsert({
+        id: protocol_id,
+        origin,
+        section_id,
+        status: 'approved',
+      }),
+    );
+    console.log(
+      protocolDataInsert({
+        id: ulid(),
+        protocol_id,
+        valid_votes_count: results.reduce(
+          (sum: number, result: number) => sum + result,
+          0,
+        ),
+      }),
+    );
+    console.log(
+      protocolActionInsert({
+        id: ulid(),
+        protocol_id,
+        actor_id,
+        action: 'send',
+      }),
+    );
+    Object.entries(results).forEach(([party_id, valid_votes_count]) => {
+      console.log(
+        protocolResultsInsert({
+          id: ulid(),
+          protocol_id,
+          party_id,
+          valid_votes_count,
+        }),
+      );
+    });
+  },
+);
 
 stream.pipe(parser);

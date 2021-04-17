@@ -1,4 +1,15 @@
-import { AfterLoad, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from 'typeorm';
+import {
+  AfterLoad,
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { ProtocolAction, ProtocolActionType } from './protocol-action.entity';
 import { ProtocolData } from './protocol-data.entity';
@@ -6,7 +17,10 @@ import { ProtocolResult } from './protocol-result.entity';
 import { Section } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
 import { User } from '../../users/entities';
-import { ProtocolStatusException, ProtocolHasResultsException } from './protocol.exceptions';
+import {
+  ProtocolStatusException,
+  ProtocolHasResultsException,
+} from './protocol.exceptions';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
@@ -16,12 +30,12 @@ export enum ProtocolStatus {
   APPROVED = 'approved',
   PUBLISHING = 'publishing',
   PUBLISHED = 'published',
-};
+}
 
 export enum ProtocolOrigin {
   TI_BROISH = 'ti-broish',
   CIK = 'cik',
-};
+}
 
 @Entity('protocols')
 export class Protocol {
@@ -36,16 +50,16 @@ export class Protocol {
   @Column({ type: 'varchar' })
   status: ProtocolStatus;
 
-  @OneToOne(() => ProtocolData, data => data.protocol, {
+  @OneToOne(() => ProtocolData, (data) => data.protocol, {
     cascade: ['insert', 'update'],
   })
-  data: ProtocolData|null;
+  data: ProtocolData | null;
 
-  @ManyToOne(() => Section, section => section.protocols, { eager: true })
+  @ManyToOne(() => Section, (section) => section.protocols, { eager: true })
   section: Section;
 
   @ManyToMany(() => Picture, {
-    cascade: ['insert', 'update']
+    cascade: ['insert', 'update'],
   })
   @JoinTable({
     name: 'protocols_pictures',
@@ -62,14 +76,22 @@ export class Protocol {
   })
   assignees: User[];
 
-  @OneToMany(() => ProtocolAction, (action: ProtocolAction) => action.protocol, {
-    cascade: ['insert', 'update'],
-  })
+  @OneToMany(
+    () => ProtocolAction,
+    (action: ProtocolAction) => action.protocol,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
   actions: ProtocolAction[];
 
-  @OneToMany(() => ProtocolResult, (result: ProtocolResult) => result.protocol, {
-    cascade: ['insert', 'update'],
-  })
+  @OneToMany(
+    () => ProtocolResult,
+    (result: ProtocolResult) => result.protocol,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
   results: ProtocolResult[];
 
   @ManyToOne(() => Protocol, {
@@ -86,7 +108,9 @@ export class Protocol {
   }
 
   getAuthor(): User {
-    return this.actions.find((action: ProtocolAction) => action.action === ProtocolActionType.SEND).actor;
+    return this.actions.find(
+      (action: ProtocolAction) => action.action === ProtocolActionType.SEND,
+    ).actor;
   }
 
   setReceivedStatus(sender: User): void {
@@ -137,13 +161,19 @@ export class Protocol {
     this.addAction(ProtocolAction.createPublishAction());
   }
 
-  replace(actor: User, replacement: Protocol, replacementStatus: ProtocolStatus = ProtocolStatus.PUBLISHED): Protocol {
-    if (![
-      ProtocolStatus.RECEIVED,
-      ProtocolStatus.APPROVED,
-      ProtocolStatus.READY,
-      ProtocolStatus.PUBLISHED,
-    ].includes(this.status)) {
+  replace(
+    actor: User,
+    replacement: Protocol,
+    replacementStatus: ProtocolStatus = ProtocolStatus.PUBLISHED,
+  ): Protocol {
+    if (
+      ![
+        ProtocolStatus.RECEIVED,
+        ProtocolStatus.APPROVED,
+        ProtocolStatus.READY,
+        ProtocolStatus.PUBLISHED,
+      ].includes(this.status)
+    ) {
       throw new ProtocolStatusException(this, ProtocolStatus.REPLACED);
     }
     replacement.setReceivedStatus(actor);
@@ -171,7 +201,7 @@ export class Protocol {
     if (this.getResults().length > 0) {
       throw new ProtocolHasResultsException(this);
     }
-    results.forEach(result => result.protocol = this);
+    results.forEach((result) => (result.protocol = this));
     this.results = results;
   }
 

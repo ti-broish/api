@@ -11,10 +11,12 @@ import { PostsRepository } from './entities/posts.repository';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsPostExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(PostsRepository) private readonly repo: PostsRepository) { }
+  constructor(
+    @Inject(PostsRepository) private readonly repo: PostsRepository,
+  ) {}
 
   async validate(postd?: number): Promise<boolean> {
-    if (!postd || typeof(postd) !== 'string') {
+    if (!postd || typeof postd !== 'string') {
       return false;
     }
 

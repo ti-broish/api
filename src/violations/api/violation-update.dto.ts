@@ -3,7 +3,7 @@ import { ViolationUpdateType } from '../entities/violation-update.entity';
 import { UserDto } from 'src/users/api/user.dto';
 
 @Exclude()
-export class ViolationUpdateDto{
+export class ViolationUpdateDto {
   @Expose({ groups: ['read'] })
   id: string;
 

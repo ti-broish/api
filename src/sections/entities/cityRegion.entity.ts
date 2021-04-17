@@ -13,10 +13,10 @@ export class CityRegion {
   @Column()
   name: string;
 
-  @ManyToMany(() => Town, town => town.cityRegions)
+  @ManyToMany(() => Town, (town) => town.cityRegions)
   towns: Town[];
 
-  @OneToMany(() => Section, section => section.cityRegion)
+  @OneToMany(() => Section, (section) => section.cityRegion)
   sections: Section[];
 
   constructor(name: string, code: string, towns: Town[]) {

@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { Protocol } from './protocol.entity';
 import { User } from '../../users/entities';
@@ -20,7 +27,7 @@ export class ProtocolAction {
   })
   id: string = ulid();
 
-  @ManyToOne(() => Protocol, protocol => protocol.actions, { eager: true })
+  @ManyToOne(() => Protocol, (protocol) => protocol.actions, { eager: true })
   @JoinColumn({
     name: 'protocol_id',
   })
@@ -42,8 +49,13 @@ export class ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.SEND, actor);
   }
 
-  public static createAsssignAction(actor: User, assignees: User[]): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.ASSIGN, actor, { assignees: assignees.map(x => x.id) });
+  public static createAsssignAction(
+    actor: User,
+    assignees: User[],
+  ): ProtocolAction {
+    return ProtocolAction.create(ProtocolActionType.ASSIGN, actor, {
+      assignees: assignees.map((x) => x.id),
+    });
   }
 
   public static createRejectAction(actor: User): ProtocolAction {
@@ -66,7 +78,11 @@ export class ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.POPULATE, actor);
   }
 
-  private static create(actionType: ProtocolActionType, actor?: User, payload?: object): ProtocolAction {
+  private static create(
+    actionType: ProtocolActionType,
+    actor?: User,
+    payload?: object,
+  ): ProtocolAction {
     const action = new ProtocolAction();
     if (actor) {
       action.actor = actor;

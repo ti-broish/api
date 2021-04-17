@@ -16,16 +16,21 @@ export class MeViolationController {
   constructor(
     private readonly violationsRepo: ViolationsRepository,
     private readonly picturesUrlGenerator: PicturesUrlGenerator,
-  ) { }
+  ) {}
 
   @Get()
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   async index(@InjectUser() user: User): Promise<ViolationDto[]> {
-    const violations = (await this.violationsRepo.findByAuthor(user))
-      .map((violation: Violation): ViolationDto => ViolationDto.fromEntity(violation));
-    violations.forEach(dto => dto.pictures.forEach(this.updatePictureUrl, this), this);
+    const violations = (await this.violationsRepo.findByAuthor(user)).map(
+      (violation: Violation): ViolationDto =>
+        ViolationDto.fromEntity(violation),
+    );
+    violations.forEach(
+      (dto) => dto.pictures.forEach(this.updatePictureUrl, this),
+      this,
+    );
 
     return violations;
   }

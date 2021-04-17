@@ -1,9 +1,8 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class PostsAndBroadcasts1608982426371 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         create table "posts" (
           "id" bpchar(26) not null,
           "author_id" bpchar(26) not null,
@@ -20,11 +19,11 @@ export class PostsAndBroadcasts1608982426371 implements MigrationInterface {
         );
       `);
 
-      await queryRunner.query(`
+    await queryRunner.query(`
         create index "posts_publish_at_key" on "posts" ("publish_at");
       `);
 
-      await queryRunner.query(`
+    await queryRunner.query(`
         create table "broadcasts" (
           "id" bpchar(26) not null,
           "author_id" bpchar(26) not null,
@@ -40,11 +39,11 @@ export class PostsAndBroadcasts1608982426371 implements MigrationInterface {
         );
       `);
 
-      await queryRunner.query(`
+    await queryRunner.query(`
         create index "broadcasts_publish_at_key" on "broadcasts" ("publish_at");
       `);
 
-      await queryRunner.query(`
+    await queryRunner.query(`
         create table "clients" (
           "id" bpchar(26) not null,
           "owner_id" bpchar(26) not null,
@@ -56,12 +55,12 @@ export class PostsAndBroadcasts1608982426371 implements MigrationInterface {
         );
       `);
 
-      await queryRunner.query(`
+    await queryRunner.query(`
         create index "clients_owner_id_is_active_key" on "clients" ("owner_id", "is_active");
         create index "clients_token_key" on "clients" ("token");
       `);
 
-      await queryRunner.query(`
+    await queryRunner.query(`
         create table "broadcasts_users" (
           "broadcast_id" bpchar(26) not null,
           "user_id" bpchar(26) not null,
@@ -71,18 +70,17 @@ export class PostsAndBroadcasts1608982426371 implements MigrationInterface {
         );
       `);
 
-      await queryRunner.query(`
+    await queryRunner.query(`
         create index "broadcasts_users_user_id_key" on "broadcasts_users" ("user_id");
       `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         drop table "broadcasts_users";
         drop table "clients";
         drop table "broadcasts";
         drop table "posts";
       `);
-    }
-
+  }
 }

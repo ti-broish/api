@@ -12,7 +12,8 @@ export class CountriesRepository {
   }
 
   findOneOrFail(code: string): Promise<Country> {
-    return this.repo.createQueryBuilder('country')
+    return this.repo
+      .createQueryBuilder('country')
       .innerJoinAndSelect('country.towns', 'towns')
       .innerJoinAndSelect('towns.sections', 'sections')
       .andWhere('country.code = :code', { code })
@@ -20,7 +21,8 @@ export class CountriesRepository {
   }
 
   async findAllAbroadWithStats(): Promise<Country[]> {
-    const qb = this.repo.createQueryBuilder('countries')
+    const qb = this.repo
+      .createQueryBuilder('countries')
       .andWhere('countries.isAbroad = :isAbroad', { isAbroad: true })
       .orderBy('countries.code', 'ASC');
 

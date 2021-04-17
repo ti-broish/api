@@ -1,5 +1,21 @@
-import { classToPlain, Exclude, Expose, plainToClass, Transform, Type } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsOptional, IsString, Length, MaxLength, MinLength, ValidateNested } from 'class-validator';
+import {
+  classToPlain,
+  Exclude,
+  Expose,
+  plainToClass,
+  Transform,
+  Type,
+} from 'class-transformer';
+import {
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+  MaxLength,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
 import { merge } from 'lodash';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { UserDto } from 'src/users/api/user.dto';
@@ -36,11 +52,17 @@ export class PostDto {
   @Expose({ groups: ['read', 'create', 'update'] })
   @Type(() => PictureDto)
   @IsOptional()
-  @Transform(({ value: id }) => id ? plainToClass(PictureDto, { id }, { groups: ['create', 'update'] }) : id, { groups: ['create', 'update'] })
+  @Transform(
+    ({ value: id }) =>
+      id
+        ? plainToClass(PictureDto, { id }, { groups: ['create', 'update'] })
+        : id,
+    { groups: ['create', 'update'] },
+  )
   @ValidateNested({
     groups: ['create', 'update'],
   })
-  picture?: PictureDto
+  picture?: PictureDto;
 
   @Expose({ groups: ['create', 'update'] })
   @IsOptional({ always: true })
@@ -72,6 +94,6 @@ export class PostDto {
     return plainToClass<PostDto, Partial<Post>>(PostDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
-    })
+    });
   }
 }

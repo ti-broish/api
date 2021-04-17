@@ -8,7 +8,7 @@ import { IsPictureExists } from './picture-exists.constraint';
 @Exclude()
 export class PictureDto implements PathInterface {
   @ApiProperty()
-  @Expose({ groups: [ 'read', 'create', 'replace'] })
+  @Expose({ groups: ['read', 'create', 'replace'] })
   @IsPictureExists({ groups: ['create', 'replace'] })
   @IsString({ groups: ['create', 'replace'] })
   @IsNotEmpty({ groups: ['create', 'replace'] })

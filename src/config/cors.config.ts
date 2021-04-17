@@ -7,5 +7,4 @@ export function enableCors(app: INestApplication): void {
     credentials: true,
     maxAge: 2 * 60 * 60,
   });
-
 }

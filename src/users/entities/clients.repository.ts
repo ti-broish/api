@@ -12,11 +12,11 @@ export class ClientsRepository {
   ) {}
 
   findOne(id: string): Promise<Client | undefined> {
-    return this.repo.findOne({ where: { id }, relations: ['owner'] } );
+    return this.repo.findOne({ where: { id }, relations: ['owner'] });
   }
 
   findOneOrFail(id: string): Promise<Client> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['owner'] } );
+    return this.repo.findOneOrFail({ where: { id }, relations: ['owner'] });
   }
 
   findAllForOwners(owners: User[]): Promise<Client[]> {
@@ -25,9 +25,14 @@ export class ClientsRepository {
         alias: 'client',
       },
       where: (qb: SelectQueryBuilder<Client>): void => {
-        qb.innerJoinAndSelect('client.owner', 'owner', 'owner.id in (:...owners)', {
-          owners: owners.map(owner => owner.id),
-        });
+        qb.innerJoinAndSelect(
+          'client.owner',
+          'owner',
+          'owner.id in (:...owners)',
+          {
+            owners: owners.map((owner) => owner.id),
+          },
+        );
       },
     });
   }

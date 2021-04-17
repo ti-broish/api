@@ -16,10 +16,7 @@ export class PartiesRepository {
 
   findAllForResults(): Promise<Party[]> {
     return this.repo.find({
-      where: [
-        { isFeatured: true },
-        { id: 0 },
-      ],
+      where: [{ isFeatured: true }, { id: 0 }],
     });
   }
 

@@ -1,19 +1,18 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddEmailVerified1616233121395 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         alter table "people"
         add column "is_email_verified" boolean default false;
       `);
-      await queryRunner.query(`
+    await queryRunner.query(`
         drop table "person_confirmations";
       `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`
         CREATE TABLE "person_confirmations" (
           "id" bpchar(26) NOT NULL,
           "person_id" bpchar(26) NOT NULL,
@@ -25,10 +24,9 @@ export class AddEmailVerified1616233121395 implements MigrationInterface {
           PRIMARY KEY ("id")
         );
       `);
-      await queryRunner.query(`
+    await queryRunner.query(`
         alter table "people"
         drop column "is_email_verified";
       `);
-    }
-
+  }
 }

@@ -1,5 +1,12 @@
 import { StatsDto } from 'src/results/api/stats.dto';
-import { Entity, Column, OneToMany, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 import { Country } from './country.entity';
 import { Municipality } from './municipality.entity';
 import { Section } from './section.entity';
@@ -18,7 +25,7 @@ export class ElectionRegion {
   @Column()
   public readonly isAbroad: boolean;
 
-  @OneToMany(() => Section, section => section.electionRegion)
+  @OneToMany(() => Section, (section) => section.electionRegion)
   public readonly sections: Section[];
 
   sectionsCount: number;
@@ -30,7 +37,10 @@ export class ElectionRegion {
 
   admUnits: Array<Municipality | Country>;
 
-  @ManyToMany(() => Municipality, municipality => municipality.electionRegions)
+  @ManyToMany(
+    () => Municipality,
+    (municipality) => municipality.electionRegions,
+  )
   @JoinTable({
     name: 'election_regions_municipalities',
     joinColumns: [{ name: 'election_region_id' }],

@@ -1,5 +1,17 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, Post, HttpCode, Param, Body, UsePipes, ValidationPipe, Inject, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  HttpCode,
+  Param,
+  Body,
+  UsePipes,
+  ValidationPipe,
+  Inject,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -16,8 +28,10 @@ import { ViolationCommentDto } from './violation-comment.dto';
 @Controller('violations/:violation/comments')
 export class ViolationCommentsController {
   constructor(
-    @Inject(ViolationsRepository) private readonly violationsRepo: ViolationsRepository,
-    @Inject(ViolationCommentsRepository) private readonly violationCommentsRepo: ViolationCommentsRepository,
+    @Inject(ViolationsRepository)
+    private readonly violationsRepo: ViolationsRepository,
+    @Inject(ViolationCommentsRepository)
+    private readonly violationCommentsRepo: ViolationCommentsRepository,
   ) {}
 
   @Get()
@@ -30,16 +44,21 @@ export class ViolationCommentsController {
     @Param('violation') violationId: string,
   ): Promise<Pagination<ViolationCommentDto>> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
-    const pagination = await paginate(this.violationCommentsRepo.queryBuilderForViolation(violation), {
-      page: query.page,
-      limit: 20,
-      route: `/violations/${violationId}/comments`,
-    });
+    const pagination = await paginate(
+      this.violationCommentsRepo.queryBuilderForViolation(violation),
+      {
+        page: query.page,
+        limit: 20,
+        route: `/violations/${violationId}/comments`,
+      },
+    );
 
     return new Pagination<ViolationCommentDto>(
-      await Promise.all(pagination.items.map(async (violationComment: ViolationComment) =>
-        ViolationCommentDto.fromEntity(violationComment)
-      )),
+      await Promise.all(
+        pagination.items.map(async (violationComment: ViolationComment) =>
+          ViolationCommentDto.fromEntity(violationComment),
+        ),
+      ),
       pagination.meta,
       pagination.links,
     );
@@ -49,7 +68,13 @@ export class ViolationCommentsController {
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
-  @UsePipes(new ValidationPipe({ transform: true, transformOptions: { groups: ['create'] }, groups: ['create'] }))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['create'] },
+      groups: ['create'],
+    }),
+  )
   async create(
     @Body() violationCommentDto: ViolationCommentDto,
     @Param('violation') violationId: string,
@@ -59,7 +84,9 @@ export class ViolationCommentsController {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     violationComment.author = user;
     violationComment.violation = violation;
-    const savedDto = ViolationCommentDto.fromEntity(await this.violationCommentsRepo.save(violationComment));
+    const savedDto = ViolationCommentDto.fromEntity(
+      await this.violationCommentsRepo.save(violationComment),
+    );
 
     return savedDto;
   }

@@ -23,6 +23,10 @@ export class ElectionRegionDto {
   municipalities: MunicipalityDto[];
 
   public static fromEntity(entity: ElectionRegion): ElectionRegionDto {
-    return plainToClass<ElectionRegionDto, Partial<ElectionRegion>>(ElectionRegionDto, entity, { excludeExtraneousValues: true })
+    return plainToClass<ElectionRegionDto, Partial<ElectionRegion>>(
+      ElectionRegionDto,
+      entity,
+      { excludeExtraneousValues: true },
+    );
   }
 }

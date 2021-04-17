@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, ManyToOne, AfterLoad } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  CreateDateColumn,
+  ManyToOne,
+  AfterLoad,
+} from 'typeorm';
 import { ulid } from 'ulid';
 import { User } from '../../users/entities';
 import { PathInterface } from '../path.interface';

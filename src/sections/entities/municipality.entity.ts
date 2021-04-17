@@ -15,10 +15,13 @@ export class Municipality {
   @Column()
   readonly name: string;
 
-  @ManyToMany(() => ElectionRegion, electionRegion => electionRegion.municipalities)
+  @ManyToMany(
+    () => ElectionRegion,
+    (electionRegion) => electionRegion.municipalities,
+  )
   readonly electionRegions: ElectionRegion[];
 
-  @OneToMany(() => Town, town => town.municipality)
+  @OneToMany(() => Town, (town) => town.municipality)
   readonly towns: Town[];
 
   sectionsCount: number;

@@ -1,9 +1,9 @@
 import { FirebaseUser } from 'src/firebase/auth';
 
-declare global{
+declare global {
   namespace Express {
-      interface Request {
-          firebaseUser: FirebaseUser
-      }
+    interface Request {
+      firebaseUser: FirebaseUser;
+    }
   }
 }

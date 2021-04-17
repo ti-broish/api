@@ -5,7 +5,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(@Inject(ConfigService) private readonly config: ConfigService) { }
+  constructor(@Inject(ConfigService) private readonly config: ConfigService) {}
 
   async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
     return {
@@ -26,7 +26,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         migrationsDir: 'src/migrations',
       },
       ssl: this.config.get('NODE_ENV') === 'production',
-      namingStrategy: new SnakeNamingStrategy()
+      namingStrategy: new SnakeNamingStrategy(),
     } as TypeOrmModuleOptions;
   }
 }

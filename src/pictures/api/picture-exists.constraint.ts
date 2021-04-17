@@ -11,14 +11,16 @@ import { PicturesRepository } from '../entities/pictures.repository';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsPictureExistsConstraint implements ValidatorConstraintInterface {
-  constructor(@Inject(PicturesRepository) private readonly repo: PicturesRepository) { }
+  constructor(
+    @Inject(PicturesRepository) private readonly repo: PicturesRepository,
+  ) {}
 
   async validate(pictureId?: string): Promise<boolean> {
     if (!pictureId) {
       return true;
     }
 
-    if (typeof(pictureId) !== 'string') {
+    if (typeof pictureId !== 'string') {
       return false;
     }
 

@@ -4,7 +4,7 @@ import { ViolationComment } from '../entities/violation-comment.entity';
 import { UserDto } from 'src/users/api/user.dto';
 
 @Exclude()
-export class ViolationCommentDto{
+export class ViolationCommentDto {
   @Expose({ groups: ['violation.process'] })
   id: string;
 
@@ -23,15 +23,23 @@ export class ViolationCommentDto{
   createdAt: Date;
 
   public toEntity(): ViolationComment {
-    return plainToClass<ViolationComment, Partial<ViolationCommentDto>>(ViolationComment, this, {
-      groups: ['create'],
-    });
+    return plainToClass<ViolationComment, Partial<ViolationCommentDto>>(
+      ViolationComment,
+      this,
+      {
+        groups: ['create'],
+      },
+    );
   }
 
   public static fromEntity(entity: ViolationComment): ViolationCommentDto {
-    return plainToClass<ViolationCommentDto, Partial<ViolationComment>>(ViolationCommentDto, entity, {
-      excludeExtraneousValues: true,
-      groups: ['violation.process'],
-    });
+    return plainToClass<ViolationCommentDto, Partial<ViolationComment>>(
+      ViolationCommentDto,
+      entity,
+      {
+        excludeExtraneousValues: true,
+        groups: ['violation.process'],
+      },
+    );
   }
 }

@@ -1,5 +1,12 @@
 import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, ConflictException, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  ConflictException,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -16,15 +23,23 @@ export class MeStreamController {
 
   @Get()
   @HttpCode(200)
-  @ApiResponse({ status: 200, description: 'You can use the stream to send in video'})
-  @ApiResponse({ status: 401, description: 'You have not authenticated properly'})
-  @ApiResponse({ status: 403, description: 'You are not allowed to stream'})
-  @ApiResponse({ status: 409, description: 'You cannot stream yet - you should either select a section first or wait for the end of election day'})
+  @ApiResponse({
+    status: 200,
+    description: 'You can use the stream to send in video',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'You have not authenticated properly',
+  })
+  @ApiResponse({ status: 403, description: 'You are not allowed to stream' })
+  @ApiResponse({
+    status: 409,
+    description:
+      'You cannot stream yet - you should either select a section first or wait for the end of election day',
+  })
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
-  async stream(
-    @InjectUser() user: User
-  ): Promise<StreamDto> {
+  async stream(@InjectUser() user: User): Promise<StreamDto> {
     const stream = await this.streamsRepo.findForUser(user);
 
     if (!stream) {

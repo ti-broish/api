@@ -10,11 +10,10 @@ import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class BroadcastsPublishTask {
-
   constructor(
     private readonly broadcastsRepo: BroadcastsRepository,
     private readonly clientsRepo: ClientsRepository,
-    @InjectEntityManager() private entityManager: EntityManager
+    @InjectEntityManager() private entityManager: EntityManager,
   ) {}
 
   @Cron(CronExpression.EVERY_MINUTE, {
@@ -32,7 +31,11 @@ export class BroadcastsPublishTask {
       broadcast.process();
     });
     this.entityManager.save(broadcasts);
-    const notifications = await Promise.all(broadcasts.map(async (broadcast: Broadcast) => this.convertBroadcastToNotification(broadcast)));
+    const notifications = await Promise.all(
+      broadcasts.map(async (broadcast: Broadcast) =>
+        this.convertBroadcastToNotification(broadcast),
+      ),
+    );
 
     try {
       // TODO: add proper logging with an external logger
@@ -47,23 +50,32 @@ export class BroadcastsPublishTask {
     this.entityManager.save(broadcasts);
   }
 
-  private async convertBroadcastToNotification(broadcast: Broadcast): Promise<firebase.messaging.Message> {
+  private async convertBroadcastToNotification(
+    broadcast: Broadcast,
+  ): Promise<firebase.messaging.Message> {
     const message: any = {
       data: broadcast.data,
       notification: {
         title: broadcast.title,
         body: broadcast.contents,
-      }
+      },
     };
     if (broadcast.users.length > 0) {
-      const tokens = (await this.clientsRepo.findAllForOwners(broadcast.users)).map((client: Client) => client.token);
-      message[tokens.length > 1 ? 'tokens' : 'token'] = tokens.length > 1 ? tokens : tokens[0];
+      const tokens = (
+        await this.clientsRepo.findAllForOwners(broadcast.users)
+      ).map((client: Client) => client.token);
+      message[tokens.length > 1 ? 'tokens' : 'token'] =
+        tokens.length > 1 ? tokens : tokens[0];
     } else if (broadcast.topics.length === 1) {
       message.topic = broadcast.topics[0];
     } else if (broadcast.topics.length > 1) {
-      message.condition = broadcast.topics.map((topic: string) => `'${topic}' in topics`).join(' && ');
+      message.condition = broadcast.topics
+        .map((topic: string) => `'${topic}' in topics`)
+        .join(' && ');
     } else {
-      throw new Error('Cannot determine neither tokens, nor topics nor condition for broadcast to notification conversion');
+      throw new Error(
+        'Cannot determine neither tokens, nor topics nor condition for broadcast to notification conversion',
+      );
     }
 
     return message;

@@ -8,7 +8,12 @@ import { StreamsController } from './api/streams.controller';
 import { Stream } from './entities/stream.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Stream]), UsersModule, CaslModule, SectionsModule],
+  imports: [
+    TypeOrmModule.forFeature([Stream]),
+    UsersModule,
+    CaslModule,
+    SectionsModule,
+  ],
   providers: [StreamsRepository],
   exports: [StreamsRepository],
   controllers: [StreamsController],

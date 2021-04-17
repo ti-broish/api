@@ -11,7 +11,7 @@
     "migrationsTableName": "migrations",
     "migrations": ["dist/migrations/*.js"],
     "cli": {
-        "migrationsDir": "src/migrations"
+      "migrationsDir": "src/migrations"
     }
   },
   {
@@ -27,7 +27,7 @@
     "migrationsTableName": "seeds",
     "migrations": ["dist/seeds/*.js"],
     "cli": {
-        "migrationsDir": "src/seeds"
+      "migrationsDir": "src/seeds"
     }
   }
 ]

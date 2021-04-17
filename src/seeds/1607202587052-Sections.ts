@@ -1,8 +1,7 @@
 import { csvToSql } from 'src/utils/csvToSql';
-import {MigrationInterface, QueryRunner} from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class Sections1607202587052 implements MigrationInterface {
-
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`COMMIT;`);
     await queryRunner.query(`
@@ -28,10 +27,14 @@ export class Sections1607202587052 implements MigrationInterface {
       );
     `);
 
-    (await csvToSql(
-      __dirname + '/parl-2021-04-04/sections-2021-04-04.csv',
-      'sections_seed',
-    )).split(';').map(async (sql) => await queryRunner.query(sql));
+    (
+      await csvToSql(
+        __dirname + '/parl-2021-04-04/sections-2021-04-04.csv',
+        'sections_seed',
+      )
+    )
+      .split(';')
+      .map(async (sql) => await queryRunner.query(sql));
 
     await queryRunner.query(`START TRANSACTION;`);
 
