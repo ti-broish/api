@@ -33,6 +33,11 @@
   "dependencies": {
     "@anchan828/typeorm-decorators": "^0.4.25",
     "@casl/ability": "^5.2.2",
+    "@mikro-orm/cli": "^4.5.3",
+    "@mikro-orm/core": "^4.5.3",
+    "@mikro-orm/nestjs": "^4.2.0",
+    "@mikro-orm/postgresql": "^4.5.3",
+    "@mikro-orm/reflection": "^4.5.3",
     "@nestjs/cli": "^7.6.0",
     "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^0.6.3",
