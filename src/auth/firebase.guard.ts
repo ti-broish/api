@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
-import { resolve } from 'path';
 import { Observable } from 'rxjs';
 import { ALLOW_ONLY_FIREBASE_USER } from './decorators/allow-only-firebase-user.decorator';
 import { IS_PUBLIC_KEY } from './decorators/public.decorator';

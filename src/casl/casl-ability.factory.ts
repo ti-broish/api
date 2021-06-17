@@ -16,10 +16,7 @@ import {
   Town,
 } from 'src/sections/entities';
 import { Role } from 'src/casl/role.enum';
-import {
-  Violation,
-  ViolationStatus,
-} from 'src/violations/entities/violation.entity';
+import { Violation } from 'src/violations/entities/violation.entity';
 import { Organization, User } from '../users/entities';
 import { Action } from './action.enum';
 import { Client } from 'src/users/entities/client.entity';
@@ -64,14 +61,15 @@ type Subjects =
   | Violation
   | 'all';
 
-type Actions =
+/* TODO !?!? */
+/* type Actions =
   | Action.Read
   | Action.Update
   | Action.Create
   | Action.Manage
   | Action.Delete
-  | Action.Publish;
-
+  | Action.Publish; */
+/* TODO !?!? */
 export type AppAbility = Ability<[Action, Subjects]>;
 
 @Injectable()

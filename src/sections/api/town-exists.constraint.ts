@@ -7,6 +7,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { TownsRepository } from '../entities/towns.repository';
+import { TownDto } from './town.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -33,9 +34,9 @@ export class IsTownExistsConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsTownExists(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (town: TownDto, propertyName: string) {
     registerDecorator({
-      target: object.constructor,
+      target: town.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],

@@ -1,10 +1,4 @@
-import {
-  Exclude,
-  Expose,
-  plainToClass,
-  Transform,
-  TransformOptions,
-} from 'class-transformer';
+import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 import { Country, ElectionRegion, Municipality } from 'src/sections/entities';
 import { AdmUnitResultsDto } from './administrative-unit-results.dto';
 import { StatsDto } from './stats.dto';
@@ -25,7 +19,7 @@ export class ElectionRegionResultsDto {
   admUnits: Record<string, AdmUnitResultsDto>;
 
   @Expose({ name: 'isAbroad', groups: ['list'] })
-  abroad: boolean = false;
+  abroad = false;
 
   @Expose({ groups: ['list', 'details'] })
   stats: StatsDto = new StatsDto();

@@ -38,6 +38,7 @@ import { ViolationDto } from '../../violations/api/violation.dto';
 import { ViolationsRepository } from '../../violations/entities/violations.repository';
 import { TownDto } from '../../sections/api/town.dto';
 import { SectionsRepository } from 'src/sections/entities/sections.repository';
+import { ValidationStatus } from '../../utils/validation-status';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -113,7 +114,7 @@ export class ProtocolsController {
     @Body('description') description: string,
     @Body('town') town: TownDto,
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const protocol = await this.repo.findOneOrFail(id);
 
     // approve and save protocol
@@ -146,7 +147,7 @@ export class ProtocolsController {
   async reject(
     @Param('id') id: string,
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.reject(user);
 
@@ -162,7 +163,7 @@ export class ProtocolsController {
   async approve(
     @Param('id') id: string,
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.approve(user);
 

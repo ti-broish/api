@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
 import { Municipality } from '../entities';
-import { ElectionRegionDto } from './electionRegion.dto';
 
 @Exclude()
 export class MunicipalityDto {

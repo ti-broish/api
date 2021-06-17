@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   HttpCode,
-  Query,
   Param,
   Body,
   Inject,
@@ -42,7 +41,7 @@ export class PicturesController {
     @Body() upload: UploadImageDto,
     @InjectUser() user: User,
   ): Promise<PictureDto> {
-    let picture = await this.picturesUploader.upload(upload.image);
+    const picture = await this.picturesUploader.upload(upload.image);
     picture.author = user;
 
     const pictureDto = PictureDto.fromEntity(await this.repo.save(picture));

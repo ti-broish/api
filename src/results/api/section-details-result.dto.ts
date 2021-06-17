@@ -13,9 +13,9 @@ export class SectionDetailsResultDto {
 
   place: string;
 
-  mobile: boolean = false;
+  mobile = false;
 
-  ship: boolean = false;
+  ship = false;
 
   totalBallots: number | null;
 

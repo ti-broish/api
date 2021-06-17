@@ -53,11 +53,15 @@ export class MeStreamController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
-  streamStart(): void {}
+  streamStart(): void {
+    // TODO
+  }
 
   @Post('stop')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
-  streamStop(): void {}
+  streamStop(): void {
+    // TODO
+  }
 }

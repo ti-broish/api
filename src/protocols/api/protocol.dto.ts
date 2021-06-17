@@ -1,4 +1,4 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Exclude,
   Expose,
@@ -18,7 +18,7 @@ import { UserDto } from 'src/users/api/user.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { SectionDto } from '../../sections/api/section.dto';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
-import { ProtocolResultDto, ProtocolResultsDto } from './protocol-results.dto';
+import { ProtocolResultsDto } from './protocol-results.dto';
 
 export enum ProtocolStatusOverride {
   PROCESSED = 'processed',

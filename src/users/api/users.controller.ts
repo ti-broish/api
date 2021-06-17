@@ -12,7 +12,6 @@ import {
   Get,
   UseGuards,
   Query,
-  ParseIntPipe,
   Patch,
   Param,
 } from '@nestjs/common';

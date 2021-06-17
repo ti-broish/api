@@ -40,7 +40,7 @@ export class ProtocolAction {
   action: ProtocolActionType;
 
   @Column({ type: 'json' })
-  payload: object;
+  payload: Record<string, unknown>;
 
   @CreateDateColumn()
   timestamp: Date;
@@ -81,7 +81,7 @@ export class ProtocolAction {
   private static create(
     actionType: ProtocolActionType,
     actor?: User,
-    payload?: object,
+    payload?: Record<string, unknown>,
   ): ProtocolAction {
     const action = new ProtocolAction();
     if (actor) {

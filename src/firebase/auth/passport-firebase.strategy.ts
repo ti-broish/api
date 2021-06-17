@@ -38,6 +38,7 @@ export class FirebaseAuthStrategy extends PassportStrategy(
   }
 
   async validate(payload: FirebaseUser, req?: Request): Promise<any> {
+    req; /* TODO Not used added only for linting purposes */
     return payload;
   }
 

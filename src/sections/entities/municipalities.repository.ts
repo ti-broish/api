@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
-import { CityRegion } from './cityRegion.entity';
 import { ElectionRegion } from './electionRegion.entity';
 import { Municipality } from './municipality.entity';
-import { Town } from './town.entity';
 
 @Injectable()
 export class MunicipalitiesRepository {

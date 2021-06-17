@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability';
 import {
   Controller,
   Get,
@@ -9,11 +8,7 @@ import {
   UsePipes,
   ValidationPipe,
   ConflictException,
-  UseGuards,
 } from '@nestjs/common';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { ProtocolsRepository } from '../../protocols/entities/protocols.repository';
 import { User } from '../../users/entities/user.entity';

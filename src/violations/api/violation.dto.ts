@@ -6,7 +6,6 @@ import {
   Type,
 } from 'class-transformer';
 import {
-  ArrayNotEmpty,
   IsArray,
   IsBoolean,
   IsNotEmpty,

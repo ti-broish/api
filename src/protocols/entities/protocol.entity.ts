@@ -2,7 +2,6 @@ import {
   AfterLoad,
   Column,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,

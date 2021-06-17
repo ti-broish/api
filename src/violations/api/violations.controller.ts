@@ -95,10 +95,7 @@ export class ViolationsController {
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
-  async get(
-    @Param('id') id: string,
-    @InjectUser() user: User,
-  ): Promise<ViolationDto> {
+  async get(@Param('id') id: string): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
     const dto = ViolationDto.fromEntity(violation, [
       'violation.process',
@@ -136,7 +133,7 @@ export class ViolationsController {
   async process(
     @Param('id') id: string,
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
     violation.process(user);
 
@@ -165,7 +162,7 @@ export class ViolationsController {
     @Param('id') id: string,
     @InjectUser() user: User,
     @Body() violationDto: ViolationDto,
-  ): Promise<object> {
+  ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
     if (violationDto.isPublished) {
       violation.publish(user);

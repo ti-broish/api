@@ -4,11 +4,9 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   ManyToOne,
-  ManyToMany,
 } from 'typeorm';
 import { ulid } from 'ulid';
 import { User } from '.';
-import { Broadcast } from '../../broadcasts/entities/broadcast.entity';
 
 @Entity('clients')
 export class Client {

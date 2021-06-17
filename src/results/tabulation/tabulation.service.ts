@@ -9,9 +9,9 @@ import {
   Section,
 } from 'src/sections/entities';
 
-function uniquePredicate(value: any, index: number, self: any[]) {
-  return self.indexOf(value) === index;
-}
+// function uniquePredicate(value: any, index: number, self: any[]) {
+//   return self.indexOf(value) === index;
+// }
 
 export class TabulationService {
   constructor(
@@ -24,12 +24,14 @@ export class TabulationService {
     const sections = approvedProtocols.map(
       (protocol: Protocol) => protocol.section,
     );
-    const electionRegionIds = sections
-      .map((section: Section) => section.id.substr(0, 2))
-      .filter(uniquePredicate);
-    const publishedProtocols = await this.protocolsRepo.findPublishedProtocolsFrom(
-      electionRegionIds,
-    );
+    /* TODO ?!? */
+    // const electionRegionIds = sections
+    //   .map((section: Section) => section.id.substr(0, 2))
+    //   .filter(uniquePredicate);
+    // const publishedProtocols = await this.protocolsRepo.findPublishedProtocolsFrom(
+    //   electionRegionIds,
+    // );
+    /* TODO ?!? */
     const countries: Country[] = [],
       electionRegions: ElectionRegion[] = [],
       municipalities: Municipality[] = [],

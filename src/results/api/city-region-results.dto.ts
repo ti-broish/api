@@ -45,7 +45,7 @@ export class CityRegionResultsDto {
   addresses: Record<string, AddressDto>;
 
   @Expose({ groups: ['list', 'details'] })
-  abroad: boolean = false;
+  abroad = false;
 
   @Expose({ groups: ['details'] })
   crumbs: BreadcrumbDto[];

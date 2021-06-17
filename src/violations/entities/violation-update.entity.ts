@@ -39,7 +39,7 @@ export class ViolationUpdate {
   type: ViolationUpdateType;
 
   @Column({ type: 'json' })
-  payload: object;
+  payload: Record<string, unknown>;
 
   @CreateDateColumn()
   timestamp: Date;
@@ -76,7 +76,7 @@ export class ViolationUpdate {
   private static create(
     updateType: ViolationUpdateType,
     actor?: User,
-    payload?: object,
+    payload?: Record<string, unknown>,
   ): ViolationUpdate {
     const update = new ViolationUpdate();
     if (actor) {

@@ -16,5 +16,7 @@ export class AddViolationsComments1616575633740 implements MigrationInterface {
       `);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(): Promise<void> {
+    // TODO
+  }
 }

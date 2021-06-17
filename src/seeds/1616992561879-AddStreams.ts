@@ -6,7 +6,7 @@ export class AddStreams1616992561879 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     (
       await csvToSql(__dirname + '/parl-2021-04-04/streams.csv', 'streams', {
-        emptyColumnCallback: (column: string) => {
+        emptyColumnCallback: () => {
           return ulid();
         },
       })

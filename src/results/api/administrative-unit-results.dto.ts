@@ -1,12 +1,5 @@
 import { ClassTransformOptions } from '@nestjs/common/interfaces/external/class-transform-options.interface';
-import {
-  Exclude,
-  Expose,
-  plainToClass,
-  Transform,
-  TransformOptions,
-  Type,
-} from 'class-transformer';
+import { Exclude, Expose, plainToClass, Transform } from 'class-transformer';
 import { CityRegion, Country, Municipality, Town } from 'src/sections/entities';
 import { BreadcrumbDto } from './breadcrumb.dto';
 import { CityRegionResultsDto } from './city-region-results.dto';
@@ -46,7 +39,7 @@ export class AdmUnitResultsDto {
   districts: Record<string, Pick<CityRegionResultsDto, 'name' | 'towns'>>;
 
   @Expose({ groups: ['list', 'details'] })
-  abroad: boolean = false;
+  abroad = false;
 
   @Expose({ groups: ['details'] })
   crumbs: BreadcrumbDto[] = [];

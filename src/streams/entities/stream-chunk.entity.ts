@@ -6,7 +6,6 @@ import {
   Entity,
   ManyToOne,
   PrimaryColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { ulid } from 'ulid';
 import { Stream } from './stream.entity';

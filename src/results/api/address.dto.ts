@@ -1,3 +1,3 @@
-class AddressDto {
+export class AddressDto {
   sections: string[];
 }

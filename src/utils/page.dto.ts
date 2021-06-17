@@ -11,5 +11,5 @@ export class PageDTO {
 
     return Math.max(page, 1);
   })
-  page: number = 1;
+  page = 1;
 }

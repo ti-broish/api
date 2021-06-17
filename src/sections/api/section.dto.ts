@@ -1,14 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsNumberString,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsNumberString, IsString, Length } from 'class-validator';
 import { StreamDto } from 'src/streams/api/stream.dto';
-import { ElectionRegion } from '../entities';
 import { Section } from '../entities/section.entity';
 import { CityRegionDto } from './cityRegion.dto';
 import { ElectionRegionDto } from './electionRegion.dto';

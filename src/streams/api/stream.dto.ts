@@ -6,7 +6,7 @@ import {
   Transform,
   Type,
 } from 'class-transformer';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { SectionDto } from 'src/sections/api/section.dto';
 import { Stream } from '../entities/stream.entity';
 

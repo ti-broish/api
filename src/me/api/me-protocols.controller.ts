@@ -1,15 +1,10 @@
-import { Ability } from '@casl/ability';
 import {
   Controller,
   Get,
   HttpCode,
   UsePipes,
   ValidationPipe,
-  UseGuards,
 } from '@nestjs/common';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { ProtocolFilters } from 'src/protocols/api/protocols-filters.dto';
 import { Protocol } from 'src/protocols/entities/protocol.entity';

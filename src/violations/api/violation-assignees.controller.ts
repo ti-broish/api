@@ -15,11 +15,12 @@ import {
   Delete,
   NotFoundException,
 } from '@nestjs/common';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { UserDto } from 'src/users/api/user.dto';
-import { UsersRepository } from 'src/users/entities/users.repository';
+import { Action } from '../../casl/action.enum';
+import { CheckPolicies } from '../../casl/check-policies.decorator';
+import { PoliciesGuard } from '../../casl/policies.guard';
+import { UserDto } from '../../users/api/user.dto';
+import { UsersRepository } from '../../users/entities/users.repository';
+import { ValidationStatus } from '../../utils/validation-status';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { User } from '../../users/entities';
 import { Violation } from '../entities/violation.entity';
@@ -67,7 +68,7 @@ export class ViolationAssigneesController {
     )
     assigneeDtos: UserDto[],
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     violation.assign(
       user,
@@ -93,7 +94,7 @@ export class ViolationAssigneesController {
     @Param('violation') violationId: string,
     @Body() assigneeDto: UserDto,
     @InjectUser() actor: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     violation.assign(actor, [...violation.assignees, assigneeDto.toEntity()]);
     await this.violationsRepo.save(violation);
@@ -116,7 +117,7 @@ export class ViolationAssigneesController {
     @Param('violation') violationId: string,
     @Param('assignee') assigneeId: string,
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
     const assignees = violation.assignees;

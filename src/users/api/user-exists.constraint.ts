@@ -4,9 +4,9 @@ import {
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  ValidationArguments,
 } from 'class-validator';
 import { UsersRepository } from '../entities/users.repository';
+import { UserDto } from './user.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -23,15 +23,15 @@ export class IsUserExistsConstraint implements ValidatorConstraintInterface {
     return !!(await this.repo.findOne(userId));
   }
 
-  defaultMessage?(validationArguments?: ValidationArguments): string {
+  defaultMessage?(): string {
     return `User with $property "$value" does not exist!`;
   }
 }
 
 export function IsUserExists(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (user: UserDto, propertyName: string) {
     registerDecorator({
-      target: object.constructor,
+      target: user.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],

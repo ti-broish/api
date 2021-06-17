@@ -4,7 +4,6 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   ManyToOne,
-  AfterLoad,
 } from 'typeorm';
 import { ulid } from 'ulid';
 import { User } from '../../users/entities';
@@ -21,10 +20,10 @@ export class Picture implements PathInterface {
   path: string;
 
   @Column()
-  sortPosition: number = 0;
+  sortPosition = 0;
 
   @Column()
-  rotation: number = 0;
+  rotation = 0;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

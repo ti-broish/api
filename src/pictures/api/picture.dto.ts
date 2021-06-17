@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { Picture } from '../entities/picture.entity';
 import { PathInterface } from '../path.interface';
 import { IsPictureExists } from './picture-exists.constraint';

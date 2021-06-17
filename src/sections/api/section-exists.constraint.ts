@@ -8,6 +8,7 @@ import {
 } from 'class-validator';
 import { Section } from '../entities';
 import { SectionsRepository } from '../entities/sections.repository';
+import { SectionDto } from './section.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -37,9 +38,9 @@ export class IsSectionExistsConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsSectionExists(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (section: SectionDto, propertyName: string) {
     registerDecorator({
-      target: object.constructor,
+      target: section.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],

@@ -16,11 +16,12 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { UserDto } from 'src/users/api/user.dto';
-import { UsersRepository } from 'src/users/entities/users.repository';
+import { Action } from '../../casl/action.enum';
+import { CheckPolicies } from '../../casl/check-policies.decorator';
+import { PoliciesGuard } from '../../casl/policies.guard';
+import { UserDto } from '../../users/api/user.dto';
+import { UsersRepository } from '../..//users/entities/users.repository';
+import { ValidationStatus } from '../../utils/validation-status';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { User } from '../../users/entities';
 import { Protocol } from '../entities/protocol.entity';
@@ -68,7 +69,7 @@ export class ProtocolAssigneesController {
     )
     assigneeDtos: UserDto[],
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     if (assigneeDtos.length > 1) {
       throw new BadRequestException(
         'CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL',
@@ -99,7 +100,7 @@ export class ProtocolAssigneesController {
     @Param('protocol') protocolId: string,
     @Body() assigneeDto: UserDto,
     @InjectUser() actor: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     if (protocol.assignees.length > 0) {
       throw new BadRequestException(
@@ -127,7 +128,7 @@ export class ProtocolAssigneesController {
     @Param('protocol') protocolId: string,
     @Param('assignee') assigneeId: string,
     @InjectUser() user: User,
-  ): Promise<object> {
+  ): Promise<ValidationStatus> {
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
     const assignees = protocol.assignees;
