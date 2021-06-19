@@ -19,5 +19,5 @@ export class ViolationUpdateDto {
   type: ViolationUpdateType;
 
   @Expose({ groups: ['violation.process'] })
-  payload: object;
+  payload: Record<string, unknown>;
 }

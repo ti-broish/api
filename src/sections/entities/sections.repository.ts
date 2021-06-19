@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { string } from 'joi';
-import { zipWith } from 'lodash';
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity';
 import { StatsDto } from 'src/results/api/stats.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
@@ -83,8 +81,8 @@ export class SectionsRepository {
   }
 
   async getResultsFor(
-    segment: string = '',
-    groupBySegment: number = 0,
+    segment = '',
+    groupBySegment = 0,
   ): Promise<number[] | Record<string, number[]>> {
     const qb = this.repo.createQueryBuilder('sections').select([]);
     qb.addSelect('results.party_id', 'party_id');
@@ -123,8 +121,8 @@ export class SectionsRepository {
   }
 
   async getStatsFor(
-    segment: string = '',
-    groupBySegment: number = 0,
+    segment = '',
+    groupBySegment = 0,
   ): Promise<StatsDto | Record<string, StatsDto>[]> {
     const statsQueries = [
       this.qbStats(segment, groupBySegment).addSelect(
@@ -193,7 +191,7 @@ export class SectionsRepository {
 
   private qbStats(
     segment: string,
-    groupBySegment: number = 0,
+    groupBySegment = 0,
   ): SelectQueryBuilder<Section> {
     const qb = this.repo.createQueryBuilder('sections').select([]);
     if (segment.length > 0) {

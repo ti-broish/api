@@ -7,6 +7,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { PostsRepository } from './entities/posts.repository';
+import { PostDto } from './post.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -29,9 +30,9 @@ export class IsPostExistsConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsPostExists(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (post: PostDto, propertyName: string) {
     registerDecorator({
-      target: object.constructor,
+      target: post.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],

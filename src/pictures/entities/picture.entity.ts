@@ -4,7 +4,6 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   ManyToOne,
-  AfterLoad,
 } from 'typeorm';
 import { ulid } from 'ulid';
 import { User } from '../../users/entities';

@@ -3,7 +3,6 @@ import {
   ArgumentsHost,
   HttpStatus,
   HttpException,
-  HttpServer,
   Injectable,
   Inject,
 } from '@nestjs/common';

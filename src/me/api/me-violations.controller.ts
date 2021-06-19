@@ -1,8 +1,5 @@
-import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
+import { Controller, Get, HttpCode } from '@nestjs/common';
+
 import { PictureDto } from 'src/pictures/api/picture.dto';
 import { Violation } from 'src/violations/entities/violation.entity';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';

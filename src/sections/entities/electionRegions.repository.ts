@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StatsDto } from 'src/results/api/stats.dto';
 import { EntityManager, Repository } from 'typeorm';
 import { ElectionRegion } from './electionRegion.entity';
 

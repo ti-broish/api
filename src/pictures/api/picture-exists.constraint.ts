@@ -4,9 +4,9 @@ import {
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  ValidationArguments,
 } from 'class-validator';
 import { PicturesRepository } from '../entities/pictures.repository';
+import { PictureDto } from './picture.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -33,7 +33,7 @@ export class IsPictureExistsConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsPictureExists(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: PictureDto, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

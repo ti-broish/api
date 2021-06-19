@@ -18,7 +18,7 @@ import {
   Length,
   ValidateNested,
 } from 'class-validator';
-import { assign, assignWith, merge } from 'lodash';
+import { assignWith } from 'lodash';
 import { Role } from 'src/casl/role.enum';
 import { User } from '../entities/user.entity';
 import { OrganizationDto } from './organization.dto';

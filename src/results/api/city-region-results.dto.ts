@@ -6,6 +6,7 @@ import {
   TransformOptions,
 } from 'class-transformer';
 import { CityRegion, Town } from 'src/sections/entities';
+import { AddressDto } from './address.dto';
 import { BreadcrumbDto } from './breadcrumb.dto';
 import { SectionResultsDto } from './section-results.dto';
 import { StatsDto } from './stats.dto';
@@ -45,7 +46,7 @@ export class CityRegionResultsDto {
   addresses: Record<string, AddressDto>;
 
   @Expose({ groups: ['list', 'details'] })
-  abroad: boolean = false;
+  abroad = false;
 
   @Expose({ groups: ['details'] })
   crumbs: BreadcrumbDto[];

@@ -13,7 +13,7 @@ const escValue = (value: string): string => {
 
 const escSymbol = (str: string): string => `"${str}"`;
 
-const defaultEmptyColumnCallback = (column: string): string => 'NULL';
+const defaultEmptyColumnCallback = (): string => 'NULL';
 
 const streamToString = (stream: Stream): Promise<string> => {
   const chunks = [];

@@ -7,6 +7,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { OrganizationsRepository } from '../entities/organizations.repository';
+import { OrganizationDto } from './organization.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -31,7 +32,7 @@ export class IsOrganizationExistsConstraint
 }
 
 export function IsOrganizationExists(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: OrganizationDto, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

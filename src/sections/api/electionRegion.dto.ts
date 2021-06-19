@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
-import { ElectionRegion, Municipality } from '../entities';
+import { ElectionRegion } from '../entities';
 import { MunicipalityDto } from './municipality.dto';
 
 @Exclude()

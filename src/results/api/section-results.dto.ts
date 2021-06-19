@@ -1,4 +1,3 @@
-import { PickType } from '@nestjs/swagger';
 import {
   Exclude,
   Expose,
@@ -6,7 +5,6 @@ import {
   TransformOptions,
 } from 'class-transformer';
 import { Section } from 'src/sections/entities';
-import { SectionDetailsResultDto } from './section-details-result.dto';
 import { StatsDto } from './stats.dto';
 
 @Exclude()

@@ -27,7 +27,7 @@ const inserterFactory = (tableName: string) => {
       .replace(
         ':values',
         Object.entries(record)
-          .map(([key, value]) => escValue(value))
+          .map(([, value]) => escValue(value))
           .join(', '),
       );
   };

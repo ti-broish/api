@@ -19,7 +19,6 @@ import {
 } from 'src/sections/entities';
 import { ElectionRegionsRepository } from 'src/sections/entities/electionRegions.repository';
 import { MunicipalitiesRepository } from 'src/sections/entities/municipalities.repository';
-import { ElectionType } from './total-results.dto';
 import { PartiesRepository } from 'src/parties/entities/parties.repository';
 import { CountriesRepository } from 'src/sections/entities/countries.repository';
 import { CityRegionsRepository } from 'src/sections/entities/cityRegions.repository';

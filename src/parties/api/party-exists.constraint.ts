@@ -7,6 +7,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { PartiesRepository } from '../entities/parties.repository';
+import { PartyDto } from './party.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -29,9 +30,9 @@ export class IsPartyExistsConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsPartyExists(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (party: PartyDto, propertyName: string) {
     registerDecorator({
-      target: object.constructor,
+      target: party.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],

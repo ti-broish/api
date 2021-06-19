@@ -16,10 +16,7 @@ import {
   Town,
 } from 'src/sections/entities';
 import { Role } from 'src/casl/role.enum';
-import {
-  Violation,
-  ViolationStatus,
-} from 'src/violations/entities/violation.entity';
+import { Violation } from 'src/violations/entities/violation.entity';
 import { Organization, User } from '../users/entities';
 import { Action } from './action.enum';
 import { Client } from 'src/users/entities/client.entity';
@@ -71,8 +68,7 @@ type Actions =
   | Action.Manage
   | Action.Delete
   | Action.Publish;
-
-export type AppAbility = Ability<[Action, Subjects]>;
+export type AppAbility = Ability<[Actions, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
