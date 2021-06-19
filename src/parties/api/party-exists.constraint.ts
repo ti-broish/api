@@ -6,8 +6,8 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from 'class-validator';
-import { PartyDto } from 'src/results/api/party.dto';
 import { PartiesRepository } from '../entities/parties.repository';
+import { PartyDto } from './party.dto';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
