@@ -20,10 +20,10 @@ export class Picture implements PathInterface {
   path: string;
 
   @Column()
-  sortPosition = 0;
+  sortPosition: number = 0;
 
   @Column()
-  rotation = 0;
+  rotation: number = 0;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

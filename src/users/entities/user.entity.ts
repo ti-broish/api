@@ -57,7 +57,7 @@ export class User {
   hasAgreedToKeepData: boolean;
 
   @Column()
-  isEmailVerified = false;
+  isEmailVerified: boolean = false;
 
   @Column('simple-json')
   roles: Role[] = [Role.User, Role.Streamer];
