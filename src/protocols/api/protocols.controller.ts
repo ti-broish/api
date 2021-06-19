@@ -38,7 +38,10 @@ import { ViolationDto } from '../../violations/api/violation.dto';
 import { ViolationsRepository } from '../../violations/entities/violations.repository';
 import { TownDto } from '../../sections/api/town.dto';
 import { SectionsRepository } from 'src/sections/entities/sections.repository';
-import { ValidationStatus } from '../../utils/validation-status';
+import {
+  AcceptedResponse,
+  ACCEPTED_RESPONSE_STATUS,
+} from '../../utils/accepted-response';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -114,7 +117,7 @@ export class ProtocolsController {
     @Body('description') description: string,
     @Body('town') town: TownDto,
     @InjectUser() user: User,
-  ): Promise<ValidationStatus> {
+  ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
 
     // approve and save protocol
@@ -137,7 +140,7 @@ export class ProtocolsController {
     ]);
     this.updatePicturesUrl(savedDto);
 
-    return { status: 'Accepted and Violation Sent' };
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
   @Post(':id/reject')
@@ -147,13 +150,13 @@ export class ProtocolsController {
   async reject(
     @Param('id') id: string,
     @InjectUser() user: User,
-  ): Promise<ValidationStatus> {
+  ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.reject(user);
 
     await this.repo.save(protocol);
 
-    return { status: 'Accepted' };
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
   @Post(':id/approve')
@@ -163,13 +166,13 @@ export class ProtocolsController {
   async approve(
     @Param('id') id: string,
     @InjectUser() user: User,
-  ): Promise<ValidationStatus> {
+  ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.approve(user);
 
     await this.repo.save(protocol);
 
-    return { status: 'Accepted' };
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
   @Post(':id/results')

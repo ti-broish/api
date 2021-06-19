@@ -20,7 +20,10 @@ import { CheckPolicies } from '../../casl/check-policies.decorator';
 import { PoliciesGuard } from '../../casl/policies.guard';
 import { UserDto } from '../../users/api/user.dto';
 import { UsersRepository } from '../../users/entities/users.repository';
-import { ValidationStatus } from '../../utils/validation-status';
+import {
+  AcceptedResponse,
+  ACCEPTED_RESPONSE_STATUS,
+} from '../../utils/accepted-response';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { User } from '../../users/entities';
 import { Violation } from '../entities/violation.entity';
@@ -68,7 +71,7 @@ export class ViolationAssigneesController {
     )
     assigneeDtos: UserDto[],
     @InjectUser() user: User,
-  ): Promise<ValidationStatus> {
+  ): Promise<AcceptedResponse> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     violation.assign(
       user,
@@ -76,7 +79,7 @@ export class ViolationAssigneesController {
     );
     await this.violationsRepo.save(violation);
 
-    return { status: 'Accepted' };
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
   @Post(':violation/assignees')
@@ -94,12 +97,12 @@ export class ViolationAssigneesController {
     @Param('violation') violationId: string,
     @Body() assigneeDto: UserDto,
     @InjectUser() actor: User,
-  ): Promise<ValidationStatus> {
+  ): Promise<AcceptedResponse> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     violation.assign(actor, [...violation.assignees, assigneeDto.toEntity()]);
     await this.violationsRepo.save(violation);
 
-    return { status: 'Accepted' };
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
   @Delete(':violation/assignees/:assignee')
@@ -117,7 +120,7 @@ export class ViolationAssigneesController {
     @Param('violation') violationId: string,
     @Param('assignee') assigneeId: string,
     @InjectUser() user: User,
-  ): Promise<ValidationStatus> {
+  ): Promise<AcceptedResponse> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
     const assignees = violation.assignees;
@@ -131,6 +134,6 @@ export class ViolationAssigneesController {
     violation.assign(user, assignees);
     await this.violationsRepo.save(violation);
 
-    return { status: 'Accepted' };
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 }
