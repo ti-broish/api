@@ -61,16 +61,14 @@ type Subjects =
   | Violation
   | 'all';
 
-/* TODO !?!? */
-/* type Actions =
+type Actions =
   | Action.Read
   | Action.Update
   | Action.Create
   | Action.Manage
   | Action.Delete
-  | Action.Publish; */
-/* TODO !?!? */
-export type AppAbility = Ability<[Action, Subjects]>;
+  | Action.Publish;
+export type AppAbility = Ability<[Actions, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
