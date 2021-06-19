@@ -14,7 +14,7 @@
 
 ```shell
 # Clone the project
-git clone git@github.com:Da-Bulgaria/ti-broish-api.git
+git clone git@github.com:ti-broish/api.git
 cd ti-broish-api
 # Install dependencies
 npm install
