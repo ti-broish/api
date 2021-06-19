@@ -1,23 +1,22 @@
-# [Issue]()
+## Какво променя този PR?
 
-# Description
+Closes #
 
-Short description representing what you have done
+<!-- Можете да посочите кое issue или друг PR, което този PR затваря, ако се merge-не. -->
+<!-- Споменете и други задачи, които са свързани с тези промени с ti-broish/<repo>#<number> -->
 
-## Type of change
+## Детайли
 
-- [x] Non Breaking change
-- [x] Breaking change
+<!-- Опишете детайлно защо сте направили тези промени -->
 
-# Checklist:
+## Списък:
 
-- [x] Checklist item
-- [x] Checklist item
+- [x]
+- [ ]
+- [ ]
 
-# Notes (specific implementation details)
+<!-- Опишете всичките компоненти на промените и отбележете кои са готови и кои предстоят. -->
 
-I have found this and this and this
+## Бележки за deployment
 
-# Screenshots (optional)
-
-Hey master let me show you some beautiful things :)
+<!-- Опишете, ако има нещо важно да се вземе предвид преди/след deployment или изтрийте тази секция. -->
