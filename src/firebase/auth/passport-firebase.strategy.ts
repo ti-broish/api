@@ -37,8 +37,10 @@ export class FirebaseAuthStrategy extends PassportStrategy(
     this.passReqToCallback = options.passReqToCallback === true || false;
   }
 
-  async validate(payload: FirebaseUser, req?: Request): Promise<any> {
-    req; /* TODO Not used added only for linting purposes */
+  async validate(
+    payload: FirebaseUser,
+    req?: Request | undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ): Promise<any> {
     return payload;
   }
 
