@@ -15,6 +15,7 @@
     "start:prod": "node dist/main",
     "deploy:demo": "pm2 deploy demo-ecosystem.config.js production update",
     "lint": "eslint \"{src,scripts,test,@types}/**/*.ts\" --fix",
+    "lint:ci": "eslint \"{src,scripts,test,@types}/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
