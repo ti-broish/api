@@ -9,6 +9,7 @@
     "postbuild": "cp -r src/seeds/parl-2021-04-04 dist/seeds/",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
+    "prestart:dev": "mkdir -p dist/seeds && cp -r src/seeds/parl-2021-04-04 dist/seeds/",
     "start:dev": "nest start --watch",
     "start:dev:db": "./scripts/start-dev-db.sh",
     "start:debug": "nest start --debug --watch",
