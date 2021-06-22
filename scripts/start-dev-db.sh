@@ -14,11 +14,13 @@ echo "echo stop & remove old docker [$SERVER] and starting new fresh instance of
   docker run --name $SERVER -e POSTGRES_PASSWORD=$DATABASE_PASSWORD \
   -e PGPASSWORD=$DATABASE_PASSWORD \
   -p 5432:5432 \
-  -d postgres
+  -d postgres \
+  -c log_statement=all \
+  -c log_destination=stderr
 
 # wait for pg to start
 echo "sleep wait for pg-server [$SERVER] to start";
-SLEEP 10;
+sleep 10;
 
 # create the db
 echo "CREATE DATABASE $DATABASE_NAME ENCODING 'UTF-8';" | docker exec -i $SERVER psql -U postgres
