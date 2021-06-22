@@ -39,7 +39,7 @@ export class SectionsRepository {
   }
 
   findByTownAndCityRegion(
-    townId: number,
+    townCode: number,
     cityRegionCode?: string,
   ): Promise<Section[]> {
     return this.repo.find({
@@ -50,7 +50,7 @@ export class SectionsRepository {
         },
       },
       where: (qb: SelectQueryBuilder<Section>): void => {
-        qb.where({ town: townId });
+        qb.andWhere('town.code = :townCode', { townCode });
 
         if (cityRegionCode) {
           qb.innerJoinAndSelect(
