@@ -16,7 +16,7 @@ export class ViolationsFilters extends PageDTO {
   author: string;
 
   @Optional()
-  town: string;
+  town: number;
 
   @Optional()
   organization: number;

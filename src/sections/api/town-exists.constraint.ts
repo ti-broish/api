@@ -16,20 +16,20 @@ export class IsTownExistsConstraint implements ValidatorConstraintInterface {
     @Inject(TownsRepository) private readonly repo: TownsRepository,
   ) {}
 
-  async validate(townId?: number): Promise<boolean> {
-    if (!townId) {
+  async validate(townCode?: number): Promise<boolean> {
+    if (!townCode) {
       return true;
     }
 
-    if (typeof townId !== 'number' || townId <= 0) {
+    if (typeof townCode !== 'number' || townCode <= 0) {
       return false;
     }
 
-    return !!(await this.repo.findOne(townId));
+    return !!(await this.repo.findOneByCode(townCode));
   }
 
   defaultMessage?(validationArguments?: ValidationArguments): string {
-    return `Town with ID "${validationArguments.value}" does not exist!`;
+    return `Town with code "${validationArguments.value}" does not exist!`;
   }
 }
 

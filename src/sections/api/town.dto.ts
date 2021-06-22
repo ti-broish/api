@@ -11,7 +11,7 @@ import { IsTownExists } from './town-exists.constraint';
 @Exclude()
 export class TownDto {
   @ApiProperty()
-  @Expose({ groups: ['read', 'create'] })
+  @Expose({ name: 'code', groups: ['read', 'create'] })
   @IsTownExists({ groups: ['create'] })
   @IsNumber({}, { groups: ['create'] })
   @Min(1, { groups: ['create'] })

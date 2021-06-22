@@ -10,12 +10,12 @@ export class TownsRepository {
     private repo: Repository<Town>,
   ) {}
 
-  findOne(id: number): Promise<Town> {
-    return this.repo.findOne(id);
+  findOneByCode(code: number): Promise<Town> {
+    return this.repo.findOne({ code });
   }
 
-  findOneOrFail(id: number): Promise<Town> {
-    return this.repo.findOneOrFail(id);
+  findOneByCodeOrFail(code: number): Promise<Town> {
+    return this.repo.findOneOrFail({ code });
   }
 
   filter(

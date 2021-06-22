@@ -57,7 +57,7 @@ export class ViolationsRepository {
     }
 
     if (filters.town) {
-      qb.andWhere('town.id = :town', { town: filters.town });
+      qb.andWhere('town.code = :town', { town: filters.town });
     }
 
     if (filters.author || filters.organization) {
