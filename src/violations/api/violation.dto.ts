@@ -46,7 +46,8 @@ export class ViolationDto {
   @Expose({ groups: ['read', 'create'] })
   @Type(() => TownDto)
   @Transform(
-    ({ value: id }) => plainToClass(TownDto, { id }, { groups: ['create'] }),
+    ({ value: id }) =>
+      plainToClass(TownDto, { code: id }, { groups: ['create'] }),
     { groups: ['create'] },
   )
   @IsNotEmpty({ groups: ['create'] })
@@ -111,6 +112,7 @@ export class ViolationDto {
         groups: ['create'],
       },
     );
+    violation.town.code = this.town.id;
 
     let sortPosition = 1;
     violation.pictures = (violation.pictures || []).map(

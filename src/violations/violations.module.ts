@@ -11,6 +11,7 @@ import { ViolationUpdate } from './entities/violation-update.entity';
 import { Violation } from './entities/violation.entity';
 import { ViolationsRepository } from './entities/violations.repository';
 import { UsersModule } from 'src/users/users.module';
+import { SectionsModule } from 'src/sections/sections.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UsersModule } from 'src/users/users.module';
     CaslModule,
     PicturesModule,
     UsersModule,
+    SectionsModule,
   ],
   controllers: [
     ViolationsController,

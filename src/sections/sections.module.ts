@@ -54,6 +54,7 @@ import { CityRegionsRepository } from './entities/cityRegions.repository';
     MunicipalitiesRepository,
     CountriesRepository,
     CityRegionsRepository,
+    TownsRepository,
   ],
   controllers: [
     SectionsController,
