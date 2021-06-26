@@ -35,9 +35,13 @@ export class ViolationsRepository {
     const qb = this.repo.createQueryBuilder('violation');
 
     qb.innerJoinAndSelect('violation.town', 'town');
-    qb.innerJoinAndSelect('violation.updates', 'update');
-    qb.innerJoinAndSelect('update.actor', 'actor');
-    qb.innerJoinAndSelect('actor.organization', 'organization');
+    qb.innerJoinAndSelect('violation.updates', 'update_send');
+    qb.andWhere('update_send.type = :update', {
+      update: ViolationUpdateType.SEND,
+    });
+    qb.innerJoinAndSelect('update_send.actor', 'sender');
+    qb.innerJoinAndSelect('sender.organization', 'organization');
+    qb.innerJoinAndSelect('violation.updates', 'updates');
     qb.leftJoinAndSelect('violation.pictures', 'picture');
 
     if (filters.assignee) {
@@ -92,12 +96,6 @@ export class ViolationsRepository {
     }
 
     if (filters.organization) {
-      qb.innerJoin('violation.updates', 'update_send');
-      qb.andWhere('update_send.type = :update', {
-        update: ViolationUpdateType.SEND,
-      });
-      qb.innerJoin('update_send.actor', 'sender');
-      qb.innerJoin('sender.organization', 'organization');
       qb.andWhere('organization.id = :organization', {
         organization: filters.organization,
       });
