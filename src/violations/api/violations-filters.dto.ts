@@ -13,11 +13,23 @@ export class ViolationsFilters extends PageDTO {
   status: ViolationStatus;
 
   @Optional()
-  author: string;
+  electionRegion: string;
+
+  @Optional()
+  municipality: string;
+
+  @Optional()
+  country: string;
 
   @Optional()
   town: number;
 
   @Optional()
+  cityRegion: string;
+
+  @Optional()
   organization: number;
+
+  @Optional()
+  published: boolean;
 }

@@ -34,7 +34,6 @@ export class ViolationsRepository {
   ): SelectQueryBuilder<Violation> {
     const qb = this.repo.createQueryBuilder('violation');
 
-    qb.leftJoinAndSelect('violation.section', 'section');
     qb.innerJoinAndSelect('violation.town', 'town');
     qb.innerJoinAndSelect('violation.updates', 'update');
     qb.innerJoinAndSelect('update.actor', 'actor');
@@ -49,17 +48,47 @@ export class ViolationsRepository {
     }
 
     if (filters.section) {
+      qb.innerJoinAndSelect('violation.section', 'section');
       qb.andWhere('section.id LIKE :section', {
         section: `${filters.section}%`,
       });
+    } else {
+      qb.leftJoinAndSelect('violation.section', 'section');
+    }
+
+    if (filters.electionRegion) {
+      qb.innerJoin('town.municipality', 'municipality');
+      qb.innerJoin('municipality.electionRegions', 'electionRegions');
+      qb.andWhere('electionRegions.code = :electionRegion', {
+        electionRegion: filters.electionRegion,
+      });
+
+      if (filters.municipality) {
+        qb.andWhere('municipality.code = :municipality', {
+          municipality: filters.municipality,
+        });
+      }
+
+      if (filters.country) {
+        qb.innerJoin('town.country', 'country');
+        qb.andWhere('country.code = :country', { country: filters.country });
+      }
+
+      if (filters.town) {
+        qb.andWhere('town.code = :town', {
+          town: filters.town,
+        });
+      }
     }
 
     if (filters.status) {
       qb.andWhere('violation.status = :status', { status: filters.status });
     }
 
-    if (filters.town) {
-      qb.andWhere('town.code = :town', { town: filters.town });
+    if (filters.published) {
+      qb.andWhere('violation.isPublished = :published', {
+        published: filters.published,
+      });
     }
 
     if (filters.organization) {

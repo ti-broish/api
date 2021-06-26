@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
+import {
+  Exclude,
+  Expose,
+  plainToClass,
+  Transform,
+  Type,
+} from 'class-transformer';
 import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator';
 import { StreamDto } from 'src/streams/api/stream.dto';
 import { Town } from '../entities';
