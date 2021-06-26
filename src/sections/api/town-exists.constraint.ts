@@ -34,7 +34,7 @@ export class IsTownExistsConstraint implements ValidatorConstraintInterface {
 }
 
 export function IsTownExists(validationOptions?: ValidationOptions) {
-  return function (town: TownDto, propertyName: string) {
+  return function (town: TownDto | object, propertyName: string) {
     registerDecorator({
       target: town.constructor,
       propertyName: propertyName,

@@ -1,35 +1,64 @@
-import { Optional } from '@nestjs/common';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsBooleanString,
+  IsInt,
+  IsNumber,
+  IsNumberString,
+  IsOptional,
+  Length,
+} from 'class-validator';
+import { IsTownExists } from 'src/sections/api/town-exists.constraint';
+import { IsOrganizationExists } from 'src/users/api/organization-exists.constraint';
+import { IsUserExists } from 'src/users/api/user-exists.constraint';
 import { PageDTO } from 'src/utils/page.dto';
+import { IsULID } from 'src/utils/ulid-constraint';
 import { ViolationStatus } from '../entities/violation.entity';
 
 export class ViolationsFilters extends PageDTO {
-  @Optional()
+  @IsOptional()
+  @IsULID()
+  @IsUserExists()
   assignee: string;
 
-  @Optional()
+  @IsOptional()
+  @Length(1, 9)
   section: string;
 
-  @Optional()
+  @IsOptional()
   status: ViolationStatus;
 
-  @Optional()
+  @IsOptional()
+  @IsNumberString()
+  @Length(2, 2)
   electionRegion: string;
 
-  @Optional()
+  @IsOptional()
+  @IsNumberString()
+  @Length(2, 2)
   municipality: string;
 
-  @Optional()
+  @IsOptional()
+  @IsNumberString()
+  @Length(2, 2)
   country: string;
 
-  @Optional()
+  @IsOptional()
+  @IsTownExists()
   town: number;
 
-  @Optional()
+  @IsOptional()
+  @IsNumberString()
+  @Length(2, 2)
   cityRegion: string;
 
-  @Optional()
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  @IsOrganizationExists()
   organization: number;
 
-  @Optional()
+  @IsOptional()
+  @IsBooleanString()
   published: boolean;
 }

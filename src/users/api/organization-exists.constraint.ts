@@ -32,7 +32,7 @@ export class IsOrganizationExistsConstraint
 }
 
 export function IsOrganizationExists(validationOptions?: ValidationOptions) {
-  return function (object: OrganizationDto, propertyName: string) {
+  return function (object: OrganizationDto | object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,
