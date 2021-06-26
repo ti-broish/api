@@ -13,5 +13,6 @@
   "BROADCAST_PENDING": "Pending",
   "BROADCAST_PROCESSING": "Processing",
   "BROADCAST_PUBLISHED": "Published",
-  "BROADCAST_DISCARDED": "Discarded"
+  "BROADCAST_DISCARDED": "Discarded",
+  "OBJECT_ACCEPTED": "Accepted"
 }
