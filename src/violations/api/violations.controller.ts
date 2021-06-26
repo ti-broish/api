@@ -38,7 +38,7 @@ export class ViolationsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
+  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Violation))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: ViolationsFilters,
