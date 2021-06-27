@@ -13,5 +13,6 @@
   "BROADCAST_PENDING": "В изчакване",
   "BROADCAST_PROCESSING": "Обработва се",
   "BROADCAST_PUBLISHED": "Публикувано",
-  "BROADCAST_DISCARDED": "Отхвърлено"
+  "BROADCAST_DISCARDED": "Отхвърлено",
+  "OBJECT_ACCEPTED": "Прието"
 }

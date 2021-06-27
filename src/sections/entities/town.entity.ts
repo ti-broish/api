@@ -19,7 +19,7 @@ export class Town {
   readonly id: number;
 
   @Column()
-  readonly code: number;
+  code: number;
 
   @Column()
   readonly name: string;

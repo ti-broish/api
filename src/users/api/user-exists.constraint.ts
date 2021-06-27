@@ -24,14 +24,14 @@ export class IsUserExistsConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage?(): string {
-    return `User with $property "$value" does not exist!`;
+    return `User with ID "$value" does not exist!`;
   }
 }
 
 export function IsUserExists(validationOptions?: ValidationOptions) {
-  return function (user: UserDto, propertyName: string) {
+  return function (target: UserDto | object, propertyName: string) {
     registerDecorator({
-      target: user.constructor,
+      target: target.constructor,
       propertyName: propertyName,
       options: validationOptions,
       constraints: [],
