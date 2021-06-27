@@ -12,6 +12,7 @@ import { Violation } from './entities/violation.entity';
 import { ViolationsRepository } from './entities/violations.repository';
 import { UsersModule } from 'src/users/users.module';
 import { SectionsModule } from 'src/sections/sections.module';
+import { ViolationStatusesController } from './api/violations-statuses.controller';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SectionsModule } from 'src/sections/sections.module';
     SectionsModule,
   ],
   controllers: [
+    ViolationStatusesController,
     ViolationsController,
     ViolationCommentsController,
     ViolationAssigneesController,
