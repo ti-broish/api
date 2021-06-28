@@ -81,6 +81,7 @@ export class CaslAbilityFactory {
       // read access to everything
       can(Action.Read, 'all');
       can([Action.Manage], User);
+      can([Action.Manage], Protocol);
       can([Action.Create, Action.Update, Action.Publish], Post);
       // Delete only unpublished posts
       can(Action.Delete, Post, { publishAt: { $eq: null } });
