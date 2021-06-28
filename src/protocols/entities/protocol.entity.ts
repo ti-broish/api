@@ -27,7 +27,6 @@ export enum ProtocolStatus {
   REPLACED = 'replaced',
   READY = 'ready',
   APPROVED = 'approved',
-  PUBLISHING = 'publishing',
   PUBLISHED = 'published',
 }
 

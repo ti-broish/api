@@ -10,6 +10,7 @@ import { ProtocolsRepository } from './entities/protocols.repository';
 import { Violation } from '../violations/entities/violation.entity';
 import { ViolationsModule } from '../violations/violations.module';
 import { SectionsModule } from 'src/sections/sections.module';
+import { ProtocolsStatusesController } from './api/protocols-statuses.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,11 @@ import { SectionsModule } from 'src/sections/sections.module';
     SectionsModule,
     ViolationsModule,
   ],
-  controllers: [ProtocolsController, ProtocolAssigneesController],
+  controllers: [
+    ProtocolsStatusesController,
+    ProtocolsController,
+    ProtocolAssigneesController,
+  ],
   providers: [ProtocolsRepository],
   exports: [ProtocolsRepository],
 })
