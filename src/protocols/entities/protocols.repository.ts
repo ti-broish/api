@@ -212,10 +212,6 @@ export class ProtocolsRepository {
     return qb.getMany();
   }
 
-  async markProtocolsAsPublishing(protocols: Protocol[]): Promise<void> {
-    this.markProtocolsAs(ProtocolStatus.PUBLISHING, protocols);
-  }
-
   async markProtocolsAsPublished(protocols: Protocol[]): Promise<void> {
     this.markProtocolsAs(ProtocolStatus.PUBLISHED, protocols);
   }
