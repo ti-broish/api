@@ -20,7 +20,7 @@ import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { UserDto } from 'src/users/api/user.dto';
-import { EntityNotFoundError } from 'typeorm';
+import { EntityNotFoundError, SelectQueryBuilder } from 'typeorm';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -29,6 +29,7 @@ import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
 import {
   EmptyPersonalProtocolQueue,
+  InvalidFiltersError,
   ProtocolsRepository,
 } from '../entities/protocols.repository';
 import { ProtocolResultsDto } from './protocol-results.dto';
@@ -42,6 +43,7 @@ import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
 } from '../../utils/accepted-response';
+import { BadRequestException } from '@nestjs/common';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -63,10 +65,20 @@ export class ProtocolsController {
   async index(
     @Query() query: ProtocolFilters,
   ): Promise<Pagination<ProtocolDto>> {
-    const pagination = await paginate(
-      this.repo.queryBuilderWithFilters(query),
-      { page: query.page, limit: 100, route: '/protocols' },
-    );
+    let protocolsQb: SelectQueryBuilder<Protocol>;
+    try {
+      protocolsQb = this.repo.queryBuilderWithFilters(query);
+    } catch (err) {
+      if (err instanceof InvalidFiltersError) {
+        throw new BadRequestException(err.message);
+      }
+      throw err;
+    }
+    const pagination = await paginate(protocolsQb, {
+      page: query.page,
+      limit: 100,
+      route: '/protocols',
+    });
 
     return new Pagination<ProtocolDto>(
       await Promise.all(

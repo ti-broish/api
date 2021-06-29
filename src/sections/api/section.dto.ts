@@ -43,15 +43,15 @@ export class SectionDto {
   isMobile: boolean;
 
   @Type(() => ElectionRegionDto)
-  @Expose({ groups: ['get', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ] })
   electionRegion: ElectionRegionDto;
 
   @Type(() => TownDto)
-  @Expose({ groups: ['get', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ] })
   town: TownDto;
 
   @Type(() => CityRegionDto)
-  @Expose({ groups: ['get', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ] })
   cityRegion: CityRegionDto;
 
   public static fromEntity(

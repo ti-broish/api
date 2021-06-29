@@ -13,6 +13,8 @@ import { Protocol, ProtocolOrigin, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
 import { shuffle } from 'lodash';
 
+export class InvalidFiltersError extends Error {}
+
 export class EmptyPersonalProtocolQueue extends Error {}
 @Injectable()
 export class ProtocolsRepository {
@@ -48,7 +50,7 @@ export class ProtocolsRepository {
 
   findByAuthor(author: User): Promise<Protocol[]> {
     return this.repo.find({
-      relations: ['pictures'],
+      relations: ['pictures', 'section'],
       join: {
         alias: 'protocol',
         innerJoin: {
@@ -68,42 +70,78 @@ export class ProtocolsRepository {
   queryBuilderWithFilters(
     filters: ProtocolFilters,
   ): SelectQueryBuilder<Protocol> {
+    const {
+      assignee,
+      section,
+      status,
+      organization,
+      origin,
+      electionRegion,
+      country,
+      town,
+      cityRegion,
+      municipality,
+    } = filters;
+
     const qb = this.repo.createQueryBuilder('protocol');
 
     qb.innerJoinAndSelect('protocol.section', 'section');
+    qb.innerJoinAndSelect('section.town', 'town');
     qb.innerJoinAndSelect('protocol.pictures', 'picture');
+    qb.innerJoinAndSelect('protocol.actions', 'action');
+    qb.innerJoinAndSelect('action.actor', 'actor');
+    qb.andWhere('action.action = :action', {
+      action: ProtocolActionType.SEND,
+    });
+    qb.innerJoinAndSelect('actor.organization', 'organization');
 
-    if (filters.assignee) {
+    if (assignee) {
       qb.innerJoinAndSelect('protocol.assignees', 'assignee');
-      qb.andWhere('assignee.id = :assignee', { assignee: filters.assignee });
+      qb.andWhere('assignee.id = :assignee', { assignee });
     } else {
       qb.leftJoinAndSelect('protocol.assignees', 'assignee');
     }
 
-    if (filters.section) {
+    if (electionRegion !== '32' && country && country !== '00') {
+      // this is useful to prevent cases where country code matches municipality code
+      // while keeping performance quick as mostly doing filters by `section.id like ":prefix%"`
+      throw new InvalidFiltersError(
+        'Incompatible input filters! Domestic region cannot be combined with a country abroad.',
+      );
+    }
+
+    const sectionPrefix =
+      (electionRegion || '') +
+      (municipality || country || '') +
+      (cityRegion || '');
+
+    if (sectionPrefix.length > 0) {
+      qb.andWhere('section.id LIKE :sectionPrefix', {
+        sectionPrefix: `${sectionPrefix}%`,
+      });
+    }
+    // Keep both filters in order to exclude confusing results from mixed filters
+    if (section) {
       qb.andWhere('section.id LIKE :section', {
-        section: `${filters.section}%`,
+        section: `${section}%`,
       });
     }
 
-    if (filters.status) {
-      qb.andWhere('protocol.status = :status', { status: filters.status });
+    if (town) {
+      qb.andWhere('town.code = :town', { town });
     }
 
-    qb.innerJoinAndSelect('protocol.actions', 'action');
-    qb.innerJoinAndSelect('action.actor', 'actor');
-    qb.innerJoinAndSelect('actor.organization', 'organization');
-
-    if (filters.author) {
-      qb.andWhere('action.actor_id = :author', { author: filters.author });
-      qb.andWhere('action.action = :action', {
-        action: ProtocolActionType.SEND,
-      });
+    if (status) {
+      qb.andWhere('protocol.status = :status', { status });
     }
 
-    qb.andWhere('protocol.origin = :origin', {
-      origin: ProtocolOrigin.TI_BROISH,
-    });
+    if (organization) {
+      qb.andWhere('organization.id = :organization', { organization });
+    }
+
+    if (origin) {
+      qb.andWhere('protocol.origin = :origin', { origin });
+    }
 
     return qb;
   }

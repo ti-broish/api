@@ -29,12 +29,12 @@ export class TownDto {
   cityRegions: CityRegionDto[];
 
   @ApiProperty()
-  @Expose({ groups: ['get', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ] })
   @Type(() => CountryDto)
   country: CountryDto;
 
   @ApiProperty()
-  @Expose({ groups: ['get', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ] })
   @Type(() => MunicipalityDto)
   municipality: MunicipalityDto;
 
