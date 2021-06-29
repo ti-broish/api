@@ -48,7 +48,7 @@ export class ProtocolsRepository {
 
   findByAuthor(author: User): Promise<Protocol[]> {
     return this.repo.find({
-      relations: ['pictures'],
+      relations: ['pictures', 'section'],
       join: {
         alias: 'protocol',
         innerJoin: {
@@ -72,6 +72,12 @@ export class ProtocolsRepository {
 
     qb.innerJoinAndSelect('protocol.section', 'section');
     qb.innerJoinAndSelect('protocol.pictures', 'picture');
+    qb.innerJoinAndSelect('protocol.actions', 'action');
+    qb.innerJoinAndSelect('action.actor', 'actor');
+    qb.andWhere('action.action = :action', {
+      action: ProtocolActionType.SEND,
+    });
+    qb.innerJoinAndSelect('actor.organization', 'organization');
 
     if (filters.assignee) {
       qb.innerJoinAndSelect('protocol.assignees', 'assignee');
@@ -90,14 +96,9 @@ export class ProtocolsRepository {
       qb.andWhere('protocol.status = :status', { status: filters.status });
     }
 
-    qb.innerJoinAndSelect('protocol.actions', 'action');
-    qb.innerJoinAndSelect('action.actor', 'actor');
-    qb.innerJoinAndSelect('actor.organization', 'organization');
-
-    if (filters.author) {
-      qb.andWhere('action.actor_id = :author', { author: filters.author });
-      qb.andWhere('action.action = :action', {
-        action: ProtocolActionType.SEND,
+    if (filters.organization) {
+      qb.andWhere('organization.id = :organization', {
+        organization: filters.organization,
       });
     }
 

@@ -13,5 +13,5 @@ export class ProtocolFilters extends PageDTO {
   status: ProtocolStatus;
 
   @Optional()
-  author: string;
+  organization: number;
 }

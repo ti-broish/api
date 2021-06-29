@@ -6,7 +6,6 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { PictureDto } from 'src/pictures/api/picture.dto';
-import { ProtocolFilters } from 'src/protocols/api/protocols-filters.dto';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -30,9 +29,7 @@ export class MeProtocolsController {
   // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(@InjectUser() user: User): Promise<ProtocolDto[]> {
-    const protocols = await this.protocolsRepo
-      .queryBuilderWithFilters({ author: user.id } as ProtocolFilters)
-      .getMany();
+    const protocols = await this.protocolsRepo.findByAuthor(user);
     return protocols.map(
       (protocol: Protocol): ProtocolDto => {
         const protocolDto = ProtocolDto.fromEntity(protocol);
