@@ -1,9 +1,11 @@
 import { Type } from 'class-transformer';
 import {
   IsBooleanString,
+  IsEnum,
   IsInt,
   IsNumberString,
   IsOptional,
+  IsString,
   Length,
 } from 'class-validator';
 import { IsTownExists } from 'src/sections/api/town-exists.constraint';
@@ -21,9 +23,12 @@ export class ViolationsFilters extends PageDTO {
 
   @IsOptional()
   @Length(1, 9)
+  @IsNumberString()
   section: string;
 
   @IsOptional()
+  @IsString()
+  @IsEnum(ViolationStatus)
   status: ViolationStatus;
 
   @IsOptional()
