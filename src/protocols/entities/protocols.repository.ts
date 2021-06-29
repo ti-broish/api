@@ -101,7 +101,8 @@ export class ProtocolsRepository {
 
     let sectionPrefix = '';
     if (electionRegion) {
-      sectionPrefix = electionRegion + (municipality || country) + cityRegion;
+      sectionPrefix =
+        electionRegion + (municipality || country || '') + (cityRegion || '');
     }
     if (section && section.length > sectionPrefix.length) {
       sectionPrefix = section;
