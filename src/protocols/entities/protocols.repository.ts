@@ -86,6 +86,7 @@ export class ProtocolsRepository {
     const qb = this.repo.createQueryBuilder('protocol');
 
     qb.innerJoinAndSelect('protocol.section', 'section');
+    qb.innerJoinAndSelect('section.town', 'town');
     qb.innerJoinAndSelect('protocol.pictures', 'picture');
     qb.innerJoinAndSelect('protocol.actions', 'action');
     qb.innerJoinAndSelect('action.actor', 'actor');
@@ -127,7 +128,6 @@ export class ProtocolsRepository {
     }
 
     if (town) {
-      qb.innerJoin('section.town', 'town');
       qb.andWhere('town.code = :town', { town });
     }
 

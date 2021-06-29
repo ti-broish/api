@@ -43,6 +43,7 @@ export class ProtocolFilters extends PageDTO {
 
   @IsOptional()
   @IsTownExists()
+  @Type(() => Number)
   town: number;
 
   @IsOptional()
