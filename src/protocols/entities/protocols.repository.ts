@@ -68,6 +68,19 @@ export class ProtocolsRepository {
   queryBuilderWithFilters(
     filters: ProtocolFilters,
   ): SelectQueryBuilder<Protocol> {
+    const {
+      assignee,
+      section,
+      status,
+      organization,
+      origin,
+      electionRegion,
+      country,
+      town,
+      cityRegion,
+      municipality,
+    } = filters;
+
     const qb = this.repo.createQueryBuilder('protocol');
 
     qb.innerJoinAndSelect('protocol.section', 'section');
@@ -79,32 +92,43 @@ export class ProtocolsRepository {
     });
     qb.innerJoinAndSelect('actor.organization', 'organization');
 
-    if (filters.assignee) {
+    if (assignee) {
       qb.innerJoinAndSelect('protocol.assignees', 'assignee');
-      qb.andWhere('assignee.id = :assignee', { assignee: filters.assignee });
+      qb.andWhere('assignee.id = :assignee', { assignee });
     } else {
       qb.leftJoinAndSelect('protocol.assignees', 'assignee');
     }
 
-    if (filters.section) {
+    let sectionPrefix = '';
+    if (electionRegion) {
+      sectionPrefix = electionRegion + (municipality || country) + cityRegion;
+    }
+    if (section && section.length > sectionPrefix.length) {
+      sectionPrefix = section;
+    }
+
+    if (sectionPrefix.length > 0) {
       qb.andWhere('section.id LIKE :section', {
-        section: `${filters.section}%`,
+        section: `${sectionPrefix}%`,
       });
     }
 
-    if (filters.status) {
-      qb.andWhere('protocol.status = :status', { status: filters.status });
+    if (town) {
+      qb.innerJoin('section.town', 'town');
+      qb.andWhere('town.code = :town', { town });
     }
 
-    if (filters.organization) {
-      qb.andWhere('organization.id = :organization', {
-        organization: filters.organization,
-      });
+    if (status) {
+      qb.andWhere('protocol.status = :status', { status });
     }
 
-    qb.andWhere('protocol.origin = :origin', {
-      origin: ProtocolOrigin.TI_BROISH,
-    });
+    if (organization) {
+      qb.andWhere('organization.id = :organization', { organization });
+    }
+
+    if (origin) {
+      qb.andWhere('protocol.origin = :origin', { origin });
+    }
 
     return qb;
   }
