@@ -13,6 +13,8 @@ import { Protocol, ProtocolOrigin, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
 import { shuffle } from 'lodash';
 
+export class InvalidFiltersError extends Error {}
+
 export class EmptyPersonalProtocolQueue extends Error {}
 @Injectable()
 export class ProtocolsRepository {
@@ -99,18 +101,28 @@ export class ProtocolsRepository {
       qb.leftJoinAndSelect('protocol.assignees', 'assignee');
     }
 
-    let sectionPrefix = '';
-    if (electionRegion) {
-      sectionPrefix =
-        electionRegion + (municipality || country || '') + (cityRegion || '');
-    }
-    if (section && section.length > sectionPrefix.length) {
-      sectionPrefix = section;
+    if (electionRegion !== '32' && country && country !== '00') {
+      // this is useful to prevent cases where country code matches municipality code
+      // while keeping performance quick as mostly doing filters by `section.id like ":prefix%"`
+      throw new InvalidFiltersError(
+        'Incompatible input filters! Domestic region cannot be combined with a country abroad.',
+      );
     }
 
+    const sectionPrefix =
+      (electionRegion || '') +
+      (municipality || country || '') +
+      (cityRegion || '');
+
     if (sectionPrefix.length > 0) {
+      qb.andWhere('section.id LIKE :sectionPrefix', {
+        sectionPrefix: `${sectionPrefix}%`,
+      });
+    }
+    // Keep both filters in order to exclude confusing results from mixed filters
+    if (section) {
       qb.andWhere('section.id LIKE :section', {
-        section: `${sectionPrefix}%`,
+        section: `${section}%`,
       });
     }
 
