@@ -20,6 +20,7 @@ import {
 } from 'class-validator';
 import { assignWith } from 'lodash';
 import { Role } from 'src/casl/role.enum';
+import { SectionDto } from 'src/sections/api/section.dto';
 import { User } from '../entities/user.entity';
 import { OrganizationDto } from './organization.dto';
 import { IsUserExists } from './user-exists.constraint';
@@ -249,6 +250,10 @@ export class UserDto {
     ],
   })
   roles: Role[];
+
+  @Expose({ groups: ['read'] })
+  @Type(() => SectionDto)
+  section: SectionDto;
 
   public static fromEntity(
     entity: User,

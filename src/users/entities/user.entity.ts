@@ -97,7 +97,7 @@ export class User {
   @JoinColumn()
   stream: Stream;
 
-  @ManyToOne(() => Section)
+  @ManyToOne(() => Section, { eager: true })
   section: Section;
 
   @CreateDateColumn({ type: 'timestamp' })
