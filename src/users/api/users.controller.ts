@@ -14,13 +14,16 @@ import {
   Query,
   Patch,
   Param,
+  Request,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { FirebaseUser } from 'src/firebase';
 import { PageDTO } from 'src/utils/page.dto';
+import { paginationRoute } from 'src/utils/pagination-route';
 import {
   AllowOnlyFirebaseUser,
   InjectFirebaseUser,
@@ -92,13 +95,16 @@ export class UsersController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: UsersFilters): Promise<Pagination<UserDto>> {
+  async index(
+    @Query() query: UsersFilters,
+    @Request() req: ExpressRequest,
+  ): Promise<Pagination<UserDto>> {
     const pagination = await paginate(
       this.repo.queryBuilderWithFilters(query),
       {
         page: query.page,
         limit: 20,
-        route: '/users',
+        route: paginationRoute(req),
       },
     );
 

@@ -13,8 +13,9 @@ import {
   Query,
   Res,
   HttpStatus,
+  Request,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -44,6 +45,7 @@ import {
   ACCEPTED_RESPONSE_STATUS,
 } from '../../utils/accepted-response';
 import { BadRequestException } from '@nestjs/common';
+import { paginationRoute } from 'src/utils/pagination-route';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -64,6 +66,7 @@ export class ProtocolsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: ProtocolFilters,
+    @Request() req: ExpressRequest,
   ): Promise<Pagination<ProtocolDto>> {
     let protocolsQb: SelectQueryBuilder<Protocol>;
     try {
@@ -77,7 +80,7 @@ export class ProtocolsController {
     const pagination = await paginate(protocolsQb, {
       page: query.page,
       limit: 100,
-      route: '/protocols',
+      route: paginationRoute(req),
     });
 
     return new Pagination<ProtocolDto>(
