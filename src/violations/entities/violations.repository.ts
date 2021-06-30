@@ -45,7 +45,7 @@ export class ViolationsRepository {
     qb.leftJoinAndSelect('violation.pictures', 'picture');
 
     if (filters.assignee) {
-      qb.innerJoin('violation.assignees', 'assignee');
+      qb.innerJoinAndSelect('violation.assignees', 'assignee');
       qb.andWhere('assignee.id = :assignee', { assignee: filters.assignee });
     } else {
       qb.leftJoinAndSelect('violation.assignees', 'assignee');
