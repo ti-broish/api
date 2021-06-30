@@ -12,12 +12,15 @@ import {
   UseGuards,
   Query,
   Patch,
+  Request,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { UserDto } from 'src/users/api/user.dto';
+import { paginationRoute } from 'src/utils/pagination-route';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -42,10 +45,15 @@ export class ViolationsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: ViolationsFilters,
+    @Request() req: ExpressRequest,
   ): Promise<Pagination<ViolationDto>> {
     const pagination = await paginate(
       this.repo.queryBuilderWithFilters(query),
-      { page: query.page, limit: 100, route: '/violations' },
+      {
+        page: query.page,
+        limit: 100,
+        route: paginationRoute(req),
+      },
     );
 
     const processViolation = async (violation: Violation) => {

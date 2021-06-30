@@ -11,12 +11,15 @@ import {
   Inject,
   UseGuards,
   Query,
+  Request,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { PageDTO } from 'src/utils/page.dto';
+import { paginationRoute } from 'src/utils/pagination-route';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { User } from '../../users/entities';
 import { ViolationComment } from '../entities/violation-comment.entity';
@@ -42,6 +45,7 @@ export class ViolationCommentsController {
   async index(
     @Query() query: PageDTO,
     @Param('violation') violationId: string,
+    @Request() req: ExpressRequest,
   ): Promise<Pagination<ViolationCommentDto>> {
     const violation = await this.violationsRepo.findOneOrFail(violationId);
     const pagination = await paginate(
@@ -49,7 +53,7 @@ export class ViolationCommentsController {
       {
         page: query.page,
         limit: 20,
-        route: `/violations/${violationId}/comments`,
+        route: paginationRoute(req),
       },
     );
 
