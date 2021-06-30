@@ -1,3 +1,4 @@
+import { Checkin } from 'src/checkins/entities/checkin.entity';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
 import { Section } from 'src/sections/entities';
 import { Stream } from 'src/streams/entities/stream.entity';
@@ -67,6 +68,12 @@ export class User {
     onDelete: 'CASCADE',
   })
   clients: Client[];
+
+  @OneToMany(() => Checkin, (checkin) => checkin.actor, {
+    cascade: ['remove'],
+    onDelete: 'CASCADE',
+  })
+  checkins: Checkin[];
 
   @ManyToMany(() => Protocol)
   @JoinTable({
