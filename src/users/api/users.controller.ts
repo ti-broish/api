@@ -30,6 +30,7 @@ import { User } from '../entities';
 import { UsersRepository } from '../entities/users.repository';
 import RegistrationService, { RegistrationError } from './registration.service';
 import { UserDto } from './user.dto';
+import { UsersFilters } from './users-filters.dto';
 
 @Controller('users')
 export class UsersController {
@@ -91,15 +92,21 @@ export class UsersController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
   @UsePipes(new ValidationPipe({ transform: true }))
-  async index(@Query() query: PageDTO): Promise<Pagination<User>> {
-    const pagination = await paginate(this.repo.getRepo(), {
-      page: query.page,
-      limit: 20,
-      route: '/users',
-    });
-    pagination.items.map((user: User) => UserDto.fromEntity(user));
+  async index(@Query() query: UsersFilters): Promise<Pagination<UserDto>> {
+    const pagination = await paginate(
+      this.repo.queryBuilderWithFilters(query),
+      {
+        page: query.page,
+        limit: 20,
+        route: '/users',
+      },
+    );
 
-    return pagination;
+    const items = pagination.items.map((user: User) =>
+      UserDto.fromEntity(user, [UserDto.ADMIN_READ]),
+    );
+
+    return new Pagination<UserDto>(items, pagination.meta, pagination.links);
   }
 
   @Patch(':id')

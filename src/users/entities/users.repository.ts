@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { User } from './user.entity';
+import { UsersFilters } from '../api/users-filters.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -38,6 +39,39 @@ export class UsersRepository {
 
   async findAll(): Promise<User[]> {
     return this.repo.find();
+  }
+
+  queryBuilderWithFilters(filters: UsersFilters): SelectQueryBuilder<User> {
+    const qb = this.repo.createQueryBuilder('people');
+
+    qb.innerJoinAndSelect('people.organization', 'organization');
+    const { firstName, lastName, email, organization, role } = filters;
+
+    if (firstName) {
+      qb.andWhere('people.firstName LIKE :firstName', {
+        firstName: `${firstName}%`,
+      });
+    }
+
+    if (lastName) {
+      qb.andWhere('people.lastName LIKE :lastName', {
+        lastName: `${lastName}%`,
+      });
+    }
+
+    if (email) {
+      qb.andWhere('people.email LIKE :email', { email: `${email}%` });
+    }
+
+    if (organization) {
+      qb.andWhere('organization.id = :organization', { organization });
+    }
+
+    if (role) {
+      qb.andWhere('people.roles = :role', { role });
+    }
+
+    return qb;
   }
 
   async save(user: User): Promise<User> {
