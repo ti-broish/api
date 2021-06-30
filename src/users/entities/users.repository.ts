@@ -68,7 +68,7 @@ export class UsersRepository {
     }
 
     if (role) {
-      qb.andWhere('people.roles = :role', { role });
+      qb.andWhere('people.roles::jsonb ? :role', { role });
     }
 
     return qb;
