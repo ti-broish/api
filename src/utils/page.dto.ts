@@ -1,15 +1,10 @@
-import { Optional } from '@nestjs/common';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
+import { IsInt, IsOptional, Length, Min } from 'class-validator';
 
 export class PageDTO {
-  @Optional()
-  @Transform(({ value: pageParam }: { value: string }) => {
-    const page = parseInt(pageParam, 10);
-    if (isNaN(page)) {
-      return 0;
-    }
-
-    return Math.max(page, 1);
-  })
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  @Min(1)
   page = 1;
 }
