@@ -114,24 +114,14 @@ export class CaslAbilityFactory {
       can([Action.Create], Stream);
     }
 
-    if (
-      user.hasRole(Role.Validator) ||
-      user.hasRole(Role.ExternalValidator) ||
-      user.hasRole(Role.Admin)
-    ) {
+    if (user.hasRole(Role.Validator) || user.hasRole(Role.Admin)) {
       can(Action.Read, [Protocol, ProtocolResult, ProtocolData]);
       can(Action.Create, [ProtocolResult, ProtocolData]);
       can(Action.Update, Protocol, ['status']);
       // Can see the organization of the user submitted the protocol
       can(Action.Read, User, ['organization']);
       // TODO: allow reading only the data of the submitter, not the organization of all users
-      if (!user.hasRole(Role.ExternalValidator)) {
-        can(Action.Publish, Protocol);
-      } else {
-        cannot(Action.Publish, Protocol).because(
-          'External validators need another validator to review the protocol before publishing!',
-        );
-      }
+      can(Action.Publish, Protocol);
     }
 
     // Check for the default role so we can revoke access to people
