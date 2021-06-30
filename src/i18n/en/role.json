@@ -1,0 +1,7 @@
+{
+  "ROLE_USER": "User",
+  "ROLE_VALIDATOR": "Validator",
+  "ROLE_LAWYER": "Lawyer",
+  "ROLE_STREAMER": "Streamer",
+  "ROLE_ADMIN": "Administrator"
+}

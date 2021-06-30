@@ -1,0 +1,7 @@
+{
+  "ROLE_USER": "Потребител",
+  "ROLE_VALIDATOR": "Валидатор",
+  "ROLE_LAWYER": "Юрист",
+  "ROLE_STREAMER": "Оператор",
+  "ROLE_ADMIN": "Администратор"
+}

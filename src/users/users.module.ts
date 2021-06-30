@@ -10,6 +10,7 @@ import { IsUserExistsConstraint } from './api/user-exists.constraint';
 import { CaslModule } from 'src/casl/casl.module';
 import { Client } from './entities/client.entity';
 import { ClientsRepository } from './entities/clients.repository';
+import { UsersRolesController } from './api/users-roles.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Organization, Client]), CaslModule],
@@ -22,6 +23,6 @@ import { ClientsRepository } from './entities/clients.repository';
     IsUserExistsConstraint,
   ],
   exports: [UsersRepository, ClientsRepository],
-  controllers: [UsersController, OrganizationsController],
+  controllers: [UsersRolesController, UsersController, OrganizationsController],
 })
 export class UsersModule {}
