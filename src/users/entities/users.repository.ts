@@ -49,18 +49,18 @@ export class UsersRepository {
 
     if (firstName) {
       qb.andWhere('people.firstName LIKE :firstName', {
-        firstName: `${firstName}%`,
+        firstName: `%${firstName}%`,
       });
     }
 
     if (lastName) {
       qb.andWhere('people.lastName LIKE :lastName', {
-        lastName: `${lastName}%`,
+        lastName: `%${lastName}%`,
       });
     }
 
     if (email) {
-      qb.andWhere('people.email LIKE :email', { email: `${email}%` });
+      qb.andWhere('people.email LIKE :email', { email: `%${email}%` });
     }
 
     if (organization) {
