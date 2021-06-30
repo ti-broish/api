@@ -11,6 +11,7 @@ import { Violation } from '../violations/entities/violation.entity';
 import { ViolationsModule } from '../violations/violations.module';
 import { SectionsModule } from 'src/sections/sections.module';
 import { ProtocolsStatusesController } from './api/protocols-statuses.controller';
+import { ProtocolsOriginsController } from './api/protocols-origins.controller';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ProtocolsStatusesController } from './api/protocols-statuses.controller
   ],
   controllers: [
     ProtocolsStatusesController,
+    ProtocolsOriginsController,
     ProtocolsController,
     ProtocolAssigneesController,
   ],
