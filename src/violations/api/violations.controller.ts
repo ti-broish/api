@@ -48,18 +48,23 @@ export class ViolationsController {
       { page: query.page, limit: 100, route: '/violations' },
     );
 
-    return new Pagination<ViolationDto>(
-      await Promise.all(
-        pagination.items.map(async (violation: Violation) => {
-          const dto = ViolationDto.fromEntity(violation, [
-            'violation.process',
-            UserDto.AUTHOR_READ,
-          ]);
-          this.updatePicturesUrl(dto);
+    const processViolation = async (violation: Violation) => {
+      const dto = ViolationDto.fromEntity(violation, [
+        'violation.process',
+        UserDto.AUTHOR_READ,
+      ]);
+      this.updatePicturesUrl(dto);
 
-          return dto;
-        }),
-      ),
+      return dto;
+    };
+
+    const promises: Promise<ViolationDto>[] = pagination.items.map(
+      processViolation,
+    );
+    const violationDtoItems = await Promise.all(promises);
+
+    return new Pagination<ViolationDto>(
+      violationDtoItems,
       pagination.meta,
       pagination.links,
     );
