@@ -50,7 +50,7 @@ export class ProtocolsRepository {
 
   findByAuthor(author: User): Promise<Protocol[]> {
     return this.repo.find({
-      relations: ['pictures', 'section'],
+      relations: ['pictures'],
       join: {
         alias: 'protocol',
         innerJoin: {
