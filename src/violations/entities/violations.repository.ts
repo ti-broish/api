@@ -115,7 +115,7 @@ export class ViolationsRepository {
 
   findByAuthor(author: User): Promise<Violation[]> {
     return this.repo.find({
-      relations: ['section', 'pictures'],
+      relations: ['section', 'pictures', 'town'],
       join: {
         alias: 'violation',
         innerJoin: {
