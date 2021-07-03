@@ -7,7 +7,8 @@ export interface ViolationException {
 
 export class ViolationStatusException
   extends Error
-  implements ViolationException {
+  implements ViolationException
+{
   private violation: Violation;
 
   constructor(
@@ -34,7 +35,8 @@ export class ViolationStatusException
 
 export class ViolationPublishingException
   extends Error
-  implements ViolationException {
+  implements ViolationException
+{
   private violation: Violation;
 
   constructor(violation: Violation, message: string) {

@@ -30,15 +30,13 @@ export class MeProtocolsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(@InjectUser() user: User): Promise<ProtocolDto[]> {
     const protocols = await this.protocolsRepo.findByAuthor(user);
-    return protocols.map(
-      (protocol: Protocol): ProtocolDto => {
-        const protocolDto = ProtocolDto.fromEntity(protocol);
-        protocolDto.pictures.forEach(this.updatePictureUrl, this);
-        protocolDto.status = ProtocolStatusOverride.PROCESSED;
+    return protocols.map((protocol: Protocol): ProtocolDto => {
+      const protocolDto = ProtocolDto.fromEntity(protocol);
+      protocolDto.pictures.forEach(this.updatePictureUrl, this);
+      protocolDto.status = ProtocolStatusOverride.PROCESSED;
 
-        return protocolDto;
-      },
-    );
+      return protocolDto;
+    });
   }
 
   private updatePictureUrl(picture: PictureDto): void {

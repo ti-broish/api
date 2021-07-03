@@ -1,5 +1,4 @@
 import { Request } from 'express';
-import url from 'url';
 
 const PAGE_PARAM = 'page';
 

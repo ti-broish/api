@@ -7,7 +7,8 @@ export interface ProtocolException {
 
 export class ProtocolStatusException
   extends Error
-  implements ProtocolException {
+  implements ProtocolException
+{
   private protocol: Protocol;
 
   constructor(
@@ -34,7 +35,8 @@ export class ProtocolStatusException
 
 export class ProtocolHasResultsException
   extends Error
-  implements ProtocolException {
+  implements ProtocolException
+{
   private protocol: Protocol;
 
   constructor(protocol: Protocol) {

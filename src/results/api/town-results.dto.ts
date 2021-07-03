@@ -24,13 +24,13 @@ export class TownResultsDto {
       value: Section[];
       options: TransformOptions;
     }): Record<string, TownResultsDto> => {
-      return sections.reduce((acc: any, section: Section): Record<
-        string,
-        SectionResultsDto
-      > => {
-        acc[section.code] = SectionResultsDto.fromEntity(section, options);
-        return acc;
-      }, {});
+      return sections.reduce(
+        (acc: any, section: Section): Record<string, SectionResultsDto> => {
+          acc[section.code] = SectionResultsDto.fromEntity(section, options);
+          return acc;
+        },
+        {},
+      );
     },
   )
   sections: Record<string, SectionResultsDto>;

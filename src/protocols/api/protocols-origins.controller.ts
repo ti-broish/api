@@ -7,13 +7,11 @@ import {
   ValidationPipe,
   UseGuards,
 } from '@nestjs/common';
-import { string } from 'joi';
 import { I18nService } from 'nestjs-i18n';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
 import { Protocol, ProtocolOrigin } from '../entities/protocol.entity';
-import { ProtocolDto } from './protocol.dto';
 
 interface OriginResponse {
   [key: string]: string;

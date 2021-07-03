@@ -12,7 +12,8 @@ import { OrganizationDto } from './organization.dto';
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsOrganizationExistsConstraint
-  implements ValidatorConstraintInterface {
+  implements ValidatorConstraintInterface
+{
   constructor(
     @Inject(OrganizationsRepository)
     private readonly repo: OrganizationsRepository,
