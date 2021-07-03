@@ -46,9 +46,8 @@ export class TotalResultsDto {
         acc: any,
         electionRegion: ElectionRegion,
       ): Record<string, Partial<ElectionRegionResultsDto>> => {
-        const electionRegionDto = ElectionRegionResultsDto.fromEntity(
-          electionRegion,
-        );
+        const electionRegionDto =
+          ElectionRegionResultsDto.fromEntity(electionRegion);
         acc[electionRegion.id] = electionRegionDto;
         return acc;
       },

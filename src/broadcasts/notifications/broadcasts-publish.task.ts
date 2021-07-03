@@ -21,7 +21,8 @@ export class BroadcastsPublishTask {
     timeZone: process.env.TZ,
   })
   async triggerNotifications() {
-    const broadcasts = await this.broadcastsRepo.findAllToBePublishedAndPending();
+    const broadcasts =
+      await this.broadcastsRepo.findAllToBePublishedAndPending();
 
     if (broadcasts.length === 0) {
       return;

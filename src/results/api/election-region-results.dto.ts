@@ -38,9 +38,11 @@ export class ElectionRegionResultsDto {
 
     electionRegionDto.admUnits = null;
     if (groups.includes('details')) {
-      const admUnits = (electionRegion.isAbroad
-        ? electionRegion.countries
-        : electionRegion.municipalities) as Array<Country | Municipality>;
+      const admUnits = (
+        electionRegion.isAbroad
+          ? electionRegion.countries
+          : electionRegion.municipalities
+      ) as Array<Country | Municipality>;
       electionRegionDto.admUnits = admUnits.reduce(
         (acc: any, unit: Municipality | Country) => {
           acc[unit.code] = AdmUnitResultsDto.fromEntity(unit);

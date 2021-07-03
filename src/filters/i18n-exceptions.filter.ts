@@ -76,11 +76,9 @@ export class I18nExceptionsFilter extends BaseExceptionFilter {
   ): Promise<string | string[]> {
     if (Array.isArray(message)) {
       return Promise.all(
-        message.map(
-          (message: string): Promise<string> => {
-            return this.translateMessage(lang, message);
-          },
-        ),
+        message.map((message: string): Promise<string> => {
+          return this.translateMessage(lang, message);
+        }),
       );
     }
 

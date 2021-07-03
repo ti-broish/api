@@ -300,9 +300,8 @@ export class ResultsController {
   private async getElectionRegionResults(
     parent: ElectionRegion,
   ): Promise<Record<string, any>> {
-    const electionRegion = await this.electionRegionsRepo.findOneWithStatsOrFail(
-      parent,
-    );
+    const electionRegion =
+      await this.electionRegionsRepo.findOneWithStatsOrFail(parent);
     let nodesType: NodesType, nodes: any[];
     if (electionRegion.isAbroad) {
       const countryStats = await this.sectionsRepo.getStatsFor(
@@ -325,9 +324,10 @@ export class ResultsController {
       );
     } else {
       nodesType = NodesType.MUNICIPALITIES;
-      const municipalities = await this.municipalitiesRepo.findFromElectionRegionWithCityRegionsAndStats(
-        electionRegion.id,
-      );
+      const municipalities =
+        await this.municipalitiesRepo.findFromElectionRegionWithCityRegionsAndStats(
+          electionRegion.id,
+        );
       if (municipalities.length === 1) {
         const districtStats = await this.sectionsRepo.getStatsFor(
           makeSegment([electionRegion, municipalities[0]]),

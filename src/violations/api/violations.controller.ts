@@ -66,9 +66,8 @@ export class ViolationsController {
       return dto;
     };
 
-    const promises: Promise<ViolationDto>[] = pagination.items.map(
-      processViolation,
-    );
+    const promises: Promise<ViolationDto>[] =
+      pagination.items.map(processViolation);
     const violationDtoItems = await Promise.all(promises);
 
     return new Pagination<ViolationDto>(
