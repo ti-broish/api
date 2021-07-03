@@ -1,5 +1,10 @@
 {
   "name": "@ti-broish/api",
+  "engines": {
+    "node": ">= 15.0.0",
+    "npm": ">= 7.9.0"
+  },
+  "engineStrict": true,
   "description": "Ti Broish API built with Nest TypeScript starter repository",
   "license": "MIT",
   "scripts": {
