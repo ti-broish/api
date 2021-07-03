@@ -6,14 +6,8 @@ import {
   Transform,
   Type,
 } from 'class-transformer';
-import {
-  IsNotEmpty,
-  MaxLength,
-  MinLength,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { SectionDto } from 'src/sections/api/section.dto';
-import { UserDto } from 'src/users/api/user.dto';
 import { Checkin } from '../entities/checkin.entity';
 
 @Exclude()
