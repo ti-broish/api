@@ -74,7 +74,7 @@
     "rxjs": "^6.6.7",
     "stream-transform": "^2.1.0",
     "swagger-ui-express": "^4.1.6",
-    "typeorm": "^0.2.32",
+    "typeorm": "^0.2.34",
     "typeorm-naming-strategies": "^2.0.0",
     "ulid": "^2.3.0"
   },
