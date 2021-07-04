@@ -40,12 +40,6 @@ export class StreamsRepository {
     });
   }
 
-  async update(stream: Stream): Promise<Stream> {
-    await this.repo.update(stream.id, stream);
-
-    return this.findOneOrFail(stream.id);
-  }
-
   findForUser(user: User): Promise<Stream | null> {
     return this.repo.findOne({
       relations: [

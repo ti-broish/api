@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
@@ -17,7 +18,8 @@ export class StreamChunk {
   })
   id: string = ulid();
 
-  @ManyToOne(() => Section)
+  @ManyToOne(() => Stream, (stream: Stream) => stream.chunks)
+  @JoinColumn({ name: 'stream_id' })
   stream: Stream;
 
   @ManyToOne(() => Section)

@@ -60,18 +60,20 @@ export class StreamsController {
 
   @Delete(':stream')
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Delete, Stream))
+  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
   async delete(@Param('stream') stream_id: string): Promise<StreamDto> {
     const stream = await this.streamsRepo.findOneOrFail(stream_id);
-    const user = await this.usersRepo.findOneOrFail(stream.user.id);
-    user.roles.splice(user.roles.indexOf(Role.Streamer), 1);
-    const updatedUser = this.usersRepo.update(user);
+    const index = stream.user.roles.indexOf(Role.Streamer);
+    if (index > 0) {
+      stream.user.roles.splice(index, 1);
+      await this.usersRepo.save(stream.user);
+    }
     stream.isCensored = true;
-    const updatedStream = this.streamsRepo.save(stream);
+    await this.streamsRepo.save(stream);
     const url_stop = 'https://stest.tibroish.bg/stop.php?name=${stream_id}';
 
     this.httpService.post(url_stop);
 
-    return new StreamDto();
+    return StreamDto.fromEntity(stream);
   }
 }

@@ -4,4 +4,5 @@ export enum Role {
   Lawyer = 'lawyer',
   Streamer = 'streamer',
   Admin = 'admin',
+  StreamModerator = 'stream_moderator',
 }
