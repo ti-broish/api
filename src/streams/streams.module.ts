@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { HttpModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CaslModule } from '../casl/casl.module';
 import { UsersModule } from 'src/users/users.module';
@@ -13,6 +13,7 @@ import { Stream } from './entities/stream.entity';
     UsersModule,
     CaslModule,
     SectionsModule,
+    HttpModule,
   ],
   providers: [StreamsRepository],
   exports: [StreamsRepository],

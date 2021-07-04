@@ -2,12 +2,16 @@ import { Ability } from '@casl/ability';
 import {
   Body,
   Controller,
+  Delete,
   HttpCode,
   Post,
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Param,
 } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
+import { startWith } from 'rxjs/operators';
 import { InjectUser } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -18,6 +22,7 @@ import { UsersRepository } from 'src/users/entities/users.repository';
 import { Stream } from '../entities/stream.entity';
 import { StreamsRepository } from '../entities/streams.repository';
 import { StreamDto } from './stream.dto';
+import { Role } from '../../casl/role.enum';
 
 @Controller('streams')
 export class StreamsController {
@@ -25,6 +30,7 @@ export class StreamsController {
     private readonly streamsRepo: StreamsRepository,
     private readonly usersRepo: UsersRepository,
     private readonly sectionsRepo: SectionsRepository,
+    private httpService: HttpService,
   ) {}
 
   @Post()
@@ -50,5 +56,22 @@ export class StreamsController {
     await this.usersRepo.save(user);
 
     return StreamDto.fromEntity(stream, ['read', StreamDto.READ]);
+  }
+
+  @Delete(':stream')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Delete, Stream))
+  async delete(@Param('stream') stream_id: string): Promise<StreamDto> {
+    const stream = await this.streamsRepo.findOneOrFail(stream_id);
+    const user = await this.usersRepo.findOneOrFail(stream.user.id);
+    user.roles.splice(user.roles.indexOf(Role.Streamer), 1);
+    const updatedUser = this.usersRepo.update(user);
+    stream.isCensored = true;
+    const updatedStream = this.streamsRepo.save(stream);
+    const url_stop = 'https://stest.tibroish.bg/stop.php?name=${stream_id}';
+
+    this.httpService.post(url_stop);
+
+    return new StreamDto();
   }
 }

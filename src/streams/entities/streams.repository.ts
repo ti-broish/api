@@ -13,7 +13,7 @@ export class StreamsRepository {
   findOneOrFail(id: string): Promise<Stream> {
     return this.repo.findOneOrFail({
       where: { id },
-      relations: ['chunks', 'section'],
+      relations: ['chunks', 'section', 'user'],
     });
   }
 
@@ -38,6 +38,12 @@ export class StreamsRepository {
         isAssigned: false,
       },
     });
+  }
+
+  async update(stream: Stream): Promise<Stream> {
+    await this.repo.update(stream.id, stream);
+
+    return this.findOneOrFail(stream.id);
   }
 
   findForUser(user: User): Promise<Stream | null> {

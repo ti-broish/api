@@ -50,6 +50,9 @@ export class Stream {
   @UpdateDateColumn()
   updatedAt?: Date;
 
+  @Column()
+  isCensored: boolean;
+
   assign(user: User, section: Section): void {
     if (this.isAssigned) {
       throw new Error('Cannot assign an already assigned stream!');
