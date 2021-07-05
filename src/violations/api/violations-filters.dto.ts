@@ -48,6 +48,7 @@ export class ViolationsFilters extends PageDTO {
 
   @IsOptional()
   @IsTownExists()
+  @Type(() => Number)
   town: number;
 
   @IsOptional()
