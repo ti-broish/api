@@ -25,7 +25,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       cli: {
         migrationsDir: 'src/migrations',
       },
-      ssl: this.config.get('NODE_ENV') === 'production',
+      ssl: this.config.get('DATABASE_SSL'),
       namingStrategy: new SnakeNamingStrategy(),
     } as TypeOrmModuleOptions;
   }
