@@ -390,4 +390,5 @@ Temporary Items
 /.env*
 /dist/
 /firebase*.json
-/var/uploads/*
+/var/log
+/var/uploads
