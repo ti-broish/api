@@ -11,9 +11,9 @@ module.exports = {
         NODE_ENV: 'production',
       },
       instances: 4,
-      error_file: 'err.log',
-      out_file: 'out.log',
-      log_file: 'combined.log',
+      error_file: 'var/log/err.log',
+      out_file: 'var/log/out.log',
+      log_file: 'var/log/combined.log',
     },
   ],
 
