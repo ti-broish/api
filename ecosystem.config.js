@@ -21,7 +21,7 @@ module.exports = {
     'ti-broish-api-prod-20210711': {
       user: 'deploy',
       host: ['ti-broish-api'],
-      ref: 'origin/deploy',
+      ref: 'origin/main',
       repo: 'https://github.com/ti-broish/api.git',
       path: '/var/www/ti-broish-api-20210711',
       'post-setup': 'ls -la',
