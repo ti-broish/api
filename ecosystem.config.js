@@ -10,6 +10,9 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
       },
+      env_production: {
+        NODE_ENV: 'production',
+      },
       instances: 4,
       error_file: 'var/log/err.log',
       out_file: 'var/log/out.log',
