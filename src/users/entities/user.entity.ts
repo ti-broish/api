@@ -94,7 +94,7 @@ export class User {
   @OneToOne(() => Stream, {
     cascade: ['update'],
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'stream_id' })
   stream: Stream;
 
   @ManyToOne(() => Section, { eager: true })

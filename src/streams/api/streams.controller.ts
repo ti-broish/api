@@ -2,12 +2,17 @@ import { Ability } from '@casl/ability';
 import {
   Body,
   Controller,
+  Delete,
   HttpCode,
   Post,
   UseGuards,
   UsePipes,
   ValidationPipe,
+  Param,
+  Inject,
 } from '@nestjs/common';
+import { HttpService } from '@nestjs/common';
+import { startWith } from 'rxjs/operators';
 import { InjectUser } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -18,6 +23,8 @@ import { UsersRepository } from 'src/users/entities/users.repository';
 import { Stream } from '../entities/stream.entity';
 import { StreamsRepository } from '../entities/streams.repository';
 import { StreamDto } from './stream.dto';
+import { Role } from '../../casl/role.enum';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('streams')
 export class StreamsController {
@@ -25,6 +32,7 @@ export class StreamsController {
     private readonly streamsRepo: StreamsRepository,
     private readonly usersRepo: UsersRepository,
     private readonly sectionsRepo: SectionsRepository,
+    private httpService: HttpService,
   ) {}
 
   @Post()
@@ -50,5 +58,34 @@ export class StreamsController {
     await this.usersRepo.save(user);
 
     return StreamDto.fromEntity(stream, ['read', StreamDto.READ]);
+  }
+
+  @Delete(':stream')
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
+  async delete(
+    @Param('stream') stream_id: string,
+    @Inject(ConfigService) config: ConfigService,
+  ): Promise<StreamDto> {
+    const stream = await this.streamsRepo.findOneOrFail(stream_id);
+    const index = stream.user.roles.indexOf(Role.Streamer);
+    if (index > 0) {
+      stream.user.roles.splice(index, 1);
+      await this.usersRepo.save(stream.user);
+    }
+    stream.isCensored = true;
+
+    await this.streamsRepo.save(stream);
+    const stream_url = stream.streamUrl.substring(
+      stream.streamUrl.indexOf('/') + 2,
+    );
+    const server_stream = stream_url.substring(0, stream_url.indexOf('.'));
+    const secret = encodeURIComponent(
+      config.get<string>('STREAM_REJECT_SECRET'),
+    );
+    const url_stop = `https://${server_stream}.tibroish.bg/stop.php?name=${stream_id}&secret=${secret}`;
+    this.httpService.post(url_stop);
+
+    return StreamDto.fromEntity(stream);
   }
 }

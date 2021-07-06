@@ -13,7 +13,7 @@ export class StreamsRepository {
   findOneOrFail(id: string): Promise<Stream> {
     return this.repo.findOneOrFail({
       where: { id },
-      relations: ['chunks', 'section'],
+      relations: ['chunks', 'section', 'user'],
     });
   }
 

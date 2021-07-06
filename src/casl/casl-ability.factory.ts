@@ -114,6 +114,10 @@ export class CaslAbilityFactory {
       can([Action.Create], Stream);
     }
 
+    if (user.hasRole(Role.StreamModerator) || user.hasRole(Role.Admin)) {
+      can([Action.Manage], Stream);
+    }
+
     if (user.hasRole(Role.Validator) || user.hasRole(Role.Admin)) {
       can(Action.Read, [Protocol, ProtocolResult, ProtocolData]);
       can(Action.Create, [ProtocolResult, ProtocolData]);

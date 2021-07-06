@@ -3,5 +3,6 @@
   "ROLE_VALIDATOR": "Валидатор",
   "ROLE_LAWYER": "Юрист",
   "ROLE_STREAMER": "Оператор",
-  "ROLE_ADMIN": "Администратор"
+  "ROLE_ADMIN": "Администратор",
+  "ROLE_STREAM_MODERATOR": "Видео Модератор"
 }
