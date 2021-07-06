@@ -64,10 +64,10 @@ export class StreamsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
   async delete(
-    @Param('stream') stream_id: string,
+    @Param('stream') streamId: string,
     @Inject(ConfigService) config: ConfigService,
   ): Promise<StreamDto> {
-    const stream = await this.streamsRepo.findOneOrFail(stream_id);
+    const stream = await this.streamsRepo.findOneOrFail(streamId);
     const index = stream.user.roles.indexOf(Role.Streamer);
     if (index > 0) {
       stream.user.roles.splice(index, 1);
@@ -76,15 +76,15 @@ export class StreamsController {
     stream.isCensored = true;
 
     await this.streamsRepo.save(stream);
-    const stream_url = stream.streamUrl.substring(
+    const streamUrl = stream.streamUrl.substring(
       stream.streamUrl.indexOf('/') + 2,
     );
-    const server_stream = stream_url.substring(0, stream_url.indexOf('.'));
+    const streamServer = streamUrl.substring(0, streamUrl.indexOf('.'));
     const secret = encodeURIComponent(
       config.get<string>('STREAM_REJECT_SECRET'),
     );
-    const url_stop = `https://${server_stream}.tibroish.bg/stop.php?name=${stream_id}&secret=${secret}`;
-    this.httpService.post(url_stop);
+    const stopUrl = `https://${streamServer}.tibroish.bg/stop.php?name=${stream.identifier}&secret=${secret}`;
+    this.httpService.post(stopUrl);
 
     return StreamDto.fromEntity(stream);
   }

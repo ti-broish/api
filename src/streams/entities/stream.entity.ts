@@ -32,6 +32,9 @@ export class Stream {
   @OneToOne(() => User, (user: User) => user.stream)
   user: User;
 
+  @Column({ name: 'stream_identifier' })
+  identifier: string;
+
   @Column()
   streamUrl: string;
 
