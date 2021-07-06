@@ -6,6 +6,8 @@ import { SectionsModule } from 'src/sections/sections.module';
 import { StreamsRepository } from './entities/streams.repository';
 import { StreamsController } from './api/streams.controller';
 import { Stream } from './entities/stream.entity';
+import { StreamCensor } from './api/stream-censor.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -14,8 +16,9 @@ import { Stream } from './entities/stream.entity';
     CaslModule,
     SectionsModule,
     HttpModule,
+    ConfigModule,
   ],
-  providers: [StreamsRepository],
+  providers: [StreamsRepository, StreamCensor],
   exports: [StreamsRepository],
   controllers: [StreamsController],
 })
