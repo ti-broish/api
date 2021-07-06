@@ -61,7 +61,10 @@ export class StreamsController {
   @Delete(':stream')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
-  async delete(@Param('stream') stream_id: string): Promise<StreamDto> {
+  async delete(
+    @Param('stream') stream_id: string,
+    @Param('secret') secret: string,
+  ): Promise<StreamDto> {
     const stream = await this.streamsRepo.findOneOrFail(stream_id);
     const index = stream.user.roles.indexOf(Role.Streamer);
     if (index > 0) {
@@ -70,7 +73,8 @@ export class StreamsController {
     }
     stream.isCensored = true;
     await this.streamsRepo.save(stream);
-    const url_stop = 'https://stest.tibroish.bg/stop.php?name=${stream_id}';
+    const url_stop =
+      'https://stest.tibroish.bg/stop.php?name=${stream_id}&secret=${secret}';
 
     this.httpService.post(url_stop);
 

@@ -19,6 +19,7 @@ export class StreamDto {
   @Expose({ groups: [StreamDto.READ] })
   id: string;
 
+  @Expose({ groups: [StreamDto.WATCH] })
   isStreaming: boolean;
 
   isAssigned: boolean;
