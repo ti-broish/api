@@ -7,7 +7,7 @@ export enum OrganizationType {
   WATCHERS = 'watchers',
 }
 @Entity('organizations', {
-  orderBy: { id: 'ASC' },
+  orderBy: { sortPosition: 'ASC' },
 })
 export class Organization {
   @PrimaryGeneratedColumn()
@@ -21,4 +21,7 @@ export class Organization {
 
   @Column()
   type: OrganizationType;
+
+  @Column()
+  sortPosition: number;
 }
