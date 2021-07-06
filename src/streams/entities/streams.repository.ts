@@ -12,14 +12,20 @@ export class StreamsRepository {
 
   findOneOrFail(id: string): Promise<Stream> {
     return this.repo.findOneOrFail({
-      where: { id },
+      where: {
+        id,
+        isCensored: false,
+      },
       relations: ['chunks', 'section', 'user'],
     });
   }
 
   findOneWithSectionOrFail(id: string): Promise<Stream> {
     return this.repo.findOneOrFail({
-      where: { id },
+      where: {
+        id,
+        isCensored: false,
+      },
       relations: [
         'chunks',
         'section',
@@ -35,6 +41,7 @@ export class StreamsRepository {
   findAvailableStreamOrFail(): Promise<Stream> {
     return this.repo.findOneOrFail({
       where: {
+        isCensored: false,
         isAssigned: false,
       },
     });
@@ -61,9 +68,7 @@ export class StreamsRepository {
     });
   }
 
-  async save(stream: Stream): Promise<Stream> {
+  async save(stream: Stream): Promise<void> {
     await this.repo.save(stream);
-
-    return this.findOneOrFail(stream.id);
   }
 }

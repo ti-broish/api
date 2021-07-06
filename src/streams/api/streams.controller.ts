@@ -11,8 +11,6 @@ import {
   Param,
   Inject,
 } from '@nestjs/common';
-import { HttpService } from '@nestjs/common';
-import { startWith } from 'rxjs/operators';
 import { InjectUser } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
@@ -23,8 +21,12 @@ import { UsersRepository } from 'src/users/entities/users.repository';
 import { Stream } from '../entities/stream.entity';
 import { StreamsRepository } from '../entities/streams.repository';
 import { StreamDto } from './stream.dto';
-import { Role } from '../../casl/role.enum';
 import { ConfigService } from '@nestjs/config';
+import {
+  AcceptedResponse,
+  ACCEPTED_RESPONSE_STATUS,
+} from 'src/utils/accepted-response';
+import { StreamCensor } from './stream-censor.service';
 
 @Controller('streams')
 export class StreamsController {
@@ -32,7 +34,7 @@ export class StreamsController {
     private readonly streamsRepo: StreamsRepository,
     private readonly usersRepo: UsersRepository,
     private readonly sectionsRepo: SectionsRepository,
-    private httpService: HttpService,
+    private readonly streamCensor: StreamCensor,
   ) {}
 
   @Post()
@@ -61,31 +63,14 @@ export class StreamsController {
   }
 
   @Delete(':stream')
+  @HttpCode(202)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
-  async delete(
+  delete(
     @Param('stream') streamId: string,
     @Inject(ConfigService) config: ConfigService,
-  ): Promise<StreamDto> {
-    const stream = await this.streamsRepo.findOneOrFail(streamId);
-    const index = stream.user.roles.indexOf(Role.Streamer);
-    if (index > 0) {
-      stream.user.roles.splice(index, 1);
-      await this.usersRepo.save(stream.user);
-    }
-    stream.isCensored = true;
-
-    await this.streamsRepo.save(stream);
-    const streamUrl = stream.streamUrl.substring(
-      stream.streamUrl.indexOf('/') + 2,
-    );
-    const streamServer = streamUrl.substring(0, streamUrl.indexOf('.'));
-    const secret = encodeURIComponent(
-      config.get<string>('STREAM_REJECT_SECRET'),
-    );
-    const stopUrl = `https://${streamServer}.tibroish.bg/stop.php?name=${stream.identifier}&secret=${secret}`;
-    this.httpService.post(stopUrl);
-
-    return StreamDto.fromEntity(stream);
+  ): AcceptedResponse {
+    this.streamCensor.censorStreamById(streamId);
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 }
