@@ -28,12 +28,12 @@ module.exports = {
       repo: 'https://github.com/ti-broish/api.git',
       path: '/var/www/ti-broish-api-20210711',
       'post-setup': 'ls -la',
-      'pre-deploy':
+      'post-deploy':
         'npm ci --only=production --ignore-scripts' +
         ' && npm run build' +
         ' && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/' +
-        ' && NODE_ENV=production npm run migration:run',
-      'post-deploy': 'pm2 startOrReload ecosystem.config.js --env production',
+        ' && NODE_ENV=production npm run migration:run' +
+        ' && pm2 startOrReload ecosystem.config.js --env production',
     },
   },
 };
