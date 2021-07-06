@@ -30,8 +30,7 @@ module.exports = {
         ' && npm run build' +
         ' && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/' +
         ' && NODE_ENV=production npm run migration:run',
-      'post-deploy':
-        'pm2 startOrReload ecosystem.config.js --env ti-broish-api-prod-20210711',
+      'post-deploy': 'pm2 startOrReload ecosystem.config.js --env production',
     },
   },
 };
