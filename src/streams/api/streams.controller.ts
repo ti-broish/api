@@ -72,10 +72,13 @@ export class StreamsController {
       await this.usersRepo.save(stream.user);
     }
     stream.isCensored = true;
-    await this.streamsRepo.save(stream);
-    const url_stop =
-      'https://stest.tibroish.bg/stop.php?name=${stream_id}&secret=${secret}';
 
+    await this.streamsRepo.save(stream);
+    const stream_url = stream.streamUrl.substring(
+      stream.streamUrl.indexOf('/') + 2,
+    );
+    const server_stream = stream_url.substring(0, stream_url.indexOf('.'));
+    const url_stop = `https://${server_stream}.tibroish.bg/stop.php?name=${stream_id}&secret=${secret}`;
     this.httpService.post(url_stop);
 
     return StreamDto.fromEntity(stream);
