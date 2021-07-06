@@ -83,7 +83,7 @@ export class StreamsController {
     const secret = encodeURIComponent(
       config.get<string>('STREAM_REJECT_SECRET'),
     );
-    const url_stop = `https://${server_stream}.tibroish.bg/stop.php?name=${stream_id}&secret=${secret}`;
+    const url_stop = `https://${server_stream}.tibroish.bg/stop.php?name=${stream.identifier}&secret=${secret}`;
     this.httpService.post(url_stop);
 
     return StreamDto.fromEntity(stream);
