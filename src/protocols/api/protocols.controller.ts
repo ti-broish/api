@@ -46,6 +46,7 @@ import {
 } from '../../utils/accepted-response';
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
+import { WorkQueue } from './work-queue.service';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -57,6 +58,7 @@ export class ProtocolsController {
     private readonly urlGenerator: PicturesUrlGenerator,
     @Inject(ViolationsRepository)
     private readonly violationsRepo: ViolationsRepository,
+    private readonly workQueue: WorkQueue,
   ) {}
 
   @Get()
@@ -115,7 +117,9 @@ export class ProtocolsController {
     const protocol = protocolDto.toEntity();
     protocol.setReceivedStatus(user);
 
-    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol), [
+    const savedProtocol = await this.repo.save(protocol);
+    this.workQueue.addProtocol(protocol);
+    const savedDto = ProtocolDto.fromEntity(savedProtocol, [
       UserDto.AUTHOR_READ,
     ]);
     this.updatePicturesUrl(savedDto);
