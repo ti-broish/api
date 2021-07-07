@@ -118,6 +118,14 @@ export class Protocol {
     ).actor;
   }
 
+  isReceived(): boolean {
+    return this.status === ProtocolStatus.RECEIVED;
+  }
+
+  isSettled(): boolean {
+    return this.status !== ProtocolStatus.RECEIVED;
+  }
+
   setReceivedStatus(sender: User): void {
     if (this.status) {
       throw new ProtocolStatusException(this, ProtocolStatus.RECEIVED);
@@ -140,7 +148,7 @@ export class Protocol {
   }
 
   reject(actor: User): void {
-    if (this.status !== ProtocolStatus.RECEIVED) {
+    if (!this.isReceived()) {
       throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
     }
 
@@ -149,7 +157,7 @@ export class Protocol {
   }
 
   approve(actor: User): void {
-    if (this.status !== ProtocolStatus.RECEIVED) {
+    if (!this.isReceived()) {
       throw new ProtocolStatusException(this, ProtocolStatus.APPROVED);
     }
 

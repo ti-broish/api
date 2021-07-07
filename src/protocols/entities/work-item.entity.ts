@@ -70,7 +70,7 @@ export class WorkItem {
   isComplete: boolean;
 
   @Column('bit')
-  queuePosition: number;
+  queuePosition: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -78,18 +78,52 @@ export class WorkItem {
   @Column('timestamp')
   completedAt: Date;
 
-  public static create(
-    type: WorkItemType,
-    origin: WorkItemOrigin,
+  public static createProtocolValidationWorkItem(
     protocol: Protocol,
     queuePosition: number = DEFAULT_POSITION,
   ): WorkItem {
+    if (!protocol.isReceived()) {
+      throw new CannotAddProtocolToQueue(
+        ERROR_CANNOT_ADD_PROTOCOL_TO_VALIDATION_QUEUE_IF_NOT_RECEIVED,
+      );
+    }
+
     const workItem = new WorkItem();
-    workItem.type = type;
-    workItem.origin = origin;
+    workItem.type = WorkItemType.PROTOCOL_VALIDATION;
+    workItem.origin = WorkItemOrigin.PROTOCOL_RECEIVED;
     workItem.protocol = protocol;
-    workItem.queuePosition = queuePosition;
+    workItem.setPosition(queuePosition);
 
     return workItem;
   }
+
+  public static createProtocolValidationDiffArbitrageWorkItem(
+    protocol: Protocol,
+    queuePosition: number = DEFAULT_POSITION,
+  ): WorkItem {
+    if (!protocol.isSettled()) {
+      throw new CannotAddProtocolToQueue(
+        ERROR_CANNOT_ADD_PROTOCOL_TO_ARBITRATION_QUEUE_IF_NOT_SETTLED,
+      );
+    }
+
+    const workItem = new WorkItem();
+    workItem.type = WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE;
+    workItem.origin = WorkItemOrigin.PROTOCOL_VALIDATION_DIFF;
+    workItem.protocol = protocol;
+    workItem.setPosition(queuePosition);
+
+    return workItem;
+  }
+
+  private setPosition(position: number): void {
+    this.queuePosition = position.toString(2);
+  }
 }
+
+export class WorkQueueError extends Error {}
+export class CannotAddProtocolToQueue extends WorkQueueError {}
+const ERROR_CANNOT_ADD_PROTOCOL_TO_VALIDATION_QUEUE_IF_NOT_RECEIVED =
+  'ERROR_CANNOT_ADD_PROTOCOL_TO_VALIDATION_QUEUE_IF_NOT_RECEIVED';
+const ERROR_CANNOT_ADD_PROTOCOL_TO_ARBITRATION_QUEUE_IF_NOT_SETTLED =
+  'ERROR_CANNOT_ADD_PROTOCOL_TO_ARBITRATION_QUEUE_IF_NOT_SETTLED';
