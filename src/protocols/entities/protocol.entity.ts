@@ -20,6 +20,7 @@ import {
   ProtocolStatusException,
   ProtocolHasResultsException,
 } from './protocol.exceptions';
+import { WorkItem } from './work-item.entity';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
@@ -91,6 +92,12 @@ export class Protocol {
     },
   )
   results: ProtocolResult[];
+
+  @OneToMany(
+    () => WorkItem,
+    (workItem: WorkItem): Protocol => workItem.protocol,
+  )
+  workItems: WorkItem[];
 
   @ManyToOne(() => Protocol, {
     cascade: ['insert', 'update'],

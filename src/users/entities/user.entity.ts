@@ -1,5 +1,6 @@
 import { Checkin } from 'src/checkins/entities/checkin.entity';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
+import { WorkItem } from 'src/protocols/entities/work-item.entity';
 import { Section } from 'src/sections/entities';
 import { Stream } from 'src/streams/entities/stream.entity';
 import { Violation } from 'src/violations/entities/violation.entity';
@@ -90,6 +91,9 @@ export class User {
     inverseJoinColumn: { name: 'violation_id' },
   })
   assignedViolations: Violation[];
+
+  @OneToMany(() => WorkItem, (workItem: WorkItem): User => workItem.assignee)
+  assignedWorkItems: WorkItem[];
 
   @OneToOne(() => Stream, {
     cascade: ['update'],
