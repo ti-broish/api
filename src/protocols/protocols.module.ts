@@ -33,7 +33,7 @@ import { WorkItem } from './entities/work-item.entity';
     ProtocolsController,
     ProtocolAssigneesController,
   ],
-  providers: [ProtocolsRepository],
+  providers: [ProtocolsRepository, WorkQueue, WorkItemsRepository],
   exports: [ProtocolsRepository],
 })
 export class ProtocolsModule {}

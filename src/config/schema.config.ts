@@ -25,4 +25,5 @@ export const configSchema = Joi.object({
     'https://tibroish.bg/results/parliament2021-07-11/',
   ),
   STREAM_REJECT_SECRET: Joi.string().required(),
+  PROTOCOLS_VALIDATION_ITERATIONS: Joi.number().default(2),
 });
