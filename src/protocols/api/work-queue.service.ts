@@ -12,7 +12,7 @@ export class WorkQueue {
     @Inject(ConfigService) private readonly config: ConfigService,
   ) {}
 
-  async addProtocol(protocol: Protocol): Promise<WorkItem[]> {
+  async addProtocolForValidation(protocol: Protocol): Promise<WorkItem[]> {
     const iterations = this.config.get<number>(PROTOCOLS_VALIDATION_ITERATIONS);
     const workItems: WorkItem[] = [];
 

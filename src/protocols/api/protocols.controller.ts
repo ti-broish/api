@@ -118,7 +118,7 @@ export class ProtocolsController {
     protocol.setReceivedStatus(user);
 
     const savedProtocol = await this.repo.save(protocol);
-    this.workQueue.addProtocol(protocol);
+    this.workQueue.addProtocolForValidation(protocol);
     const savedDto = ProtocolDto.fromEntity(savedProtocol, [
       UserDto.AUTHOR_READ,
     ]);
