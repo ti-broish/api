@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { StreamsWebhookController } from './api/streams-webhook.controller';
 import StreamManager from './api/stream-manager.service';
 import { forwardRef } from '@nestjs/common';
+import { SectionStreamsController } from './api/section-streams.controller';
 
 @Module({
   imports: [
@@ -23,6 +24,10 @@ import { forwardRef } from '@nestjs/common';
   ],
   providers: [StreamsRepository, StreamCensor, StreamManager],
   exports: [StreamsRepository],
-  controllers: [StreamsController, StreamsWebhookController],
+  controllers: [
+    StreamsController,
+    StreamsWebhookController,
+    SectionStreamsController,
+  ],
 })
 export class StreamsModule {}

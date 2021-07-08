@@ -5,7 +5,7 @@ import { StreamsRepository } from '../entities/streams.repository';
 import { StreamDto } from './stream.dto';
 
 @Controller('sections/:section/streams')
-export class StreamsController {
+export class SectionStreamsController {
   constructor(private readonly streamsRepo: StreamsRepository) {}
 
   @Public()
