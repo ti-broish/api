@@ -29,7 +29,7 @@ export class StreamsWebhookController {
     @Query('url') recordUrl?: string,
     @Query('len') len?: string,
   ) {
-    const stream = await this.streamsRepo.findOneOrFail(streamId);
+    const stream = await this.streamsRepo.findOneByIdentifierOrFail(streamId);
     if (type == 'start') {
       try {
         if (stream.isStreaming != false) {

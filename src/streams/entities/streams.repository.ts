@@ -20,6 +20,13 @@ export class StreamsRepository {
     });
   }
 
+  findOneByIdentifierOrFail(identifier: string): Promise<Stream> {
+    return this.repo.findOneOrFail({
+      where: { identifier },
+      relations: ['chunks', 'section', 'user'],
+    });
+  }
+
   findOneWithSectionOrFail(id: string): Promise<Stream> {
     return this.repo.findOneOrFail({
       where: {
