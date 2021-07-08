@@ -50,7 +50,11 @@ export class ProtocolAssigneesController {
     return protocol.assignees.map((user: User) => UserDto.fromEntity(user));
   }
 
+  /**
+   * @deprecated No need to manage multiple assignees at once
+   */
   @Put(':protocol/assignees')
+  @ApiTags('Deprecated')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
