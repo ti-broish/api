@@ -9,26 +9,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { StreamsRepository } from 'src/streams/entities/streams.repository';
 import { ApiFirebaseAuth } from '../../auth/decorators/ApiFirebaseAuth.decorator';
 import { Section } from '../entities/section.entity';
 import { SectionsRepository } from '../entities/sections.repository';
 import { SectionDto } from './section.dto';
-import { StreamDto } from 'src/streams/api/stream.dto';
-import { Stream } from 'stream';
-import { Public } from 'src/auth/decorators';
 
 @Controller('sections')
 @ApiFirebaseAuth()
 export class SectionsController {
-  constructor(
-    private readonly repo: SectionsRepository,
-    private readonly streamsRepo: StreamsRepository,
-  ) {}
+  constructor(private readonly repo: SectionsRepository) {}
 
   @Get()
   @HttpCode(200)
@@ -68,19 +60,6 @@ export class SectionsController {
     return SectionDto.fromEntity(
       await this.repo.findOneOrFailWithRelations(sectionCode),
       ['read', 'get'],
-    );
-  }
-
-  @Get(':section/streams')
-  @Public()
-  @HttpCode(200)
-  async getStreams(
-    @Param('section') sectionCode?: string,
-  ): Promise<StreamDto[]> {
-    const streamsInSection = await this.streamsRepo.findBySection(sectionCode);
-
-    return streamsInSection.map((stream) =>
-      StreamDto.fromEntity(stream, [StreamDto.WATCH]),
     );
   }
 }

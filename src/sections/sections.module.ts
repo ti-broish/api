@@ -25,9 +25,6 @@ import { IsTownExistsConstraint } from './api/town-exists.constraint';
 import { CaslModule } from 'src/casl/casl.module';
 import { MunicipalitiesRepository } from './entities/municipalities.repository';
 import { CityRegionsRepository } from './entities/cityRegions.repository';
-import { StreamsModule } from 'src/streams/streams.module';
-import { forwardRef } from '@nestjs/common';
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -39,7 +36,6 @@ import { forwardRef } from '@nestjs/common';
       CityRegion,
     ]),
     CaslModule,
-    forwardRef(() => StreamsModule),
   ],
   providers: [
     SectionsRepository,
