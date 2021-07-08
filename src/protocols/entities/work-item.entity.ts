@@ -54,6 +54,7 @@ export class WorkItem {
   @ManyToOne(
     () => Protocol,
     (protocol: Protocol): WorkItem[] => protocol.workItems,
+    { cascade: ['insert', 'update'] },
   )
   @JoinColumn({
     name: 'protocol_id',
@@ -114,6 +115,13 @@ export class WorkItem {
     workItem.setPosition(queuePosition);
 
     return workItem;
+  }
+
+  assign(assignee: User): void {
+    this.isAssigned = true;
+    this.assignee = assignee;
+    // Kept for auditing and backwards compatibility
+    this.protocol.assign(assignee, [assignee]);
   }
 
   private setPosition(position: number): void {

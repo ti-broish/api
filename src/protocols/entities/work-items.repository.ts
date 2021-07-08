@@ -10,8 +10,9 @@ import {
 } from 'typeorm';
 import { ProtocolActionType } from './protocol-action.entity';
 import { shuffle } from 'lodash';
-import { WorkItem } from './work-item.entity';
+import { WorkItem, WorkItemType } from './work-item.entity';
 import { Protocol } from './protocol.entity';
+import { EmptyPersonalProtocolQueue } from './protocols.repository';
 
 @Injectable()
 export class WorkItemsRepository {
@@ -43,13 +44,76 @@ export class WorkItemsRepository {
     });
   }
 
+  private findOneOrFail(id: string): Promise<WorkItem> {
+    return this.repo.findOneOrFail(id, { relations: ['protocol'] });
+  }
+
   async save(workItem: WorkItem): Promise<WorkItem>;
   async save(workItems: WorkItem[]): Promise<WorkItem[]>;
 
   async save(input: WorkItem | WorkItem[]): Promise<WorkItem | WorkItem[]> {
-    const workItems = Array.isArray(input) ? input : [input];
+    const workItems: WorkItem[] = Array.isArray(input) ? input : [input];
+    if (workItems.length === 0) {
+      throw new Error('No work items provided');
+    }
     await this.repo.save(workItems);
 
-    return workItems;
+    return Array.isArray(input) ? workItems : workItems[0];
+  }
+
+  async findNextAvailableItem(
+    user: User,
+    types: WorkItemType[],
+  ): Promise<WorkItem> {
+    const allAssignedProtocols = await this.getAllAssignedProtocols(user);
+    const qb = this.repo
+      .createQueryBuilder('workItem')
+      .innerJoinAndSelect('workItem.protocol', 'protocol')
+      .innerJoinAndSelect('protocol.pictures', 'pictures')
+      .andWhere('workItem.isAssigned = false')
+      .andWhere('workItem.isComplete = false')
+      .andWhere('workItem.type IN (:...types)', { types })
+      .limit(1);
+
+    if (allAssignedProtocols.length > 0) {
+      qb.andWhere('workItem.protocol_id not in (:...allAssignedProtocols)', {
+        allAssignedProtocols,
+      });
+    }
+
+    const batch = await qb.getMany();
+
+    if (batch.length === 0) {
+      throw new EmptyPersonalProtocolQueue(
+        'Cannot find an available protocol for you!',
+      );
+    }
+
+    return shuffle<WorkItem>(batch)[0];
+  }
+
+  async findAssignedOpenItem(user: User): Promise<WorkItem> {
+    const qb = this.repo
+      .createQueryBuilder('workItem')
+      .innerJoinAndSelect('workItem.protocol', 'protocol')
+      .innerJoinAndSelect('protocol.pictures', 'pictures')
+      .andWhere('workItem.assignee_id = :assignee', { assignee: user.id })
+      .andWhere('workItem.isComplete = false')
+      .limit(1)
+      .orderBy('workItem.id', 'ASC');
+
+    return (await qb.getOneOrFail()) as WorkItem;
+  }
+
+  private async getAllAssignedProtocols({
+    id: assigneeId,
+  }: User): Promise<string[]> {
+    return (
+      await this.repo
+        .createQueryBuilder('workItem')
+        .select('workItem.protocol_id', 'protocol_id')
+        .andWhere('workItem.assignee_id = :assigneeId', { assigneeId })
+        .getRawMany()
+    ).map((workItem) => workItem.protocol_id);
   }
 }
