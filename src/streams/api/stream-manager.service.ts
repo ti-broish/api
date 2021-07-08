@@ -20,16 +20,19 @@ export default class StreamManager {
     this.repo.save(stream);
   }
 
-  async stop(stream: Stream, start: string, len: string, recordUrl: string) {
+  async stop(
+    stream: Stream,
+    start: string,
+    duration: number,
+    recordUrl: string,
+  ) {
     const startDate = moment(start, 'YYYYMMDD-hhmmss');
     stream.isStreaming = false;
     const lastActiveChunk = stream.chunks.find(
       (chunk) => chunk.isActive == true,
     );
     lastActiveChunk.startTime = startDate.toDate();
-    lastActiveChunk.endTime = startDate
-      .add(parseInt(len, 10), 'seconds')
-      .toDate();
+    lastActiveChunk.endTime = startDate.add(duration, 'seconds').toDate();
     lastActiveChunk.isActive = false;
     lastActiveChunk.url = recordUrl;
     this.repo.save(stream);
