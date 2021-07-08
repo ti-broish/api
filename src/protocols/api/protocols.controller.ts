@@ -47,6 +47,7 @@ import {
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { WorkQueue } from './work-queue.service';
+import { WorkItem } from '../entities/work-item.entity';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -264,32 +265,15 @@ export class ProtocolsController {
     @InjectUser() user: User,
     @Res() response: Response,
   ): Promise<ProtocolDto | null> {
-    let protocol: Protocol;
-    try {
-      protocol = await this.repo.findAssignedPendingProtocol(user);
-    } catch (error: any) {
-      if (!(error instanceof EntityNotFoundError)) {
-        throw error;
-      }
+    const workItem = await this.workQueue.retrieveItemForValidation(user);
 
-      try {
-        protocol = await this.repo.findNextAvailableProtocol(user);
-        protocol.assign(user, [user]);
-        protocol = await this.repo.save(protocol);
-      } catch (error) {
-        if (
-          !(error instanceof EntityNotFoundError) &&
-          !(error instanceof EmptyPersonalProtocolQueue)
-        ) {
-          throw error;
-        }
-
-        response.status(HttpStatus.NO_CONTENT);
-        response.send('');
-        return null;
-      }
+    if (workItem === null) {
+      response.status(HttpStatus.NO_CONTENT);
+      response.send('');
+      return null;
     }
 
+    const { protocol } = await this.workQueue.assign(workItem, user);
     const savedDto = ProtocolDto.fromEntity(protocol);
     this.updatePicturesUrl(savedDto);
     response.send(savedDto);
