@@ -15,7 +15,6 @@ export default class StreamManager {
   async start(stream: Stream) {
     stream.isStreaming = true;
     const chunk = new StreamChunk();
-    chunk.author = stream.user;
     chunk.isActive = true;
     stream.addChunk(chunk);
     this.repo.save(stream);

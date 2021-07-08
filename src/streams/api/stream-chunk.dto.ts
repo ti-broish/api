@@ -6,8 +6,6 @@ export class StreamChunkDto {
   @Expose({ groups: ['stream.watch'] })
   id: string;
 
-  author: User;
-
   @Expose({ groups: ['stream.watch'] })
   url?: string;
 

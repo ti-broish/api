@@ -21,9 +21,6 @@ export class StreamChunk {
   @JoinColumn({ name: 'stream_id' })
   stream: Stream;
 
-  @ManyToOne(() => User)
-  author: User;
-
   @Column()
   url?: string;
 
