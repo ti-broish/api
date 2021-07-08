@@ -7,7 +7,7 @@ import * as moment from 'moment';
 export class StreamingError implements Error {
   constructor(public name: string, public message: string) {}
 }
-export default class StreamingService {
+export default class StreamManager {
   constructor(
     @Inject(StreamsRepository) private readonly repo: StreamsRepository,
   ) {}

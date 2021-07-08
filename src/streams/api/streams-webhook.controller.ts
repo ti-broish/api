@@ -9,8 +9,8 @@ import {
 import { StreamsRepository } from '../entities/streams.repository';
 import { AuthGuard } from '@nestjs/passport';
 import { Public } from 'src/auth/decorators';
-import { StreamingError } from './streams-controller.service';
-import StreamingService from './streams-controller.service';
+import { StreamingError } from './stream-manager.service';
+import StreamManager from './stream-manager.service';
 
 @Public()
 @UseGuards(AuthGuard('basic'))
@@ -18,7 +18,7 @@ import StreamingService from './streams-controller.service';
 export class StreamsWebhookController {
   constructor(
     private readonly streamsRepo: StreamsRepository,
-    private readonly streamingService: StreamingService,
+    private readonly streamingService: StreamManager,
   ) {}
 
   @Post()

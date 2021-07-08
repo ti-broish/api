@@ -9,7 +9,7 @@ import { Stream } from './entities/stream.entity';
 import { StreamCensor } from './api/stream-censor.service';
 import { ConfigModule } from '@nestjs/config';
 import { StreamsWebhookController } from './api/streams-webhook.controller';
-import StreamingService from './api/streams-controller.service';
+import StreamManager from './api/stream-manager.service';
 import { forwardRef } from '@nestjs/common';
 
 @Module({
@@ -21,7 +21,7 @@ import { forwardRef } from '@nestjs/common';
     HttpModule,
     ConfigModule,
   ],
-  providers: [StreamsRepository, StreamCensor, StreamingService],
+  providers: [StreamsRepository, StreamCensor, StreamManager],
   exports: [StreamsRepository],
   controllers: [StreamsController, StreamsWebhookController],
 })
