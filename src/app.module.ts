@@ -66,6 +66,7 @@ import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
     CaslModule,
     StreamsModule,
     ResultsModule,
+    AuthModule,
   ],
   providers: [
     {

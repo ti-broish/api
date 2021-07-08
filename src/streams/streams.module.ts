@@ -8,6 +8,8 @@ import { StreamsController } from './api/streams.controller';
 import { Stream } from './entities/stream.entity';
 import { StreamCensor } from './api/stream-censor.service';
 import { ConfigModule } from '@nestjs/config';
+import { StreamsWebhookController } from './api/streams-webhook.controller';
+import StreamingService from './api/streams-controller.service';
 
 @Module({
   imports: [
@@ -18,8 +20,8 @@ import { ConfigModule } from '@nestjs/config';
     HttpModule,
     ConfigModule,
   ],
-  providers: [StreamsRepository, StreamCensor],
+  providers: [StreamsRepository, StreamCensor, StreamingService],
   exports: [StreamsRepository],
-  controllers: [StreamsController],
+  controllers: [StreamsController, StreamsWebhookController],
 })
 export class StreamsModule {}

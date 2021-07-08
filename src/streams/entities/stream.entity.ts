@@ -26,6 +26,9 @@ export class Stream {
   @OneToMany(
     () => StreamChunk,
     (streamChunk: StreamChunk) => streamChunk.stream,
+    {
+      cascade: ['insert', 'update'],
+    },
   )
   chunks: StreamChunk[];
 
@@ -75,5 +78,9 @@ export class Stream {
     const resultsUrl = process.env.CANONICAL_RESULTS.replace(/\/$/, '');
 
     return `${resultsUrl}/${this.section.id}`;
+  }
+
+  addChunk(chunk: StreamChunk): void {
+    this.chunks.push(chunk);
   }
 }

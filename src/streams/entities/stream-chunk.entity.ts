@@ -1,4 +1,3 @@
-import { Section } from 'src/sections/entities';
 import { User } from 'src/users/entities';
 import {
   Column,
@@ -21,9 +20,6 @@ export class StreamChunk {
   @ManyToOne(() => Stream, (stream: Stream) => stream.chunks)
   @JoinColumn({ name: 'stream_id' })
   stream: Stream;
-
-  @ManyToOne(() => Section)
-  section: Section;
 
   @ManyToOne(() => User)
   author: User;
