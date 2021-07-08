@@ -12,15 +12,20 @@ import { ViolationsModule } from '../violations/violations.module';
 import { SectionsModule } from 'src/sections/sections.module';
 import { ProtocolsStatusesController } from './api/protocols-statuses.controller';
 import { ProtocolsOriginsController } from './api/protocols-origins.controller';
+import { WorkQueue } from './api/work-queue.service';
+import { ConfigModule } from '@nestjs/config';
+import { WorkItemsRepository } from './entities/work-items.repository';
+import { WorkItem } from './entities/work-item.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Protocol, Violation]),
+    TypeOrmModule.forFeature([Protocol, Violation, WorkItem]),
     CaslModule,
     PicturesModule,
     UsersModule,
     SectionsModule,
     ViolationsModule,
+    ConfigModule,
   ],
   controllers: [
     ProtocolsStatusesController,
@@ -28,7 +33,7 @@ import { ProtocolsOriginsController } from './api/protocols-origins.controller';
     ProtocolsController,
     ProtocolAssigneesController,
   ],
-  providers: [ProtocolsRepository],
+  providers: [ProtocolsRepository, WorkQueue, WorkItemsRepository],
   exports: [ProtocolsRepository],
 })
 export class ProtocolsModule {}

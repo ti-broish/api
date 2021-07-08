@@ -46,6 +46,9 @@ import {
 } from '../../utils/accepted-response';
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
+import { WorkQueue } from './work-queue.service';
+import { WorkItem } from '../entities/work-item.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -57,6 +60,7 @@ export class ProtocolsController {
     private readonly urlGenerator: PicturesUrlGenerator,
     @Inject(ViolationsRepository)
     private readonly violationsRepo: ViolationsRepository,
+    private readonly workQueue: WorkQueue,
   ) {}
 
   @Get()
@@ -115,7 +119,9 @@ export class ProtocolsController {
     const protocol = protocolDto.toEntity();
     protocol.setReceivedStatus(user);
 
-    const savedDto = ProtocolDto.fromEntity(await this.repo.save(protocol), [
+    const savedProtocol = await this.repo.save(protocol);
+    this.workQueue.addProtocolForValidation(protocol);
+    const savedDto = ProtocolDto.fromEntity(savedProtocol, [
       UserDto.AUTHOR_READ,
     ]);
     this.updatePicturesUrl(savedDto);
@@ -168,14 +174,17 @@ export class ProtocolsController {
   ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.reject(user);
-
-    await this.repo.save(protocol);
+    this.workQueue.completeItem(user, protocol);
 
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
+  /**
+   * @deprecated Not really useful anymore to approve a protocol as-is
+   */
   @Post(':id/approve')
   @HttpCode(202)
+  @ApiTags('Deprecated')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   async approve(
@@ -184,8 +193,7 @@ export class ProtocolsController {
   ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.approve(user);
-
-    await this.repo.save(protocol);
+    this.workQueue.completeItem(user, protocol);
 
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
@@ -210,10 +218,9 @@ export class ProtocolsController {
   ): Promise<ProtocolResultsDto> {
     const protocol = await this.repo.findOneOrFail(protocolId);
     protocol.populate(user, resultsDto.toResults());
+    await this.workQueue.completeItem(user, protocol);
 
-    const savedProtocol = await this.repo.save(protocol);
-
-    return ProtocolResultsDto.fromEntity(savedProtocol);
+    return ProtocolResultsDto.fromEntity(protocol);
   }
 
   @Post(':id/replace')
@@ -260,32 +267,15 @@ export class ProtocolsController {
     @InjectUser() user: User,
     @Res() response: Response,
   ): Promise<ProtocolDto | null> {
-    let protocol: Protocol;
-    try {
-      protocol = await this.repo.findAssignedPendingProtocol(user);
-    } catch (error: any) {
-      if (!(error instanceof EntityNotFoundError)) {
-        throw error;
-      }
+    const workItem = await this.workQueue.retrieveItemForValidation(user);
 
-      try {
-        protocol = await this.repo.findNextAvailableProtocol(user);
-        protocol.assign(user, [user]);
-        protocol = await this.repo.save(protocol);
-      } catch (error) {
-        if (
-          !(error instanceof EntityNotFoundError) &&
-          !(error instanceof EmptyPersonalProtocolQueue)
-        ) {
-          throw error;
-        }
-
-        response.status(HttpStatus.NO_CONTENT);
-        response.send('');
-        return null;
-      }
+    if (workItem === null) {
+      response.status(HttpStatus.NO_CONTENT);
+      response.send('');
+      return null;
     }
 
+    const { protocol } = await this.workQueue.assign(workItem, user);
     const savedDto = ProtocolDto.fromEntity(protocol);
     this.updatePicturesUrl(savedDto);
     response.send(savedDto);

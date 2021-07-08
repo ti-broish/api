@@ -68,5 +68,7 @@
   "VIOLATION_IS_ALREADY_UNPUBLISHED": "Violation is already unpublished",
   "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_RECEIVED": "Violation cannot be published when it is just received",
   "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_REJECTED": "Violation cannot be published when it is rejected",
-  "STREAM_NOT_ASSIGNED_STREAM": "You cannot stream yet - you should either select a section first or wait for the end of election day"
+  "STREAM_NOT_ASSIGNED_STREAM": "You cannot stream yet - you should either select a section first or wait for the end of election day",
+  "ERROR_CANNOT_ADD_PROTOCOL_TO_VALIDATION_QUEUE_IF_NOT_RECEIVED": "Cannot add a protocol for validation if it is not received.",
+  "ERROR_CANNOT_ADD_PROTOCOL_TO_ARBITRATION_QUEUE_IF_NOT_SETTLED": "Cannot add a protocol for arbitration if it is not processed yet."
 }

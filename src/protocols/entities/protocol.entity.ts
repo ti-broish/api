@@ -20,6 +20,7 @@ import {
   ProtocolStatusException,
   ProtocolHasResultsException,
 } from './protocol.exceptions';
+import { WorkItem } from './work-item.entity';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
@@ -92,6 +93,12 @@ export class Protocol {
   )
   results: ProtocolResult[];
 
+  @OneToMany(
+    () => WorkItem,
+    (workItem: WorkItem): Protocol => workItem.protocol,
+  )
+  workItems: WorkItem[];
+
   @ManyToOne(() => Protocol, {
     cascade: ['insert', 'update'],
   })
@@ -109,6 +116,14 @@ export class Protocol {
     return this.actions.find(
       (action: ProtocolAction) => action.action === ProtocolActionType.SEND,
     ).actor;
+  }
+
+  isReceived(): boolean {
+    return this.status === ProtocolStatus.RECEIVED;
+  }
+
+  isSettled(): boolean {
+    return this.status !== ProtocolStatus.RECEIVED;
   }
 
   setReceivedStatus(sender: User): void {
@@ -133,7 +148,7 @@ export class Protocol {
   }
 
   reject(actor: User): void {
-    if (this.status !== ProtocolStatus.RECEIVED) {
+    if (!this.isReceived()) {
       throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
     }
 
@@ -142,7 +157,7 @@ export class Protocol {
   }
 
   approve(actor: User): void {
-    if (this.status !== ProtocolStatus.RECEIVED) {
+    if (!this.isReceived()) {
       throw new ProtocolStatusException(this, ProtocolStatus.APPROVED);
     }
 

@@ -7,8 +7,16 @@ export function setUpSwagger(app: INestApplication) {
     .setDescription(
       'Ti Broish API is built for clients sending in election results data in Bulgaria',
     )
+    .addTag(
+      'default',
+      'Supported API endpoints. See below for deprecated endpoints.',
+    )
+    .addTag(
+      'Deprecated',
+      'These endpoints are deprecated and SHOULD NOT be used for new development. They may be subject to removal.',
+    )
     .setVersion('0.1')
-    .setContact('Da Bulgaria', 'https://dabulgaria.bg', 'team@dabulgaria.bg')
+    .setContact('Ti Broish', 'https://tibroish.bg', 'team@tibroish.bg')
     .addBearerAuth(
       {
         type: 'http',

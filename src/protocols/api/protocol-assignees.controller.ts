@@ -15,6 +15,7 @@ import {
   Delete,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Action } from '../../casl/action.enum';
 import { CheckPolicies } from '../../casl/check-policies.decorator';
@@ -29,6 +30,9 @@ import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { User } from '../../users/entities';
 import { Protocol } from '../entities/protocol.entity';
 import { ProtocolsRepository } from '../entities/protocols.repository';
+import { CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { ApiTags } from '@nestjs/swagger';
+import { WorkQueue } from './work-queue.service';
 
 @Controller('protocols')
 export class ProtocolAssigneesController {
@@ -36,12 +40,14 @@ export class ProtocolAssigneesController {
     @Inject(ProtocolsRepository)
     private readonly protocolsRepo: ProtocolsRepository,
     @Inject(UsersRepository) private readonly usersRepo: UsersRepository,
+    private caslAbilityFactory: CaslAbilityFactory,
+    private readonly workQueue: WorkQueue,
   ) {}
 
   @Get(':protocol/assignees')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Protocol))
   async getAssignees(
     @Param('protocol') protocolId: string,
   ): Promise<UserDto[]> {
@@ -50,7 +56,11 @@ export class ProtocolAssigneesController {
     return protocol.assignees.map((user: User) => UserDto.fromEntity(user));
   }
 
+  /**
+   * @deprecated No need to manage multiple assignees at once
+   */
   @Put(':protocol/assignees')
+  @ApiTags('Deprecated')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
@@ -104,6 +114,7 @@ export class ProtocolAssigneesController {
     @Body() assigneeDto: UserDto,
     @InjectUser() actor: User,
   ): Promise<AcceptedResponse> {
+    this.checkIfCanEditAssignees(actor, assigneeDto.id);
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     if (protocol.assignees.length > 0) {
       throw new BadRequestException(
@@ -130,21 +141,30 @@ export class ProtocolAssigneesController {
   async deleteAssignee(
     @Param('protocol') protocolId: string,
     @Param('assignee') assigneeId: string,
-    @InjectUser() user: User,
+    @InjectUser() actor: User,
   ): Promise<AcceptedResponse> {
+    this.checkIfCanEditAssignees(actor, assigneeId);
+
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
-    const assignees = protocol.assignees;
-    const foundIndex = assignees.findIndex(
-      (user: User) => user.id === assigneeToBeDeleted.id,
-    );
-    if (foundIndex < 0) {
-      throw new NotFoundException('ASSIGNEE_NOT_FOUND');
-    }
-    assignees.splice(foundIndex, 1);
-    protocol.assign(user, assignees);
-    await this.protocolsRepo.save(protocol);
+
+    this.workQueue.unassignFromProtocol(actor, protocol, assigneeToBeDeleted);
 
     return { status: ACCEPTED_RESPONSE_STATUS };
+  }
+
+  private checkIfCanEditAssignees(actor: User, assigneeId: string): boolean {
+    // If the assignee is the actor, allow to edit
+    // If not, check if actor can manage the protocol
+    if (actor.id === assigneeId) {
+      return true;
+    }
+
+    const ability = this.caslAbilityFactory.createForUser(actor);
+    if (ability.can(Action.Manage, Protocol)) {
+      return true;
+    }
+
+    throw new ForbiddenException('Cannot change assignments for others users!');
   }
 }

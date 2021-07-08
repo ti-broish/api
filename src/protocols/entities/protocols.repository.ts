@@ -150,68 +150,6 @@ export class ProtocolsRepository {
     return this.repo.find();
   }
 
-  async findNextAvailableProtocol(user: User): Promise<Protocol> {
-    const allAssignedProtocols = (
-      await this.repo
-        .createQueryBuilder('protocol')
-        .select('protocol.id')
-        .innerJoin('protocol.actions', 'action_assign')
-        .andWhere('action_assign.action = :assignAction', {
-          assignAction: ProtocolActionType.ASSIGN,
-        })
-        .andWhere('action_assign.actor_id = :assignActorId', {
-          assignActorId: user.id,
-        })
-        .getRawMany()
-    ).map((protocol) => protocol.protocol_id);
-
-    const qb = this.repo
-      .createQueryBuilder('protocol')
-      .innerJoin('protocol.actions', 'action_send')
-      .leftJoin('protocol.assignees', 'assignee')
-      .andWhere('assignee.id IS NULL')
-      .andWhere('protocol.status = :status', {
-        status: ProtocolStatus.RECEIVED,
-      })
-      .andWhere('action_send.action = :sendAction', {
-        sendAction: ProtocolActionType.SEND,
-      })
-      .addOrderBy('action_send.timestamp', 'ASC')
-      .limit(100);
-
-    if (allAssignedProtocols.length > 0) {
-      qb.andWhere('protocol.id not in (:...allAssignedProtocols)', {
-        allAssignedProtocols,
-      });
-    }
-
-    const batch = await qb.getMany();
-
-    if (batch.length === 0) {
-      throw new EmptyPersonalProtocolQueue(
-        'Cannot find an available protocol for you!',
-      );
-    }
-
-    const selected = shuffle<Protocol>(batch)[0];
-
-    return this.findOneOrFail(selected.id);
-  }
-
-  async findAssignedPendingProtocol(user: User): Promise<Protocol> {
-    const qb = this.repo
-      .createQueryBuilder('protocol')
-      .innerJoin('protocol.assignees', 'assignee')
-      .andWhere('assignee.id = :assigneeId', { assigneeId: user.id })
-      .andWhere('protocol.status = :received', {
-        received: ProtocolStatus.RECEIVED,
-      })
-      .limit(1)
-      .orderBy('protocol.id', 'ASC');
-
-    return this.findOneOrFail((await qb.getOneOrFail()).id);
-  }
-
   async findApprovedProtocols(): Promise<Protocol[]> {
     const qb = this.repo.createQueryBuilder('protocol');
     qb.innerJoinAndSelect('protocol.results', 'results');
