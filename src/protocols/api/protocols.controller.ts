@@ -48,6 +48,7 @@ import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { WorkQueue } from './work-queue.service';
 import { WorkItem } from '../entities/work-item.entity';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -178,8 +179,12 @@ export class ProtocolsController {
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
+  /**
+   * @deprecated Not really useful anymore to approve a protocol as-is
+   */
   @Post(':id/approve')
   @HttpCode(202)
+  @ApiTags('Deprecated')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   async approve(
