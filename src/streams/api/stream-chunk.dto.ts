@@ -1,5 +1,4 @@
 import { Exclude, Expose } from 'class-transformer';
-import { User } from '../../users/entities';
 
 @Exclude()
 export class StreamChunkDto {

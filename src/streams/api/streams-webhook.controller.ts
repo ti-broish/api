@@ -2,10 +2,10 @@ import { Controller, Post, UseGuards, ConflictException } from '@nestjs/common';
 import { StreamsRepository } from '../entities/streams.repository';
 import { AuthGuard } from '@nestjs/passport';
 import { Public } from 'src/auth/decorators';
-import { StreamingError } from './stream-manager.service';
 import StreamManager from './stream-manager.service';
 import { Body } from '@nestjs/common';
 import { StreamWebhookDto } from './stream-webhook.dto';
+import { StreamingError } from '../entities/stream.entity';
 
 @Public()
 @UseGuards(AuthGuard('basic'))

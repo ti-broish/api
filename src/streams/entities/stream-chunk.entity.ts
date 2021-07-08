@@ -1,4 +1,3 @@
-import { User } from 'src/users/entities';
 import {
   Column,
   CreateDateColumn,
@@ -32,4 +31,18 @@ export class StreamChunk {
 
   @Column('timestamp', { name: 'end_timestamp' })
   endTime?: Date;
+
+  static start(): StreamChunk {
+    const chunk = new StreamChunk();
+    chunk.isActive = true;
+
+    return chunk;
+  }
+
+  stop(start: Date, end: Date, url: string): void {
+    this.isActive = false;
+    this.startTime = start;
+    this.endTime = end;
+    this.url = url;
+  }
 }
