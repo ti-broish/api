@@ -10,13 +10,14 @@ import { StreamCensor } from './api/stream-censor.service';
 import { ConfigModule } from '@nestjs/config';
 import { StreamsWebhookController } from './api/streams-webhook.controller';
 import StreamingService from './api/streams-controller.service';
+import { forwardRef } from '@nestjs/common';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Stream]),
     UsersModule,
     CaslModule,
-    SectionsModule,
+    forwardRef(() => SectionsModule),
     HttpModule,
     ConfigModule,
   ],

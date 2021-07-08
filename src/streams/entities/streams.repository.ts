@@ -68,6 +68,13 @@ export class StreamsRepository {
     });
   }
 
+  async findBySection(sectionId: string): Promise<Stream[]> {
+    return this.repo.find({
+      where: { section: sectionId },
+      relations: ['chunks', 'section'],
+    });
+  }
+
   async save(stream: Stream): Promise<void> {
     await this.repo.save(stream);
   }
