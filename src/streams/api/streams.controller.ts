@@ -66,11 +66,9 @@ export class StreamsController {
   @HttpCode(202)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
-  delete(
-    @Param('stream') streamId: string,
-    @Inject(ConfigService) config: ConfigService,
-  ): AcceptedResponse {
+  delete(@Param('stream') streamId: string): AcceptedResponse {
     this.streamCensor.censorStreamById(streamId);
+
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
 }

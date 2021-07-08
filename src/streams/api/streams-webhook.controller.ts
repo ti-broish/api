@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability';
 import {
   Controller,
   Post,
