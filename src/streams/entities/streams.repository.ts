@@ -68,9 +68,9 @@ export class StreamsRepository {
     });
   }
 
-  async findBySection(sectionId: string): Promise<Stream[]> {
+  async findBySection(section: string): Promise<Stream[]> {
     return this.repo.find({
-      where: { section: sectionId },
+      where: { section },
       relations: ['chunks', 'section'],
     });
   }
