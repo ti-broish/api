@@ -70,7 +70,10 @@ export class StreamsRepository {
 
   async findBySection(section: string): Promise<Stream[]> {
     return this.repo.find({
-      where: { section },
+      where: {
+        section,
+        isCensored: false,
+      },
       relations: ['chunks', 'section'],
     });
   }
