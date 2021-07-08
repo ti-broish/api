@@ -130,6 +130,10 @@ export class WorkItem {
       throw new Error('Cannot unassign a work item without an assignee.');
     }
 
+    if (this.isComplete) {
+      throw new Error('Cannot unassign from a completed work item.');
+    }
+
     const assigneeToBeRemoved = this.assignee;
     this.isAssigned = false;
     this.assignee = null;
@@ -144,6 +148,10 @@ export class WorkItem {
   }
 
   complete(): void {
+    if (this.isComplete) {
+      throw new Error('Cannot complete an already  completed work item.');
+    }
+
     this.isComplete = true;
     this.completedAt = new Date();
   }
