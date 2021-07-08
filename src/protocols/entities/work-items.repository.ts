@@ -44,10 +44,6 @@ export class WorkItemsRepository {
     });
   }
 
-  private findOneOrFail(id: string): Promise<WorkItem> {
-    return this.repo.findOneOrFail(id, { relations: ['protocol'] });
-  }
-
   async save(workItem: WorkItem): Promise<WorkItem>;
   async save(workItems: WorkItem[]): Promise<WorkItem[]>;
 
