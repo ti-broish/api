@@ -28,7 +28,9 @@ export default class StreamManager {
       (chunk) => chunk.isActive == true,
     );
     lastActiveChunk.startTime = startDate.toDate();
-    lastActiveChunk.endTime = startDate.add(parseInt(len), 'seconds').toDate();
+    lastActiveChunk.endTime = startDate
+      .add(parseInt(len, 10), 'seconds')
+      .toDate();
     lastActiveChunk.isActive = false;
     lastActiveChunk.url = recordUrl;
     this.repo.save(stream);
