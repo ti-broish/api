@@ -32,6 +32,7 @@ import { Protocol } from '../entities/protocol.entity';
 import { ProtocolsRepository } from '../entities/protocols.repository';
 import { CaslAbilityFactory } from 'src/casl/casl-ability.factory';
 import { ApiTags } from '@nestjs/swagger';
+import { WorkQueue } from './work-queue.service';
 
 @Controller('protocols')
 export class ProtocolAssigneesController {
@@ -40,6 +41,7 @@ export class ProtocolAssigneesController {
     private readonly protocolsRepo: ProtocolsRepository,
     @Inject(UsersRepository) private readonly usersRepo: UsersRepository,
     private caslAbilityFactory: CaslAbilityFactory,
+    private readonly workQueue: WorkQueue,
   ) {}
 
   @Get(':protocol/assignees')
@@ -145,16 +147,8 @@ export class ProtocolAssigneesController {
 
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
     const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
-    const assignees = protocol.assignees;
-    const foundIndex = assignees.findIndex(
-      (user: User) => user.id === assigneeToBeDeleted.id,
-    );
-    if (foundIndex < 0) {
-      throw new NotFoundException('ASSIGNEE_NOT_FOUND');
-    }
-    assignees.splice(foundIndex, 1);
-    protocol.assign(actor, assignees);
-    await this.protocolsRepo.save(protocol);
+
+    this.workQueue.unassignFromProtocol(actor, protocol, assigneeToBeDeleted);
 
     return { status: ACCEPTED_RESPONSE_STATUS };
   }

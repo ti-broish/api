@@ -40,7 +40,7 @@ export class WorkItemsRepository {
           assignee: assignee.id,
         });
       },
-      relations: ['protocol'],
+      relations: ['protocol', 'assignee'],
     });
   }
 

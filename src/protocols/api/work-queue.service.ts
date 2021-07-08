@@ -60,6 +60,22 @@ export class WorkQueue {
     return this.getAvailableWorkItemForValidation(user);
   }
 
+  async unassignFromProtocol(
+    actor: User,
+    protocol: Protocol,
+    assigneeToBeDeleted: User,
+  ): Promise<void> {
+    const workItem = await this.worksItemsRepo.findOne(
+      protocol,
+      assigneeToBeDeleted,
+    );
+    if (workItem) {
+      workItem.protocol = protocol;
+      workItem.unassign(actor);
+      this.worksItemsRepo.save(workItem);
+    }
+  }
+
   private async getAvailableWorkItemForValidation(
     user: User,
   ): Promise<WorkItem> {

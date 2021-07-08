@@ -62,6 +62,7 @@ export class WorkItem {
   protocol: Protocol;
 
   @ManyToOne(() => User, (user: User): WorkItem[] => user.assignedWorkItems)
+  @JoinColumn({ name: 'assignee_id' })
   assignee: User;
 
   @Column()
@@ -122,6 +123,24 @@ export class WorkItem {
     this.assignee = assignee;
     // Kept for auditing and backwards compatibility
     this.protocol.assign(assignee, [assignee]);
+  }
+
+  unassign(actor: User): void {
+    if (!this.assignee) {
+      throw new Error('Cannot unassign a work item without an assignee.');
+    }
+
+    const assigneeToBeRemoved = this.assignee;
+    this.isAssigned = false;
+    this.assignee = null;
+    const assignees = this.protocol.assignees;
+    const foundIndex = assignees.findIndex(
+      (user: User) => user.id === assigneeToBeRemoved.id,
+    );
+    if (foundIndex >= 0) {
+      assignees.splice(foundIndex, 1);
+      this.protocol.assign(actor, assignees);
+    }
   }
 
   private setPosition(position: number): void {
