@@ -13,6 +13,20 @@ export default class StreamManager {
   ) {}
 
   async start(stream: Stream) {
+    if (stream.isStreaming != false) {
+      throw new StreamingError(
+        'StreamingAlreadyStoppedError',
+        'Trying to start a stream that has already been started',
+      );
+    }
+
+    if (stream.isCensored != false) {
+      throw new StreamingError(
+        'StreamingIsCensoredError',
+        'Cannot start censored stream',
+      );
+    }
+
     stream.isStreaming = true;
     const chunk = new StreamChunk();
     chunk.isActive = true;
@@ -26,6 +40,13 @@ export default class StreamManager {
     duration: number,
     recordUrl: string,
   ) {
+    if (stream.isStreaming != true) {
+      throw new StreamingError(
+        'StreamingAlreadyStoppedError',
+        'Trying to stop a stream that has already been stopped',
+      );
+    }
+
     const startDate = moment(start, 'YYYYMMDD-hhmmss');
     stream.isStreaming = false;
     const lastActiveChunk = stream.chunks.find(

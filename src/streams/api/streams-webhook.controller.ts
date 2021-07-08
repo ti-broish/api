@@ -23,18 +23,6 @@ export class StreamsWebhookController {
     );
     if (webhook.type == StreamWebhookDto.START) {
       try {
-        if (stream.isStreaming != false) {
-          throw new StreamingError(
-            'StreamingAlreadyStoppedError',
-            'Trying to start a stream that has already been started',
-          );
-        }
-        if (stream.isCensored != false) {
-          throw new StreamingError(
-            'StreamingIsCensoredError',
-            'Cannot start censored stream',
-          );
-        }
         this.streamingService.start(stream);
       } catch (e) {
         if (e instanceof StreamingError) {
@@ -46,12 +34,6 @@ export class StreamsWebhookController {
     }
     if (webhook.type == StreamWebhookDto.STOP) {
       try {
-        if (stream.isStreaming != true) {
-          throw new StreamingError(
-            'StreamingAlreadyStoppedError',
-            'Trying to stop a stream that has already been stopped',
-          );
-        }
         this.streamingService.stop(
           stream,
           webhook.start,
