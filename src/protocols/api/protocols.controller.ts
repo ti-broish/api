@@ -173,8 +173,7 @@ export class ProtocolsController {
   ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.reject(user);
-
-    await this.repo.save(protocol);
+    this.workQueue.completeItem(user, protocol);
 
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
@@ -189,8 +188,7 @@ export class ProtocolsController {
   ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
     protocol.approve(user);
-
-    await this.repo.save(protocol);
+    this.workQueue.completeItem(user, protocol);
 
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
@@ -215,10 +213,9 @@ export class ProtocolsController {
   ): Promise<ProtocolResultsDto> {
     const protocol = await this.repo.findOneOrFail(protocolId);
     protocol.populate(user, resultsDto.toResults());
+    await this.workQueue.completeItem(user, protocol);
 
-    const savedProtocol = await this.repo.save(protocol);
-
-    return ProtocolResultsDto.fromEntity(savedProtocol);
+    return ProtocolResultsDto.fromEntity(protocol);
   }
 
   @Post(':id/replace')

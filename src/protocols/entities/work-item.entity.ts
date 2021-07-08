@@ -143,6 +143,11 @@ export class WorkItem {
     }
   }
 
+  complete(): void {
+    this.isComplete = true;
+    this.completedAt = new Date();
+  }
+
   private setPosition(position: number): void {
     this.queuePosition = position.toString(2);
   }

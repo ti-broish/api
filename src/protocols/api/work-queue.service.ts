@@ -69,11 +69,24 @@ export class WorkQueue {
       protocol,
       assigneeToBeDeleted,
     );
-    if (workItem) {
-      workItem.protocol = protocol;
-      workItem.unassign(actor);
-      this.worksItemsRepo.save(workItem);
+    if (!workItem) {
+      return;
     }
+
+    workItem.protocol = protocol;
+    workItem.unassign(actor);
+    this.worksItemsRepo.save(workItem);
+  }
+
+  async completeItem(actor: User, protocol: Protocol): Promise<void> {
+    const workItem = await this.worksItemsRepo.findOne(protocol, actor);
+    if (!workItem) {
+      throw new Error('Work item not found!');
+    }
+
+    workItem.protocol = protocol;
+    workItem.complete();
+    this.worksItemsRepo.save(workItem);
   }
 
   private async getAvailableWorkItemForValidation(
