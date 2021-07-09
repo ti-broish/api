@@ -117,7 +117,7 @@ export class Stream {
     let lastActiveChunk: StreamChunk | undefined = this.chunks.find(
       (chunk: StreamChunk): boolean => chunk.isActive === true,
     );
-    if (lastActiveChunk !== undefined) {
+    if (lastActiveChunk === undefined) {
       lastActiveChunk = this.start();
     }
 

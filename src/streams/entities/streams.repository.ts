@@ -20,6 +20,10 @@ export class StreamsRepository {
     });
   }
 
+  findOneByIdentifier(identifier: string): Promise<Stream> {
+    return this.repo.findOne({ where: { identifier } });
+  }
+
   findOneByIdentifierOrFail(identifier: string): Promise<Stream> {
     return this.repo.findOneOrFail({
       where: { identifier },
@@ -85,7 +89,7 @@ export class StreamsRepository {
     });
   }
 
-  async save(stream: Stream): Promise<void> {
-    await this.repo.save(stream);
+  async save(stream: Stream): Promise<Stream> {
+    return await this.repo.save(stream);
   }
 }

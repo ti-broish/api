@@ -1,26 +1,41 @@
 import { StreamsRepository } from '../entities/streams.repository';
 import { Inject } from '@nestjs/common';
 import { Stream } from '../entities/stream.entity';
-import { StreamChunk } from '../entities/stream-chunk.entity';
-import * as moment from 'moment';
+import { StreamEventDto } from './stream-event.dto';
 
 export default class StreamManager {
   constructor(
     @Inject(StreamsRepository) private readonly repo: StreamsRepository,
   ) {}
 
-  async start(stream: Stream) {
-    stream.start();
-    this.repo.save(stream);
+  async processStreamEvent(event: StreamEventDto): Promise<Stream> {
+    const stream = await this.repo.findOneByIdentifierOrFail(event.identifier);
+
+    if (event.type === StreamEventDto.START) {
+      return this.start(stream);
+    }
+
+    if (event.type === StreamEventDto.STOP) {
+      return this.stop(stream, event.start, event.end, event.url);
+    }
+
+    throw new Error(`Unsupported streaming event: ${event.type}`);
   }
 
-  async stop(stream: Stream, start: string, duration: number, url: string) {
-    const startDate = moment(start, 'YYYYMMDD-hhmmss');
-    stream.stop(
-      startDate.toDate(),
-      startDate.add(duration, 'seconds').toDate(),
-      url,
-    );
-    this.repo.save(stream);
+  async start(stream: Stream): Promise<Stream> {
+    stream.start();
+
+    return this.repo.save(stream);
+  }
+
+  async stop(
+    stream: Stream,
+    start: Date,
+    end: Date,
+    url: string,
+  ): Promise<Stream> {
+    stream.stop(start, end, url);
+
+    return this.repo.save(stream);
   }
 }

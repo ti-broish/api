@@ -1,52 +1,44 @@
-import { Controller, Post, UseGuards, ConflictException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  ConflictException,
+  UsePipes,
+  ValidationPipe,
+  HttpCode,
+} from '@nestjs/common';
 import { StreamsRepository } from '../entities/streams.repository';
 import { AuthGuard } from '@nestjs/passport';
 import { Public } from 'src/auth/decorators';
 import StreamManager from './stream-manager.service';
 import { Body } from '@nestjs/common';
-import { StreamWebhookDto } from './stream-webhook.dto';
+import { StreamEventDto } from './stream-event.dto';
 import { StreamingError } from '../entities/stream.entity';
+import {
+  AcceptedResponse,
+  ACCEPTED_RESPONSE_STATUS,
+} from 'src/utils/accepted-response';
 
 @Public()
 @UseGuards(AuthGuard('basic'))
 @Controller('streams/webhook')
 export class StreamsWebhookController {
-  constructor(
-    private readonly streamsRepo: StreamsRepository,
-    private readonly streamingService: StreamManager,
-  ) {}
+  constructor(private readonly streamManager: StreamManager) {}
 
   @Post()
-  async webhook(@Body() webhook: StreamWebhookDto) {
-    const stream = await this.streamsRepo.findOneByIdentifierOrFail(
-      webhook.identifier,
-    );
-    if (webhook.type == StreamWebhookDto.START) {
-      try {
-        this.streamingService.start(stream);
-      } catch (e) {
-        if (e instanceof StreamingError) {
-          throw new ConflictException(e.message);
-        }
-
-        throw e;
+  @HttpCode(202)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async webhook(@Body() webhook: StreamEventDto): Promise<AcceptedResponse> {
+    try {
+      await this.streamManager.processStreamEvent(webhook);
+    } catch (error) {
+      if (error instanceof StreamingError) {
+        throw new ConflictException(error.message);
       }
-    }
-    if (webhook.type == StreamWebhookDto.STOP) {
-      try {
-        this.streamingService.stop(
-          stream,
-          webhook.start,
-          webhook.duration,
-          webhook.url,
-        );
-      } catch (e) {
-        if (e instanceof StreamingError) {
-          throw new ConflictException(e.message);
-        }
 
-        throw e;
-      }
+      throw error;
     }
+
+    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 }
