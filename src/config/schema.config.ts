@@ -26,4 +26,6 @@ export const configSchema = Joi.object({
   ),
   STREAM_REJECT_SECRET: Joi.string().required(),
   PROTOCOLS_VALIDATION_ITERATIONS: Joi.number().default(2),
+  STREAMS_WEBHOOK_USERNAME: Joi.string().required(),
+  STREAMS_WEBHOOK_PASSWORD: Joi.string().required(),
 });

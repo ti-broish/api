@@ -8,6 +8,7 @@ import {
 } from 'class-transformer';
 import { IsNotEmpty, ValidateNested } from 'class-validator';
 import { SectionDto } from 'src/sections/api/section.dto';
+import { StreamChunkDto } from './stream-chunk.dto';
 import { Stream } from '../entities/stream.entity';
 
 @Exclude()
@@ -16,7 +17,7 @@ export class StreamDto {
   public static CREATE = 'stream.create';
   public static WATCH = 'stream.watch';
 
-  @Expose({ groups: [StreamDto.READ] })
+  @Expose({ groups: [StreamDto.READ, StreamDto.WATCH] })
   id: string;
 
   @Expose({ groups: [StreamDto.WATCH] })
@@ -34,7 +35,7 @@ export class StreamDto {
   viewUrl?: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [StreamDto.READ, StreamDto.CREATE] })
+  @Expose({ groups: [StreamDto.READ, StreamDto.CREATE, StreamDto.WATCH] })
   @Type(() => SectionDto)
   @Transform(
     ({ value: id }) =>
@@ -47,12 +48,16 @@ export class StreamDto {
   })
   section?: SectionDto;
 
+  @Expose({ groups: [StreamDto.WATCH] })
+  @Type(() => StreamChunkDto)
+  chunks: StreamChunkDto[] = [];
+
   public static fromEntity(
     entity: Stream,
     groups: string[] = [StreamDto.READ],
   ): StreamDto {
     return plainToClass<StreamDto, Partial<Stream>>(StreamDto, entity, {
-      excludeExtraneousValues: true,
+      excludeExtraneousValues: false,
       groups: groups,
     });
   }

@@ -26,6 +26,9 @@ export class Stream {
   @OneToMany(
     () => StreamChunk,
     (streamChunk: StreamChunk) => streamChunk.stream,
+    {
+      cascade: ['insert', 'update'],
+    },
   )
   chunks: StreamChunk[];
 
@@ -76,4 +79,53 @@ export class Stream {
 
     return `${resultsUrl}/${this.section.id}`;
   }
+
+  addChunk(chunk: StreamChunk): void {
+    this.chunks.push(chunk);
+  }
+
+  start(): StreamChunk {
+    if (this.isStreaming != false) {
+      throw new StreamingError(
+        'StreamingAlreadyStoppedError',
+        'Trying to start a stream that has already been started',
+      );
+    }
+
+    if (this.isCensored != false) {
+      throw new StreamingError(
+        'StreamingIsCensoredError',
+        'Cannot start censored stream',
+      );
+    }
+
+    this.isStreaming = true;
+    const chunk = StreamChunk.start();
+    this.addChunk(chunk);
+
+    return chunk;
+  }
+
+  stop(start: Date, end: Date, url: string): void {
+    if (this.isStreaming != true) {
+      throw new StreamingError(
+        'StreamingAlreadyStoppedError',
+        'Trying to stop a stream that has already been stopped',
+      );
+    }
+
+    let lastActiveChunk: StreamChunk | undefined = this.chunks.find(
+      (chunk: StreamChunk): boolean => chunk.isActive === true,
+    );
+    if (lastActiveChunk === undefined) {
+      lastActiveChunk = this.start();
+    }
+
+    lastActiveChunk.stop(start, end, url);
+    this.isStreaming = false;
+  }
+}
+
+export class StreamingError implements Error {
+  constructor(public name: string, public message: string) {}
 }

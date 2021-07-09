@@ -8,18 +8,32 @@ import { StreamsController } from './api/streams.controller';
 import { Stream } from './entities/stream.entity';
 import { StreamCensor } from './api/stream-censor.service';
 import { ConfigModule } from '@nestjs/config';
+import { StreamsWebhookController } from './api/streams-webhook.controller';
+import StreamManager from './api/stream-manager.service';
+import { forwardRef } from '@nestjs/common';
+import { SectionStreamsController } from './api/section-streams.controller';
+import { IsStreamIdentifierExistsConstraint } from './api/stream-exists.constraint';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Stream]),
     UsersModule,
     CaslModule,
-    SectionsModule,
+    forwardRef(() => SectionsModule),
     HttpModule,
     ConfigModule,
   ],
-  providers: [StreamsRepository, StreamCensor],
+  providers: [
+    StreamsRepository,
+    StreamCensor,
+    StreamManager,
+    IsStreamIdentifierExistsConstraint,
+  ],
   exports: [StreamsRepository],
-  controllers: [StreamsController],
+  controllers: [
+    StreamsController,
+    StreamsWebhookController,
+    SectionStreamsController,
+  ],
 })
 export class StreamsModule {}

@@ -13,7 +13,9 @@ const allowedGroups = ['read', 'get'];
 @Exclude()
 export class SectionDto {
   @ApiProperty()
-  @Expose({ groups: ['read', 'create', StreamDto.CREATE, 'replace'] })
+  @Expose({
+    groups: ['read', 'create', StreamDto.CREATE, StreamDto.WATCH, 'replace'],
+  })
   @IsSectionExists({ groups: ['create', StreamDto.CREATE, 'replace'] })
   @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH, {
     groups: ['create', StreamDto.CREATE, 'replace'],

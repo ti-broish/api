@@ -9,7 +9,6 @@ import {
   UsePipes,
   ValidationPipe,
   Param,
-  Inject,
 } from '@nestjs/common';
 import { InjectUser } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
@@ -21,7 +20,6 @@ import { UsersRepository } from 'src/users/entities/users.repository';
 import { Stream } from '../entities/stream.entity';
 import { StreamsRepository } from '../entities/streams.repository';
 import { StreamDto } from './stream.dto';
-import { ConfigService } from '@nestjs/config';
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
@@ -66,11 +64,9 @@ export class StreamsController {
   @HttpCode(202)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
-  delete(
-    @Param('stream') streamId: string,
-    @Inject(ConfigService) config: ConfigService,
-  ): AcceptedResponse {
+  delete(@Param('stream') streamId: string): AcceptedResponse {
     this.streamCensor.censorStreamById(streamId);
+
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
 }

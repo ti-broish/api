@@ -20,6 +20,17 @@ export class StreamsRepository {
     });
   }
 
+  findOneByIdentifier(identifier: string): Promise<Stream> {
+    return this.repo.findOne({ where: { identifier } });
+  }
+
+  findOneByIdentifierOrFail(identifier: string): Promise<Stream> {
+    return this.repo.findOneOrFail({
+      where: { identifier },
+      relations: ['chunks', 'section', 'user'],
+    });
+  }
+
   findOneWithSectionOrFail(id: string): Promise<Stream> {
     return this.repo.findOneOrFail({
       where: {
@@ -68,7 +79,17 @@ export class StreamsRepository {
     });
   }
 
-  async save(stream: Stream): Promise<void> {
-    await this.repo.save(stream);
+  async findBySection(section: string): Promise<Stream[]> {
+    return this.repo.find({
+      where: {
+        section,
+        isCensored: false,
+      },
+      relations: ['chunks', 'section'],
+    });
+  }
+
+  async save(stream: Stream): Promise<Stream> {
+    return await this.repo.save(stream);
   }
 }
