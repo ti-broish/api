@@ -28,4 +28,5 @@ export const configSchema = Joi.object({
   PROTOCOLS_VALIDATION_ITERATIONS: Joi.number().default(2),
   STREAMS_WEBHOOK_USERNAME: Joi.string().required(),
   STREAMS_WEBHOOK_PASSWORD: Joi.string().required(),
+  ELECTION_CAMPAIGN_NAME: Joi.string().default('Парламентарни избори'),
 });

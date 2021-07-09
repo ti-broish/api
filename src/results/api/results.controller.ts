@@ -24,6 +24,8 @@ import { CountriesRepository } from 'src/sections/entities/countries.repository'
 import { CityRegionsRepository } from 'src/sections/entities/cityRegions.repository';
 import { SectionsRepository } from 'src/sections/entities/sections.repository';
 import { StatsDto } from './stats.dto';
+import { ConfigService } from '@nestjs/config';
+import { CrumbMaker } from './crumb-maker.service';
 
 export enum NodeType {
   ELECTION = 'election',
@@ -46,7 +48,7 @@ export enum NodesType {
   SECTIONS = 'sections',
 }
 
-const mapToType = (
+export const mapToType = (
   item:
     | ElectionRegion
     | Country
@@ -134,34 +136,12 @@ const isMunicipalityHidden = (municipality: Municipality) =>
 const makeSegment = (items: { code: string }[]) =>
   items.reduce((acc, x) => `${acc}${x.code}`, '');
 
-const makeCrumbs = (items: any[]) =>
-  items
-    .filter((x) => !!x)
-    .reduce(
-      (crumbs: Record<string, string>[], item) => {
-        crumbs.push({
-          segment:
-            item instanceof Section
-              ? item.id
-              : crumbs.reduce((acc, x) => `${acc}${x.segment}`, '') + item.code,
-          name: item.name,
-          type: mapToType(item),
-        });
-        return crumbs;
-      },
-      [
-        {
-          segment: '',
-          name: 'Парламентарни избори 04.04.2021',
-          type: NodeType.ELECTION,
-        },
-      ],
-    );
-
 @Controller('results')
 @Public()
 export class ResultsController {
   constructor(
+    private readonly crumbMaker: CrumbMaker,
+    private readonly config: ConfigService,
     private readonly electionRegionsRepo: ElectionRegionsRepository,
     private readonly partiesRepo: PartiesRepository,
     private readonly municipalitiesRepo: MunicipalitiesRepository,
@@ -176,7 +156,7 @@ export class ResultsController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async meta(): Promise<Record<string, any>> {
     return {
-      name: 'Парламентарни избори 04.04.2021',
+      name: this.config.get('ELECTION_CAMPAIGN_NAME'),
       parties: (await this.partiesRepo.findAllForResults()).map(
         ({ id, name, displayName, color }) => ({
           id,
@@ -200,7 +180,7 @@ export class ResultsController {
     return {
       id: null,
       segment: '',
-      name: 'Парламентарни избори 04.04.2021',
+      name: this.config.get('ELECTION_CAMPAIGN_NAME'),
       type: NodeType.ELECTION,
       results: (await this.sectionsRepo.getResultsFor()) || [],
       stats,
@@ -411,7 +391,7 @@ export class ResultsController {
       results:
         (await this.sectionsRepo.getResultsFor(electionRegion.code)) || [],
       stats: (await this.sectionsRepo.getStatsFor(electionRegion.code)) || {},
-      crumbs: makeCrumbs([]),
+      crumbs: this.crumbMaker.makeCrumbs([]),
       abroad: electionRegion.isAbroad,
       nodesType,
       nodes,
@@ -452,7 +432,7 @@ export class ResultsController {
       stats: await this.sectionsRepo.getStatsFor(
         `${electionRegion.code}${code}`,
       ),
-      crumbs: makeCrumbs([electionRegion]),
+      crumbs: this.crumbMaker.makeCrumbs([electionRegion]),
       abroad: false,
       nodesType: NodesType.TOWNS,
       nodes: municipality.towns.map(({ code: id, name, sections }) => ({
@@ -495,7 +475,7 @@ export class ResultsController {
       stats: await this.sectionsRepo.getStatsFor(
         makeSegment([electionRegion, country]),
       ),
-      crumbs: makeCrumbs([electionRegion]),
+      crumbs: this.crumbMaker.makeCrumbs([electionRegion]),
       abroad: true,
       nodesType: NodesType.TOWNS,
       nodes: country.towns.map(({ code, name, sections }) => ({
@@ -519,7 +499,7 @@ export class ResultsController {
     municipality: Municipality,
     district: CityRegion,
   ): Promise<Record<string, any>> {
-    const crumbs = makeCrumbs([
+    const crumbs = this.crumbMaker.makeCrumbs([
       electionRegion,
       !isMunicipalityHidden(municipality) ? municipality : null,
     ]);
@@ -594,7 +574,7 @@ export class ResultsController {
 
     return {
       ...sectionMapper(section),
-      crumbs: makeCrumbs([electionRegion, unit, district]),
+      crumbs: this.crumbMaker.makeCrumbs([electionRegion, unit, district]),
       abroad: electionRegion.isAbroad,
       place: section.place,
       town: {
