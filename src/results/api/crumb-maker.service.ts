@@ -4,7 +4,7 @@ import { Section } from 'src/sections/entities';
 import { mapToType, NodeType } from './results.controller';
 
 export class CrumbMaker {
-  constructor(private readonly config: ConfigService) {}
+  constructor(@Inject(ConfigService) private readonly config: ConfigService) {}
 
   makeCrumbs(items: any[]) {
     return items
