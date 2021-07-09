@@ -1,4 +1,4 @@
-import { Exclude, Expose, Transform, Type } from 'class-transformer';
+import { Exclude, Expose, Transform } from 'class-transformer';
 import { IsDate, IsIn, IsNotEmpty, IsOptional, IsUrl } from 'class-validator';
 import * as moment from 'moment';
 import { IsStreamIdentifierExists } from './stream-exists.constraint';
