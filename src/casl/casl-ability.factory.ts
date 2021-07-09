@@ -21,6 +21,9 @@ import { Organization, User } from '../users/entities';
 import { Action } from './action.enum';
 import { Client } from 'src/users/entities/client.entity';
 import { Stream } from 'src/streams/entities/stream.entity';
+import * as moment from 'moment';
+import { ConfigService } from '@nestjs/config';
+import * as momenttz from 'moment-timezone';
 
 type Subjects =
   | typeof User
@@ -72,6 +75,8 @@ export type AppAbility = Ability<[Actions, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
+  constructor(private readonly config: ConfigService) {}
+
   createForUser(user: User) {
     const { can, build } = new AbilityBuilder<Ability<[Action, Subjects]>>(
       Ability as AbilityClass<AppAbility>,
@@ -110,7 +115,16 @@ export class CaslAbilityFactory {
       can(Action.Read, [User, Picture, Protocol]);
     }
 
-    if (user.hasRole(Role.Streamer) || user.hasRole(Role.Admin)) {
+    const currentTime = moment().format();
+    const limitTimestamp = moment.parseZone(
+      this.config.get<string>('STREAMING_TIMESTAMP'),
+    );
+
+    if (
+      (user.hasRole(Role.Streamer) &&
+        moment(currentTime).isAfter(limitTimestamp, 'second')) ||
+      user.hasRole(Role.Admin)
+    ) {
       can([Action.Create], Stream);
     }
 
