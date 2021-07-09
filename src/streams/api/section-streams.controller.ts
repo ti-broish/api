@@ -1,4 +1,4 @@
-import { Controller, HttpCode, Param } from '@nestjs/common';
+import { Controller, Get, HttpCode, Param } from '@nestjs/common';
 import { Public } from 'src/auth/decorators';
 import { Stream } from '../entities/stream.entity';
 import { StreamsRepository } from '../entities/streams.repository';
@@ -8,6 +8,7 @@ import { StreamDto } from './stream.dto';
 export class SectionStreamsController {
   constructor(private readonly streamsRepo: StreamsRepository) {}
 
+  @Get()
   @Public()
   @HttpCode(200)
   async getStreams(
