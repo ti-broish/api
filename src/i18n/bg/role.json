@@ -1,8 +1,9 @@
 {
   "ROLE_USER": "Потребител",
   "ROLE_VALIDATOR": "Валидатор",
+  "ROLE_SUPERVALIDATOR": "Супер Валидатор",
   "ROLE_LAWYER": "Юрист",
   "ROLE_STREAMER": "Оператор",
   "ROLE_ADMIN": "Администратор",
-  "ROLE_STREAM_MODERATOR": "Видео Модератор"
+  "ROLE_STREAMMODERATOR": "Видео Модератор"
 }
