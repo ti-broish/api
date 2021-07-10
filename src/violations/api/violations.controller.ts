@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Public } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -101,6 +102,22 @@ export class ViolationsController {
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
+  }
+
+  @Public()
+  @Get('feed')
+  @HttpCode(200)
+  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
+  async feed(@Query('after') after?: string): Promise<ViolationDto[]> {
+    const publishedViolations = await this.repo
+      .queryBuilderFeed(after)
+      .getMany();
+
+    const items = publishedViolations.map((violation: Violation) =>
+      ViolationDto.fromEntity(violation, [ViolationDto.READ]),
+    );
+
+    return items;
   }
 
   @Get(':id')

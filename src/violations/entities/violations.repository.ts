@@ -29,6 +29,21 @@ export class ViolationsRepository {
     });
   }
 
+  queryBuilderFeed(after?: string): SelectQueryBuilder<Violation> {
+    const qb = this.repo.createQueryBuilder('violation');
+    qb.innerJoinAndSelect('violation.section', 'section');
+    qb.innerJoinAndSelect('violation.town', 'town');
+    qb.innerJoinAndSelect('town.municipality', 'municipality');
+    qb.andWhere('violation.isPublished= :isPublished', { isPublished: true });
+    if (after) {
+      qb.andWhere('violation.id < :id', { id: after });
+    }
+    qb.limit(50);
+    qb.orderBy('violation.id', 'DESC');
+
+    return qb;
+  }
+
   queryBuilderWithFilters(
     filters: ViolationsFilters,
   ): SelectQueryBuilder<Violation> {

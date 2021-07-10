@@ -27,6 +27,8 @@ import { ProtocolDto } from '../../protocols/api/protocol.dto';
 
 @Exclude()
 export class ViolationDto {
+  public static READ = 'violation.read';
+
   @Expose({ groups: ['read'] })
   id: string;
 
