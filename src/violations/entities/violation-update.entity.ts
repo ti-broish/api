@@ -70,7 +70,6 @@ export class ViolationUpdate {
   }
 
   public static createUnpublishUpdate(actor: User): ViolationUpdate {
-    console.log('Actor', actor);
     return ViolationUpdate.create(ViolationUpdateType.UNPUBLISH, actor);
   }
 
