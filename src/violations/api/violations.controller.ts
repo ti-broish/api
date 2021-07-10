@@ -186,11 +186,15 @@ export class ViolationsController {
     @Body() violationDto: ViolationDto,
   ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
-    if (violationDto.isPublished) {
-      violation.publish(user);
-    } else {
-      violation.unpublish(user);
+    // Allow editing publishing text without changing the published status
+    if (violationDto.isPublished !== violation.isPublished) {
+      if (violationDto.isPublished) {
+        violation.publish(user);
+      } else {
+        violation.unpublish(user);
+      }
     }
+
     violation.publishedText = violationDto.publishedText;
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
