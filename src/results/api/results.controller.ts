@@ -157,6 +157,7 @@ export class ResultsController {
   async meta(): Promise<Record<string, any>> {
     return {
       name: this.config.get('ELECTION_CAMPAIGN_NAME'),
+      endOfElectionDayTimestamp: this.config.get('STREAMING_TIMESTAMP'),
       parties: (await this.partiesRepo.findAllForResults()).map(
         ({ id, name, displayName, color }) => ({
           id,
