@@ -66,7 +66,7 @@ export class ProtocolDto {
   pictures: PictureDto[];
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [UserDto.AUTHOR_READ] })
+  @Expose({ groups: ['author_read'] })
   @Type(() => UserDto)
   assignees: UserDto[];
 

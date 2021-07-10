@@ -16,10 +16,10 @@ import {
 } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { Public } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { UserDto } from 'src/users/api/user.dto';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
@@ -59,7 +59,7 @@ export class ViolationsController {
     const processViolation = async (violation: Violation) => {
       const dto = ViolationDto.fromEntity(violation, [
         'violation.process',
-        UserDto.AUTHOR_READ,
+        'author_read',
       ]);
       this.updatePicturesUrl(dto);
 
@@ -96,11 +96,21 @@ export class ViolationsController {
     violation.setReceivedStatus(user);
     const savedDto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
+  }
+
+  @Public()
+  @Get('feed')
+  @HttpCode(200)
+  async feed(@Query('after') after?: string): Promise<ViolationDto[]> {
+    return (await this.repo.findPublishedViolations(after)).map(
+      (violation: Violation) =>
+        ViolationDto.fromEntity(violation, [ViolationDto.FEED]),
+    );
   }
 
   @Get(':id')
@@ -111,7 +121,7 @@ export class ViolationsController {
     const violation = await this.repo.findOneOrFail(id);
     const dto = ViolationDto.fromEntity(violation, [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(dto);
 
@@ -131,7 +141,7 @@ export class ViolationsController {
 
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(dto);
 
@@ -151,7 +161,7 @@ export class ViolationsController {
 
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(dto);
 
@@ -176,15 +186,19 @@ export class ViolationsController {
     @Body() violationDto: ViolationDto,
   ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
-    if (violationDto.isPublished) {
-      violation.publish(user);
-    } else {
-      violation.unpublish(user);
+    // Allow editing publishing text without changing the published status
+    if (violationDto.isPublished !== violation.isPublished) {
+      if (violationDto.isPublished) {
+        violation.publish(user);
+      } else {
+        violation.unpublish(user);
+      }
     }
+
     violation.publishedText = violationDto.publishedText;
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
       'isPublishedUpdate',
     ]);
     this.updatePicturesUrl(dto);

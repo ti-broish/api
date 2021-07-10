@@ -29,6 +29,30 @@ export class ViolationsRepository {
     });
   }
 
+  findPublishedViolations(after?: string): Promise<Violation[]> {
+    const qb = this.repo.createQueryBuilder('violation');
+
+    qb.leftJoinAndSelect('violation.section', 'section');
+    qb.leftJoinAndSelect('section.cityRegion', 'cityRegion');
+    qb.leftJoinAndSelect('section.electionRegion', 'electionRegion');
+    qb.innerJoinAndSelect('violation.town', 'town');
+    qb.innerJoinAndSelect('town.country', 'country');
+    qb.leftJoinAndSelect('town.municipality', 'municipality');
+    qb.leftJoinAndSelect('municipality.electionRegions', 'electionRegions');
+
+    qb.andWhere('violation.isPublished = true');
+
+    qb.limit(50);
+    qb.orderBy('violation.id', 'DESC');
+
+    // Simple cursor pagination
+    if (after) {
+      qb.andWhere('violation.id < :after', { after });
+    }
+
+    return qb.getMany();
+  }
+
   queryBuilderWithFilters(
     filters: ViolationsFilters,
   ): SelectQueryBuilder<Violation> {

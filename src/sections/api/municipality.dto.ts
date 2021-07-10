@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass } from 'class-transformer';
+import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
 import { Municipality } from '../entities';
+import { ElectionRegionDto } from './electionRegion.dto';
 
 @Exclude()
 export class MunicipalityDto {
@@ -11,6 +12,10 @@ export class MunicipalityDto {
   @ApiProperty()
   @Expose()
   name: string;
+
+  @Expose({ groups: ['violations.feed'] })
+  @Type(() => ElectionRegionDto)
+  electionRegions?: ElectionRegionDto[];
 
   public static fromEntity(entity: Municipality): MunicipalityDto {
     return plainToClass<MunicipalityDto, Partial<Municipality>>(

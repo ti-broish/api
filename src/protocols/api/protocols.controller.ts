@@ -20,7 +20,6 @@ import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { UserDto } from 'src/users/api/user.dto';
 import { EntityNotFoundError, SelectQueryBuilder } from 'typeorm';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
@@ -91,7 +90,7 @@ export class ProtocolsController {
       await Promise.all(
         pagination.items.map(async (protocol: Protocol) =>
           ProtocolDto.fromEntity(protocol, [
-            UserDto.AUTHOR_READ,
+            'author_read',
             'protocol.validate',
           ]),
         ),
@@ -121,9 +120,7 @@ export class ProtocolsController {
 
     const savedProtocol = await this.repo.save(protocol);
     this.workQueue.addProtocolForValidation(protocol);
-    const savedDto = ProtocolDto.fromEntity(savedProtocol, [
-      UserDto.AUTHOR_READ,
-    ]);
+    const savedDto = ProtocolDto.fromEntity(savedProtocol, ['author_read']);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
@@ -157,7 +154,7 @@ export class ProtocolsController {
     const savedEntity = await this.violationsRepo.save(violation);
     const savedDto = ViolationDto.fromEntity(savedEntity, [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(savedDto);
 
@@ -291,7 +288,7 @@ export class ProtocolsController {
     const protocol = await this.repo.findOneOrFail(id);
     const dto = ProtocolDto.fromEntity(protocol, [
       'protocol.validate',
-      UserDto.AUTHOR_READ,
+      'author_read',
       'get',
     ]);
     dto.results = ProtocolResultsDto.fromEntity(protocol);
