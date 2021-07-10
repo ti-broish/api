@@ -181,7 +181,7 @@ export class ViolationsController {
     } else {
       violation.unpublish(user);
     }
-
+    violation.publishedText = violationDto.publishedText;
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
       UserDto.AUTHOR_READ,
