@@ -133,7 +133,7 @@ export class SectionsRepository {
         .addSelect('COUNT(distinct sections.id)', 'sectionsWithResults')
         .addSelect('COALESCE(SUM(results.validVotesCount), 0)', 'validVotes')
         .addSelect(
-          'COALESCE(SUM(results.invalidVotesCount), 0)',
+          "COALESCE(SUM((protocols.metadata->'invalidVotesCount')::int), 0)",
           'invalidVotes',
         )
         .innerJoin(
