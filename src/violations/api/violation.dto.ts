@@ -28,11 +28,12 @@ import { ProtocolDto } from '../../protocols/api/protocol.dto';
 @Exclude()
 export class ViolationDto {
   public static READ = 'violation.read';
+  public static FEED = 'violations.feed';
 
   @Expose({ groups: ['read'] })
   id: string;
 
-  @Expose({ groups: ['read', 'create'] })
+  @Expose({ groups: ['read', 'create', ViolationDto.FEED] })
   @Type(() => SectionDto)
   @ValidateIf((violationDto: ViolationDto) => violationDto.town !== undefined)
   @Transform(
@@ -45,7 +46,7 @@ export class ViolationDto {
   })
   section?: SectionDto;
 
-  @Expose({ groups: ['read', 'create'] })
+  @Expose({ groups: ['read', 'create', ViolationDto.FEED] })
   @Type(() => TownDto)
   @Transform(
     ({ value: id }) =>
@@ -83,7 +84,7 @@ export class ViolationDto {
   @IsNotEmpty({ groups: ['create'] })
   description: string;
 
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', ViolationDto.FEED] })
   status: ViolationStatus;
 
   @Expose({ groups: ['read', 'isPublishedUpdate'] })
@@ -100,13 +101,13 @@ export class ViolationDto {
 
   private author: UserDto;
 
-  @Expose({ groups: [UserDto.AUTHOR_READ] })
+  @Expose({ groups: [] })
   @Type(() => UserDto)
   getAuthor(): UserDto {
     return this.author;
   }
 
-  @Expose({ groups: ['read', 'isPublishedUpdate'] })
+  @Expose({ groups: ['read', 'isPublishedUpdate', ViolationDto.FEED] })
   @MinLength(20, { groups: ['isPublishedUpdate'] })
   @MaxLength(2000, { groups: ['isPublishedUpdate'] })
   publishedText: string;

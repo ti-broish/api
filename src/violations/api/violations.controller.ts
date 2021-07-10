@@ -106,17 +106,11 @@ export class ViolationsController {
   @Public()
   @Get('feed')
   @HttpCode(200)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
   async feed(@Query('after') after?: string): Promise<ViolationDto[]> {
-    const publishedViolations = await this.repo
-      .queryBuilderFeed(after)
-      .getMany();
-
-    const items = publishedViolations.map((violation: Violation) =>
-      ViolationDto.fromEntity(violation, [ViolationDto.READ]),
+    return (await this.repo.findPublishedViolations(after)).map(
+      (violation: Violation) =>
+        ViolationDto.fromEntity(violation, [ViolationDto.FEED]),
     );
-
-    return items;
   }
 
   @Get(':id')
