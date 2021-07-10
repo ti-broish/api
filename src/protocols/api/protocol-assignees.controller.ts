@@ -59,7 +59,7 @@ export class ProtocolAssigneesController {
   @Post(':protocol/assignees')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Protocol))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -74,11 +74,6 @@ export class ProtocolAssigneesController {
   ): Promise<AcceptedResponse> {
     this.checkIfCanEditAssignees(actor, assigneeDto.id);
     const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
-    if (protocol.assignees.length > 0) {
-      throw new BadRequestException(
-        'CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL',
-      );
-    }
     protocol.assign(actor, [...protocol.assignees, assigneeDto.toEntity()]);
     await this.protocolsRepo.save(protocol);
 
