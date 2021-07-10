@@ -9,20 +9,30 @@ import {
 import {
   ArrayNotEmpty,
   IsArray,
+  IsBoolean,
+  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { Picture } from 'src/pictures/entities/picture.entity';
 import { UserDto } from 'src/users/api/user.dto';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { SectionDto } from '../../sections/api/section.dto';
-import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
-import { ProtocolResultsDto } from './protocol-results.dto';
+import { ProtocolResult } from '../entities/protocol-result.entity';
+import {
+  Protocol,
+  ProtocolData,
+  ProtocolStatus,
+} from '../entities/protocol.entity';
+import { ProtocolResultDto } from './protocol-result.dto';
 
 export enum ProtocolStatusOverride {
   PROCESSED = 'processed',
 }
+
 @Exclude()
 export class ProtocolDto {
   @ApiProperty()
@@ -73,13 +83,87 @@ export class ProtocolDto {
   @Expose({ groups: ['read'] })
   status: ProtocolStatus | ProtocolStatusOverride;
 
-  @Expose({ groups: ['replace', 'read.results'] })
-  @Type(() => ProtocolResultsDto)
-  @IsNotEmpty({ groups: ['replace'] })
+  @Type(() => ProtocolResultDto)
+  @IsNotEmpty({ groups: ['replace', 'read.results'] })
+  @IsArray({ groups: ['replace', 'read.results'] })
+  @ArrayNotEmpty({ groups: ['replace', 'read.results'] })
   @ValidateNested({
-    groups: ['replace'],
+    each: true,
+    groups: ['replace', 'read.results'],
   })
-  results: ProtocolResultsDto;
+  @Expose({ groups: ['read', 'replace', 'read.results'] })
+  results: ProtocolResultDto[] = [];
+
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @IsBoolean({ groups: ['replace'] })
+  hasPaperBallots?: boolean;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  machinesCount?: number;
+
+  @IsBoolean({ groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  isFinal: boolean;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  additionalVotersCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  paperBallotsOutsideOfBox?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  votesCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  paperVotesCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  votersCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  validVotesCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  invalidVotesCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  machineVotesCount?: number;
 
   private author: UserDto;
 
@@ -110,8 +194,21 @@ export class ProtocolDto {
     );
 
     if (protocol.results) {
-      protocol.results = this.results.toResults();
-      protocol.data = this.results.toProtocolData();
+      protocol.results = this.results.map(
+        (resultDto: ProtocolResultDto): ProtocolResult => resultDto.toEntity(),
+      );
+      const PROTOCOL_METADATA_KEYS = Object.keys(new ProtocolData());
+      console.debug('metadata', PROTOCOL_METADATA_KEYS);
+      protocol.setData(
+        PROTOCOL_METADATA_KEYS.reduce(
+          (data: ProtocolData, key: string): ProtocolData => {
+            data[key] = this[key];
+            return data;
+          },
+          {} as ProtocolData,
+        ),
+      );
+      console.debug(this, protocol.metadata);
     }
 
     return protocol;
@@ -134,6 +231,19 @@ export class ProtocolDto {
       protocolDto.author = UserDto.fromEntity(protocol.getAuthor(), [
         'protocol.validate',
       ]);
+    }
+
+    if (additionalGroups.includes('read.results')) {
+      const PROTOCOL_METADATA_KEYS = Object.getOwnPropertyNames(
+        new ProtocolData(),
+      );
+      PROTOCOL_METADATA_KEYS.reduce(
+        (dto: ProtocolDto, key: string): ProtocolData => {
+          dto[key] = protocol.metadata?.[key];
+          return dto;
+        },
+        protocolDto,
+      );
     }
 
     return protocolDto;

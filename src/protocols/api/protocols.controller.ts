@@ -20,7 +20,7 @@ import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { EntityNotFoundError, SelectQueryBuilder } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
@@ -28,11 +28,9 @@ import { User } from '../../users/entities';
 import { ProtocolResult } from '../entities/protocol-result.entity';
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
 import {
-  EmptyPersonalProtocolQueue,
   InvalidFiltersError,
   ProtocolsRepository,
 } from '../entities/protocols.repository';
-import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 import { ProtocolFilters } from './protocols-filters.dto';
 import { ViolationDto } from '../../violations/api/violation.dto';
@@ -48,6 +46,7 @@ import { paginationRoute } from 'src/utils/pagination-route';
 import { WorkQueue } from './work-queue.service';
 import { WorkItem } from '../entities/work-item.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { ProtocolResultDto } from './protocol-result.dto';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -205,8 +204,8 @@ export class ProtocolsController {
     );
     await this.repo.save(prevProtocol);
     const savedProtocol = await this.repo.save(nextProtocol);
+    this.workQueue.completeItem(user, prevProtocol);
     const savedDto = ProtocolDto.fromEntity(savedProtocol, ['read.results']);
-    savedDto.results = ProtocolResultsDto.fromEntity(savedProtocol);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;

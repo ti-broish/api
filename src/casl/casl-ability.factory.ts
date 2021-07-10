@@ -4,7 +4,6 @@ import { Broadcast } from 'src/broadcasts/entities/broadcast.entity';
 import { Party } from 'src/parties/entities/party.entity';
 import { Picture } from 'src/pictures/entities/picture.entity';
 import { Post } from 'src/posts/entities/post.entity';
-import { ProtocolData } from 'src/protocols/entities/protocol-data.entity';
 import { ProtocolResult } from 'src/protocols/entities/protocol-result.entity';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
 import {
@@ -40,10 +39,8 @@ type Subjects =
   | typeof Stream
   | Stream
   | typeof Protocol
-  | typeof ProtocolData
   | typeof ProtocolResult
   | Protocol
-  | ProtocolData
   | ProtocolResult
   | typeof Section
   | typeof CityRegion
@@ -132,8 +129,8 @@ export class CaslAbilityFactory {
     }
 
     if (user.hasRole(Role.Validator) || user.hasRole(Role.Admin)) {
-      can(Action.Read, [Protocol, ProtocolResult, ProtocolData]);
-      can(Action.Create, [ProtocolResult, ProtocolData]);
+      can(Action.Read, [Protocol, ProtocolResult]);
+      can(Action.Create, [ProtocolResult]);
       can(Action.Update, Protocol, ['status']);
       // Can see the organization of the user submitted the protocol
       can(Action.Read, User, ['organization']);

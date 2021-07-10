@@ -31,7 +31,6 @@ export class ProtocolsRepository {
       where: { id },
       relations: [
         'pictures',
-        'data',
         'results',
         'actions',
         'actions.actor',

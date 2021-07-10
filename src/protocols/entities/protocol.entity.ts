@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 import { ulid } from 'ulid';
 import { ProtocolAction, ProtocolActionType } from './protocol-action.entity';
-import { ProtocolData } from './protocol-data.entity';
 import { ProtocolResult } from './protocol-result.entity';
 import { Section } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
@@ -36,6 +35,22 @@ export enum ProtocolOrigin {
   CIK = 'cik',
 }
 
+export class ProtocolData {
+  constructor(
+    public hasPaperBallots?: boolean,
+    public machinesCount?: number,
+    public isFinal?: boolean,
+    public votersCount?: number,
+    public additionalVotersCount?: number,
+    public paperBallotsOutsideOfBox?: number,
+    public votesCount?: number,
+    public paperVotesCount?: number,
+    public machineVotesCount?: number,
+    public invalidVotesCount?: number,
+    public validVotesCount?: number,
+  ) {}
+}
+
 @Entity('protocols')
 export class Protocol {
   @PrimaryColumn('char', {
@@ -49,10 +64,8 @@ export class Protocol {
   @Column({ type: 'varchar' })
   status: ProtocolStatus;
 
-  @OneToOne(() => ProtocolData, (data) => data.protocol, {
-    cascade: ['insert', 'update'],
-  })
-  data: ProtocolData | null;
+  @Column('jsonb')
+  metadata: ProtocolData;
 
   @ManyToOne(() => Section, (section) => section.protocols, { eager: true })
   section: Section;
@@ -210,9 +223,8 @@ export class Protocol {
     this.results = results;
   }
 
-  private setData(data: ProtocolData): void {
-    data.protocol = this;
-    this.data = data;
+  setData(data: ProtocolData): void {
+    this.metadata = data;
   }
 
   @AfterLoad()
