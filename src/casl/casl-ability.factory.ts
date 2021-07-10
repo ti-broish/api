@@ -23,7 +23,6 @@ import { Client } from 'src/users/entities/client.entity';
 import { Stream } from 'src/streams/entities/stream.entity';
 import * as moment from 'moment';
 import { ConfigService } from '@nestjs/config';
-import * as momenttz from 'moment-timezone';
 
 type Subjects =
   | typeof User
