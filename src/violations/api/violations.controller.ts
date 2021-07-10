@@ -20,7 +20,6 @@ import { Public } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { UserDto } from 'src/users/api/user.dto';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
@@ -60,7 +59,7 @@ export class ViolationsController {
     const processViolation = async (violation: Violation) => {
       const dto = ViolationDto.fromEntity(violation, [
         'violation.process',
-        UserDto.AUTHOR_READ,
+        'author_read',
       ]);
       this.updatePicturesUrl(dto);
 
@@ -97,7 +96,7 @@ export class ViolationsController {
     violation.setReceivedStatus(user);
     const savedDto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(savedDto);
 
@@ -128,7 +127,7 @@ export class ViolationsController {
     const violation = await this.repo.findOneOrFail(id);
     const dto = ViolationDto.fromEntity(violation, [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(dto);
 
@@ -148,7 +147,7 @@ export class ViolationsController {
 
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(dto);
 
@@ -168,7 +167,7 @@ export class ViolationsController {
 
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ]);
     this.updatePicturesUrl(dto);
 
@@ -201,7 +200,7 @@ export class ViolationsController {
     violation.publishedText = violationDto.publishedText;
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
-      UserDto.AUTHOR_READ,
+      'author_read',
       'isPublishedUpdate',
     ]);
     this.updatePicturesUrl(dto);

@@ -43,7 +43,7 @@ export class UserDto {
       UserDto.ADMIN_READ,
       UserDto.MANAGE,
       'assignee',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ],
   })
   @IsUserExists({
@@ -67,7 +67,7 @@ export class UserDto {
       UserDto.ADMIN_READ,
       UserDto.CREATE,
       UserDto.UPDATE,
-      UserDto.AUTHOR_READ,
+      'author_read',
     ],
   })
   @IsNotEmpty({
@@ -91,7 +91,7 @@ export class UserDto {
       UserDto.ADMIN_READ,
       UserDto.CREATE,
       UserDto.UPDATE,
-      UserDto.AUTHOR_READ,
+      'author_read',
     ],
   })
   @IsNotEmpty({
@@ -115,7 +115,7 @@ export class UserDto {
       UserDto.ADMIN_READ,
       UserDto.CREATE,
       UserDto.UPDATE,
-      UserDto.AUTHOR_READ,
+      'author_read',
     ],
   })
   @IsNotEmpty({
@@ -145,7 +145,7 @@ export class UserDto {
       UserDto.ADMIN_READ,
       UserDto.CREATE,
       UserDto.UPDATE,
-      UserDto.AUTHOR_READ,
+      'author_read',
     ],
   })
   @IsNotEmpty({
@@ -192,7 +192,7 @@ export class UserDto {
       UserDto.CREATE,
       UserDto.UPDATE,
       'protocol.validate',
-      UserDto.AUTHOR_READ,
+      'author_read',
     ],
   })
   @Type(() => OrganizationDto)
@@ -246,7 +246,7 @@ export class UserDto {
       UserDto.ME_READ,
       UserDto.ADMIN_READ,
       UserDto.MANAGE,
-      UserDto.AUTHOR_READ,
+      'author_read',
     ],
   })
   roles: Role[];

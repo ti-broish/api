@@ -90,7 +90,7 @@ export class ViolationDto {
   @IsBoolean({ groups: ['isPublishedUpdate'] })
   isPublished: boolean;
 
-  @Expose({ groups: [UserDto.AUTHOR_READ] })
+  @Expose({ groups: ['author_read'] })
   @Type(() => UserDto)
   assignees: UserDto[];
 
@@ -156,9 +156,9 @@ export class ViolationDto {
       },
     );
 
-    if (additionalGroups.includes(UserDto.AUTHOR_READ)) {
+    if (additionalGroups.includes('author_read')) {
       violationDto.author = UserDto.fromEntity(violation.getAuthor(), [
-        UserDto.AUTHOR_READ,
+        'author_read',
       ]);
     }
 
