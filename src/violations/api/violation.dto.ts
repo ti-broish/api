@@ -104,6 +104,9 @@ export class ViolationDto {
     return this.author;
   }
 
+  @Expose()
+  publishedText: string;
+
   public toEntity(): Violation {
     const violation = plainToClass<Violation, Partial<ViolationDto>>(
       Violation,
@@ -148,7 +151,6 @@ export class ViolationDto {
         groups: ['read', ...additionalGroups],
       },
     );
-
     if (additionalGroups.includes(UserDto.AUTHOR_READ)) {
       violationDto.author = UserDto.fromEntity(violation.getAuthor(), [
         UserDto.AUTHOR_READ,

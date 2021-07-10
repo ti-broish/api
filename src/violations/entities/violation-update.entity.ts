@@ -70,6 +70,7 @@ export class ViolationUpdate {
   }
 
   public static createUnpublishUpdate(actor: User): ViolationUpdate {
+    console.log('Actor', actor);
     return ViolationUpdate.create(ViolationUpdateType.UNPUBLISH, actor);
   }
 
@@ -78,6 +79,7 @@ export class ViolationUpdate {
     actor?: User,
     payload?: Record<string, unknown>,
   ): ViolationUpdate {
+    console.log('gets here', actor);
     const update = new ViolationUpdate();
     if (actor) {
       update.actor = actor;
