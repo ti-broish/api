@@ -1,23 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities';
-import {
-  Repository,
-  SelectQueryBuilder,
-  getConnection,
-  In,
-  Brackets,
-} from 'typeorm';
-import { ProtocolActionType } from './protocol-action.entity';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { shuffle } from 'lodash';
 import { WorkItem, WorkItemType } from './work-item.entity';
 import { Protocol } from './protocol.entity';
-import { EmptyPersonalProtocolQueue } from './protocols.repository';
+import {
+  EmptyPersonalProtocolQueue,
+  ProtocolsRepository,
+} from './protocols.repository';
 
 @Injectable()
 export class WorkItemsRepository {
   constructor(
     @InjectRepository(WorkItem) private readonly repo: Repository<WorkItem>,
+    @Inject(ProtocolsRepository)
+    private readonly protocolsRepo: ProtocolsRepository,
   ) {}
 
   getRepo(): Repository<WorkItem> {
@@ -61,7 +59,8 @@ export class WorkItemsRepository {
     user: User,
     types: WorkItemType[],
   ): Promise<WorkItem> {
-    const allAssignedProtocols = await this.getAllAssignedProtocols(user);
+    const allAssignedProtocols =
+      await this.protocolsRepo.getAllAssignedProtocols(user);
     const qb = this.repo
       .createQueryBuilder('workItem')
       .innerJoinAndSelect('workItem.protocol', 'protocol')
@@ -99,17 +98,5 @@ export class WorkItemsRepository {
       .orderBy('workItem.id', 'ASC');
 
     return (await qb.getOneOrFail()) as WorkItem;
-  }
-
-  private async getAllAssignedProtocols({
-    id: assigneeId,
-  }: User): Promise<string[]> {
-    return (
-      await this.repo
-        .createQueryBuilder('workItem')
-        .select('workItem.protocol_id', 'protocol_id')
-        .andWhere('workItem.assignee_id = :assigneeId', { assigneeId })
-        .getRawMany()
-    ).map((workItem) => workItem.protocol_id);
   }
 }

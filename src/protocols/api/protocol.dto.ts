@@ -121,21 +121,28 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
-  paperBallotsOutsideOfBox?: number;
+  votersVotedCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
-  votesCount?: number;
+  uncastBallots?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
-  paperVotesCount?: number;
+  invalidAndUncastBallots?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  nonMachineVotesCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -143,6 +150,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   votersCount?: number;
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  totalVotesCast?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -198,7 +212,6 @@ export class ProtocolDto {
         (resultDto: ProtocolResultDto): ProtocolResult => resultDto.toEntity(),
       );
       const PROTOCOL_METADATA_KEYS = Object.keys(new ProtocolData());
-      console.debug('metadata', PROTOCOL_METADATA_KEYS);
       protocol.setData(
         PROTOCOL_METADATA_KEYS.reduce(
           (data: ProtocolData, key: string): ProtocolData => {
@@ -208,7 +221,6 @@ export class ProtocolDto {
           {} as ProtocolData,
         ),
       );
-      console.debug(this, protocol.metadata);
     }
 
     return protocol;

@@ -23,10 +23,10 @@ import { WorkItem } from './work-item.entity';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
+  SETTLED = 'settled',
   REJECTED = 'rejected',
   REPLACED = 'replaced',
   READY = 'ready',
-  APPROVED = 'approved',
   PUBLISHED = 'published',
 }
 
@@ -42,9 +42,11 @@ export class ProtocolData {
     public isFinal?: boolean,
     public votersCount?: number,
     public additionalVotersCount?: number,
-    public paperBallotsOutsideOfBox?: number,
-    public votesCount?: number,
-    public paperVotesCount?: number,
+    public votersVotedCount?: number,
+    public uncastBallots?: number,
+    public invalidAndUncastBallots?: number,
+    public totalVotesCast?: number,
+    public nonMachineVotesCount?: number,
     public machineVotesCount?: number,
     public invalidVotesCount?: number,
     public validVotesCount?: number,
@@ -136,10 +138,10 @@ export class Protocol {
   }
 
   isSettled(): boolean {
-    return this.status !== ProtocolStatus.RECEIVED;
+    return this.status === ProtocolStatus.SETTLED;
   }
 
-  setReceivedStatus(sender: User): void {
+  receive(sender: User): void {
     if (this.status) {
       throw new ProtocolStatusException(this, ProtocolStatus.RECEIVED);
     }
@@ -152,26 +154,28 @@ export class Protocol {
     this.addAction(ProtocolAction.createAsssignAction(actor, assignees));
   }
 
-  reject(actor: User): void {
-    if (!this.isReceived()) {
+  reject(actor: User): Protocol {
+    if (!this.isReceived() && !this.isSettled()) {
       throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
     }
 
-    this.status = ProtocolStatus.REJECTED;
+    const replacement = new Protocol();
+    replacement.receive(actor);
+    replacement.section = this.section;
+    replacement.pictures = this.pictures;
+    replacement.status = ProtocolStatus.REJECTED;
+    replacement.addAction(ProtocolAction.createRejectAction(actor));
+    replacement.assignees = [actor];
+    replacement.parent = this;
+
+    this.status = ProtocolStatus.SETTLED;
     this.addAction(ProtocolAction.createRejectAction(actor));
-  }
 
-  approve(actor: User): void {
-    if (!this.isReceived()) {
-      throw new ProtocolStatusException(this, ProtocolStatus.APPROVED);
-    }
-
-    this.status = ProtocolStatus.APPROVED;
-    this.addAction(ProtocolAction.createApproveAction(actor));
+    return replacement;
   }
 
   publish(): void {
-    if (this.status !== ProtocolStatus.APPROVED) {
+    if (this.status !== ProtocolStatus.READY) {
       throw new ProtocolStatusException(this, ProtocolStatus.PUBLISHED);
     }
 
@@ -179,29 +183,25 @@ export class Protocol {
     this.addAction(ProtocolAction.createPublishAction());
   }
 
-  replace(
-    actor: User,
-    replacement: Protocol,
-    replacementStatus: ProtocolStatus = ProtocolStatus.PUBLISHED,
-  ): Protocol {
+  replace(actor: User, replacement: Protocol): Protocol {
     if (
       ![
         ProtocolStatus.RECEIVED,
-        ProtocolStatus.APPROVED,
-        ProtocolStatus.READY,
+        ProtocolStatus.SETTLED,
         ProtocolStatus.PUBLISHED,
       ].includes(this.status)
     ) {
       throw new ProtocolStatusException(this, ProtocolStatus.REPLACED);
     }
-    replacement.setReceivedStatus(actor);
+    replacement.receive(actor);
     replacement.section = replacement.section || this.section;
-    replacement.status = replacementStatus;
+    replacement.status = ProtocolStatus.READY;
+    replacement.addAction(ProtocolAction.createReadyAction(actor));
     replacement.assignees = this.assignees;
     replacement.parent = this;
 
-    this.status = ProtocolStatus.REPLACED;
-    this.addAction(ProtocolAction.createPublishAction(actor));
+    this.status = ProtocolStatus.SETTLED;
+    this.addAction(ProtocolAction.createReplaceAction(actor));
 
     return replacement;
   }

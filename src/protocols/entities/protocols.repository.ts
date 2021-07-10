@@ -149,22 +149,6 @@ export class ProtocolsRepository {
     return this.repo.find();
   }
 
-  async findApprovedProtocols(): Promise<Protocol[]> {
-    const qb = this.repo.createQueryBuilder('protocol');
-    qb.innerJoinAndSelect('protocol.results', 'results');
-    qb.innerJoinAndSelect('protocol.section', 'section');
-    qb.innerJoinAndSelect('section.election_region', 'election_region');
-    qb.innerJoinAndSelect('section.town', 'town');
-    qb.innerJoinAndSelect('town.municipality', 'municipality');
-    qb.innerJoinAndSelect('town.country', 'country');
-    qb.innerJoinAndSelect('section.cityRegion', 'cityRegion');
-    qb.andWhere('protocol.status = :status', {
-      status: ProtocolStatus.APPROVED,
-    });
-
-    return qb.getMany();
-  }
-
   async findPublishedProtocolsFrom(
     partialSectionIds: string[],
   ): Promise<Protocol[]> {
@@ -205,5 +189,21 @@ export class ProtocolsRepository {
       .set({ status })
       .where({ id: In(protocols.map((protocol: Protocol) => protocol.id)) })
       .execute();
+  }
+
+  async getAllAssignedProtocols({
+    id: assignActorId,
+  }: User): Promise<string[]> {
+    return (
+      await this.repo
+        .createQueryBuilder('protocol')
+        .select('protocol.id')
+        .innerJoin('protocol.actions', 'action_assign')
+        .andWhere('action_assign.action = :assignAction', {
+          assignAction: ProtocolActionType.ASSIGN,
+        })
+        .andWhere('action_assign.actor_id = :assignActorId', { assignActorId })
+        .getRawMany()
+    ).map((protocol) => protocol.protocol_id);
   }
 }

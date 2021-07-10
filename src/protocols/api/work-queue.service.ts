@@ -9,7 +9,11 @@ import {
   EmptyPersonalProtocolQueue,
   ProtocolsRepository,
 } from '../entities/protocols.repository';
-import { WorkItem, WorkItemType } from '../entities/work-item.entity';
+import {
+  WorkItem,
+  WorkItemType,
+  WorkQueueError,
+} from '../entities/work-item.entity';
 import { WorkItemsRepository } from '../entities/work-items.repository';
 
 const PROTOCOLS_VALIDATION_ITERATIONS = 'PROTOCOLS_VALIDATION_ITERATIONS';
@@ -78,15 +82,24 @@ export class WorkQueue {
     this.worksItemsRepo.save(workItem);
   }
 
-  async completeItem(actor: User, protocol: Protocol): Promise<void> {
-    const workItem = await this.worksItemsRepo.findOne(protocol, actor);
-    if (!workItem) {
-      throw new Error('Work item not found!');
-    }
+  async completeItem(
+    actor: User,
+    protocol: Protocol,
+    callback: Function = () => {},
+  ): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      const workItem = await this.worksItemsRepo.findOne(protocol, actor);
+      if (!workItem) {
+        reject(new WorkItemNotFoundError('Work item not found!'));
+      }
 
-    workItem.protocol = protocol;
-    workItem.complete();
-    this.worksItemsRepo.save(workItem);
+      workItem.protocol = protocol;
+      workItem.complete();
+
+      await callback();
+      this.worksItemsRepo.save(workItem);
+      resolve();
+    });
   }
 
   private async getAvailableWorkItemForValidation(
@@ -129,3 +142,5 @@ export class WorkQueue {
     return workItem;
   }
 }
+
+export class WorkItemNotFoundError extends WorkQueueError {}
