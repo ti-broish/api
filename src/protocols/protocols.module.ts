@@ -16,6 +16,7 @@ import { WorkQueue } from './api/work-queue.service';
 import { ConfigModule } from '@nestjs/config';
 import { WorkItemsRepository } from './entities/work-items.repository';
 import { WorkItem } from './entities/work-item.entity';
+import { ProtocolRejectionsController } from './api/protocol-rejections.controller';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { WorkItem } from './entities/work-item.entity';
     ConfigModule,
   ],
   controllers: [
+    ProtocolRejectionsController,
     ProtocolsStatusesController,
     ProtocolsOriginsController,
     ProtocolsController,

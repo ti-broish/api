@@ -34,6 +34,13 @@ export enum ProtocolOrigin {
   CIK = 'cik',
 }
 
+export enum ProtocolRejectionReason {
+  INCOMPLETE_PAPER_PROTOCOL = 'incomplete-paper-protocol',
+  INCOMPLETE_PAPER_MACHINE_PROTOCOL = 'incomplete-paper-machine-protocol',
+  MALICE_INPUT = 'malice-input',
+  REJECTION_WITH_NO_NOTIFICATION = 'rejection-with-no-notification',
+}
+
 export class ProtocolData {
   constructor(
     public hasPaperBallots?: boolean,
