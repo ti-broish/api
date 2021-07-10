@@ -185,6 +185,7 @@ export class ViolationsController {
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
       'violation.process',
       UserDto.AUTHOR_READ,
+      'isPublishedUpdate',
     ]);
     this.updatePicturesUrl(dto);
 

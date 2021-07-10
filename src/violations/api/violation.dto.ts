@@ -104,7 +104,9 @@ export class ViolationDto {
     return this.author;
   }
 
-  @Expose()
+  @Expose({ groups: ['read', 'isPublishedUpdate'] })
+  @MinLength(20, { groups: ['isPublishedUpdate'] })
+  @MaxLength(2000, { groups: ['isPublishedUpdate'] })
   publishedText: string;
 
   public toEntity(): Violation {
@@ -151,6 +153,7 @@ export class ViolationDto {
         groups: ['read', ...additionalGroups],
       },
     );
+
     if (additionalGroups.includes(UserDto.AUTHOR_READ)) {
       violationDto.author = UserDto.fromEntity(violation.getAuthor(), [
         UserDto.AUTHOR_READ,
