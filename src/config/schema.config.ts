@@ -24,6 +24,7 @@ export const configSchema = Joi.object({
   CANONICAL_RESULTS: Joi.string().default(
     'https://tibroish.bg/results/parliament2021-07-11/',
   ),
+  STREAMING_TIMESTAMP: Joi.string().required(),
   STREAM_REJECT_SECRET: Joi.string().required(),
   PROTOCOLS_VALIDATION_ITERATIONS: Joi.number().default(2),
   STREAMS_WEBHOOK_USERNAME: Joi.string().required(),
