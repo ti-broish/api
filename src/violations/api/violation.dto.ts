@@ -104,6 +104,11 @@ export class ViolationDto {
     return this.author;
   }
 
+  @Expose({ groups: ['read', 'isPublishedUpdate'] })
+  @MinLength(20, { groups: ['isPublishedUpdate'] })
+  @MaxLength(2000, { groups: ['isPublishedUpdate'] })
+  publishedText: string;
+
   public toEntity(): Violation {
     const violation = plainToClass<Violation, Partial<ViolationDto>>(
       Violation,

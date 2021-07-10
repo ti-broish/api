@@ -45,6 +45,9 @@ export class Violation {
   @Column({ type: 'boolean' })
   isPublished: boolean;
 
+  @Column({ type: 'varchar' })
+  publishedText: string;
+
   @ManyToOne(() => Section, (section) => section.violations)
   section?: Section;
 
