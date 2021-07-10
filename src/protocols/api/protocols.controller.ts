@@ -176,50 +176,6 @@ export class ProtocolsController {
     return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
-  /**
-   * @deprecated Not really useful anymore to approve a protocol as-is
-   */
-  @Post(':id/approve')
-  @HttpCode(202)
-  @ApiTags('Deprecated')
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async approve(
-    @Param('id') id: string,
-    @InjectUser() user: User,
-  ): Promise<AcceptedResponse> {
-    const protocol = await this.repo.findOneOrFail(id);
-    protocol.approve(user);
-    this.workQueue.completeItem(user, protocol);
-
-    return { status: ACCEPTED_RESPONSE_STATUS };
-  }
-
-  @Post(':id/results')
-  @HttpCode(201)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) =>
-    ability.can(Action.Create, ProtocolResult),
-  )
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-      transformOptions: { groups: ['create'] },
-      groups: ['create'],
-    }),
-  )
-  async createResults(
-    @Param('id') protocolId: string,
-    @Body() resultsDto: ProtocolResultsDto,
-    @InjectUser() user: User,
-  ): Promise<ProtocolResultsDto> {
-    const protocol = await this.repo.findOneOrFail(protocolId);
-    protocol.populate(user, resultsDto.toResults());
-    await this.workQueue.completeItem(user, protocol);
-
-    return ProtocolResultsDto.fromEntity(protocol);
-  }
-
   @Post(':id/replace')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
@@ -290,19 +246,11 @@ export class ProtocolsController {
       'protocol.validate',
       'author_read',
       'get',
+      'read.results',
     ]);
-    dto.results = ProtocolResultsDto.fromEntity(protocol);
     this.updatePicturesUrl(dto);
 
     return dto;
-  }
-
-  @Get(':id/results')
-  @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, ProtocolResult))
-  async results(@Param('id') id: string): Promise<ProtocolResultsDto> {
-    return ProtocolResultsDto.fromEntity(await this.repo.findOneOrFail(id));
   }
 
   private updatePicturesUrl(protocolDto: ProtocolDto | ViolationDto) {

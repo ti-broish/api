@@ -56,48 +56,6 @@ export class ProtocolAssigneesController {
     return protocol.assignees.map((user: User) => UserDto.fromEntity(user));
   }
 
-  /**
-   * @deprecated No need to manage multiple assignees at once
-   */
-  @Put(':protocol/assignees')
-  @ApiTags('Deprecated')
-  @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-      transformOptions: { groups: ['assignee'] },
-      groups: ['assignee'],
-    }),
-  )
-  async putAssignees(
-    @Param('protocol') protocolId: string,
-    @Body(
-      new ParseArrayPipe({
-        items: UserDto,
-        transformOptions: { groups: ['assignee'] },
-        groups: ['assignee'],
-      }),
-    )
-    assigneeDtos: UserDto[],
-    @InjectUser() user: User,
-  ): Promise<AcceptedResponse> {
-    if (assigneeDtos.length > 1) {
-      throw new BadRequestException(
-        'CANNOT_ASSIGN_MORE_THAN_ONE_PERSON_TO_PROTOCOL',
-      );
-    }
-    const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
-    protocol.assign(
-      user,
-      assigneeDtos.map((userDto: UserDto) => userDto.toEntity()),
-    );
-    await this.protocolsRepo.save(protocol);
-
-    return { status: ACCEPTED_RESPONSE_STATUS };
-  }
-
   @Post(':protocol/assignees')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)

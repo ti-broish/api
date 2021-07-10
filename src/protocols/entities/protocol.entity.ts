@@ -139,14 +139,6 @@ export class Protocol {
     this.addAction(ProtocolAction.createAsssignAction(actor, assignees));
   }
 
-  populate(actor: User, results: ProtocolResult[]): void {
-    if (this.hasResults()) {
-      throw new ProtocolHasResultsException(this);
-    }
-    this.setResults(results);
-    this.addAction(ProtocolAction.createPopulateAction(actor));
-  }
-
   reject(actor: User): void {
     if (!this.isReceived()) {
       throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
