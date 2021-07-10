@@ -79,7 +79,6 @@ export class ViolationUpdate {
     actor?: User,
     payload?: Record<string, unknown>,
   ): ViolationUpdate {
-    console.log('gets here', actor);
     const update = new ViolationUpdate();
     if (actor) {
       update.actor = actor;
