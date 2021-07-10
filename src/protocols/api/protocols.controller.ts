@@ -127,6 +127,7 @@ export class ProtocolsController {
 
   @Post(':id/approve-with-violation')
   @HttpCode(200)
+  @ApiTags('Deprecated')
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   async approveNotify(
