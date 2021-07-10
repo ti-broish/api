@@ -14,10 +14,9 @@ export enum ProtocolActionType {
   SEND = 'send',
   ASSIGN = 'assign',
   REJECT = 'reject',
-  APPROVE = 'approve',
+  READY = 'ready',
   PUBLISH = 'publish',
   REPLACE = 'replace',
-  POPULATE = 'populate',
 }
 
 @Entity('protocol_actions')
@@ -62,10 +61,6 @@ export class ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.REJECT, actor);
   }
 
-  public static createApproveAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.APPROVE, actor);
-  }
-
   public static createPublishAction(actor?: User): ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.PUBLISH, actor);
   }
@@ -74,8 +69,8 @@ export class ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.REPLACE, actor);
   }
 
-  public static createPopulateAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.POPULATE, actor);
+  public static createReadyAction(actor: User): ProtocolAction {
+    return ProtocolAction.create(ProtocolActionType.READY, actor);
   }
 
   private static create(

@@ -15,7 +15,6 @@ export class IsULIDConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage?(context: ValidationArguments): string {
-    console.debug(context.object);
     return `${context.property} identifier is not an ULID`;
   }
 }

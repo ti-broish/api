@@ -32,14 +32,11 @@ export class ProtocolResult {
   @Column()
   validVotesCount: number;
 
-  @Column()
-  machineVotesCount: number;
+  @Column('jsonb')
+  machineVotes: number[];
 
   @Column()
   nonMachineVotesCount: number;
-
-  @Column()
-  invalidVotesCount: number;
 
   @CreateDateColumn()
   createdAt: Date;

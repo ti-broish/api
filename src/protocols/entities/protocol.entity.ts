@@ -6,12 +6,10 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryColumn,
 } from 'typeorm';
 import { ulid } from 'ulid';
 import { ProtocolAction, ProtocolActionType } from './protocol-action.entity';
-import { ProtocolData } from './protocol-data.entity';
 import { ProtocolResult } from './protocol-result.entity';
 import { Section } from '../../sections/entities';
 import { Picture } from '../../pictures/entities/picture.entity';
@@ -24,16 +22,34 @@ import { WorkItem } from './work-item.entity';
 
 export enum ProtocolStatus {
   RECEIVED = 'received',
+  SETTLED = 'settled',
   REJECTED = 'rejected',
   REPLACED = 'replaced',
   READY = 'ready',
-  APPROVED = 'approved',
   PUBLISHED = 'published',
 }
 
 export enum ProtocolOrigin {
   TI_BROISH = 'ti-broish',
   CIK = 'cik',
+}
+
+export class ProtocolData {
+  constructor(
+    public hasPaperBallots?: boolean,
+    public machinesCount?: number,
+    public isFinal?: boolean,
+    public votersCount?: number,
+    public additionalVotersCount?: number,
+    public votersVotedCount?: number,
+    public uncastBallots?: number,
+    public invalidAndUncastBallots?: number,
+    public totalVotesCast?: number,
+    public nonMachineVotesCount?: number,
+    public machineVotesCount?: number,
+    public invalidVotesCount?: number,
+    public validVotesCount?: number,
+  ) {}
 }
 
 @Entity('protocols')
@@ -49,10 +65,8 @@ export class Protocol {
   @Column({ type: 'varchar' })
   status: ProtocolStatus;
 
-  @OneToOne(() => ProtocolData, (data) => data.protocol, {
-    cascade: ['insert', 'update'],
-  })
-  data: ProtocolData | null;
+  @Column('jsonb')
+  metadata: ProtocolData;
 
   @ManyToOne(() => Section, (section) => section.protocols, { eager: true })
   section: Section;
@@ -123,10 +137,10 @@ export class Protocol {
   }
 
   isSettled(): boolean {
-    return this.status !== ProtocolStatus.RECEIVED;
+    return this.status === ProtocolStatus.SETTLED;
   }
 
-  setReceivedStatus(sender: User): void {
+  receive(sender: User): void {
     if (this.status) {
       throw new ProtocolStatusException(this, ProtocolStatus.RECEIVED);
     }
@@ -139,34 +153,28 @@ export class Protocol {
     this.addAction(ProtocolAction.createAsssignAction(actor, assignees));
   }
 
-  populate(actor: User, results: ProtocolResult[]): void {
-    if (this.hasResults()) {
-      throw new ProtocolHasResultsException(this);
-    }
-    this.setResults(results);
-    this.addAction(ProtocolAction.createPopulateAction(actor));
-  }
-
-  reject(actor: User): void {
-    if (!this.isReceived()) {
+  reject(actor: User): Protocol {
+    if (!this.isReceived() && !this.isSettled()) {
       throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
     }
 
-    this.status = ProtocolStatus.REJECTED;
+    const replacement = new Protocol();
+    replacement.receive(actor);
+    replacement.section = this.section;
+    replacement.pictures = this.pictures;
+    replacement.status = ProtocolStatus.REJECTED;
+    replacement.addAction(ProtocolAction.createRejectAction(actor));
+    replacement.assignees = [actor];
+    replacement.parent = this;
+
+    this.status = ProtocolStatus.SETTLED;
     this.addAction(ProtocolAction.createRejectAction(actor));
-  }
 
-  approve(actor: User): void {
-    if (!this.isReceived()) {
-      throw new ProtocolStatusException(this, ProtocolStatus.APPROVED);
-    }
-
-    this.status = ProtocolStatus.APPROVED;
-    this.addAction(ProtocolAction.createApproveAction(actor));
+    return replacement;
   }
 
   publish(): void {
-    if (this.status !== ProtocolStatus.APPROVED) {
+    if (this.status !== ProtocolStatus.READY) {
       throw new ProtocolStatusException(this, ProtocolStatus.PUBLISHED);
     }
 
@@ -174,29 +182,25 @@ export class Protocol {
     this.addAction(ProtocolAction.createPublishAction());
   }
 
-  replace(
-    actor: User,
-    replacement: Protocol,
-    replacementStatus: ProtocolStatus = ProtocolStatus.PUBLISHED,
-  ): Protocol {
+  replace(actor: User, replacement: Protocol): Protocol {
     if (
       ![
         ProtocolStatus.RECEIVED,
-        ProtocolStatus.APPROVED,
-        ProtocolStatus.READY,
+        ProtocolStatus.SETTLED,
         ProtocolStatus.PUBLISHED,
       ].includes(this.status)
     ) {
       throw new ProtocolStatusException(this, ProtocolStatus.REPLACED);
     }
-    replacement.setReceivedStatus(actor);
+    replacement.receive(actor);
     replacement.section = replacement.section || this.section;
-    replacement.status = replacementStatus;
+    replacement.status = ProtocolStatus.READY;
+    replacement.addAction(ProtocolAction.createReadyAction(actor));
     replacement.assignees = this.assignees;
+    replacement.parent = this;
 
-    this.status = ProtocolStatus.REPLACED;
-    this.parent = replacement;
-    this.addAction(ProtocolAction.createPublishAction(actor));
+    this.status = ProtocolStatus.SETTLED;
+    this.addAction(ProtocolAction.createReplaceAction(actor));
 
     return replacement;
   }
@@ -218,9 +222,8 @@ export class Protocol {
     this.results = results;
   }
 
-  private setData(data: ProtocolData): void {
-    data.protocol = this;
-    this.data = data;
+  setData(data: ProtocolData): void {
+    this.metadata = data;
   }
 
   @AfterLoad()

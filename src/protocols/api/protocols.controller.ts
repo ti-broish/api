@@ -20,24 +20,21 @@ import { paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
-import { EntityNotFoundError, SelectQueryBuilder } from 'typeorm';
+import { SelectQueryBuilder } from 'typeorm';
 import { InjectUser } from '../../auth/decorators/inject-user.decorator';
 import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { User } from '../../users/entities';
 import { ProtocolResult } from '../entities/protocol-result.entity';
-import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
+import { Protocol } from '../entities/protocol.entity';
 import {
-  EmptyPersonalProtocolQueue,
   InvalidFiltersError,
   ProtocolsRepository,
 } from '../entities/protocols.repository';
-import { ProtocolResultsDto } from './protocol-results.dto';
 import { ProtocolDto } from './protocol.dto';
 import { ProtocolFilters } from './protocols-filters.dto';
 import { ViolationDto } from '../../violations/api/violation.dto';
 import { ViolationsRepository } from '../../violations/entities/violations.repository';
-import { TownDto } from '../../sections/api/town.dto';
 import { SectionsRepository } from 'src/sections/entities/sections.repository';
 import {
   AcceptedResponse,
@@ -45,9 +42,7 @@ import {
 } from '../../utils/accepted-response';
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
-import { WorkQueue } from './work-queue.service';
-import { WorkItem } from '../entities/work-item.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { WorkItemNotFoundError, WorkQueue } from './work-queue.service';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -116,7 +111,7 @@ export class ProtocolsController {
     @InjectUser() user: User,
   ): Promise<ProtocolDto> {
     const protocol = protocolDto.toEntity();
-    protocol.setReceivedStatus(user);
+    protocol.receive(user);
 
     const savedProtocol = await this.repo.save(protocol);
     this.workQueue.addProtocolForValidation(protocol);
@@ -124,41 +119,6 @@ export class ProtocolsController {
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
-  }
-
-  @Post(':id/approve-with-violation')
-  @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async approveNotify(
-    @Param('id') id: string,
-    @Body('description') description: string,
-    @Body('town') town: TownDto,
-    @InjectUser() user: User,
-  ): Promise<AcceptedResponse> {
-    const protocol = await this.repo.findOneOrFail(id);
-
-    // approve and save protocol
-    protocol.approve(user);
-    await this.repo.save(protocol);
-
-    // build violation from protocol
-    const violationDto = ViolationDto.fromProtocol(protocol);
-    violationDto.description = description;
-    violationDto.town = protocol.section.town;
-    violationDto.town = town;
-    const violation = violationDto.toEntity();
-    violation.setReceivedStatus(user);
-
-    // save violation
-    const savedEntity = await this.violationsRepo.save(violation);
-    const savedDto = ViolationDto.fromEntity(savedEntity, [
-      'violation.process',
-      'author_read',
-    ]);
-    this.updatePicturesUrl(savedDto);
-
-    return { status: ACCEPTED_RESPONSE_STATUS };
   }
 
   @Post(':id/reject')
@@ -170,54 +130,20 @@ export class ProtocolsController {
     @InjectUser() user: User,
   ): Promise<AcceptedResponse> {
     const protocol = await this.repo.findOneOrFail(id);
-    protocol.reject(user);
-    this.workQueue.completeItem(user, protocol);
+    try {
+      await this.workQueue.completeItem(user, protocol, async () => {
+        const rejectedProtocolVersion = protocol.reject(user);
+        await this.repo.save(protocol);
+        this.repo.save(rejectedProtocolVersion);
+      });
+    } catch (err) {
+      if (err instanceof WorkItemNotFoundError) {
+        throw new BadRequestException('Work item not found');
+      }
+      throw err;
+    }
 
     return { status: ACCEPTED_RESPONSE_STATUS };
-  }
-
-  /**
-   * @deprecated Not really useful anymore to approve a protocol as-is
-   */
-  @Post(':id/approve')
-  @HttpCode(202)
-  @ApiTags('Deprecated')
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
-  async approve(
-    @Param('id') id: string,
-    @InjectUser() user: User,
-  ): Promise<AcceptedResponse> {
-    const protocol = await this.repo.findOneOrFail(id);
-    protocol.approve(user);
-    this.workQueue.completeItem(user, protocol);
-
-    return { status: ACCEPTED_RESPONSE_STATUS };
-  }
-
-  @Post(':id/results')
-  @HttpCode(201)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) =>
-    ability.can(Action.Create, ProtocolResult),
-  )
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-      transformOptions: { groups: ['create'] },
-      groups: ['create'],
-    }),
-  )
-  async createResults(
-    @Param('id') protocolId: string,
-    @Body() resultsDto: ProtocolResultsDto,
-    @InjectUser() user: User,
-  ): Promise<ProtocolResultsDto> {
-    const protocol = await this.repo.findOneOrFail(protocolId);
-    protocol.populate(user, resultsDto.toResults());
-    await this.workQueue.completeItem(user, protocol);
-
-    return ProtocolResultsDto.fromEntity(protocol);
   }
 
   @Post(':id/replace')
@@ -239,18 +165,18 @@ export class ProtocolsController {
   ): Promise<ProtocolDto> {
     const replacement = replacementDto.toEntity(['replace']);
     const prevProtocol = await this.repo.findOneOrFail(protocolId);
-    const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(
-      prevProtocol.section,
-    );
-    const nextProtocol = prevProtocol.replace(
-      user,
-      replacement,
-      hasPublishedProtocol ? ProtocolStatus.APPROVED : ProtocolStatus.PUBLISHED,
-    );
-    await this.repo.save(prevProtocol);
-    const savedProtocol = await this.repo.save(nextProtocol);
+    let savedProtocol: Protocol;
+
+    await this.workQueue.completeItem(user, prevProtocol, async () => {
+      // const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(
+      //   prevProtocol.section,
+      // );
+      const nextProtocol = prevProtocol.replace(user, replacement);
+      await this.repo.save(prevProtocol);
+      savedProtocol = await this.repo.save(nextProtocol);
+    });
+
     const savedDto = ProtocolDto.fromEntity(savedProtocol, ['read.results']);
-    savedDto.results = ProtocolResultsDto.fromEntity(savedProtocol);
     this.updatePicturesUrl(savedDto);
 
     return savedDto;
@@ -290,19 +216,11 @@ export class ProtocolsController {
       'protocol.validate',
       'author_read',
       'get',
+      'read.results',
     ]);
-    dto.results = ProtocolResultsDto.fromEntity(protocol);
     this.updatePicturesUrl(dto);
 
     return dto;
-  }
-
-  @Get(':id/results')
-  @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, ProtocolResult))
-  async results(@Param('id') id: string): Promise<ProtocolResultsDto> {
-    return ProtocolResultsDto.fromEntity(await this.repo.findOneOrFail(id));
   }
 
   private updatePicturesUrl(protocolDto: ProtocolDto | ViolationDto) {

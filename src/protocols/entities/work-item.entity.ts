@@ -127,11 +127,15 @@ export class WorkItem {
 
   unassign(actor: User): void {
     if (!this.assignee) {
-      throw new Error('Cannot unassign a work item without an assignee.');
+      throw new CannotUnassignNotAssignedItem(
+        'Cannot unassign a work item without an assignee.',
+      );
     }
 
     if (this.isComplete) {
-      throw new Error('Cannot unassign from a completed work item.');
+      throw new CannotUnassignCompletedItem(
+        'Cannot unassign from a completed work item.',
+      );
     }
 
     const assigneeToBeRemoved = this.assignee;
@@ -149,7 +153,9 @@ export class WorkItem {
 
   complete(): void {
     if (this.isComplete) {
-      throw new Error('Cannot complete an already  completed work item.');
+      throw new CannotCompleteCompletedItem(
+        'Cannot complete an already  completed work item.',
+      );
     }
 
     this.isComplete = true;
@@ -163,6 +169,9 @@ export class WorkItem {
 
 export class WorkQueueError extends Error {}
 export class CannotAddProtocolToQueue extends WorkQueueError {}
+export class CannotCompleteCompletedItem extends WorkQueueError {}
+export class CannotUnassignNotAssignedItem extends WorkQueueError {}
+export class CannotUnassignCompletedItem extends WorkQueueError {}
 const ERROR_CANNOT_ADD_PROTOCOL_TO_VALIDATION_QUEUE_IF_NOT_RECEIVED =
   'ERROR_CANNOT_ADD_PROTOCOL_TO_VALIDATION_QUEUE_IF_NOT_RECEIVED';
 const ERROR_CANNOT_ADD_PROTOCOL_TO_ARBITRATION_QUEUE_IF_NOT_SETTLED =
