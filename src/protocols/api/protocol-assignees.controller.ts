@@ -10,11 +10,7 @@ import {
   UsePipes,
   Inject,
   UseGuards,
-  Put,
-  ParseArrayPipe,
   Delete,
-  NotFoundException,
-  BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
 import { Action } from '../../casl/action.enum';
@@ -31,7 +27,6 @@ import { User } from '../../users/entities';
 import { Protocol } from '../entities/protocol.entity';
 import { ProtocolsRepository } from '../entities/protocols.repository';
 import { CaslAbilityFactory } from 'src/casl/casl-ability.factory';
-import { ApiTags } from '@nestjs/swagger';
 import { WorkQueue } from './work-queue.service';
 
 @Controller('protocols')

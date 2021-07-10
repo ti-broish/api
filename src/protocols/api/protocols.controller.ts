@@ -26,7 +26,7 @@ import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { User } from '../../users/entities';
 import { ProtocolResult } from '../entities/protocol-result.entity';
-import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
+import { Protocol } from '../entities/protocol.entity';
 import {
   InvalidFiltersError,
   ProtocolsRepository,
@@ -35,7 +35,6 @@ import { ProtocolDto } from './protocol.dto';
 import { ProtocolFilters } from './protocols-filters.dto';
 import { ViolationDto } from '../../violations/api/violation.dto';
 import { ViolationsRepository } from '../../violations/entities/violations.repository';
-import { TownDto } from '../../sections/api/town.dto';
 import { SectionsRepository } from 'src/sections/entities/sections.repository';
 import {
   AcceptedResponse,
@@ -44,9 +43,6 @@ import {
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service';
-import { WorkItem } from '../entities/work-item.entity';
-import { ApiTags } from '@nestjs/swagger';
-import { ProtocolResultDto } from './protocol-result.dto';
 
 @Controller('protocols')
 export class ProtocolsController {

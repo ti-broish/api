@@ -85,7 +85,7 @@ export class WorkQueue {
   async completeItem(
     actor: User,
     protocol: Protocol,
-    callback: Function = () => {},
+    callback?: () => Promise<void>,
   ): Promise<void> {
     return new Promise(async (resolve, reject) => {
       const workItem = await this.worksItemsRepo.findOne(protocol, actor);
@@ -96,7 +96,9 @@ export class WorkQueue {
       workItem.protocol = protocol;
       workItem.complete();
 
-      await callback();
+      if (callback) {
+        await callback();
+      }
       this.worksItemsRepo.save(workItem);
       resolve();
     });

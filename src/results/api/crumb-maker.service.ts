@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Section } from 'src/sections/entities';
 import { mapToType, NodeType } from './results.controller';

@@ -11,7 +11,6 @@ import {
 import { ProtocolActionType } from './protocol-action.entity';
 import { Protocol, ProtocolStatus } from './protocol.entity';
 import { ProtocolFilters } from '../api/protocols-filters.dto';
-import { shuffle } from 'lodash';
 
 export class InvalidFiltersError extends Error {}
 
