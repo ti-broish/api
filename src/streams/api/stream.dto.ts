@@ -51,7 +51,7 @@ export class StreamDto {
   })
   section?: SectionDto;
 
-  @Expose({ groups: [StreamDto.WATCH] })
+  @Expose({ groups: [StreamDto.WATCH, StreamDto.FEED] })
   @Type(() => StreamChunkDto)
   chunks: StreamChunkDto[] = [];
 
