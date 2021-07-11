@@ -36,28 +36,30 @@ export class SectionDto {
   public id: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', ViolationDto.FEED] })
+  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED] })
   public code: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', ViolationDto.FEED] })
+  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED] })
   public place: string;
 
-  @Expose({ groups: ['get', ViolationDto.FEED] })
+  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED] })
   votersCount: number;
 
-  @Expose({ groups: ['get', ViolationDto.FEED] })
+  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED] })
   isMachine: boolean;
 
-  @Expose({ groups: ['get', ViolationDto.FEED] })
+  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED] })
   isMobile: boolean;
 
   @Type(() => ElectionRegionDto)
-  @Expose({ groups: ['get', 'read', StreamDto.READ, ViolationDto.FEED] })
+  @Expose({
+    groups: ['get', 'read', StreamDto.READ, ViolationDto.FEED, StreamDto.FEED],
+  })
   electionRegion: ElectionRegionDto;
 
   @Type(() => TownDto)
-  @Expose({ groups: ['get', 'read', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ, StreamDto.FEED] })
   town: TownDto;
 
   @Type(() => CityRegionDto)

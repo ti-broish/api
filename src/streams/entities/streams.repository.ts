@@ -89,6 +89,31 @@ export class StreamsRepository {
     });
   }
 
+  findPublishedViolations(after?: string): Promise<Stream[]> {
+    const qb = this.repo.createQueryBuilder('stream');
+
+    qb.leftJoinAndSelect('stream.section', 'section');
+    qb.leftJoinAndSelect('section.cityRegion', 'cityRegion');
+    qb.leftJoinAndSelect('section.electionRegion', 'electionRegion');
+    qb.leftJoinAndSelect('section.town', 'town');
+    qb.innerJoinAndSelect('town.country', 'country');
+    qb.leftJoinAndSelect('town.municipality', 'municipality');
+    qb.leftJoinAndSelect('municipality.electionRegions', 'electionRegions');
+
+    qb.andWhere('stream.isCensored = false');
+    qb.andWhere('stream.isStreaming = true');
+
+    qb.limit(50);
+    qb.orderBy('stream.id', 'DESC');
+
+    // Simple cursor pagination
+    if (after) {
+      qb.andWhere('stream.id < :after', { after });
+    }
+
+    return qb.getMany();
+  }
+
   async save(stream: Stream): Promise<Stream> {
     return await this.repo.save(stream);
   }

@@ -16,8 +16,9 @@ export class StreamDto {
   public static READ = 'stream.read';
   public static CREATE = 'stream.create';
   public static WATCH = 'stream.watch';
+  public static FEED = 'stream.feed';
 
-  @Expose({ groups: [StreamDto.READ, StreamDto.WATCH] })
+  @Expose({ groups: [StreamDto.READ, StreamDto.WATCH, StreamDto.FEED] })
   id: string;
 
   @Expose({ groups: [StreamDto.WATCH] })
@@ -25,17 +26,19 @@ export class StreamDto {
 
   isAssigned: boolean;
 
-  @Expose({ groups: [StreamDto.READ] })
+  @Expose({ groups: [StreamDto.READ, StreamDto.FEED] })
   streamUrl: string;
 
-  @Expose({ groups: [StreamDto.WATCH] })
+  @Expose({ groups: [StreamDto.WATCH, StreamDto.FEED] })
   broadcastUrl: string;
 
   @Expose({ groups: [StreamDto.READ] })
   viewUrl?: string;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: [StreamDto.READ, StreamDto.CREATE, StreamDto.WATCH] })
+  @Expose({
+    groups: [StreamDto.READ, StreamDto.CREATE, StreamDto.WATCH, StreamDto.FEED],
+  })
   @Type(() => SectionDto)
   @Transform(
     ({ value: id }) =>
