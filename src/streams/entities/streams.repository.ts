@@ -100,9 +100,9 @@ export class StreamsRepository {
     qb.innerJoinAndSelect('town.country', 'country');
     qb.leftJoinAndSelect('town.municipality', 'municipality');
     qb.leftJoinAndSelect('municipality.electionRegions', 'electionRegions');
+    qb.where('chunks.isActive = false');
 
     qb.andWhere('stream.isCensored = false');
-    qb.andWhere('stream.isStreaming = true');
 
     qb.limit(10);
     qb.orderBy('stream.id', 'DESC');
