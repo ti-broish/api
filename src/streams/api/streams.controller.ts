@@ -76,7 +76,7 @@ export class StreamsController {
   @Get('feed')
   @HttpCode(200)
   async feed(@Query('after') after?: string): Promise<StreamDto[]> {
-    return (await this.streamsRepo.findPublishedViolations(after)).map(
+    return (await this.streamsRepo.findUncensoredStreams(after)).map(
       (stream: Stream) =>
         StreamDto.fromEntity(stream, [StreamDto.WATCH, StreamDto.FEED]),
     );

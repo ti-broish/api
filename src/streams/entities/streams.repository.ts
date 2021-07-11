@@ -89,7 +89,7 @@ export class StreamsRepository {
     });
   }
 
-  findPublishedViolations(after?: string): Promise<Stream[]> {
+  findUncensoredStreams(after?: string): Promise<Stream[]> {
     const qb = this.repo.createQueryBuilder('stream');
 
     qb.leftJoinAndSelect('stream.section', 'section');
