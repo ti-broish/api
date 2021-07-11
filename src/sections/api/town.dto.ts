@@ -11,7 +11,7 @@ import { IsTownExists } from './town-exists.constraint';
 @Exclude()
 export class TownDto {
   @ApiProperty()
-  @Expose({ name: 'code', groups: ['read', 'create'] })
+  @Expose({ name: 'code', groups: ['read', 'create', 'violations.feed'] })
   @IsTownExists({ groups: ['create'] })
   @IsNumber({}, { groups: ['create'] })
   @Min(1, { groups: ['create'] })
@@ -20,21 +20,21 @@ export class TownDto {
   id: number;
 
   @ApiProperty()
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', 'violations.feed'] })
   name: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', 'violations.feed'] })
   @Type(() => CityRegionDto)
   cityRegions: CityRegionDto[];
 
   @ApiProperty()
-  @Expose({ groups: ['get', 'read', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ, 'violations.feed'] })
   @Type(() => CountryDto)
   country: CountryDto;
 
   @ApiProperty()
-  @Expose({ groups: ['get', 'read', StreamDto.READ] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ, 'violations.feed'] })
   @Type(() => MunicipalityDto)
   municipality: MunicipalityDto;
 
