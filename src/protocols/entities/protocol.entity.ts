@@ -72,6 +72,9 @@ export class Protocol {
   @Column({ type: 'varchar' })
   status: ProtocolStatus;
 
+  @Column({ type: 'varchar' })
+  rejectionReason: ProtocolRejectionReason;
+
   @Column('jsonb')
   metadata: ProtocolData;
 
@@ -160,7 +163,7 @@ export class Protocol {
     this.addAction(ProtocolAction.createAsssignAction(actor, assignees));
   }
 
-  reject(actor: User): Protocol {
+  reject(actor: User, reason: ProtocolRejectionReason): Protocol {
     if (!this.isReceived() && !this.isSettled()) {
       throw new ProtocolStatusException(this, ProtocolStatus.REJECTED);
     }
@@ -173,6 +176,7 @@ export class Protocol {
     replacement.addAction(ProtocolAction.createRejectAction(actor));
     replacement.assignees = [actor];
     replacement.parent = this;
+    replacement.rejectionReason = reason;
 
     this.status = ProtocolStatus.SETTLED;
     this.addAction(ProtocolAction.createRejectAction(actor));

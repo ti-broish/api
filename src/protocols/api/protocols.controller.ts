@@ -26,7 +26,7 @@ import { PictureDto } from '../../pictures/api/picture.dto';
 import { PicturesUrlGenerator } from '../../pictures/pictures-url-generator.service';
 import { User } from '../../users/entities';
 import { ProtocolResult } from '../entities/protocol-result.entity';
-import { Protocol } from '../entities/protocol.entity';
+import { Protocol, ProtocolRejectionReason } from '../entities/protocol.entity';
 import {
   InvalidFiltersError,
   ProtocolsRepository,
@@ -127,12 +127,22 @@ export class ProtocolsController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
   async reject(
     @Param('id') id: string,
+    @Body('reason') reason: ProtocolRejectionReason,
     @InjectUser() user: User,
   ): Promise<AcceptedResponse> {
+    if (
+      !reason ||
+      Object.values(ProtocolRejectionReason).includes(reason) === false
+    ) {
+      throw new BadRequestException(
+        'You must select a valid reason for the rejection',
+      );
+    }
+
     const protocol = await this.repo.findOneOrFail(id);
     try {
       await this.workQueue.completeItem(user, protocol, async () => {
-        const rejectedProtocolVersion = protocol.reject(user);
+        const rejectedProtocolVersion = protocol.reject(user, reason);
         await this.repo.save(protocol);
         this.repo.save(rejectedProtocolVersion);
       });

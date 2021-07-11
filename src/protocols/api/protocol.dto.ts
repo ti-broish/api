@@ -10,6 +10,7 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsBoolean,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsNumber,
@@ -26,6 +27,7 @@ import { ProtocolResult } from '../entities/protocol-result.entity';
 import {
   Protocol,
   ProtocolData,
+  ProtocolRejectionReason,
   ProtocolStatus,
 } from '../entities/protocol.entity';
 import { ProtocolResultDto } from './protocol-result.dto';
@@ -83,6 +85,9 @@ export class ProtocolDto {
 
   @Expose({ groups: ['read'] })
   status: ProtocolStatus | ProtocolStatusOverride;
+
+  @Expose({ name: 'rejectionReason', groups: ['read'] })
+  reason: ProtocolRejectionReason;
 
   @Type(() => ProtocolResultDto)
   @IsNotEmpty({ groups: ['replace', 'read.results'] })
@@ -272,4 +277,14 @@ export class ProtocolDto {
 
     return protocolDto;
   }
+}
+
+@Exclude()
+export class ProtocolRejectionDto {
+  @Expose()
+  @IsNotEmpty()
+  @IsIn(Object.values(ProtocolRejectionReason), {
+    always: true,
+  })
+  reason: ProtocolRejectionReason;
 }
