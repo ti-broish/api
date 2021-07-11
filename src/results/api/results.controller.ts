@@ -588,7 +588,7 @@ export class ResultsController {
         id: section.town.code,
         name: section.town.name,
       },
-      protocol: section.protocols.map((protocol: Protocol) =>
+      protocols: section.protocols.map((protocol: Protocol) =>
         ProtocolDto.fromEntity(protocol, ['read']),
       ),
     };
