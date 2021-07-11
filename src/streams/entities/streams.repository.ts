@@ -93,10 +93,10 @@ export class StreamsRepository {
     const qb = this.repo.createQueryBuilder('stream');
 
     qb.leftJoinAndSelect('stream.chunks', 'chunks');
-    qb.leftJoinAndSelect('stream.section', 'section');
+    qb.innerJoinAndSelect('stream.section', 'section');
     qb.leftJoinAndSelect('section.cityRegion', 'cityRegion');
-    qb.leftJoinAndSelect('section.electionRegion', 'electionRegion');
-    qb.leftJoinAndSelect('section.town', 'town');
+    qb.innerJoinAndSelect('section.electionRegion', 'electionRegion');
+    qb.innerJoinAndSelect('section.town', 'town');
     qb.innerJoinAndSelect('town.country', 'country');
     qb.leftJoinAndSelect('town.municipality', 'municipality');
     qb.leftJoinAndSelect('municipality.electionRegions', 'electionRegions');
