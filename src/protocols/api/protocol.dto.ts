@@ -39,11 +39,11 @@ export enum ProtocolStatusOverride {
 @Exclude()
 export class ProtocolDto {
   @ApiProperty()
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', 'protocolInResults'] })
   id: number;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: ['read', 'create', 'replace'] })
+  @Expose({ groups: ['read', 'create', 'replace', 'protocolInResults'] })
   @Type(() => SectionDto)
   @IsOptional({ groups: ['replace'] })
   @Transform(
@@ -57,7 +57,7 @@ export class ProtocolDto {
   section: SectionDto;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: ['read', 'create', 'replace'] })
+  @Expose({ groups: ['read', 'create', 'replace', 'protocolInResults'] })
   @Transform(
     ({ value: ids }) =>
       Array.isArray(ids)
@@ -83,7 +83,7 @@ export class ProtocolDto {
   @Type(() => UserDto)
   assignees: UserDto[];
 
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', 'protocolInResults'] })
   status: ProtocolStatus | ProtocolStatusOverride;
 
   @Expose({ name: 'rejectionReason', groups: ['read'] })
@@ -97,10 +97,10 @@ export class ProtocolDto {
     each: true,
     groups: ['replace', 'read.results'],
   })
-  @Expose({ groups: ['read', 'replace', 'read.results'] })
+  @Expose({ groups: ['read', 'replace', 'read.results', 'protocolInResults'] })
   results: ProtocolResultDto[] = [];
 
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   @IsBoolean({ groups: ['replace'] })
   hasPaperBallots?: boolean;
 
@@ -109,7 +109,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(2, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   machinesCount?: number;
 
   @IsBoolean({ groups: ['replace'] })
@@ -121,7 +121,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   additionalVotersCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -129,7 +129,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   votersVotedCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -137,7 +137,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(50000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   uncastBallots?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -145,7 +145,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   invalidAndUncastBallots?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -153,7 +153,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   nonMachineVotesCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -161,7 +161,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(50000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   votersCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -169,7 +169,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   totalVotesCast?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -177,7 +177,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   validVotesCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -185,7 +185,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   invalidVotesCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -193,7 +193,7 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
   machineVotesCount?: number;
 
   private author: UserDto;
@@ -262,7 +262,10 @@ export class ProtocolDto {
       ]);
     }
 
-    if (additionalGroups.includes('read.results')) {
+    if (
+      additionalGroups.includes('read.results') ||
+      additionalGroups.includes('protocol.protocolInResults')
+    ) {
       const PROTOCOL_METADATA_KEYS = Object.getOwnPropertyNames(
         new ProtocolData(),
       );

@@ -43,6 +43,7 @@ import {
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service';
+import { Public } from 'src/auth/decorators';
 
 @Controller('protocols')
 export class ProtocolsController {

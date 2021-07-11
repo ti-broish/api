@@ -7,6 +7,8 @@ import {
   getConnection,
   In,
   Brackets,
+  createQueryBuilder,
+  QueryRunnerAlreadyReleasedError,
 } from 'typeorm';
 import { ProtocolActionType } from './protocol-action.entity';
 import { Protocol, ProtocolStatus } from './protocol.entity';
@@ -204,5 +206,18 @@ export class ProtocolsRepository {
         .andWhere('action_assign.actor_id = :assignActorId', { assignActorId })
         .getRawMany()
     ).map((protocol) => protocol.protocol_id);
+  }
+
+  async findBySection(sectionCode: string): Promise<Protocol[]> {
+    const qb = this.repo.createQueryBuilder('protocol');
+    qb.innerJoinAndSelect('protocol.section', 'section');
+    qb.leftJoinAndSelect('protocol.pictures', 'pictures');
+    qb.innerJoinAndSelect('protocol.results', 'results');
+    qb.andWhere('protocol.section = :id', { id: sectionCode });
+    qb.andWhere('protocol.status in (:...status)', {
+      status: [ProtocolStatus.READY, ProtocolStatus.PUBLISHED],
+    });
+
+    return qb.getMany();
   }
 }

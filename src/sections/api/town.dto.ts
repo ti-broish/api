@@ -11,7 +11,10 @@ import { IsTownExists } from './town-exists.constraint';
 @Exclude()
 export class TownDto {
   @ApiProperty()
-  @Expose({ name: 'code', groups: ['read', 'create', 'violations.feed'] })
+  @Expose({
+    name: 'code',
+    groups: ['read', 'create', 'violations.feed', 'protocolInResults'],
+  })
   @IsTownExists({ groups: ['create'] })
   @IsNumber({}, { groups: ['create'] })
   @Min(1, { groups: ['create'] })
@@ -20,24 +23,42 @@ export class TownDto {
   id: number;
 
   @ApiProperty()
-  @Expose({ groups: ['read', 'violations.feed', 'stream.feed'] })
+  @Expose({
+    groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'],
+  })
   name: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', 'violations.feed', 'stream.feed'] })
+  @Expose({
+    groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'],
+  })
   @Type(() => CityRegionDto)
   cityRegions: CityRegionDto[];
 
   @ApiProperty()
   @Expose({
-    groups: ['get', 'read', StreamDto.READ, 'violations.feed', 'stream.feed'],
+    groups: [
+      'get',
+      'read',
+      StreamDto.READ,
+      'violations.feed',
+      'stream.feed',
+      'protocolInResults',
+    ],
   })
   @Type(() => CountryDto)
   country: CountryDto;
 
   @ApiProperty()
   @Expose({
-    groups: ['get', 'read', StreamDto.READ, 'violations.feed', 'stream.feed'],
+    groups: [
+      'get',
+      'read',
+      StreamDto.READ,
+      'violations.feed',
+      'stream.feed',
+      'protocolInResults',
+    ],
   })
   @Type(() => MunicipalityDto)
   municipality: MunicipalityDto;

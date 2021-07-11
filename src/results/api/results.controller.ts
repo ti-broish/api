@@ -26,6 +26,9 @@ import { SectionsRepository } from 'src/sections/entities/sections.repository';
 import { StatsDto } from './stats.dto';
 import { ConfigService } from '@nestjs/config';
 import { CrumbMaker } from './crumb-maker.service';
+import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository';
+import { Protocol } from 'src/protocols/entities/protocol.entity';
+import { ProtocolDto } from 'src/protocols/api/protocol.dto';
 
 export enum NodeType {
   ELECTION = 'election',
@@ -148,6 +151,7 @@ export class ResultsController {
     private readonly countriesRepo: CountriesRepository,
     private readonly cityRegionsRepo: CityRegionsRepository,
     private readonly sectionsRepo: SectionsRepository,
+    private readonly protocolsRepo: ProtocolsRepository,
   ) {}
 
   @Get('meta.json')
@@ -572,6 +576,9 @@ export class ResultsController {
     section.results = (await this.sectionsRepo.getResultsFor(
       section.id,
     )) as number[];
+    section.protocols = (await this.protocolsRepo.findBySection(
+      section.id,
+    )) as Protocol[];
 
     return {
       ...sectionMapper(section),
@@ -582,6 +589,9 @@ export class ResultsController {
         id: section.town.code,
         name: section.town.name,
       },
+      protocols: section.protocols.map((protocol: Protocol) =>
+        ProtocolDto.fromEntity(protocol, ['protocol.protocolInResults']),
+      ),
     };
   }
 }
