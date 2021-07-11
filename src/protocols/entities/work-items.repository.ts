@@ -94,7 +94,7 @@ export class WorkItemsRepository {
       .innerJoinAndSelect('protocol.pictures', 'pictures')
       .andWhere('workItem.assignee_id = :assignee', { assignee: user.id })
       .andWhere('workItem.isComplete = false')
-      .limit(1)
+      .limit(200)
       .orderBy('workItem.id', 'ASC');
 
     return (await qb.getOneOrFail()) as WorkItem;
