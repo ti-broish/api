@@ -43,6 +43,7 @@ import {
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service';
+import { Public } from 'src/auth/decorators';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -56,6 +57,17 @@ export class ProtocolsController {
     private readonly violationsRepo: ViolationsRepository,
     private readonly workQueue: WorkQueue,
   ) {}
+
+  @Public()
+  @Get(':section')
+  @HttpCode(200)
+  async getprotocols(
+    @Param('section') sectionCode?: string,
+  ): Promise<Protocol[]> {
+    console.debug('here');
+    const protocols = this.repo.findBySection(sectionCode);
+    return protocols;
+  }
 
   @Get()
   @HttpCode(200)
