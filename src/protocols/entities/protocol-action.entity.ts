@@ -17,6 +17,7 @@ export enum ProtocolActionType {
   READY = 'ready',
   PUBLISH = 'publish',
   REPLACE = 'replace',
+  APPROVE = 'approve',
 }
 
 @Entity('protocol_actions')
@@ -61,8 +62,12 @@ export class ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.REJECT, actor);
   }
 
-  public static createPublishAction(actor?: User): ProtocolAction {
+  public static createPublishAction(actor: User): ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.PUBLISH, actor);
+  }
+
+  public static createApprovedAction(actor: User): ProtocolAction {
+    return ProtocolAction.create(ProtocolActionType.APPROVE, actor);
   }
 
   public static createReplaceAction(actor: User): ProtocolAction {

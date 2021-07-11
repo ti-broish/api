@@ -138,6 +138,10 @@ export class CaslAbilityFactory {
       can(Action.Publish, Protocol);
     }
 
+    if (user.hasRole(Role.SuperValidator) || user.hasRole(Role.Admin)) {
+      can(Action.Manage, [Protocol]);
+    }
+
     // Check for the default role so we can revoke access to people
     if (user.hasRole(Role.User)) {
       can(Action.Read, Organization);

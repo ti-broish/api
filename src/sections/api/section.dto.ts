@@ -23,6 +23,7 @@ export class SectionDto {
       ViolationDto.FEED,
       'replace',
       'protocol.protocolInResults',
+      'compare',
     ],
   })
   @IsSectionExists({ groups: ['create', StreamDto.CREATE, 'replace'] })

@@ -1,10 +1,11 @@
-import { Inject } from '@nestjs/common';
+import { forwardRef, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Action } from 'src/casl/action.enum';
 import { CaslAbilityFactory } from 'src/casl/casl-ability.factory';
+import { SectionsRepository } from 'src/sections/entities/sections.repository';
 import { User } from 'src/users/entities';
 import { EntityNotFoundError } from 'typeorm';
-import { Protocol } from '../entities/protocol.entity';
+import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
 import {
   EmptyPersonalProtocolQueue,
   ProtocolsRepository,
@@ -15,13 +16,18 @@ import {
   WorkQueueError,
 } from '../entities/work-item.entity';
 import { WorkItemsRepository } from '../entities/work-items.repository';
+import { ProtocolDto } from './protocol.dto';
 
 const PROTOCOLS_VALIDATION_ITERATIONS = 'PROTOCOLS_VALIDATION_ITERATIONS';
 
 export class WorkQueue {
   constructor(
+    @Inject(forwardRef(() => WorkItemsRepository))
     private readonly worksItemsRepo: WorkItemsRepository,
+    @Inject(forwardRef(() => ProtocolsRepository))
     private readonly protocolsRepo: ProtocolsRepository,
+    @Inject(forwardRef(() => SectionsRepository))
+    private readonly sectionsRepo: SectionsRepository,
     @Inject(ConfigService) private readonly config: ConfigService,
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
@@ -37,6 +43,14 @@ export class WorkQueue {
     await this.worksItemsRepo.save(workItems);
 
     return workItems;
+  }
+
+  async addProtocolForArbitration(protocol: Protocol): Promise<WorkItem> {
+    const workItem =
+      WorkItem.createProtocolValidationDiffArbitrageWorkItem(protocol);
+    await this.worksItemsRepo.save(workItem);
+
+    return workItem;
   }
 
   async assign(workItem: WorkItem, assignee: User): Promise<WorkItem> {
@@ -86,11 +100,12 @@ export class WorkQueue {
     actor: User,
     protocol: Protocol,
     callback?: () => Promise<void>,
-  ): Promise<void> {
+  ): Promise<WorkItem> {
     return new Promise(async (resolve, reject) => {
       const workItem = await this.worksItemsRepo.findOne(protocol, actor);
       if (!workItem) {
         reject(new WorkItemNotFoundError('Work item not found!'));
+        return;
       }
 
       workItem.protocol = protocol;
@@ -99,8 +114,9 @@ export class WorkQueue {
       if (callback) {
         await callback();
       }
-      this.worksItemsRepo.save(workItem);
-      resolve();
+      await this.worksItemsRepo.save(workItem);
+
+      resolve(workItem);
     });
   }
 
@@ -113,10 +129,19 @@ export class WorkQueue {
     }
     let workItem: WorkItem | null = null;
 
+    const allowedWorkItemTypes = [WorkItemType.PROTOCOL_VALIDATION];
+
+    if (ability.can(Action.Manage, Protocol)) {
+      allowedWorkItemTypes.push(
+        WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE,
+      );
+    }
+
     try {
-      workItem = await this.worksItemsRepo.findNextAvailableItem(user, [
-        WorkItemType.PROTOCOL_VALIDATION,
-      ]);
+      workItem = await this.worksItemsRepo.findNextAvailableItem(
+        user,
+        allowedWorkItemTypes,
+      );
     } catch (error) {
       if (
         !(error instanceof EntityNotFoundError) &&
@@ -142,6 +167,70 @@ export class WorkQueue {
     }
 
     return workItem;
+  }
+
+  async checkResolution(
+    actor: User,
+    workItem: WorkItem,
+    protocol: Protocol,
+  ): Promise<void> {
+    const ability = this.caslAbilityFactory.createForUser(actor);
+    if (
+      workItem.type === WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE &&
+      ability.can(Action.Manage, Protocol)
+    ) {
+      this.actOnResolution(actor, protocol);
+      return;
+    }
+
+    const other = await this.findOtherSettledProtocols(protocol);
+    if (!other) {
+      return;
+    }
+
+    const hasAgreement = ProtocolDto.compare(protocol, other);
+
+    if (!hasAgreement) {
+      this.addProtocolForArbitration(protocol.parent);
+
+      return;
+    }
+
+    this.actOnResolution(actor, protocol);
+  }
+
+  private async actOnResolution(
+    actor: User,
+    protocol: Protocol,
+  ): Promise<void> {
+    if (protocol.status !== ProtocolStatus.READY) {
+      // TODO: check rejection reason for follow-up notification to sender
+      return;
+    }
+
+    const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(
+      protocol.section,
+    );
+
+    if (hasPublishedProtocol) {
+      protocol.approve(actor);
+    } else {
+      protocol.publish(actor);
+    }
+
+    this.protocolsRepo.save(protocol);
+
+    // TODO: Send notification to the sender the protcol was published
+  }
+
+  private async findOtherSettledProtocols(
+    source: Protocol,
+  ): Promise<Protocol | null> {
+    if (!source.parent) {
+      return null;
+    }
+
+    return this.protocolsRepo.findSettledProtocolFromParent(source);
   }
 }
 

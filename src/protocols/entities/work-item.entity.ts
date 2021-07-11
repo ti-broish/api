@@ -22,6 +22,7 @@ export enum WorkItemOrigin {
 
 // Last rank in the queue by having the highest position
 const DEFAULT_POSITION = 0b1111111;
+export const TOP_WORK_ITEM_POSITION = 0b0000000;
 
 export const QUEUE_POSITION_TIERS = {
   HAS_NO_OTHER_VALIDATION_COMPLETED: 0b1000000,
@@ -101,7 +102,7 @@ export class WorkItem {
 
   public static createProtocolValidationDiffArbitrageWorkItem(
     protocol: Protocol,
-    queuePosition: number = DEFAULT_POSITION,
+    queuePosition: number = TOP_WORK_ITEM_POSITION,
   ): WorkItem {
     if (!protocol.isSettled()) {
       throw new CannotAddProtocolToQueue(

@@ -31,6 +31,7 @@ export class ProtocolsRepository {
     return this.repo.findOneOrFail({
       where: { id },
       relations: [
+        'parent',
         'pictures',
         'results',
         'actions',
@@ -219,5 +220,19 @@ export class ProtocolsRepository {
     });
 
     return qb.getMany();
+  }
+
+  async findSettledProtocolFromParent(child: Protocol) {
+    return this.repo
+      .createQueryBuilder('protocol')
+      .innerJoinAndSelect('protocol.section', 'section')
+      .leftJoinAndSelect('protocol.results', 'results')
+      .leftJoinAndSelect('results.party', 'party')
+      .andWhere('protocol.parent_id = :parentId', { parentId: child.parent.id })
+      .andWhere('protocol.id != :self', { self: child.id })
+      .andWhere('protocol.status IN (:...statuses)', {
+        statuses: [ProtocolStatus.READY, ProtocolStatus.REJECTED],
+      })
+      .getOne();
   }
 }

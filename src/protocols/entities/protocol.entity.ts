@@ -26,6 +26,7 @@ export enum ProtocolStatus {
   REJECTED = 'rejected',
   REPLACED = 'replaced',
   READY = 'ready',
+  APPROVED = 'approved',
   PUBLISHED = 'published',
 }
 
@@ -184,13 +185,22 @@ export class Protocol {
     return replacement;
   }
 
-  publish(): void {
+  publish(actor: User): void {
     if (this.status !== ProtocolStatus.READY) {
       throw new ProtocolStatusException(this, ProtocolStatus.PUBLISHED);
     }
 
     this.status = ProtocolStatus.PUBLISHED;
-    this.addAction(ProtocolAction.createPublishAction());
+    this.addAction(ProtocolAction.createPublishAction(actor));
+  }
+
+  approve(actor: User): void {
+    if (this.status !== ProtocolStatus.READY) {
+      throw new ProtocolStatusException(this, ProtocolStatus.APPROVED);
+    }
+
+    this.status = ProtocolStatus.APPROVED;
+    this.addAction(ProtocolAction.createApprovedAction(actor));
   }
 
   replace(actor: User, replacement: Protocol): Protocol {
