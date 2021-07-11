@@ -37,20 +37,55 @@ export class SectionDto {
   public id: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
+  @Expose({
+    groups: [
+      'read',
+      ViolationDto.FEED,
+      StreamDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
   public code: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
+  @Expose({
+    groups: [
+      'read',
+      ViolationDto.FEED,
+      StreamDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
   public place: string;
 
-  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
+  @Expose({
+    groups: [
+      'get',
+      ViolationDto.FEED,
+      StreamDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
   votersCount: number;
 
-  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
+  @Expose({
+    groups: [
+      'get',
+      ViolationDto.FEED,
+      StreamDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
   isMachine: boolean;
 
-  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
+  @Expose({
+    groups: [
+      'get',
+      ViolationDto.FEED,
+      StreamDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
   isMobile: boolean;
 
   @Type(() => ElectionRegionDto)
@@ -61,13 +96,21 @@ export class SectionDto {
       StreamDto.READ,
       ViolationDto.FEED,
       StreamDto.FEED,
-      'protocol.protocolInResults'
+      'protocol.protocolInResults',
     ],
   })
   electionRegion: ElectionRegionDto;
 
   @Type(() => TownDto)
-  @Expose({ groups: ['get', 'read', StreamDto.READ, StreamDto.FEED, 'protocol.protocolInResults'] })
+  @Expose({
+    groups: [
+      'get',
+      'read',
+      StreamDto.READ,
+      StreamDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
   town: TownDto;
 
   @Type(() => CityRegionDto)

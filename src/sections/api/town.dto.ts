@@ -23,11 +23,15 @@ export class TownDto {
   id: number;
 
   @ApiProperty()
-  @Expose({ groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'] })
+  @Expose({
+    groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'],
+  })
   name: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'] })
+  @Expose({
+    groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'],
+  })
   @Type(() => CityRegionDto)
   cityRegions: CityRegionDto[];
 
