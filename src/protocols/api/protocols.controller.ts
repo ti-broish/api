@@ -58,17 +58,6 @@ export class ProtocolsController {
     private readonly workQueue: WorkQueue,
   ) {}
 
-  @Public()
-  @Get(':section')
-  @HttpCode(200)
-  async getprotocols(
-    @Param('section') sectionCode?: string,
-  ): Promise<Protocol[]> {
-    console.debug('here');
-    const protocols = this.repo.findBySection(sectionCode);
-    return protocols;
-  }
-
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
