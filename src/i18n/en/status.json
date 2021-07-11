@@ -8,6 +8,7 @@
   "PROTOCOL_REPLACED": "Replaced",
   "PROTOCOL_READY": "Ready",
   "PROTOCOL_SETTLED": "Processed",
+  "PROTOCOL_PROCESSED": "Processed",
   "PROTOCOL_PUBLISHED": "Published",
   "BROADCAST_PENDING": "Pending",
   "BROADCAST_PROCESSING": "Processing",

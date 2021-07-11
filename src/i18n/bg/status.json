@@ -7,6 +7,7 @@
   "PROTOCOL_REJECTED": "Отхвърлен",
   "PROTOCOL_REPLACED": "Заменен",
   "PROTOCOL_READY": "Попълнен",
+  "PROTOCOL_PROCESSED": "Обработен",
   "PROTOCOL_SETTLED": "Обработен",
   "PROTOCOL_PUBLISHED": "Публикуван",
   "BROADCAST_PENDING": "В изчакване",
