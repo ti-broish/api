@@ -211,8 +211,8 @@ export class ProtocolsRepository {
   async findBySection(sectionCode: string): Promise<Protocol[]> {
     const qb = this.repo.createQueryBuilder('protocol');
     qb.innerJoinAndSelect('protocol.section', 'section');
-    qb.innerJoinAndSelect('protocol.pictures', 'pictures');
-
+    qb.leftJoinAndSelect('protocol.pictures', 'pictures');
+    qb.innerJoinAndSelect('protocol.results', 'results');
     qb.andWhere('protocol.section = :id', { id: sectionCode });
     qb.andWhere('protocol.status in (:...status)', {
       status: [ProtocolStatus.READY, ProtocolStatus.PUBLISHED],
