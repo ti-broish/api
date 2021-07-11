@@ -58,6 +58,7 @@ export class ViolationsController {
 
     const processViolation = async (violation: Violation) => {
       const dto = ViolationDto.fromEntity(violation, [
+        'read',
         'violation.process',
         'author_read',
       ]);
@@ -95,6 +96,7 @@ export class ViolationsController {
     const violation = violationDto.toEntity();
     violation.setReceivedStatus(user);
     const savedDto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'read',
       'violation.process',
       'author_read',
     ]);
@@ -120,6 +122,7 @@ export class ViolationsController {
   async get(@Param('id') id: string): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id);
     const dto = ViolationDto.fromEntity(violation, [
+      'read',
       'violation.process',
       'author_read',
     ]);
@@ -140,6 +143,7 @@ export class ViolationsController {
     violation.reject(user);
 
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'read',
       'violation.process',
       'author_read',
     ]);
@@ -160,6 +164,7 @@ export class ViolationsController {
     violation.process(user);
 
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'read',
       'violation.process',
       'author_read',
     ]);
@@ -197,6 +202,7 @@ export class ViolationsController {
 
     violation.publishedText = violationDto.publishedText;
     const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
+      'read',
       'violation.process',
       'author_read',
       'isPublishedUpdate',

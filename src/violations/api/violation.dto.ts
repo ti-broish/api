@@ -146,18 +146,18 @@ export class ViolationDto {
 
   public static fromEntity(
     violation: Violation,
-    additionalGroups: string[] = [],
+    groups: string[] = ['read'],
   ): ViolationDto {
     const violationDto = plainToClass<ViolationDto, Partial<Violation>>(
       ViolationDto,
       violation,
       {
         excludeExtraneousValues: true,
-        groups: ['read', ...additionalGroups],
+        groups,
       },
     );
 
-    if (additionalGroups.includes('author_read')) {
+    if (groups.includes('author_read')) {
       violationDto.author = UserDto.fromEntity(violation.getAuthor(), [
         'author_read',
       ]);
