@@ -22,6 +22,7 @@ export class SectionDto {
       StreamDto.WATCH,
       ViolationDto.FEED,
       'replace',
+      'protocol.protocolInResults',
     ],
   })
   @IsSectionExists({ groups: ['create', StreamDto.CREATE, 'replace'] })
@@ -36,34 +37,49 @@ export class SectionDto {
   public id: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED] })
+  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
   public code: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED] })
+  @Expose({ groups: ['read', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
   public place: string;
 
-  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED] })
+  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
   votersCount: number;
 
-  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED] })
+  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
   isMachine: boolean;
 
-  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED] })
+  @Expose({ groups: ['get', ViolationDto.FEED, StreamDto.FEED, 'protocol.protocolInResults'] })
   isMobile: boolean;
 
   @Type(() => ElectionRegionDto)
   @Expose({
-    groups: ['get', 'read', StreamDto.READ, ViolationDto.FEED, StreamDto.FEED],
+    groups: [
+      'get',
+      'read',
+      StreamDto.READ,
+      ViolationDto.FEED,
+      StreamDto.FEED,
+      'protocol.protocolInResults'
+    ],
   })
   electionRegion: ElectionRegionDto;
 
   @Type(() => TownDto)
-  @Expose({ groups: ['get', 'read', StreamDto.READ, StreamDto.FEED] })
+  @Expose({ groups: ['get', 'read', StreamDto.READ, StreamDto.FEED, 'protocol.protocolInResults'] })
   town: TownDto;
 
   @Type(() => CityRegionDto)
-  @Expose({ groups: ['get', 'read', StreamDto.READ, ViolationDto.FEED] })
+  @Expose({
+    groups: [
+      'get',
+      'read',
+      StreamDto.READ,
+      ViolationDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
   cityRegion: CityRegionDto;
 
   public static fromEntity(

@@ -579,6 +579,7 @@ export class ResultsController {
     section.protocols = (await this.protocolsRepo.findBySection(
       section.id,
     )) as Protocol[];
+
     return {
       ...sectionMapper(section),
       crumbs: this.crumbMaker.makeCrumbs([electionRegion, unit, district]),
@@ -589,7 +590,7 @@ export class ResultsController {
         name: section.town.name,
       },
       protocols: section.protocols.map((protocol: Protocol) =>
-        ProtocolDto.fromEntity(protocol, ['read']),
+        ProtocolDto.fromEntity(protocol, ['protocol.protocolInResults']),
       ),
     };
   }

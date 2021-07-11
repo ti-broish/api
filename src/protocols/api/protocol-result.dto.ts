@@ -23,10 +23,12 @@ export class ProtocolResultDto {
     groups: ['create', 'replace'],
   })
   @Type(() => PartyDto)
-  @Expose({ groups: ['read', 'create', 'replace'] })
+  @Expose({
+    groups: ['read', 'create', 'replace', 'protocol.protocolInResults'],
+  })
   party: PartyDto;
 
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', 'protocol.protocolInResults'] })
   validVotesCount: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -35,7 +37,7 @@ export class ProtocolResultDto {
   @Min(0, { each: true, groups: ['replace'] })
   @Max(5000, { each: true, groups: ['replace'] })
   @IsInt({ each: true, groups: ['replace'] })
-  @Expose({ groups: ['read', 'replace'] })
+  @Expose({ groups: ['read', 'replace', 'protocol.protocolInResults'] })
   @IsArray({ groups: ['replace'] })
   @ArrayNotEmpty({ groups: ['replace'] })
   machineVotes?: number[];
@@ -46,7 +48,7 @@ export class ProtocolResultDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
-  @Expose({ groups: ['read', 'replace'] })
+  @Expose({ groups: ['read', 'replace', 'protocol.protocolInResults'] })
   nonMachineVotesCount?: number;
 
   public toEntity(): ProtocolResult {

@@ -214,7 +214,7 @@ export class ProtocolsRepository {
     qb.innerJoinAndSelect('protocol.pictures', 'pictures');
 
     qb.andWhere('protocol.section = :id', { id: sectionCode });
-    qb.andWhere('protocol.status in (:status)', {
+    qb.andWhere('protocol.status in (:...status)', {
       status: [ProtocolStatus.READY, ProtocolStatus.PUBLISHED],
     });
 
