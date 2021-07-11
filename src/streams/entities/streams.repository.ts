@@ -103,7 +103,7 @@ export class StreamsRepository {
     qb.andWhere('stream.isCensored = false');
     qb.andWhere('stream.isStreaming = true');
 
-    qb.limit(50);
+    qb.limit(10);
     qb.orderBy('stream.id', 'DESC');
 
     // Simple cursor pagination
