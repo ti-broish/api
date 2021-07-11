@@ -33,6 +33,7 @@ export class ViolationsRepository {
     const qb = this.repo.createQueryBuilder('violation');
 
     qb.leftJoinAndSelect('violation.section', 'section');
+    qb.innerJoinAndSelect('violation.updates', 'updates');
     qb.leftJoinAndSelect('section.cityRegion', 'cityRegion');
     qb.leftJoinAndSelect('section.electionRegion', 'electionRegion');
     qb.innerJoinAndSelect('violation.town', 'town');

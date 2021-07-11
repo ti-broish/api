@@ -24,13 +24,14 @@ import { ViolationUpdateDto } from './violation-update.dto';
 import { Picture } from 'src/pictures/entities/picture.entity';
 import { Protocol } from '../../protocols/entities/protocol.entity';
 import { ProtocolDto } from '../../protocols/api/protocol.dto';
+import { ViolationUpdateType } from '../entities/violation-update.entity';
 
 @Exclude()
 export class ViolationDto {
   public static READ = 'violation.read';
   public static FEED = 'violations.feed';
 
-  @Expose({ groups: ['read'] })
+  @Expose({ groups: ['read', ViolationDto.FEED] })
   id: string;
 
   @Expose({ groups: ['read', 'create', ViolationDto.FEED] })
@@ -112,6 +113,8 @@ export class ViolationDto {
   @MaxLength(2000, { groups: ['isPublishedUpdate'] })
   publishedText: string;
 
+  createdAt: Date;
+
   public toEntity(): Violation {
     const violation = plainToClass<Violation, Partial<ViolationDto>>(
       Violation,
@@ -162,6 +165,10 @@ export class ViolationDto {
         'author_read',
       ]);
     }
+
+    violationDto.createdAt = (violation.updates || []).find(
+      (update): boolean => update.type === ViolationUpdateType.SEND,
+    )?.timestamp;
 
     return violationDto;
   }
