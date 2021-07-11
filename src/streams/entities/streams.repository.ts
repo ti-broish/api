@@ -92,6 +92,7 @@ export class StreamsRepository {
   findUncensoredStreams(after?: string): Promise<Stream[]> {
     const qb = this.repo.createQueryBuilder('stream');
 
+    qb.innerJoinAndSelect('stream.chunks', 'chunks');
     qb.leftJoinAndSelect('stream.section', 'section');
     qb.leftJoinAndSelect('section.cityRegion', 'cityRegion');
     qb.leftJoinAndSelect('section.electionRegion', 'electionRegion');
