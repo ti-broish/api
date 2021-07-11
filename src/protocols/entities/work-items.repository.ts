@@ -99,4 +99,13 @@ export class WorkItemsRepository {
 
     return (await qb.getOneOrFail()) as WorkItem;
   }
+
+  async findCompletedItems(): Promise<WorkItem[]> {
+    return this.repo
+      .createQueryBuilder('workItem')
+      .innerJoinAndSelect('workItem.protocol', 'protocol')
+      .innerJoinAndSelect('protocol.children', 'children')
+      .andWhere('workItem.isComplete = true')
+      .getMany();
+  }
 }

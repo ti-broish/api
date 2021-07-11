@@ -17,6 +17,8 @@ import { ConfigModule } from '@nestjs/config';
 import { WorkItemsRepository } from './entities/work-items.repository';
 import { WorkItem } from './entities/work-item.entity';
 import { ProtocolRejectionsController } from './api/protocol-rejections.controller';
+import { ProtocolResolutionCommand } from './commands/protocol-resolution.command';
+import { CommandModule } from 'nestjs-command';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { ProtocolRejectionsController } from './api/protocol-rejections.controll
     SectionsModule,
     ViolationsModule,
     ConfigModule,
+    CommandModule,
   ],
   controllers: [
     ProtocolRejectionsController,
@@ -35,7 +38,12 @@ import { ProtocolRejectionsController } from './api/protocol-rejections.controll
     ProtocolsController,
     ProtocolAssigneesController,
   ],
-  providers: [ProtocolsRepository, WorkQueue, WorkItemsRepository],
+  providers: [
+    ProtocolsRepository,
+    WorkQueue,
+    WorkItemsRepository,
+    ProtocolResolutionCommand,
+  ],
   exports: [ProtocolsRepository],
 })
 export class ProtocolsModule {}

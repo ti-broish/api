@@ -65,6 +65,7 @@
     "mime-types": "^2.1.30",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
+    "nestjs-command": "^2.0.0",
     "nestjs-i18n": "^8.0.11",
     "nestjs-minio": "^2.1.7",
     "nestjs-typeorm-paginate": "^2.3.2",
@@ -79,7 +80,8 @@
     "swagger-ui-express": "^4.1.6",
     "typeorm": "^0.2.34",
     "typeorm-naming-strategies": "^2.0.0",
-    "ulid": "^2.3.0"
+    "ulid": "^2.3.0",
+    "yargs": "^15.4.1"
   },
   "devDependencies": {
     "@nestjs/schematics": "^7.3.1",

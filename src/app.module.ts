@@ -26,6 +26,7 @@ import { StreamsModule } from './streams/streams.module';
 import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module';
 import { ResultsModule } from './results/results.module';
 import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor';
+import { CommandModule } from 'nestjs-command';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
     CaslModule,
     StreamsModule,
     ResultsModule,
+    CommandModule,
   ],
   providers: [
     {

@@ -124,10 +124,17 @@ export class Protocol {
   )
   workItems: WorkItem[];
 
-  @ManyToOne(() => Protocol, {
-    cascade: ['insert', 'update'],
-  })
+  @ManyToOne(
+    () => Protocol,
+    (protocol: Protocol): Protocol[] => protocol.children,
+    {
+      cascade: ['insert', 'update'],
+    },
+  )
   parent: Protocol;
+
+  @OneToMany(() => Protocol, (protocol: Protocol): Protocol => protocol.parent)
+  children: Protocol[];
 
   public getResults(): ProtocolResult[] {
     return this.results || [];
