@@ -9,8 +9,10 @@ import {
   UsePipes,
   ValidationPipe,
   Param,
+  Get,
+  Query,
 } from '@nestjs/common';
-import { InjectUser } from 'src/auth/decorators';
+import { InjectUser, Public } from 'src/auth/decorators';
 import { Action } from 'src/casl/action.enum';
 import { CheckPolicies } from 'src/casl/check-policies.decorator';
 import { PoliciesGuard } from 'src/casl/policies.guard';
@@ -68,5 +70,14 @@ export class StreamsController {
     this.streamCensor.censorStreamById(streamId);
 
     return { status: ACCEPTED_RESPONSE_STATUS };
+  }
+
+  @Public()
+  @Get('feed')
+  @HttpCode(200)
+  async feed(@Query('after') after?: string): Promise<StreamDto[]> {
+    return (await this.streamsRepo.findPublishedViolations(after)).map(
+      (stream: Stream) => StreamDto.fromEntity(stream, [StreamDto.FEED]),
+    );
   }
 }

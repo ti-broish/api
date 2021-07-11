@@ -20,21 +20,25 @@ export class TownDto {
   id: number;
 
   @ApiProperty()
-  @Expose({ groups: ['read', 'violations.feed'] })
+  @Expose({ groups: ['read', 'violations.feed', 'stream.feed'] })
   name: string;
 
   @ApiProperty()
-  @Expose({ groups: ['read', 'violations.feed'] })
+  @Expose({ groups: ['read', 'violations.feed', 'stream.feed'] })
   @Type(() => CityRegionDto)
   cityRegions: CityRegionDto[];
 
   @ApiProperty()
-  @Expose({ groups: ['get', 'read', StreamDto.READ, 'violations.feed'] })
+  @Expose({
+    groups: ['get', 'read', StreamDto.READ, 'violations.feed', 'stream.feed'],
+  })
   @Type(() => CountryDto)
   country: CountryDto;
 
   @ApiProperty()
-  @Expose({ groups: ['get', 'read', StreamDto.READ, 'violations.feed'] })
+  @Expose({
+    groups: ['get', 'read', StreamDto.READ, 'violations.feed', 'stream.feed'],
+  })
   @Type(() => MunicipalityDto)
   municipality: MunicipalityDto;
 

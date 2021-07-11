@@ -13,7 +13,7 @@ export class MunicipalityDto {
   @Expose()
   name: string;
 
-  @Expose({ groups: ['violations.feed'] })
+  @Expose({ groups: ['violations.feed', 'streams.feed'] })
   @Type(() => ElectionRegionDto)
   electionRegions?: ElectionRegionDto[];
 
