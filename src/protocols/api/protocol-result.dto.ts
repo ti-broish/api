@@ -6,6 +6,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  Max,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -32,6 +33,7 @@ export class ProtocolResultDto {
   @IsNumber({}, { each: true, groups: ['replace'] })
   @IsNotEmpty({ groups: ['replace'] })
   @Min(0, { each: true, groups: ['replace'] })
+  @Max(5000, { each: true, groups: ['replace'] })
   @IsInt({ each: true, groups: ['replace'] })
   @Expose({ groups: ['read', 'replace'] })
   @IsArray({ groups: ['replace'] })
@@ -42,6 +44,7 @@ export class ProtocolResultDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsNotEmpty({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Expose({ groups: ['read', 'replace'] })
   nonMachineVotesCount?: number;

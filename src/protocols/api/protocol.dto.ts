@@ -14,6 +14,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  Max,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -102,6 +103,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(2, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   machinesCount?: number;
 
@@ -113,6 +115,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   additionalVotersCount?: number;
 
@@ -120,6 +123,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   votersVotedCount?: number;
 
@@ -127,6 +131,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(50000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   uncastBallots?: number;
 
@@ -134,6 +139,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   invalidAndUncastBallots?: number;
 
@@ -141,6 +147,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   nonMachineVotesCount?: number;
 
@@ -148,6 +155,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(50000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   votersCount?: number;
 
@@ -155,6 +163,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   totalVotesCast?: number;
 
@@ -162,6 +171,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   validVotesCount?: number;
 
@@ -169,6 +179,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   invalidVotesCount?: number;
 
@@ -176,6 +187,7 @@ export class ProtocolDto {
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
   machineVotesCount?: number;
 
