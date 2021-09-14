@@ -11,14 +11,11 @@ import {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const config = app.get(ConfigService);
-  if (config.get<boolean>('API_DOCS', false)) {
-    setUpSwagger(app);
-  }
+  setUpSwagger(app);
   useContainerForValidator(app.select(AppModule));
   setBodySize(app);
   enableGracefulShutfown(app);
   enableCors(app);
-  await app.listen(config.get<number>('PORT', 3000));
+  await app.listen(app.get(ConfigService).get<number>('PORT', 4000));
 }
 bootstrap();
