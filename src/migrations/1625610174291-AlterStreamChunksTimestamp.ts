@@ -12,8 +12,8 @@ export class AlterStreamChunksTimestamp1625610174291
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-        alter table "stream_chunks" alter column "start_timestamp" NOT NULL;
-        alter table "stream_chunks" alter column "end_timestamp" NOT NULL;
+        alter table "stream_chunks" alter column "start_timestamp" set not null;
+        alter table "stream_chunks" alter column "end_timestamp" set not null;
       `);
   }
 }
