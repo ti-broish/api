@@ -41,8 +41,6 @@ import {
 import { BadRequestException } from '@nestjs/common';
 import { paginationRoute } from 'src/utils/pagination-route';
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service';
-import { Public } from 'src/auth/decorators';
-import { WorkItem } from '../entities/work-item.entity';
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -212,8 +210,7 @@ export class ProtocolsController {
     @InjectUser() user: User,
     @Res() response: Response,
   ): Promise<ProtocolDto | null> {
-    let workItem: WorkItem;
-    workItem = await this.workQueue.retrieveItemForValidation(user);
+    const workItem = await this.workQueue.retrieveItemForValidation(user);
 
     if (workItem === null) {
       response.status(HttpStatus.NO_CONTENT);

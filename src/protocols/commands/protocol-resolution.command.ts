@@ -1,8 +1,7 @@
-import { Command, Positional, Option } from 'nestjs-command';
+import { Command } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
 import { WorkQueue } from '../api/work-queue.service';
 import { ProtocolsRepository } from '../entities/protocols.repository';
-import { Protocol } from '../entities/protocol.entity';
 import { WorkItemsRepository } from '../entities/work-items.repository';
 import { WorkItem } from '../entities/work-item.entity';
 
