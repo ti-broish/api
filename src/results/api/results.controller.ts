@@ -131,11 +131,6 @@ const mapSections = ([place, sections]: [string, Section[]]) => ({
 const groupSectionsByPlaceReducer = (sections: Section[]) =>
   Object.entries(sections.reduce(groupByPlaceReducer, {})).map(mapSections);
 
-const isMunicipalityHidden = (municipality: Municipality) =>
-  (municipality.towns.length === 1 &&
-    municipality.towns[0].cityRegions.length > 0) ||
-  municipality.electionRegions.length > 1;
-
 const makeSegment = (items: { code: string }[]) =>
   items.reduce((acc, x) => `${acc}${x.code}`, '');
 
@@ -407,7 +402,7 @@ export class ResultsController {
     electionRegion: ElectionRegion,
     municipality: Municipality,
   ): Promise<Record<string, any>> {
-    if (isMunicipalityHidden(municipality)) {
+    if (municipality.isMunicipalityHidden()) {
       throw new NotFoundException();
     }
     municipality = await this.municipalitiesRepo.findOneWithStatsOrFail(
@@ -504,10 +499,6 @@ export class ResultsController {
     municipality: Municipality,
     district: CityRegion,
   ): Promise<Record<string, any>> {
-    const crumbs = this.crumbMaker.makeCrumbs([
-      electionRegion,
-      !isMunicipalityHidden(municipality) ? municipality : null,
-    ]);
     let nodesType: NodesType, nodes: any[];
     const sectionsStats = await this.sectionsRepo.getStatsFor(
       makeSegment([electionRegion, municipality, district]),
@@ -557,7 +548,7 @@ export class ResultsController {
         (await this.sectionsRepo.getStatsFor(
           makeSegment([electionRegion, municipality, district]),
         )) || {},
-      crumbs,
+      crumbs: this.crumbMaker.makeCrumbs([electionRegion, municipality]),
       abroad: false,
       nodesType,
       nodes,
