@@ -37,7 +37,9 @@ export class ProtocolResultDto {
   @Min(0, { each: true, groups: ['replace'] })
   @Max(5000, { each: true, groups: ['replace'] })
   @IsInt({ each: true, groups: ['replace'] })
-  @Expose({ groups: ['read', 'replace', 'protocol.protocolInResults', 'compare'] })
+  @Expose({
+    groups: ['read', 'replace', 'protocol.protocolInResults', 'compare'],
+  })
   @IsArray({ groups: ['replace'] })
   @ArrayNotEmpty({ groups: ['replace'] })
   machineVotes?: number[];
@@ -48,7 +50,9 @@ export class ProtocolResultDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
-  @Expose({ groups: ['read', 'replace', 'protocol.protocolInResults', 'compare'] })
+  @Expose({
+    groups: ['read', 'replace', 'protocol.protocolInResults', 'compare'],
+  })
   nonMachineVotesCount?: number;
 
   public toEntity(): ProtocolResult {

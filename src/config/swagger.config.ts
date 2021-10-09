@@ -5,7 +5,7 @@ export function setUpSwagger(app: INestApplication) {
   const options = new DocumentBuilder()
     .setTitle('Ti Broish API')
     .setDescription(
-      'Ti Broish API is built for clients sending in election results data in Bulgaria',
+      'Ti Broish API is built for clients sending in or receiving election results data in Bulgaria',
     )
     .addTag(
       'default',

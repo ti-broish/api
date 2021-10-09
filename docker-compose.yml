@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+  # Ti Broish NestJS API
+  ti-broish-api:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    networks:
+      - ti-broish-network
+    ports:
+      - ${PORT:-4000}:${PORT:-4000}
+      - ${DEBUG_PORT:-9229}:${DEBUG_PORT:-9229}
+    depends_on:
+      - ti-broish-db
+      - ti-broish-cache
+    links:
+      - ti-broish-db:ti-broish-db
+      - ti-broish-cache:ti-broish-cache
+
+  # Ti Broish PostgreSQL Database
+  ti-broish-db:
+    image: 'postgres:13-alpine'
+    # Make Postgres log to a file.
+    # More on logging with Postgres: https://www.postgresql.org/docs/current/static/runtime-config-logging.html
+    command: postgres -c logging_collector=on -c log_statement=all -c log_destination=stderr -c log_directory=/logs
+    restart: always
+    environment:
+      # Provide the password via an environment variable. If the variable is unset or empty, use a default password
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD:-ti-broish}
+    volumes:
+      # Persist the data between container invocations
+      - tiBroishDbVolume:/var/lib/postgresql/data
+      # Persist logs
+      - ./var/log:/logs
+      # Provide initial bootstrap SQL script to create default database
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/10-init.sql
+    networks:
+      - ti-broish-network
+    ports:
+      - '5432:5432'
+
+  # Ti Broish Redis Cache
+  ti-broish-cache:
+    image: 'redis:6-alpine'
+    networks:
+      - ti-broish-network
+    ports:
+      - '6379:6379'
+
+networks:
+  ti-broish-network:
+    driver: bridge
+
+volumes:
+  tiBroishDbVolume:

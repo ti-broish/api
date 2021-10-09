@@ -7,8 +7,6 @@ import {
   getConnection,
   In,
   Brackets,
-  createQueryBuilder,
-  QueryRunnerAlreadyReleasedError,
 } from 'typeorm';
 import { ProtocolActionType } from './protocol-action.entity';
 import { Protocol, ProtocolStatus } from './protocol.entity';

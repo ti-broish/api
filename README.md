@@ -10,32 +10,27 @@
 
 ## Първоначална инсталация
 
-Пуснете [Docker][] и изпълнете следните команди:
+Пуснете [Docker][], включете [Docker Compose 2.0][] и изпълнете следните команди:
 
 ```shell
 # Clone the project
 git clone git@github.com:ti-broish/api.git
 cd ti-broish-api
-# Install dependencies
-npm install
-# Start the database with Docker
-npm run start:dev:db
-# Build and start the app
-npm run start
+# Copy the environment configuration template
+cp .env.schema .env
+# Пуснете всички нужни контейнери - API, Postgres база данни и Redis cache
+docker compose up
 # Create the schema and seed the data
-npm run migration:run && npm run seed:run
+docker compose exec ti-broish-api npm run migration:run
+docker compose exec ti-broish-api npm run seed:run
 ```
 
 ### Конфигурация
 
+`.env.schema` файлът съдържа стойности по подразбиране и всички възможни настройки на средата,
+които приложението приема. Коригирайте всичко, което е нужно да промените в `.env`.
+
 Свалете Service account JSON файл от Firebase и го запазете като `firebase.json` в проекта.
-
-```shell
-# Copy the environment configuration template
-cp .env.schema .env
-```
-
-`.env` файлът съдържа стойности по подразбиране от шаблона.
 
 #### Генериране на Firebase JWT Token
 
@@ -93,3 +88,4 @@ npm run test:cov
 Кодът на Ти Броиш е лицензиран под [MIT лиценз](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 [docker]: https://www.docker.com/products/docker-desktop
+[docker compose 2.0]: https://docs.docker.com/compose/cli-command/#installing-compose-v2

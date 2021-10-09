@@ -21,6 +21,7 @@ export class Sections1607202587052 implements MigrationInterface {
         "place" varchar,
         "voters_count" int,
         "is_machine" boolean,
+        "machines_count" int,
         "is_mobile" boolean,
         "is_ship" boolean,
         "is_covid" boolean
