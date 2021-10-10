@@ -1,0 +1,1 @@
+CREATE DATABASE "ti_broish" ENCODING 'UTF-8';
