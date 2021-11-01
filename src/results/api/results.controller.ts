@@ -417,7 +417,6 @@ export class ResultsController {
       makeSegment([electionRegion, municipality]),
       9,
     );
-    console.log('Municipality');
     const { code, name } = municipality;
 
     return {
