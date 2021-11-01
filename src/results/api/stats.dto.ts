@@ -12,4 +12,8 @@ export class StatsDto {
   validVotes?: number = 0;
 
   invalidVotes?: number = 0;
+
+  processedViolations?: number = 0;
+
+  publishedViolations?: number = 0;
 }
