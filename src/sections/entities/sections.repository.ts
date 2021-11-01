@@ -1,11 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity';
 import { StatsDto } from 'src/results/api/stats.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Section } from './section.entity';
-import { TownsRepository } from './towns.repository';
-import { Town } from './town.entity';
 
 const objectValuesToInt = (
   obj: Record<string, string>,
@@ -18,8 +16,6 @@ export class SectionsRepository {
   constructor(
     @InjectRepository(Section)
     private repo: Repository<Section>,
-    @Inject(TownsRepository)
-    private readonly townsRepo: TownsRepository,
   ) {}
 
   findOne(id: string): Promise<Section | undefined> {
@@ -128,13 +124,6 @@ export class SectionsRepository {
     segment = '',
     groupBySegment = 0,
   ): Promise<StatsDto | Record<string, StatsDto>[]> {
-    const qb = this.townsRepo.getRepo().createQueryBuilder('towns').select([]);
-    console.log(segment);
-    var query = '';
-    segment.length == 2
-      ? (query = 'electionRegions.code LIKE ' + segment.toString() + '%')
-      : (query =
-          'municipalities.code LIKE ' + segment.slice(2, 4).toString + '%');
     const statsQueries = [
       this.qbStats(segment, groupBySegment).addSelect(
         'SUM(sections.voters_count)',
@@ -155,46 +144,13 @@ export class SectionsRepository {
         )
         .innerJoin('protocols.results', 'results'),
       this.qbStats(segment, groupBySegment)
-        .addSelect('COUNT(distinct violations.id)', 'violationsCount')
-        .leftJoin('sections.violations', 'violations')
-        .leftJoin('sections.town', 'town')
-        .innerJoin('town.violations', 'town_violations'),
+        .addSelect('COUNT(violations.id)', 'violationsCount')
+        .innerJoin('sections.violations', 'violations'),
       this.qbStats(segment, groupBySegment).addSelect(
         'COUNT(sections.id)',
         'sectionsCount',
       ),
     ];
-    const statsQueriesTown = [
-      qb
-        .addSelect('COUNT(distinct violations_town.id)', 'violationsCountTown')
-        .innerJoin('towns.municipality', 'municipalities')
-        .leftJoin('municipalities.electionRegions', 'electionRegions')
-        .innerJoin('towns.violations', 'violations_town')
-        .where('municipalities.code LIKE :segment', {
-          segment: `${segment.slice(2, 4)}%`,
-        })
-        .andWhere('violations_town.section_id IS NULL'),
-    ];
-    // console.log("Query 1")
-    // console.log(this.qbStats(segment, groupBySegment)
-    // .addSelect('COUNT(distinct violations.id)', 'violationsCount')
-    // .leftJoin('sections.violations', 'violations')
-    // .leftJoin('sections.town', 'town')
-    // .innerJoin('town.violations', 'town_violations').getQueryAndParameters())
-    // console.log(segment)
-    // console.log(groupBySegment)
-    // console.log("Query 2")
-    // console.log(qb.addSelect('COUNT(distinct violations_town.id)', 'violationsCountTown')
-    //   .leftJoinAndSelect('towns.municipality', 'municipalities')
-    //   .leftJoinAndSelect('municipalities.electionRegions', 'electionRegions')
-    //   .innerJoin('towns.violations', 'violations_town')
-    //   .where(query)
-    //   .andWhere('violations_town.section_id IS NULL').getQueryAndParameters())
-    console.log(groupBySegment);
-    console.log(segment);
-    // groupBySegment > 0 || segment.length == 9
-    //   ? statsQueries.pop()
-    //   : statsQueries
     const rawResults =
       groupBySegment > 0
         ? statsQueries.map((sqb) =>
@@ -204,23 +160,9 @@ export class SectionsRepository {
               .getRawMany(),
           )
         : statsQueries.map((sqb) => sqb.getRawOne());
-    const rawResultsTown = statsQueriesTown.map((sqb) => sqb.getRawOne());
-    const statsSections = await Promise.all(rawResults);
-    const statsTown = await Promise.all(rawResultsTown);
-    const stats = statsSections.concat(statsTown);
-    var violationsCountTown = 0;
-    stats.forEach((x) => console.log(Object.keys(x)));
-    stats.forEach((x, i) =>
-      Object.keys(x).includes('violationsCountTown')
-        ? (violationsCountTown = parseInt(x.violationsCountTown))
-        : (violationsCountTown = 0),
-    );
-    stats.forEach((x, i) =>
-      Object.keys(x).includes('violationsCount')
-        ? (x.violationsCount =
-            parseInt(x.violationsCount) + violationsCountTown)
-        : x.violatinsCount,
-    );
+
+    const stats = await Promise.all(rawResults);
+
     if (groupBySegment > 0) {
       const output = {};
 
