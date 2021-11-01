@@ -6,7 +6,6 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Section } from './section.entity';
 import { TownsRepository } from './towns.repository';
 import { Town } from './town.entity';
-import { single } from 'rxjs/operators';
 
 const objectValuesToInt = (
   obj: Record<string, string>,
@@ -184,12 +183,12 @@ export class SectionsRepository {
     const statsTown = await Promise.all(rawResultsTown);
     const stats = statsSections.concat(statsTown);
     var violationsCountTown = 0;
-    stats.forEach((x, i) =>
+    stats.forEach((x) =>
       Object.keys(x).includes('violationsCountTown')
         ? (violationsCountTown = parseInt(x.violationsCountTown))
         : (violationsCountTown = 0),
     );
-    stats.forEach((x, i) =>
+    stats.forEach((x) =>
       Object.keys(x).includes('violationsCount')
         ? (x.violationsCount =
             parseInt(x.violationsCount) + violationsCountTown)
