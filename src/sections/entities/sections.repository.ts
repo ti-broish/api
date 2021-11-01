@@ -182,7 +182,7 @@ export class SectionsRepository {
     const statsSections = await Promise.all(rawResults);
     const statsTown = await Promise.all(rawResultsTown);
     const stats = statsSections.concat(statsTown);
-    var violationsCountTown = 0;
+    let violationsCountTown = 0;
     stats.forEach((x) =>
       Object.keys(x).includes('violationsCountTown')
         ? (violationsCountTown = parseInt(x.violationsCountTown))
