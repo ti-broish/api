@@ -10,6 +10,10 @@ export class TownsRepository {
     private repo: Repository<Town>,
   ) {}
 
+  getRepo(): Repository<Town> {
+    return this.repo;
+  }
+
   findOneByCode(code: number): Promise<Town> {
     return this.repo.findOne({ code });
   }
