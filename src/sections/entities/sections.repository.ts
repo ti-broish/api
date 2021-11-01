@@ -6,6 +6,7 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Section } from './section.entity';
 import { TownsRepository } from './towns.repository';
 import { Town } from './town.entity';
+import { single } from 'rxjs/operators';
 
 const objectValuesToInt = (
   obj: Record<string, string>,
@@ -128,13 +129,6 @@ export class SectionsRepository {
     segment = '',
     groupBySegment = 0,
   ): Promise<StatsDto | Record<string, StatsDto>[]> {
-    const qb = this.townsRepo.getRepo().createQueryBuilder('towns').select([]);
-    console.log(segment);
-    var query = '';
-    segment.length == 2
-      ? (query = 'electionRegions.code LIKE ' + segment.toString() + '%')
-      : (query =
-          'municipalities.code LIKE ' + segment.slice(2, 4).toString + '%');
     const statsQueries = [
       this.qbStats(segment, groupBySegment).addSelect(
         'SUM(sections.voters_count)',
@@ -165,36 +159,14 @@ export class SectionsRepository {
       ),
     ];
     const statsQueriesTown = [
-      qb
+      this.qbStatsTownViolations(segment, groupBySegment)
         .addSelect('COUNT(distinct violations_town.id)', 'violationsCountTown')
         .innerJoin('towns.municipality', 'municipalities')
         .leftJoin('municipalities.electionRegions', 'electionRegions')
         .innerJoin('towns.violations', 'violations_town')
-        .where('municipalities.code LIKE :segment', {
-          segment: `${segment.slice(2, 4)}%`,
-        })
         .andWhere('violations_town.section_id IS NULL'),
     ];
-    // console.log("Query 1")
-    // console.log(this.qbStats(segment, groupBySegment)
-    // .addSelect('COUNT(distinct violations.id)', 'violationsCount')
-    // .leftJoin('sections.violations', 'violations')
-    // .leftJoin('sections.town', 'town')
-    // .innerJoin('town.violations', 'town_violations').getQueryAndParameters())
-    // console.log(segment)
-    // console.log(groupBySegment)
-    // console.log("Query 2")
-    // console.log(qb.addSelect('COUNT(distinct violations_town.id)', 'violationsCountTown')
-    //   .leftJoinAndSelect('towns.municipality', 'municipalities')
-    //   .leftJoinAndSelect('municipalities.electionRegions', 'electionRegions')
-    //   .innerJoin('towns.violations', 'violations_town')
-    //   .where(query)
-    //   .andWhere('violations_town.section_id IS NULL').getQueryAndParameters())
-    console.log(groupBySegment);
-    console.log(segment);
-    // groupBySegment > 0 || segment.length == 9
-    //   ? statsQueries.pop()
-    //   : statsQueries
+    segment.length == 9 ? statsQueriesTown.pop() : statsQueriesTown;
     const rawResults =
       groupBySegment > 0
         ? statsQueries.map((sqb) =>
@@ -204,12 +176,14 @@ export class SectionsRepository {
               .getRawMany(),
           )
         : statsQueries.map((sqb) => sqb.getRawOne());
-    const rawResultsTown = statsQueriesTown.map((sqb) => sqb.getRawOne());
+    const rawResultsTown =
+      groupBySegment > 0
+        ? statsQueriesTown.map((sqb) => sqb.groupBy('segment').getRawMany())
+        : statsQueriesTown.map((sqb) => sqb.getRawOne());
     const statsSections = await Promise.all(rawResults);
     const statsTown = await Promise.all(rawResultsTown);
     const stats = statsSections.concat(statsTown);
     var violationsCountTown = 0;
-    stats.forEach((x) => console.log(Object.keys(x)));
     stats.forEach((x, i) =>
       Object.keys(x).includes('violationsCountTown')
         ? (violationsCountTown = parseInt(x.violationsCountTown))
@@ -231,9 +205,15 @@ export class SectionsRepository {
             if (!output[singleStat.segment]) {
               output[singleStat.segment] = new StatsDto();
             }
-
             Object.keys(singleStat).forEach((key) => {
               output[singleStat.segment][key] = parseInt(singleStat[key], 10);
+              Object.keys(output[singleStat.segment]).includes(
+                'violationsCountTown',
+              )
+                ? (output[singleStat.segment].violationsCount =
+                    parseInt(output[singleStat.segment].violationsCount) +
+                    output[singleStat.segment].violationsCountTown)
+                : output[singleStat.segment].violationsCount;
             });
             delete singleStat.segment;
           });
@@ -260,6 +240,31 @@ export class SectionsRepository {
         'MAX(LEFT(sections.id, :groupBySegment))',
         'segment',
       ).setParameters({ groupBySegment });
+    }
+
+    return qb;
+  }
+
+  private qbStatsTownViolations(
+    segment: string,
+    groupBySegment = 0,
+  ): SelectQueryBuilder<Town> {
+    const qb = this.townsRepo.getRepo().createQueryBuilder('towns').select([]);
+    if (segment.length == 2) {
+      qb.where('electionRegions.code LIKE :segment', {
+        segment: `${segment}%`,
+      });
+    } else {
+      qb.where('municipalities.code LIKE :segment', {
+        segment: `${segment.slice(2, 4)}%`,
+      });
+    }
+
+    if (groupBySegment > 0) {
+      qb.addSelect(
+        'CONCAT(electionRegions.code,municipalities.code)',
+        'segment',
+      );
     }
 
     return qb;
