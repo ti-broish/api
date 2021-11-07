@@ -92,14 +92,14 @@ export class ViolationsRepository {
       .createQueryBuilder('sections')
       .select('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
       .addSelect('sections.town_id')
-      .where('sections.id like :segment', { segment: `${segment}%` })
+      .andWhere('sections.id like :segment', { segment: `${segment}%` })
       .groupBy('sections.town_id');
     query.innerJoin(
       '(' + subqueryViolationWithoutSection.getQuery() + ')',
       'sections',
       '"violation"."town_id" = "sections"."town_id"',
     );
-    query.where('violation.section_id IS NULL');
+    query.andWhere('violation.section_id IS NULL');
     query.orderBy('violation.id', 'DESC');
     query.setParameter('groupBySegment', groupBySegment);
     query.setParameter('segment', segment);
@@ -113,7 +113,7 @@ export class ViolationsRepository {
   ): SelectQueryBuilder<Violation> {
     const query = this.qbViolations();
     query.innerJoin('violation.section', 'sections');
-    query.where('sections.id like :segment', { segment: `${segment}%` });
+    query.andWhere('sections.id like :segment', { segment: `${segment}%` });
     query.limit(20);
     query.orderBy('violation.id', 'DESC');
 
