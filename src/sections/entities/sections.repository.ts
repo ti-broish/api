@@ -18,6 +18,10 @@ export class SectionsRepository {
     private repo: Repository<Section>,
   ) {}
 
+  getRepo() {
+    return this.repo;
+  }
+
   findOne(id: string): Promise<Section | undefined> {
     return this.repo.findOne(id);
   }
