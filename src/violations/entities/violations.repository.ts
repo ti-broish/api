@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { User } from '../../users/entities';
@@ -6,12 +6,15 @@ import { Violation } from './violation.entity';
 import { ViolationUpdateType } from './violation-update.entity';
 import { ViolationsFilters } from '../api/violations-filters.dto';
 import { TownsRepository } from 'src/sections/entities/towns.repository';
+import { SectionsRepository } from 'src/sections/entities/sections.repository';
 
 @Injectable()
 export class ViolationsRepository {
   constructor(
     @InjectRepository(Violation) private readonly repo: Repository<Violation>,
     private readonly townsRepo: TownsRepository,
+    @Inject(SectionsRepository)
+    private readonly sectionsRepo: SectionsRepository,
   ) {}
 
   findOneOrFail(id: string): Promise<Violation> {
@@ -52,6 +55,83 @@ export class ViolationsRepository {
     }
 
     return qb.getMany();
+  }
+
+  async findPublishedViolationsSegment(segment: string): Promise<Violation[]> {
+    const groupBySegment = segment.length;
+
+    const violationsWithSections = await this.queryBuilderViolationWithSections(
+      segment,
+    ).getMany();
+    let totalViolations = violationsWithSections;
+    if (segment.length != 9) {
+      const violationsWithoutSections =
+        await this.queryBuilderViolationWithoutSections(
+          segment,
+          groupBySegment,
+        ).getMany();
+      totalViolations = violationsWithSections.concat(
+        violationsWithoutSections,
+      );
+      totalViolations.sort((violation1, violation2) =>
+        violation2.id.localeCompare(violation1.id),
+      );
+    }
+
+    return totalViolations;
+  }
+
+  queryBuilderViolationWithoutSections(
+    segment: string,
+    groupBySegment: number,
+  ): SelectQueryBuilder<Violation> {
+    const query = this.qbViolations();
+    const subqueryViolationWithoutSection = this.sectionsRepo
+      .getRepo()
+      .createQueryBuilder('sections')
+      .select('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
+      .addSelect('sections.town_id')
+      .where('sections.id like :segment', { segment: `${segment}%` })
+      .groupBy('sections.town_id');
+    query.innerJoin(
+      '(' + subqueryViolationWithoutSection.getQuery() + ')',
+      'sections',
+      '"violation"."town_id" = "sections"."town_id"',
+    );
+    query.where('violation.section_id IS NULL');
+    query.orderBy('violation.id', 'DESC');
+    query.setParameter('groupBySegment', groupBySegment);
+    query.setParameter('segment', segment);
+    query.limit(20);
+
+    return query;
+  }
+
+  queryBuilderViolationWithSections(
+    segment: string,
+  ): SelectQueryBuilder<Violation> {
+    const query = this.qbViolations();
+    query.innerJoin('violation.section', 'sections');
+    query.where('sections.id like :segment', { segment: `${segment}%` });
+    query.limit(20);
+    query.orderBy('violation.id', 'DESC');
+
+    return query;
+  }
+
+  qbViolations() {
+    const qb = this.repo.createQueryBuilder('violation');
+    qb.leftJoinAndSelect('violation.section', 'section')
+      .innerJoinAndSelect('violation.updates', 'updates')
+      .leftJoinAndSelect('section.cityRegion', 'cityRegion')
+      .leftJoinAndSelect('section.electionRegion', 'electionRegion')
+      .innerJoinAndSelect('violation.town', 'town')
+      .innerJoinAndSelect('town.country', 'country')
+      .leftJoinAndSelect('town.municipality', 'municipality')
+      .leftJoinAndSelect('municipality.electionRegions', 'electionRegions')
+      .andWhere('violation.isPublished = true');
+
+    return qb;
   }
 
   queryBuilderWithFilters(

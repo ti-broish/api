@@ -13,6 +13,7 @@ import {
   Query,
   Patch,
   Request,
+  NotFoundException,
 } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { paginate, Pagination } from 'nestjs-typeorm-paginate';
@@ -110,6 +111,19 @@ export class ViolationsController {
   @HttpCode(200)
   async feed(@Query('after') after?: string): Promise<ViolationDto[]> {
     return (await this.repo.findPublishedViolations(after)).map(
+      (violation: Violation) =>
+        ViolationDto.fromEntity(violation, [ViolationDto.FEED]),
+    );
+  }
+
+  @Public()
+  @Get('feed/:segment')
+  @HttpCode(200)
+  async feedFilter(@Param('segment') segment: string): Promise<ViolationDto[]> {
+    if (!segment.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
+      throw new NotFoundException();
+    }
+    return (await this.repo.findPublishedViolationsSegment(segment)).map(
       (violation: Violation) =>
         ViolationDto.fromEntity(violation, [ViolationDto.FEED]),
     );
