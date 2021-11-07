@@ -62,7 +62,6 @@ export class ViolationsRepository {
 
     const violationsWithSections = await this.queryBuilderViolationWithSections(
       segment,
-      groupBySegment,
     ).getMany();
     let totalViolations = violationsWithSections;
     if (segment.length != 9) {
@@ -83,28 +82,16 @@ export class ViolationsRepository {
   }
 
   queryBuilderViolationWithoutSections(
-    segment,
-    groupBySegment,
+    segment: string,
+    groupBySegment: number,
   ): SelectQueryBuilder<Violation> {
-    const qb = this.repo.createQueryBuilder('violation');
-    const query = qb
-      .leftJoinAndSelect('violation.section', 'section')
-      .innerJoinAndSelect('violation.updates', 'updates')
-      .leftJoinAndSelect('section.cityRegion', 'cityRegion')
-      .leftJoinAndSelect('section.electionRegion', 'electionRegion')
-      .innerJoinAndSelect('violation.town', 'town')
-      .innerJoinAndSelect('town.country', 'country')
-      .leftJoinAndSelect('town.municipality', 'municipality')
-      .leftJoinAndSelect('municipality.electionRegions', 'electionRegions')
-      .andWhere('violation.isPublished = true');
+    const query = this.qbViolations();
     const subqueryViolationWithoutSection = this.sectionsRepo
       .getRepo()
       .createQueryBuilder('sections')
-      .select('MAX(LEFT(sections.id,' + groupBySegment + ')) as segment')
+      .select('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
       .addSelect('sections.town_id')
-      .where(
-        'LEFT(sections.id,' + groupBySegment + ')' + '=' + `'${segment}'` + '',
-      )
+      .where('sections.id like :segment', { segment: `${segment}%` })
       .groupBy('sections.town_id');
     query.innerJoin(
       '(' + subqueryViolationWithoutSection.getQuery() + ')',
@@ -113,18 +100,27 @@ export class ViolationsRepository {
     );
     query.where('violation.section_id IS NULL');
     query.orderBy('violation.id', 'DESC');
+    query.setParameter('groupBySegment', groupBySegment);
     query.limit(20);
 
     return query;
   }
 
   queryBuilderViolationWithSections(
-    segment,
-    groupBySegment,
+    segment: string,
   ): SelectQueryBuilder<Violation> {
+    const query = this.qbViolations();
+    query.innerJoin('violation.section', 'sections');
+    query.where('sections.id like :segment', { segment: `${segment}%` });
+    query.limit(20);
+    query.orderBy('violation.id', 'DESC');
+
+    return query;
+  }
+
+  qbViolations() {
     const qb = this.repo.createQueryBuilder('violation');
-    const query = qb
-      .leftJoinAndSelect('violation.section', 'section')
+    qb.leftJoinAndSelect('violation.section', 'section')
       .innerJoinAndSelect('violation.updates', 'updates')
       .leftJoinAndSelect('section.cityRegion', 'cityRegion')
       .leftJoinAndSelect('section.electionRegion', 'electionRegion')
@@ -133,14 +129,8 @@ export class ViolationsRepository {
       .leftJoinAndSelect('town.municipality', 'municipality')
       .leftJoinAndSelect('municipality.electionRegions', 'electionRegions')
       .andWhere('violation.isPublished = true');
-    query.innerJoin('violation.section', 'sections');
-    query.where(
-      'LEFT(sections.id,' + groupBySegment + ')' + '=' + `'${segment}'` + '',
-    );
-    query.limit(20);
-    query.orderBy('violation.id', 'DESC');
 
-    return query;
+    return qb;
   }
 
   queryBuilderWithFilters(
