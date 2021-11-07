@@ -47,6 +47,7 @@ export class ViolationsController {
     @Query() query: ViolationsFilters,
     @Request() req: ExpressRequest,
   ): Promise<Pagination<ViolationDto>> {
+    console.log(query);
     const pagination = await paginate(
       this.repo.queryBuilderWithFilters(query),
       {
@@ -110,6 +111,16 @@ export class ViolationsController {
   @HttpCode(200)
   async feed(@Query('after') after?: string): Promise<ViolationDto[]> {
     return (await this.repo.findPublishedViolations(after)).map(
+      (violation: Violation) =>
+        ViolationDto.fromEntity(violation, [ViolationDto.FEED]),
+    );
+  }
+
+  @Public()
+  @Get('feed/:segment')
+  @HttpCode(200)
+  async feedFilter(@Param('segment') segment: string): Promise<ViolationDto[]> {
+    return (await this.repo.findPublishedViolationsSegment2(segment)).map(
       (violation: Violation) =>
         ViolationDto.fromEntity(violation, [ViolationDto.FEED]),
     );
