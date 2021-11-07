@@ -101,6 +101,7 @@ export class ViolationsRepository {
     query.where('violation.section_id IS NULL');
     query.orderBy('violation.id', 'DESC');
     query.setParameter('groupBySegment', groupBySegment);
+    query.setParameter('segment', segment);
     query.limit(20);
 
     return query;
