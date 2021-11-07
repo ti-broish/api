@@ -57,7 +57,7 @@ export class ViolationsRepository {
     return qb.getMany();
   }
 
-  async findPublishedViolationsSegment2(segment: string): Promise<Violation[]> {
+  async findPublishedViolationsSegment(segment: string): Promise<Violation[]> {
     const groupBySegment = segment.length;
 
     const violationsWithSections = await this.queryBuilderViolationWithSections(

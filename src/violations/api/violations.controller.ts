@@ -119,7 +119,7 @@ export class ViolationsController {
   @Get('feed/:segment')
   @HttpCode(200)
   async feedFilter(@Param('segment') segment: string): Promise<ViolationDto[]> {
-    return (await this.repo.findPublishedViolationsSegment2(segment)).map(
+    return (await this.repo.findPublishedViolationsSegment(segment)).map(
       (violation: Violation) =>
         ViolationDto.fromEntity(violation, [ViolationDto.FEED]),
     );
