@@ -47,7 +47,6 @@ export class ViolationsController {
     @Query() query: ViolationsFilters,
     @Request() req: ExpressRequest,
   ): Promise<Pagination<ViolationDto>> {
-    console.log(query);
     const pagination = await paginate(
       this.repo.queryBuilderWithFilters(query),
       {
