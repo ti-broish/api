@@ -66,7 +66,7 @@ export class ViolationsRepository {
     ).getMany();
     let totalViolations = violationsWithSections;
     if (segment.length != 9) {
-      let violationsWithoutSections =
+      const violationsWithoutSections =
         await this.queryBuilderViolationWithoutSections(
           segment,
           groupBySegment,
