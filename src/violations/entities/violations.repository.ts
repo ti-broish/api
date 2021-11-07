@@ -76,6 +76,7 @@ export class ViolationsRepository {
       totalViolations.sort((violation1, violation2) =>
         violation2.id.localeCompare(violation1.id),
       );
+      totalViolations.slice(0, 20);
     }
 
     return totalViolations;
