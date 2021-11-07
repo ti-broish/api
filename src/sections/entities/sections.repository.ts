@@ -150,6 +150,14 @@ export class SectionsRepository {
         'COUNT(sections.id)',
         'sectionsCount',
       ),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(violations.id)', 'processedViolations')
+        .innerJoin('sections.violations', 'violations')
+        .where("violations.status = 'processed'"),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(violations.id)', 'publishedViolations')
+        .innerJoin('sections.violations', 'violations')
+        .where('violations.isPublished = TRUE'),
     ];
     const rawResults =
       groupBySegment > 0
