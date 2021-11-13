@@ -2,10 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity';
 import { StatsDto } from 'src/results/api/stats.dto';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { QueryBuilder, Repository, SelectQueryBuilder } from 'typeorm';
 import { Section } from './section.entity';
 import { TownsRepository } from './towns.repository';
 import { Town } from './town.entity';
+import { group } from 'yargs';
 
 const objectValuesToInt = (
   obj: Record<string, string>,
@@ -148,22 +149,18 @@ export class SectionsRepository {
         )
         .innerJoin('protocols.results', 'results'),
       this.qbStats(segment, groupBySegment)
-        .addSelect('COUNT(distinct violations.id)', 'violationsCount')
-        .leftJoin('sections.violations', 'violations')
-        .leftJoin('sections.town', 'town')
-        .innerJoin('town.violations', 'town_violations'),
+        .addSelect('COUNT(violations.id)', 'violationsCount')
+        .innerJoin('sections.violations', 'violations'),
       this.qbStats(segment, groupBySegment).addSelect(
         'COUNT(sections.id)',
         'sectionsCount',
       ),
     ];
     const statsQueriesTown = [
-      this.qbStatsTownViolations(segment, groupBySegment)
-        .addSelect('COUNT(distinct violations_town.id)', 'violationsCountTown')
-        .innerJoin('towns.municipality', 'municipalities')
-        .leftJoin('municipalities.electionRegions', 'electionRegions')
-        .innerJoin('towns.violations', 'violations_town')
-        .andWhere('violations_town.section_id IS NULL'),
+      this.qbStatsTownViolations(segment, groupBySegment).addSelect(
+        'COUNT(*)',
+        'violationsCountTown',
+      ),
     ];
     segment.length == 9 ? statsQueriesTown.pop() : statsQueriesTown;
     const rawResults =
@@ -177,7 +174,7 @@ export class SectionsRepository {
         : statsQueries.map((sqb) => sqb.getRawOne());
     const rawResultsTown =
       groupBySegment > 0
-        ? statsQueriesTown.map((sqb) => sqb.groupBy('segment').getRawMany())
+        ? statsQueriesTown.map((sqb) => sqb.getRawMany())
         : statsQueriesTown.map((sqb) => sqb.getRawOne());
     const statsSections = await Promise.all(rawResults);
     const statsTown = await Promise.all(rawResultsTown);
@@ -194,6 +191,7 @@ export class SectionsRepository {
             parseInt(x.violationsCount) + violationsCountTown)
         : x.violatinsCount,
     );
+
     if (groupBySegment > 0) {
       const output = {};
 
@@ -231,6 +229,16 @@ export class SectionsRepository {
     groupBySegment = 0,
   ): SelectQueryBuilder<Section> {
     const qb = this.repo.createQueryBuilder('sections').select([]);
+    this.qbStatsWithQueryBuilder(segment, groupBySegment, qb);
+
+    return qb;
+  }
+
+  private qbStatsWithQueryBuilder(
+    segment: string,
+    groupBySegment = 0,
+    qb: SelectQueryBuilder<Section>,
+  ): SelectQueryBuilder<Section> {
     if (segment.length > 0) {
       qb.where('sections.id like :segment', { segment: `${segment}%` });
     }
@@ -247,23 +255,23 @@ export class SectionsRepository {
   private qbStatsTownViolations(
     segment: string,
     groupBySegment = 0,
-  ): SelectQueryBuilder<Town> {
-    const qb = this.townsRepo.getRepo().createQueryBuilder('towns').select([]);
-    if (segment.length == 2) {
-      qb.where('electionRegions.code LIKE :segment', {
-        segment: `${segment}%`,
-      });
-    } else {
-      qb.where('municipalities.code LIKE :segment', {
-        segment: `${segment.slice(2, 4)}%`,
-      });
-    }
-
+  ): SelectQueryBuilder<Section> {
+    const qb = this.repo.manager.createQueryBuilder().select([]);
+    qb.from((subQuery) => {
+      return this.qbStatsWithQueryBuilder(segment, groupBySegment, subQuery)
+        .from('sections', 'sections')
+        .addSelect('sections.town_id')
+        .groupBy('sections.town_id');
+    }, 'sections')
+      .innerJoin(
+        'violations',
+        'violations',
+        '"violations"."town_id" = "sections"."town_id"',
+      )
+      .andWhere('violations.section_id IS NULL');
     if (groupBySegment > 0) {
-      qb.addSelect(
-        'CONCAT(electionRegions.code,municipalities.code)',
-        'segment',
-      );
+      qb.groupBy('sections.segment');
+      qb.addSelect('segment');
     }
 
     return qb;
