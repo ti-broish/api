@@ -30,7 +30,7 @@ export class Sections1607202587052 implements MigrationInterface {
 
     (
       await csvToSql(
-        __dirname + '/parl-2021-07-11/sections-2021-07-11.csv',
+        __dirname + '/parl-2021-11-14/sections-2021-11-14.csv',
         'sections_seed',
       )
     )
