@@ -23,6 +23,10 @@ export class SectionsRepository {
     private readonly townsRepo: TownsRepository,
   ) {}
 
+  getRepo() {
+    return this.repo;
+  }
+
   findOne(id: string): Promise<Section | undefined> {
     return this.repo.findOne(id);
   }
@@ -155,6 +159,14 @@ export class SectionsRepository {
         'COUNT(sections.id)',
         'sectionsCount',
       ),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(violations.id)', 'processedViolations')
+        .innerJoin('sections.violations', 'violations')
+        .where("violations.status = 'processed'"),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(violations.id)', 'publishedViolations')
+        .innerJoin('sections.violations', 'violations')
+        .where('violations.isPublished = TRUE'),
     ];
     const statsQueriesTown = [
       this.qbStatsTownViolations(segment, groupBySegment).addSelect(
