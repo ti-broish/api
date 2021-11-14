@@ -80,7 +80,6 @@ export class ViolationDto {
   pictures: PictureDto[];
 
   @Expose({ groups: ['read', 'create'] })
-  @MinLength(20, { groups: ['create'] })
   @MaxLength(2000, { groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
   description: string;
@@ -109,7 +108,6 @@ export class ViolationDto {
   }
 
   @Expose({ groups: ['read', 'isPublishedUpdate', ViolationDto.FEED] })
-  @MinLength(20, { groups: ['isPublishedUpdate'] })
   @MaxLength(2000, { groups: ['isPublishedUpdate'] })
   publishedText: string;
 
