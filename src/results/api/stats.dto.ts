@@ -1,5 +1,3 @@
-import { getTextOfJSDocComment } from 'typescript';
-
 export class StatsDto {
   violationsCount?: number = 0;
 
@@ -20,5 +18,4 @@ export class StatsDto {
   processedViolations?: number = 0;
 
   publishedViolations?: number = 0;
-
 }

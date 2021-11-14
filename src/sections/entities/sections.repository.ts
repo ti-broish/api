@@ -2,11 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity';
 import { StatsDto } from 'src/results/api/stats.dto';
-import { QueryBuilder, Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Section } from './section.entity';
 import { TownsRepository } from './towns.repository';
-import { Town } from './town.entity';
-import { group } from 'yargs';
 
 const objectValuesToInt = (
   obj: Record<string, string>,
