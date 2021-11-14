@@ -5,6 +5,7 @@ import { CityRegion } from './cityRegion.entity';
 import { ElectionRegion } from './electionRegion.entity';
 import { Town } from './town.entity';
 import { StatsDto } from 'src/results/api/stats.dto';
+import { Stream } from 'src/streams/entities/stream.entity';
 
 @Entity('sections')
 export class Section {
@@ -45,6 +46,9 @@ export class Section {
 
   @OneToMany(() => Violation, (violation) => violation.section)
   violations: Violation[];
+
+  @OneToMany(() => Stream, (stream) => stream.section)
+  streams: Stream[];
 
   stats: StatsDto;
   results: number[];
