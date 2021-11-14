@@ -47,8 +47,9 @@ export class ViolationsRepository {
     if (after) {
       qbUnique.andWhere('violation.id < :after', { after });
     }
+    console.log(qbUnique.getQuery());
 
-    const violationIds = (await qbUnique.getRawMany()).map((x) => x.id);
+    const violationIds = (await qbUnique.getMany()).map((x) => x.id);
 
     const qb = this.repo.createQueryBuilder('violation');
 
