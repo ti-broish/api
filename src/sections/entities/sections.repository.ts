@@ -160,11 +160,11 @@ export class SectionsRepository {
       this.qbStats(segment, groupBySegment)
         .addSelect('COUNT(violations.id)', 'processedViolations')
         .innerJoin('sections.violations', 'violations')
-        .where("violations.status = 'processed'"),
+        .andWhere("violations.status = 'processed'"),
       this.qbStats(segment, groupBySegment)
         .addSelect('COUNT(violations.id)', 'publishedViolations')
         .innerJoin('sections.violations', 'violations')
-        .where('violations.isPublished = TRUE'),
+        .andWhere('violations.isPublished = TRUE'),
     ];
     const statsQueriesTown = [
       this.qbStatsTownViolations(segment, groupBySegment).addSelect(
