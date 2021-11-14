@@ -417,7 +417,6 @@ export class ResultsController {
       makeSegment([electionRegion, municipality]),
       9,
     );
-
     const { code, name } = municipality;
 
     return {

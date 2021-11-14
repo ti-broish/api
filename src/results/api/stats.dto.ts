@@ -13,6 +13,8 @@ export class StatsDto {
 
   invalidVotes?: number = 0;
 
+  violationsCountTown?: number = 0;
+
   processedViolations?: number = 0;
 
   publishedViolations?: number = 0;

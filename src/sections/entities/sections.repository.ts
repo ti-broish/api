@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity';
 import { StatsDto } from 'src/results/api/stats.dto';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Section } from './section.entity';
+import { TownsRepository } from './towns.repository';
 
 const objectValuesToInt = (
   obj: Record<string, string>,
@@ -16,6 +17,8 @@ export class SectionsRepository {
   constructor(
     @InjectRepository(Section)
     private repo: Repository<Section>,
+    @Inject(TownsRepository)
+    private readonly townsRepo: TownsRepository,
   ) {}
 
   getRepo() {
@@ -163,6 +166,13 @@ export class SectionsRepository {
         .innerJoin('sections.violations', 'violations')
         .where('violations.isPublished = TRUE'),
     ];
+    const statsQueriesTown = [
+      this.qbStatsTownViolations(segment, groupBySegment).addSelect(
+        'COUNT(*)',
+        'violationsCountTown',
+      ),
+    ];
+    segment.length == 9 ? statsQueriesTown.pop() : statsQueriesTown;
     const rawResults =
       groupBySegment > 0
         ? statsQueries.map((sqb) =>
@@ -172,8 +182,25 @@ export class SectionsRepository {
               .getRawMany(),
           )
         : statsQueries.map((sqb) => sqb.getRawOne());
-
-    const stats = await Promise.all(rawResults);
+    const rawResultsTown =
+      groupBySegment > 0
+        ? statsQueriesTown.map((sqb) => sqb.getRawMany())
+        : statsQueriesTown.map((sqb) => sqb.getRawOne());
+    const statsSections = await Promise.all(rawResults);
+    const statsTown = await Promise.all(rawResultsTown);
+    const stats = statsSections.concat(statsTown);
+    let violationsCountTown = 0;
+    stats.forEach((x) =>
+      Object.keys(x).includes('violationsCountTown')
+        ? (violationsCountTown = parseInt(x.violationsCountTown))
+        : (violationsCountTown = 0),
+    );
+    stats.forEach((x) =>
+      Object.keys(x).includes('violationsCount')
+        ? (x.violationsCount =
+            parseInt(x.violationsCount) + violationsCountTown)
+        : x.violatinsCount,
+    );
 
     if (groupBySegment > 0) {
       const output = {};
@@ -185,9 +212,15 @@ export class SectionsRepository {
             if (!output[singleStat.segment]) {
               output[singleStat.segment] = new StatsDto();
             }
-
             Object.keys(singleStat).forEach((key) => {
               output[singleStat.segment][key] = parseInt(singleStat[key], 10);
+              Object.keys(output[singleStat.segment]).includes(
+                'violationsCountTown',
+              )
+                ? (output[singleStat.segment].violationsCount =
+                    parseInt(output[singleStat.segment].violationsCount) +
+                    output[singleStat.segment].violationsCountTown)
+                : output[singleStat.segment].violationsCount;
             });
             delete singleStat.segment;
           });
@@ -206,6 +239,16 @@ export class SectionsRepository {
     groupBySegment = 0,
   ): SelectQueryBuilder<Section> {
     const qb = this.repo.createQueryBuilder('sections').select([]);
+    this.qbStatsWithQueryBuilder(segment, groupBySegment, qb);
+
+    return qb;
+  }
+
+  private qbStatsWithQueryBuilder(
+    segment: string,
+    groupBySegment = 0,
+    qb: SelectQueryBuilder<Section>,
+  ): SelectQueryBuilder<Section> {
     if (segment.length > 0) {
       qb.where('sections.id like :segment', { segment: `${segment}%` });
     }
@@ -214,6 +257,31 @@ export class SectionsRepository {
         'MAX(LEFT(sections.id, :groupBySegment))',
         'segment',
       ).setParameters({ groupBySegment });
+    }
+
+    return qb;
+  }
+
+  private qbStatsTownViolations(
+    segment: string,
+    groupBySegment = 0,
+  ): SelectQueryBuilder<Section> {
+    const qb = this.repo.manager.createQueryBuilder().select([]);
+    qb.from((subQuery) => {
+      return this.qbStatsWithQueryBuilder(segment, groupBySegment, subQuery)
+        .from('sections', 'sections')
+        .addSelect('sections.town_id')
+        .groupBy('sections.town_id');
+    }, 'sections')
+      .innerJoin(
+        'violations',
+        'violations',
+        '"violations"."town_id" = "sections"."town_id"',
+      )
+      .andWhere('violations.section_id IS NULL');
+    if (groupBySegment > 0) {
+      qb.groupBy('sections.segment');
+      qb.addSelect('segment');
     }
 
     return qb;
