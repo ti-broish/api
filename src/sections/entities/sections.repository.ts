@@ -167,7 +167,8 @@ export class SectionsRepository {
         .andWhere('violations.isPublished = TRUE'),
       this.qbStats(segment, groupBySegment)
         .addSelect('COUNT(streams.id)', 'streamsCount')
-        .innerJoin('sections.streams', 'streams'),
+        .innerJoin('sections.streams', 'streams')
+        .innerJoin('streams.chunks', 'chunks'),
       this.qbStats(segment, groupBySegment)
         .addSelect('COUNT(streams.id)', 'streamsCountActive')
         .innerJoin('sections.streams', 'streams')
