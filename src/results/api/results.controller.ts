@@ -7,6 +7,7 @@ import {
   UsePipes,
   NotFoundException,
   Header,
+  Inject,
 } from '@nestjs/common';
 import { Public } from 'src/auth/decorators';
 import {
@@ -29,6 +30,8 @@ import { CrumbMaker } from './crumb-maker.service';
 import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
 import { ProtocolDto } from 'src/protocols/api/protocol.dto';
+import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
+import { PictureDto } from 'src/pictures/api/picture.dto';
 
 export enum NodeType {
   ELECTION = 'election',
@@ -147,6 +150,8 @@ export class ResultsController {
     private readonly cityRegionsRepo: CityRegionsRepository,
     private readonly sectionsRepo: SectionsRepository,
     private readonly protocolsRepo: ProtocolsRepository,
+    @Inject(PicturesUrlGenerator)
+    private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
 
   @Get('meta.json')
@@ -580,8 +585,18 @@ export class ResultsController {
         name: section.town.name,
       },
       protocols: section.protocols.map((protocol: Protocol) =>
-        ProtocolDto.fromEntity(protocol, ['protocol.protocolInResults']),
+        this.updatePicturesUrl(
+          ProtocolDto.fromEntity(protocol, ['protocol.protocolInResults']),
+        ),
       ),
     };
+  }
+  private updatePicturesUrl(protocolDto: ProtocolDto) {
+    protocolDto.pictures.forEach(
+      (picture: PictureDto) =>
+        (picture.url = this.urlGenerator.getUrl(picture)),
+    );
+
+    return protocolDto;
   }
 }
