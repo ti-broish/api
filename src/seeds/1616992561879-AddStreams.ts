@@ -5,7 +5,7 @@ import { csvToSql } from 'src/utils/csvToSql';
 
 export class AddStreams1616992561879 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const streamsInput = __dirname + '/parl-2021-07-11/streams.csv';
+    const streamsInput = __dirname + '/parl-2021-11-14/streams.csv';
     if (!fs.existsSync(streamsInput)) {
       console.warn(`Missing streams seed input: ${streamsInput}`);
       return;
