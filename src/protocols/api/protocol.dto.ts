@@ -39,12 +39,18 @@ export enum ProtocolStatusOverride {
 @Exclude()
 export class ProtocolDto {
   @ApiProperty()
-  @Expose({ groups: ['read', 'protocolInResults'] })
+  @Expose({ groups: ['read', 'protocol.protocolInResults'] })
   id: number;
 
   @ApiProperty({ required: true })
   @Expose({
-    groups: ['read', 'create', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'create',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   @Type(() => SectionDto)
   @IsOptional({ groups: ['replace'] })
@@ -59,7 +65,9 @@ export class ProtocolDto {
   section: SectionDto;
 
   @ApiProperty({ required: true })
-  @Expose({ groups: ['read', 'create', 'replace', 'protocolInResults'] })
+  @Expose({
+    groups: ['read', 'create', 'replace', 'protocol.protocolInResults'],
+  })
   @Transform(
     ({ value: ids }) =>
       Array.isArray(ids)
@@ -85,7 +93,7 @@ export class ProtocolDto {
   @Type(() => UserDto)
   assignees: UserDto[];
 
-  @Expose({ groups: ['read', 'protocolInResults'] })
+  @Expose({ groups: ['read', 'protocol.protocolInResults'] })
   status: ProtocolStatus | ProtocolStatusOverride;
 
   @Expose({ name: 'rejectionReason', groups: ['read', 'compare'] })
@@ -100,12 +108,24 @@ export class ProtocolDto {
     groups: ['replace', 'read.results'],
   })
   @Expose({
-    groups: ['read', 'replace', 'read.results', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'replace',
+      'read.results',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   results: ProtocolResultDto[] = [];
 
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   @IsBoolean({ groups: ['replace'] })
   hasPaperBallots?: boolean;
@@ -115,7 +135,9 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(2, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
+  @Expose({
+    groups: ['read', 'read.results', 'replace', 'protocol.protocolInResults'],
+  })
   machinesCount?: number;
 
   @IsBoolean({ groups: ['replace', 'compare'] })
@@ -127,7 +149,9 @@ export class ProtocolDto {
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
-  @Expose({ groups: ['read', 'read.results', 'replace', 'protocolInResults'] })
+  @Expose({
+    groups: ['read', 'read.results', 'replace', 'protocol.protocolInResults'],
+  })
   additionalVotersCount?: number;
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -136,7 +160,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   votersVotedCount?: number;
 
@@ -146,7 +176,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(50000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   uncastBallots?: number;
 
@@ -156,7 +192,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   invalidAndUncastBallots?: number;
 
@@ -166,7 +208,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   nonMachineVotesCount?: number;
 
@@ -176,7 +224,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(50000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   votersCount?: number;
 
@@ -186,7 +240,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   totalVotesCast?: number;
 
@@ -196,7 +256,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   validVotesCount?: number;
 
@@ -206,7 +272,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   invalidVotesCount?: number;
 
@@ -216,7 +288,13 @@ export class ProtocolDto {
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocolInResults', 'compare'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   machineVotesCount?: number;
 

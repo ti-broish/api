@@ -13,7 +13,7 @@ export class TownDto {
   @ApiProperty()
   @Expose({
     name: 'code',
-    groups: ['read', 'create', 'violations.feed', 'protocolInResults'],
+    groups: ['read', 'create', 'violations.feed', 'protocol.protocolInResults'],
   })
   @IsTownExists({ groups: ['create'] })
   @IsNumber({}, { groups: ['create'] })
@@ -24,13 +24,23 @@ export class TownDto {
 
   @ApiProperty()
   @Expose({
-    groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'],
+    groups: [
+      'read',
+      'violations.feed',
+      'stream.feed',
+      'protocol.protocolInResults',
+    ],
   })
   name: string;
 
   @ApiProperty()
   @Expose({
-    groups: ['read', 'violations.feed', 'stream.feed', 'protocolInResults'],
+    groups: [
+      'read',
+      'violations.feed',
+      'stream.feed',
+      'protocol.protocolInResults',
+    ],
   })
   @Type(() => CityRegionDto)
   cityRegions: CityRegionDto[];
@@ -43,7 +53,7 @@ export class TownDto {
       StreamDto.READ,
       'violations.feed',
       'stream.feed',
-      'protocolInResults',
+      'protocol.protocolInResults',
     ],
   })
   @Type(() => CountryDto)
@@ -57,7 +67,7 @@ export class TownDto {
       StreamDto.READ,
       'violations.feed',
       'stream.feed',
-      'protocolInResults',
+      'protocol.protocolInResults',
     ],
   })
   @Type(() => MunicipalityDto)
