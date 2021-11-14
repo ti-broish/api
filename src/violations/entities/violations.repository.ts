@@ -69,16 +69,14 @@ export class ViolationsRepository {
   async findPublishedViolationsSegment(segment: string): Promise<Violation[]> {
     const groupBySegment = segment.length;
 
-    const violationsWithSections = await this.queryBuilderViolationWithSections(
-      segment,
+    const violationsWithSections = await (
+      await this.queryBuilderViolationWithSections(segment)
     ).getMany();
     let totalViolations = violationsWithSections;
     if (segment.length != 9) {
-      const violationsWithoutSections =
-        await this.queryBuilderViolationWithoutSections(
-          segment,
-          groupBySegment,
-        ).getMany();
+      const violationsWithoutSections = await (
+        await this.queryBuilderViolationWithoutSections(segment, groupBySegment)
+      ).getMany();
       totalViolations = violationsWithSections.concat(
         violationsWithoutSections,
       );
@@ -91,17 +89,17 @@ export class ViolationsRepository {
     return totalViolations;
   }
 
-  queryBuilderViolationWithoutSections(
+  private async queryBuilderViolationWithoutSections(
     segment: string,
     groupBySegment: number,
-  ): SelectQueryBuilder<Violation> {
-    const query = this.qbViolations();
+  ): Promise<SelectQueryBuilder<Violation>> {
+    const query = await this.qbViolations();
     const subqueryViolationWithoutSection = this.sectionsRepo
       .getRepo()
       .createQueryBuilder('sections')
       .select('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
       .addSelect('sections.town_id')
-      .andWhere('sections.id like :segment', { segment: `${segment}%` })
+      .andWhere('sections.id like :segment')
       .groupBy('sections.town_id');
     query.innerJoin(
       '(' + subqueryViolationWithoutSection.getQuery() + ')',
@@ -111,16 +109,15 @@ export class ViolationsRepository {
     query.andWhere('violation.section_id IS NULL');
     query.orderBy('violation.id', 'DESC');
     query.setParameter('groupBySegment', groupBySegment);
-    query.setParameter('segment', segment);
+    query.setParameter('segment', `${segment}%`);
     query.limit(20);
-
     return query;
   }
 
-  queryBuilderViolationWithSections(
+  private async queryBuilderViolationWithSections(
     segment: string,
-  ): SelectQueryBuilder<Violation> {
-    const query = this.qbViolations();
+  ): Promise<SelectQueryBuilder<Violation>> {
+    const query = await this.qbViolations();
     query.innerJoin('violation.section', 'sections');
     query.andWhere('sections.id like :segment', { segment: `${segment}%` });
     query.limit(20);
@@ -129,7 +126,8 @@ export class ViolationsRepository {
     return query;
   }
 
-  qbViolations() {
+  private async qbViolations() {
+    const violationIds = await this.getUniqueIds();
     const qb = this.repo.createQueryBuilder('violation');
     qb.leftJoinAndSelect('violation.section', 'section')
       .innerJoinAndSelect('violation.updates', 'updates')
@@ -139,9 +137,26 @@ export class ViolationsRepository {
       .innerJoinAndSelect('town.country', 'country')
       .leftJoinAndSelect('town.municipality', 'municipality')
       .leftJoinAndSelect('municipality.electionRegions', 'electionRegions')
+      .andWhereInIds(violationIds)
       .andWhere('violation.isPublished = true');
 
     return qb;
+  }
+
+  private async getUniqueIds() {
+    const qbUnique = this.repo.createQueryBuilder('violation');
+    qbUnique.select('violation.id');
+    qbUnique.innerJoin('violation.updates', 'updates');
+    qbUnique.innerJoin('violation.town', 'town');
+    qbUnique.innerJoin('town.country', 'country');
+    qbUnique.andWhere('violation.isPublished = true');
+    qbUnique.limit(20);
+    qbUnique.groupBy('violation.id');
+    qbUnique.orderBy('violation.id', 'DESC');
+
+    const violationIds = (await qbUnique.getMany()).map((x) => x.id);
+
+    return violationIds;
   }
 
   queryBuilderWithFilters(
