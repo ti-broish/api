@@ -32,7 +32,24 @@ export class ViolationsRepository {
     });
   }
 
-  findPublishedViolations(after?: string): Promise<Violation[]> {
+  async findPublishedViolations(after?: string): Promise<Violation[]> {
+    const qbUnique = this.repo.createQueryBuilder('violation');
+    qbUnique.select('violation.id');
+    qbUnique.innerJoin('violation.updates', 'updates');
+    qbUnique.innerJoin('violation.town', 'town');
+    qbUnique.innerJoin('town.country', 'country');
+    qbUnique.andWhere('violation.isPublished = true');
+    qbUnique.limit(50);
+    qbUnique.groupBy('violation.id');
+    qbUnique.orderBy('violation.id', 'DESC');
+
+    // Simple cursor pagination
+    if (after) {
+      qbUnique.andWhere('violation.id < :after', { after });
+    }
+
+    const violationIds = (await qbUnique.getRawMany()).map((x) => x.id);
+
     const qb = this.repo.createQueryBuilder('violation');
 
     qb.leftJoinAndSelect('violation.section', 'section');
@@ -43,16 +60,8 @@ export class ViolationsRepository {
     qb.innerJoinAndSelect('town.country', 'country');
     qb.leftJoinAndSelect('town.municipality', 'municipality');
     qb.leftJoinAndSelect('municipality.electionRegions', 'electionRegions');
-
-    qb.andWhere('violation.isPublished = true');
-
-    qb.limit(50);
+    qb.andWhereInIds(violationIds);
     qb.orderBy('violation.id', 'DESC');
-
-    // Simple cursor pagination
-    if (after) {
-      qb.andWhere('violation.id < :after', { after });
-    }
 
     return qb.getMany();
   }
