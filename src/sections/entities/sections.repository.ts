@@ -173,12 +173,7 @@ export class SectionsRepository {
         .innerJoin('sections.streams', 'streams')
         .andWhere('streams.isStreaming = TRUE'),
     ];
-    console.log(
-      this.qbStats(segment, groupBySegment)
-        .addSelect('COUNT(streams.id)', 'streamsCount')
-        .innerJoin('sections.streams', 'streams')
-        .getQueryAndParameters(),
-    );
+
     const statsQueriesTown = [
       this.qbStatsTownViolations(segment, groupBySegment).addSelect(
         'COUNT(*)',
