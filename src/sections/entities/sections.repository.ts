@@ -165,7 +165,15 @@ export class SectionsRepository {
         .addSelect('COUNT(violations.id)', 'publishedViolations')
         .innerJoin('sections.violations', 'violations')
         .andWhere('violations.isPublished = TRUE'),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(streams.id)', 'streamsCount')
+        .innerJoin('sections.streams', 'streams'),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(streams.id)', 'streamsCountActive')
+        .innerJoin('sections.streams', 'streams')
+        .andWhere('streams.isStreaming = TRUE'),
     ];
+
     const statsQueriesTown = [
       this.qbStatsTownViolations(segment, groupBySegment).addSelect(
         'COUNT(*)',
