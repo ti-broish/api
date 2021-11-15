@@ -175,11 +175,10 @@ export class WorkQueue {
     protocol: Protocol,
   ): Promise<void> {
     const ability = this.caslAbilityFactory.createForUser(actor);
-    if (
-      workItem.type === WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE &&
-      ability.can(Action.Manage, Protocol)
-    ) {
-      this.actOnResolution(actor, protocol);
+    if (workItem.type === WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE) {
+      if (ability.can(Action.Manage, Protocol)) {
+        this.actOnResolution(actor, protocol);
+      }
       return;
     }
 
