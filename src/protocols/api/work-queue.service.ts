@@ -182,6 +182,10 @@ export class WorkQueue {
       return;
     }
 
+    // Allow a single resolution per protocol
+    this.actOnResolution(actor, protocol);
+    return;
+
     const other = await this.findOtherSettledProtocols(protocol);
     if (!other) {
       return;
