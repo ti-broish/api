@@ -100,7 +100,7 @@ export class ProtocolDto {
   reason: ProtocolRejectionReason;
 
   @Type(() => ProtocolResultDto)
-  @IsNotEmpty({ groups: ['replace', 'read.results'] })
+  @IsNotEmpty({ groups: ['read.results'] })
   @IsArray({ groups: ['replace', 'read.results'] })
   @ArrayNotEmpty({ groups: ['replace', 'read.results'] })
   @ValidateNested({
