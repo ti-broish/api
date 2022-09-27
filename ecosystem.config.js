@@ -47,7 +47,7 @@ module.exports = {
       path: '/var/www/ti-broish-api-20210711',
       'post-setup': 'ls -la',
       'post-deploy':
-        'npm ci --only=production --ignore-scripts --no-audit' +
+        'npm ci --only=production --ignore-scripts --no-audit --loglevel=error' +
         ' && npm run build' +
         ' && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/' +
         ' && NODE_ENV=production npm run migration:run' +
@@ -61,7 +61,7 @@ module.exports = {
       path: '/var/www/ti-broish-api-staging',
       'post-setup': 'ls -la',
       'post-deploy':
-        'npm ci --only=production --ignore-scripts --no-audit' +
+        'npm ci --only=production --ignore-scripts --no-audit --loglevel=error' +
         ' && npm run build' +
         ' && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/' +
         ' && NODE_ENV=production npm run migration:run' +
