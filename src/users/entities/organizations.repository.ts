@@ -11,7 +11,11 @@ export class OrganizationsRepository {
   ) {}
 
   findAll(): Promise<Organization[]> {
-    return this.repo.find();
+    return this.repo.find({
+      where: {
+        isHidden: false,
+      },
+    });
   }
 
   findOne(id: number): Promise<Organization | null> {

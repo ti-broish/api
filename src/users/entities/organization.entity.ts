@@ -24,4 +24,7 @@ export class Organization {
 
   @Column()
   sortPosition: number;
+
+  @Column()
+  isHidden: boolean;
 }
