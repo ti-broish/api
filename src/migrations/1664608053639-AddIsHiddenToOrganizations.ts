@@ -5,13 +5,13 @@ export class AddIsHiddenToOrganizations1664608053639
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-        alter table "organizatons" add column "is_hidden" boolean;
+        alter table "organizations" add column "is_hidden" boolean;
       `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
-        alter table "organizatons" drop column "is_hidden";
+        alter table "organizations" drop column "is_hidden";
       `);
   }
 }
