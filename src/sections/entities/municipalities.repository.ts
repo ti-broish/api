@@ -37,17 +37,7 @@ export class MunicipalitiesRepository {
       .innerJoinAndSelect('municipalities.towns', 'towns')
       .innerJoinAndSelect('towns.sections', 'sections')
       .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
-      .leftJoin('cityRegions.sections', 'cityRegionSections')
       .andWhere('municipalities.id = :id', { id: municipality.id })
-      .andWhere(
-        new Brackets((qba) => {
-          qba.andWhere(
-            'cityRegionSections.election_region_id = :electionRegionId',
-            { electionRegionId: electionRegion.id },
-          );
-          qba.orWhere('cityRegionSections.id is null');
-        }),
-      )
       .getOneOrFail();
   }
 
