@@ -187,21 +187,30 @@ export class ViolationsRepository {
     }
 
     if (filters.electionRegion) {
-      qb.innerJoin('town.municipality', 'municipality');
-      qb.innerJoin('municipality.electionRegions', 'electionRegions');
-      qb.andWhere('electionRegions.code = :electionRegion', {
-        electionRegion: filters.electionRegion,
-      });
-
-      if (filters.municipality) {
-        qb.andWhere('municipality.code = :municipality', {
-          municipality: filters.municipality,
+      if (filters.electionRegion != '32') {
+        qb.innerJoin('town.municipality', 'municipality');
+        qb.innerJoin('municipality.electionRegions', 'electionRegions');
+        qb.andWhere('electionRegions.code = :electionRegion', {
+          electionRegion: filters.electionRegion,
         });
-      }
 
-      if (filters.country) {
+        if (filters.municipality) {
+          qb.andWhere('municipality.code = :municipality', {
+            municipality: filters.municipality,
+          });
+        }
+
+        if (filters.country) {
+          qb.innerJoin('town.country', 'country');
+          qb.andWhere('country.code = :country', { country: filters.country });
+        }
+      } else {
         qb.innerJoin('town.country', 'country');
-        qb.andWhere('country.code = :country', { country: filters.country });
+        if (filters.country) {
+          qb.andWhere('country.code = :country', { country: filters.country });
+        } else {
+          qb.andWhere('country.code != :country', { country: '00' });
+        }
       }
 
       if (filters.town) {
