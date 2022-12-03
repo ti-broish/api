@@ -62,7 +62,7 @@
     "lodash": "^4.17.21",
     "lodash.merge": "^4.6.2",
     "mime-types": "^2.1.30",
-    "moment": "^2.29.1",
+    "moment": "^2.29.4",
     "moment-timezone": "^0.5.33",
     "nestjs-command": "^2.0.0",
     "nestjs-i18n": "^8.0.11",
