@@ -16,7 +16,6 @@ export class ProtocolResolutionCommand {
   @Command({
     command: 'protocols:resolve',
     describe: 'Check resolution for processed protocols in the work queue',
-    autoExit: true, // defaults to `true`, but you can use `false` if you need more control
   })
   async create() {
     const workItems = await this.workItemsRepository.findCompletedItems();
