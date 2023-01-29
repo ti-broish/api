@@ -11,12 +11,12 @@ export class BroadcastsRepository {
     private repo: Repository<Broadcast>,
   ) {}
 
-  findOne(id: number): Promise<Broadcast | undefined> {
-    return this.repo.findOne(id);
+  findOne(id: string): Promise<Broadcast | undefined> {
+    return this.repo.findOneBy({ id });
   }
 
-  findOneOrFail(id: number): Promise<Broadcast> {
-    return this.repo.findOneOrFail(id);
+  findOneOrFail(id: string): Promise<Broadcast> {
+    return this.repo.findOneByOrFail({ id });
   }
 
   findAll(): Promise<Broadcast[]> {
@@ -48,7 +48,10 @@ export class BroadcastsRepository {
   save(broadcast: Broadcast): Promise<Broadcast> {
     this.repo.save(broadcast);
 
-    return this.repo.findOne(broadcast.id, {
+    return this.repo.findOne({
+      where: {
+        id: broadcast.id,
+      },
       relations: ['users'],
     });
   }

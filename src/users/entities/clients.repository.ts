@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from '.';
 import { Client } from './client.entity';
 
@@ -24,15 +24,10 @@ export class ClientsRepository {
       join: {
         alias: 'client',
       },
-      where: (qb: SelectQueryBuilder<Client>): void => {
-        qb.innerJoinAndSelect(
-          'client.owner',
-          'owner',
-          'owner.id in (:...owners)',
-          {
-            owners: owners.map((owner) => owner.id),
-          },
-        );
+      where: {
+        owner: {
+          id: In(owners.map((owner) => owner.id)),
+        },
       },
     });
   }

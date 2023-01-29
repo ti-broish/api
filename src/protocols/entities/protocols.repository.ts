@@ -56,12 +56,13 @@ export class ProtocolsRepository {
           action: 'protocol.actions',
         },
       },
-      where: (qb: SelectQueryBuilder<Protocol>) => {
-        qb.where('action.actor_id = :authorId', {
-          authorId: author.id,
-        }).andWhere('action.action = :action', {
+      where: {
+        actions: {
+          actor: {
+            id: author.id,
+          },
           action: ProtocolActionType.SEND,
-        });
+        },
       },
     });
   }

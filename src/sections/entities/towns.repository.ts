@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Town } from './town.entity';
 
 @Injectable()
@@ -15,11 +15,11 @@ export class TownsRepository {
   }
 
   findOneByCode(code: number): Promise<Town> {
-    return this.repo.findOne({ code });
+    return this.repo.findOneBy({ code });
   }
 
   findOneByCodeOrFail(code: number): Promise<Town> {
-    return this.repo.findOneOrFail({ code });
+    return this.repo.findOneByOrFail({ code });
   }
 
   filter(
@@ -31,41 +31,35 @@ export class TownsRepository {
       throw new Error('Cannot filter towns by just election region!');
     }
 
-    return this.repo.find({
-      join: {
-        alias: 'town',
-        innerJoin: {
-          country: 'town.country',
-        },
-      },
-      where: (qb: SelectQueryBuilder<Town>) => {
-        qb.where('country.code = :countryCode', { countryCode });
+    const qb = this.repo.createQueryBuilder('town');
+    qb.innerJoin('town.country', 'country');
+    qb.andWhere('country.code = :countryCode', { countryCode });
 
-        if (electionRegionCode && municipalityCode) {
-          qb.innerJoin(
-            'town.municipality',
-            'municipality',
-            'municipality.code = :municipalityCode',
-            { municipalityCode },
-          );
-          qb.innerJoin(
-            'municipality.electionRegions',
-            'electionRegions',
-            'electionRegions.code = :electionRegionCode',
-            { electionRegionCode },
-          );
-          qb.innerJoin(
-            'town.sections',
-            'section',
-            'section.election_region_id = electionRegions.id',
-          );
-          qb.leftJoinAndSelect(
-            'town.cityRegions',
-            'city_region',
-            'city_region.id = "section"."city_region_id"',
-          );
-        }
-      },
-    });
+    if (electionRegionCode && municipalityCode) {
+      qb.innerJoin(
+        'town.municipality',
+        'municipality',
+        'municipality.code = :municipalityCode',
+        { municipalityCode },
+      );
+      qb.innerJoin(
+        'municipality.electionRegions',
+        'electionRegions',
+        'electionRegions.code = :electionRegionCode',
+        { electionRegionCode },
+      );
+      qb.innerJoin(
+        'town.sections',
+        'section',
+        'section.election_region_id = electionRegions.id',
+      );
+      qb.leftJoinAndSelect(
+        'town.cityRegions',
+        'city_region',
+        'city_region.id = "section"."city_region_id"',
+      );
+    }
+
+    return qb.getMany();
   }
 }

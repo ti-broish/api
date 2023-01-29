@@ -21,6 +21,6 @@ export class PartiesRepository {
   }
 
   findOne(id: number): Promise<Party> {
-    return this.repo.findOne(id);
+    return this.repo.findOneBy({ id });
   }
 }
