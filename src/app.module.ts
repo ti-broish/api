@@ -17,7 +17,7 @@ import { BroadcastsModule } from './broadcasts/broadcasts.module';
 import { CaslModule } from './casl/casl.module';
 import {
   AcceptLanguageResolver,
-  I18nJsonParser,
+  I18nJsonLoader,
   I18nModule,
 } from 'nestjs-i18n';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
@@ -33,14 +33,14 @@ import { CommandModule } from 'nestjs-command';
     ConfigModule.forRoot({ validationSchema: configSchema }),
     I18nModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
+      useFactory: async (configService: ConfigService) => ({
         fallbackLanguage: configService.get('NEST_LANG', 'bg'),
-        parserOptions: {
+        loaderOptions: {
           path: path.join(__dirname, '/i18n/'),
         },
-        resolvers: [AcceptLanguageResolver],
       }),
-      parser: I18nJsonParser,
+      resolvers: [AcceptLanguageResolver],
+      loader: I18nJsonLoader,
       inject: [ConfigService],
     }),
     FirebaseAdminCoreModule.forRootAsync({
