@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Raw, Repository } from 'typeorm';
-import * as dateformat from 'dateformat';
-import * as slugify from '@sindresorhus/slugify';
+import dateformat from 'dateformat';
+import slugify from '@sindresorhus/slugify';
 import { Post } from './post.entity';
 
 @Injectable()

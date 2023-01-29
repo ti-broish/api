@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Raw, Repository } from 'typeorm';
-import * as dateformat from 'dateformat';
+import dateformat from 'dateformat';
 import { Broadcast, BroadcastStatus } from './broadcast.entity';
 
 @Injectable()
