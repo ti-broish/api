@@ -55,7 +55,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "csv-parse": "^5.3.3",
-    "dateformat": "^4.6.3",
+    "dateformat": "^5.0.3",
     "firebase": "^9.16.0",
     "firebase-admin": "^11.5.0",
     "install": "^0.13.0",
