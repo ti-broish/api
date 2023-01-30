@@ -26,15 +26,16 @@ export class SectionsRepository {
   }
 
   findOne(id: string): Promise<Section | undefined> {
-    return this.repo.findOne(id);
+    return this.repo.findOneBy({ id });
   }
 
   findOneOrFail(id: string): Promise<Section> {
-    return this.repo.findOneOrFail(id, { relations: ['town'] });
+    return this.repo.findOneOrFail({ where: { id }, relations: ['town'] });
   }
 
   findOneOrFailWithRelations(id: string): Promise<Section> {
-    return this.repo.findOneOrFail(id, {
+    return this.repo.findOneOrFail({
+      where: { id },
       relations: [
         'town',
         'town.country',
@@ -49,30 +50,25 @@ export class SectionsRepository {
     townCode: number,
     cityRegionCode?: string,
   ): Promise<Section[]> {
-    return this.repo.find({
+    const findOptions: { [k: string]: any } = {
       join: {
         alias: 'section',
         innerJoinAndSelect: {
           town: 'section.town',
         },
       },
-      where: (qb: SelectQueryBuilder<Section>): void => {
-        qb.andWhere('town.code = :townCode', { townCode });
-
-        if (cityRegionCode) {
-          qb.innerJoinAndSelect(
-            'section.cityRegion',
-            'cityRegion',
-            'cityRegion.code = :cityRegionCode',
-            { cityRegionCode },
-          );
-        }
+      where: {
+        town: {
+          code: townCode,
+        },
       },
-    });
-  }
+    };
 
-  findByElectionRegion(electionRegion: string): Promise<Section[]> {
-    return this.repo.find({ where: { electionRegion } });
+    if (cityRegionCode) {
+      findOptions.join.innerJoinAndSelect.cityRegion = 'section.cityRegion';
+    }
+
+    return this.repo.find(findOptions);
   }
 
   async hasPublishedProtocol(section: Section): Promise<boolean> {

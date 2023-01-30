@@ -1,5 +1,5 @@
-import * as parse from 'csv-parse';
-import * as transform from 'stream-transform';
+import { parse } from 'csv-parse';
+import { transform } from 'stream-transform';
 import { createReadStream, PathLike } from 'fs';
 import { Stream } from 'stream';
 

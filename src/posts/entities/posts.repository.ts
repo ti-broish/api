@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Raw, Repository } from 'typeorm';
-import * as dateformat from 'dateformat';
-import * as slugify from '@sindresorhus/slugify';
+import dateformat from 'dateformat';
+import slugify from '@sindresorhus/slugify';
 import { Post } from './post.entity';
 
 @Injectable()
@@ -12,12 +12,12 @@ export class PostsRepository {
     private repo: Repository<Post>,
   ) {}
 
-  findOne(id: number): Promise<Post | undefined> {
-    return this.repo.findOne(id);
+  findOne(id: string): Promise<Post | undefined> {
+    return this.repo.findOneBy({ id });
   }
 
-  findOneOrFail(id: number): Promise<Post> {
-    return this.repo.findOneOrFail(id);
+  findOneOrFail(id: string): Promise<Post> {
+    return this.repo.findOneByOrFail({ id });
   }
 
   findAll(): Promise<Post[]> {

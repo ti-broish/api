@@ -1,16 +1,24 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { NestMinioModule } from 'nestjs-minio';
+import { NestMinioModule, NestMinioOptions } from 'nestjs-minio';
 import { FilesUrlGenerator, FilesUploader } from '.';
-import { MinioConfigService } from './minio.config';
 
 @Module({
   imports: [
     ConfigModule,
     NestMinioModule.registerAsync({
+      isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
-      useClass: MinioConfigService,
+      useFactory: async (configService: ConfigService) =>
+        ({
+          endPoint: configService.get('MINIO_ENDPOINT'),
+          port: configService.get('MINIO_PORT'),
+          useSSL: true,
+          accessKey: configService.get('MINIO_ACCESS_KEY'),
+          secretKey: configService.get('MINIO_SECRET_KEY'),
+          password: configService.get('DATABASE_PASSWORD'),
+        } as NestMinioOptions),
     }),
   ],
   providers: [FilesUploader, FilesUrlGenerator],

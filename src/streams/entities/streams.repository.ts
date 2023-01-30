@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Stream } from './stream.entity';
 
 @Injectable()
@@ -73,8 +73,10 @@ export class StreamsRepository {
           user: 'stream.user',
         },
       },
-      where: (qb: SelectQueryBuilder<Stream>) => {
-        qb.where('user.id = :userId', { userId: user.id });
+      where: {
+        user: {
+          id: user.id,
+        },
       },
     });
   }
@@ -82,7 +84,9 @@ export class StreamsRepository {
   async findBySection(section: string): Promise<Stream[]> {
     return this.repo.find({
       where: {
-        section,
+        section: {
+          id: section,
+        },
         isCensored: false,
       },
       relations: ['chunks', 'section'],

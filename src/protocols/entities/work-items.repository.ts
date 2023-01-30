@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../users/entities';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { shuffle } from 'lodash';
 import { WorkItem, WorkItemType } from './work-item.entity';
 import { Protocol } from './protocol.entity';
@@ -31,12 +31,13 @@ export class WorkItemsRepository {
           assignee: 'workItem.assignee',
         },
       },
-      where: (qb: SelectQueryBuilder<WorkItem>) => {
-        qb.andWhere('protocol.id = :protocolId', {
-          protocolId: protocol.id,
-        }).andWhere('assignee.id = :assignee', {
-          assignee: assignee.id,
-        });
+      where: {
+        protocol: {
+          id: protocol.id,
+        },
+        assignee: {
+          id: assignee.id,
+        },
       },
       relations: ['protocol', 'assignee'],
     });

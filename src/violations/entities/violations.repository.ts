@@ -257,10 +257,13 @@ export class ViolationsRepository {
           update: 'violation.updates',
         },
       },
-      where: (qb: SelectQueryBuilder<Violation>) => {
-        qb.where('update.actor_id = :authorId', {
-          authorId: author.id,
-        }).andWhere('update.type = :type', { type: ViolationUpdateType.SEND });
+      where: {
+        updates: {
+          actor: {
+            id: author.id,
+          },
+          type: ViolationUpdateType.SEND,
+        },
       },
     });
   }
