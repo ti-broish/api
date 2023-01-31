@@ -11,9 +11,7 @@ import { configSchema, TypeOrmConfigService } from './config';
 import { PicturesModule } from './pictures/pictures.module';
 import { ProtocolsModule } from './protocols/protocols.module';
 import { ViolationsModule } from './violations/violations.module';
-import { PostsModule } from './posts/posts.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { BroadcastsModule } from './broadcasts/broadcasts.module';
 import { CaslModule } from './casl/casl.module';
 import {
   AcceptLanguageResolver,
@@ -61,8 +59,6 @@ import { CommandModule } from 'nestjs-command';
     PicturesModule,
     ProtocolsModule,
     ViolationsModule,
-    PostsModule,
-    BroadcastsModule,
     ScheduleModule.forRoot(),
     CaslModule,
     StreamsModule,
