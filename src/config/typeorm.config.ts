@@ -18,7 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: false,
       migrationsTableName: 'migrations',
-      migrations: ['dist/migrations/*.ts'],
+      migrations: ['dist/migrations/*.js'],
       extra: {
         max: this.config.get<number>('DATABASE_MAX_CONNECTIONS', 14),
       },
