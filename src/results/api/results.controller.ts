@@ -571,9 +571,7 @@ export class ResultsController {
     section.results = (await this.sectionsRepo.getResultsFor(
       section.id,
     )) as number[];
-    section.protocols = (await this.protocolsRepo.findBySection(
-      section.id,
-    )) as Protocol[];
+    section.protocols = await this.protocolsRepo.findBySection(section.id);
 
     return {
       ...sectionMapper(section),

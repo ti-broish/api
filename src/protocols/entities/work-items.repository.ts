@@ -98,7 +98,7 @@ export class WorkItemsRepository {
       .limit(200)
       .orderBy('workItem.id', 'ASC');
 
-    return (await qb.getOneOrFail()) as WorkItem;
+    return await qb.getOneOrFail();
   }
 
   async findCompletedItems(): Promise<WorkItem[]> {

@@ -14,7 +14,13 @@ const escValue = (value: string | number): string => {
     return value;
   }
 
-  return "'" + ('' + value).replace(/'/g, "''") + "'";
+  if (typeof value === 'number') {
+    value = value.toString();
+  }
+
+  value = value.replace(/'/g, "''");
+
+  return `'${value}'`;
 };
 
 const insertTemplate = `INSERT INTO :table (:columns) values (:values);`;

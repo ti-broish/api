@@ -19,8 +19,8 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "deploy:demo": "pm2 deploy demo-ecosystem.config.js production update",
-    "lint": "eslint \"{src,scripts,test,@types}/**/*.ts\" --fix",
-    "lint:ci": "eslint \"{src,scripts,test,@types}/**/*.ts\"",
+    "lint": "eslint \"{src,scripts,test,@types}/**/*.ts\" --fix --quiet",
+    "lint:ci": "eslint \"{src,scripts,test,@types}/**/*.ts\" --fix-dry-run --quiet",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -138,8 +138,8 @@
     "testEnvironment": "node"
   },
   "lint-staged": {
-    "*": [
-      "prettier --write --ignore-unknown"
+    "(src|scripts|test|@types)/**/*.(ts|js)": [
+      "eslint --fix --quiet"
     ]
   },
   "main": "dist/main.js",
