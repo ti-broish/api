@@ -9,13 +9,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          # This is important to fetch the changes to the previous commit
-          fetch-depth: 0
+        uses: actions/checkout@v3
 
       - name: Check syntax
-        uses: creyD/prettier_action@v3.1
+        uses: creyD/prettier_action@v4.2
         with:
           dry: true
           only_changed: true
@@ -27,22 +24,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          # Make sure the actual branch is checked out when running on pull requests
-          ref: ${{ github.head_ref }}
-          # This is important to fetch the changes to the previous commit
-          fetch-depth: 0
+      - uses: actions/checkout@v3
 
-      - name: NPM or Yarn install with caching
-        uses: bahmutov/npm-install@v1.6.0
-
-      - name: Run tests
-        run: npm test
+      - uses: bahmutov/npm-install@v1
 
       - name: Build
         run: npm run build
+
+      - name: Run tests
+        run: npm test
 
       - name: Lint code
         run: npm run lint:ci
