@@ -33,7 +33,7 @@ import { CommandModule } from 'nestjs-command';
     ConfigModule.forRoot({ validationSchema: configSchema }),
     I18nModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         fallbackLanguage: configService.get('NEST_LANG', 'bg'),
         loaderOptions: {
           path: path.join(__dirname, '/i18n/'),

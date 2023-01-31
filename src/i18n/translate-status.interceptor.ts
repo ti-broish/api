@@ -56,7 +56,7 @@ export class TranslateStatusInterceptor implements NestInterceptor {
         .replace('Dto', '')
         .toUpperCase();
       try {
-        object.statusLocalized = await this.i18n.translate(
+        object.statusLocalized = this.i18n.translate(
           `status.${objectType}_${object.status.toUpperCase()}`,
           { lang },
         );

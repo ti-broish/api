@@ -201,13 +201,13 @@ export class SectionsRepository {
     let violationsCountTown = 0;
     stats.forEach((x) =>
       Object.keys(x).includes('violationsCountTown')
-        ? (violationsCountTown = parseInt(x.violationsCountTown))
+        ? (violationsCountTown = parseInt(x.violationsCountTown, 10))
         : (violationsCountTown = 0),
     );
     stats.forEach((x) =>
       Object.keys(x).includes('violationsCount')
         ? (x.violationsCount =
-            parseInt(x.violationsCount) + violationsCountTown)
+            parseInt(x.violationsCount, 10) + violationsCountTown)
         : x.violatinsCount,
     );
 
@@ -227,9 +227,12 @@ export class SectionsRepository {
                 'violationsCountTown',
               )
                 ? (output[singleStat.segment].violationsCount =
-                    parseInt(output[singleStat.segment].violationsCount) +
-                    output[singleStat.segment].violationsCountTown)
-                : output[singleStat.segment].violationsCount;
+                    parseInt(output[singleStat.segment].violationsCount, 10) +
+                    parseInt(
+                      output[singleStat.segment].violationsCountTown,
+                      10,
+                    ))
+                : parseInt(output[singleStat.segment].violationsCount, 10);
             });
             delete singleStat.segment;
           });

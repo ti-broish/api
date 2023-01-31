@@ -11,7 +11,11 @@ export class BasicStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  public validate = async (req, username, password): Promise<boolean> => {
+  public validate = async (
+    _: any,
+    username: string,
+    password: string,
+  ): Promise<boolean> => {
     if (
       this.configService.get<string>('STREAMS_WEBHOOK_USERNAME') === username &&
       this.configService.get<string>('STREAMS_WEBHOOK_PASSWORD') === password

@@ -39,8 +39,11 @@ const createRecordsToInsertsTransformer = (
         .replace(
           ':values',
           Object.entries(record)
-            .map(([key, value]) => {
-              const str = ('' + value).trim();
+            .map(([key, value]: [string, string | number]) => {
+              if (typeof value === 'number') {
+                value = value.toString();
+              }
+              const str = value.trim();
 
               return escValue(str.length > 0 ? str : emptyColumnCallback(key));
             })
