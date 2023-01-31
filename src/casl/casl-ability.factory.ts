@@ -1,9 +1,7 @@
 import { Ability, AbilityBuilder, AbilityClass } from '@casl/ability';
 import { Injectable } from '@nestjs/common';
-import { Broadcast } from 'src/broadcasts/entities/broadcast.entity';
 import { Party } from 'src/parties/entities/party.entity';
 import { Picture } from 'src/pictures/entities/picture.entity';
-import { Post } from 'src/posts/entities/post.entity';
 import { ProtocolResult } from 'src/protocols/entities/protocol-result.entity';
 import { Protocol } from 'src/protocols/entities/protocol.entity';
 import {
@@ -30,10 +28,6 @@ type Subjects =
   | User
   | Organization
   | Client
-  | typeof Post
-  | typeof Broadcast
-  | Post
-  | Broadcast
   | typeof Picture
   | Picture
   | typeof Stream
@@ -83,14 +77,6 @@ export class CaslAbilityFactory {
       can(Action.Read, 'all');
       can([Action.Manage], User);
       can([Action.Manage], Protocol);
-      can([Action.Create, Action.Update, Action.Publish], Post);
-      // Delete only unpublished posts
-      can(Action.Delete, Post, { publishAt: { $eq: null } });
-      can([Action.Create, Action.Publish], Broadcast);
-      // Change/Delete only unpublished broadcasts. Once the notifications are out, they're out.
-      can([Action.Update, Action.Delete], Broadcast, {
-        publishAt: { $eq: null },
-      });
       can(Action.Update, User, [
         'email',
         'phone',
