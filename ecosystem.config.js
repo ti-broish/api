@@ -45,7 +45,8 @@ export const deploy = {
     repo: 'https://github.com/ti-broish/api.git',
     path: '/var/www/ti-broish-api-20210711',
     'post-setup': 'ls -la',
-    'post-deploy': 'npm ci --only=production --ignore-scripts --no-audit --loglevel=error --cache .npm --prefer-offline --silent' +
+    'post-deploy':
+      'npm ci --only=production --ignore-scripts --no-audit --loglevel=error --cache .npm --prefer-offline --silent' +
       ' && npm run build' +
       ' && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/' +
       ' && NODE_ENV=production npm run migration:run' +
@@ -58,7 +59,8 @@ export const deploy = {
     repo: 'https://github.com/ti-broish/api.git',
     path: '/var/www/ti-broish-api-staging',
     'post-setup': 'ls -la',
-    'post-deploy': 'npm ci --only=production --ignore-scripts --no-audit --loglevel=error --cache .npm --prefer-offline --silent' +
+    'post-deploy':
+      'npm ci --only=production --ignore-scripts --no-audit --loglevel=error --cache .npm --prefer-offline --silent' +
       ' && npm run build' +
       ' && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/' +
       ' && NODE_ENV=production npm run migration:run' +
