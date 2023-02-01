@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class ReportsUpdatesDropStatusAddType1608933294974
   implements MigrationInterface
@@ -14,7 +14,7 @@ export class ReportsUpdatesDropStatusAddType1608933294974
           alter column timestamp set default CURRENT_TIMESTAMP;
         drop type "report_status";
         create index "report_updates_report_id_type_timestamp_key" on "report_updates" ("report_id", "type", "timestamp");
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -28,6 +28,6 @@ export class ReportsUpdatesDropStatusAddType1608933294974
           alter column timestamp drop default;
         create index "report_updates_actor_id_timestamp_key" on "report_updates" ("actor_id", "timestamp");
         create index "report_updates_status_key" on "report_updates" ("status");
-      `);
+      `)
   }
 }

@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -12,22 +12,22 @@ import {
   UseGuards,
   Delete,
   ForbiddenException,
-} from '@nestjs/common';
-import { Action } from '../../casl/action.enum';
-import { CheckPolicies } from '../../casl/check-policies.decorator';
-import { PoliciesGuard } from '../../casl/policies.guard';
-import { UserDto } from '../../users/api/user.dto';
-import { UsersRepository } from '../..//users/entities/users.repository';
+} from '@nestjs/common'
+import { Action } from '../../casl/action.enum'
+import { CheckPolicies } from '../../casl/check-policies.decorator'
+import { PoliciesGuard } from '../../casl/policies.guard'
+import { UserDto } from '../../users/api/user.dto'
+import { UsersRepository } from '../..//users/entities/users.repository'
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
-} from '../../utils/accepted-response';
-import { InjectUser } from '../../auth/decorators/inject-user.decorator';
-import { User } from '../../users/entities';
-import { Protocol } from '../entities/protocol.entity';
-import { ProtocolsRepository } from '../entities/protocols.repository';
-import { CaslAbilityFactory } from 'src/casl/casl-ability.factory';
-import { WorkQueue } from './work-queue.service';
+} from '../../utils/accepted-response'
+import { InjectUser } from '../../auth/decorators/inject-user.decorator'
+import { User } from '../../users/entities'
+import { Protocol } from '../entities/protocol.entity'
+import { ProtocolsRepository } from '../entities/protocols.repository'
+import { CaslAbilityFactory } from 'src/casl/casl-ability.factory'
+import { WorkQueue } from './work-queue.service'
 
 @Controller('protocols')
 export class ProtocolAssigneesController {
@@ -46,9 +46,9 @@ export class ProtocolAssigneesController {
   async getAssignees(
     @Param('protocol') protocolId: string,
   ): Promise<UserDto[]> {
-    const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
+    const protocol = await this.protocolsRepo.findOneOrFail(protocolId)
 
-    return protocol.assignees.map((user: User) => UserDto.fromEntity(user));
+    return protocol.assignees.map((user: User) => UserDto.fromEntity(user))
   }
 
   @Post(':protocol/assignees')
@@ -67,12 +67,12 @@ export class ProtocolAssigneesController {
     @Body() assigneeDto: UserDto,
     @InjectUser() actor: User,
   ): Promise<AcceptedResponse> {
-    this.checkIfCanEditAssignees(actor, assigneeDto.id);
-    const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
-    protocol.assign(actor, [...protocol.assignees, assigneeDto.toEntity()]);
-    await this.protocolsRepo.save(protocol);
+    this.checkIfCanEditAssignees(actor, assigneeDto.id)
+    const protocol = await this.protocolsRepo.findOneOrFail(protocolId)
+    protocol.assign(actor, [...protocol.assignees, assigneeDto.toEntity()])
+    await this.protocolsRepo.save(protocol)
 
-    return { status: ACCEPTED_RESPONSE_STATUS };
+    return { status: ACCEPTED_RESPONSE_STATUS }
   }
 
   @Delete(':protocol/assignees/:assignee')
@@ -91,28 +91,28 @@ export class ProtocolAssigneesController {
     @Param('assignee') assigneeId: string,
     @InjectUser() actor: User,
   ): Promise<AcceptedResponse> {
-    this.checkIfCanEditAssignees(actor, assigneeId);
+    this.checkIfCanEditAssignees(actor, assigneeId)
 
-    const protocol = await this.protocolsRepo.findOneOrFail(protocolId);
-    const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId);
+    const protocol = await this.protocolsRepo.findOneOrFail(protocolId)
+    const assigneeToBeDeleted = await this.usersRepo.findOneOrFail(assigneeId)
 
-    this.workQueue.unassignFromProtocol(actor, protocol, assigneeToBeDeleted);
+    this.workQueue.unassignFromProtocol(actor, protocol, assigneeToBeDeleted)
 
-    return { status: ACCEPTED_RESPONSE_STATUS };
+    return { status: ACCEPTED_RESPONSE_STATUS }
   }
 
   private checkIfCanEditAssignees(actor: User, assigneeId: string): boolean {
     // If the assignee is the actor, allow to edit
     // If not, check if actor can manage the protocol
     if (actor.id === assigneeId) {
-      return true;
+      return true
     }
 
-    const ability = this.caslAbilityFactory.createForUser(actor);
+    const ability = this.caslAbilityFactory.createForUser(actor)
     if (ability.can(Action.Manage, Protocol)) {
-      return true;
+      return true
     }
 
-    throw new ForbiddenException('Cannot change assignments for others users!');
+    throw new ForbiddenException('Cannot change assignments for others users!')
   }
 }

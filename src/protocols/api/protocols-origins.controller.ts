@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -6,15 +6,15 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
-} from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { Protocol, ProtocolOrigin } from '../entities/protocol.entity';
+} from '@nestjs/common'
+import { I18nService } from 'nestjs-i18n'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { Protocol, ProtocolOrigin } from '../entities/protocol.entity'
 
 interface OriginResponse {
-  [key: string]: string;
+  [key: string]: string
 }
 
 @Controller('protocols/origins')
@@ -31,7 +31,7 @@ export class ProtocolsOriginsController {
       Object.keys(ProtocolOrigin).map((originKey) =>
         this.formatOrigin(originKey, ProtocolOrigin[originKey]),
       ),
-    );
+    )
   }
 
   private async formatOrigin(
@@ -43,6 +43,6 @@ export class ProtocolsOriginsController {
       originLocalized: await this.i18n.translate(
         `origin.PROTOCOL_${originKey}`,
       ),
-    } as OriginResponse;
+    } as OriginResponse
   }
 }

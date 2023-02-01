@@ -1,4 +1,4 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common'
 
 export function enableCors(app: INestApplication): void {
   app.enableCors({
@@ -6,5 +6,5 @@ export function enableCors(app: INestApplication): void {
     allowedHeaders: 'Content-Type,Accept,Authorization',
     credentials: true,
     maxAge: 2 * 60 * 60,
-  });
+  })
 }

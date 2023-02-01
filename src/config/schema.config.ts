@@ -1,4 +1,4 @@
-import * as Joi from 'joi';
+import * as Joi from 'joi'
 
 export const configSchema = Joi.object({
   NODE_ENV: Joi.string()
@@ -29,4 +29,4 @@ export const configSchema = Joi.object({
   STREAMS_WEBHOOK_USERNAME: Joi.string().required(),
   STREAMS_WEBHOOK_PASSWORD: Joi.string().required(),
   ELECTION_CAMPAIGN_NAME: Joi.string().default('Парламентарни избори'),
-});
+})

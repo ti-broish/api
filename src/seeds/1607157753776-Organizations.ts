@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class Organizations1607157753776 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -53,12 +53,10 @@ export class Organizations1607157753776 implements MigrationInterface {
         ('БЗСЗБ', 'watchers'),
         ('Гражданси комитет равни пред закона', 'watchers'),
         ('Съвет по нормотворчество', 'watchers');
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    queryRunner.query(
-      `TRUNCATE TABLE "organizations" RESTART IDENTITY CASCADE`,
-    );
+    queryRunner.query(`TRUNCATE TABLE "organizations" RESTART IDENTITY CASCADE`)
   }
 }

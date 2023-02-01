@@ -6,17 +6,17 @@ import {
   UsePipes,
   ValidationPipe,
   HttpCode,
-} from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Public } from 'src/auth/decorators';
-import StreamManager from './stream-manager.service';
-import { Body } from '@nestjs/common';
-import { StreamEventDto } from './stream-event.dto';
-import { StreamingError } from '../entities/stream.entity';
+} from '@nestjs/common'
+import { AuthGuard } from '@nestjs/passport'
+import { Public } from 'src/auth/decorators'
+import StreamManager from './stream-manager.service'
+import { Body } from '@nestjs/common'
+import { StreamEventDto } from './stream-event.dto'
+import { StreamingError } from '../entities/stream.entity'
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
-} from 'src/utils/accepted-response';
+} from 'src/utils/accepted-response'
 
 @Public()
 @UseGuards(AuthGuard('basic'))
@@ -29,15 +29,15 @@ export class StreamsWebhookController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async webhook(@Body() webhook: StreamEventDto): Promise<AcceptedResponse> {
     try {
-      await this.streamManager.processStreamEvent(webhook);
+      await this.streamManager.processStreamEvent(webhook)
     } catch (error) {
       if (error instanceof StreamingError) {
-        throw new ConflictException(error.message);
+        throw new ConflictException(error.message)
       }
 
-      throw error;
+      throw error
     }
 
-    return { status: ACCEPTED_RESPONSE_STATUS };
+    return { status: ACCEPTED_RESPONSE_STATUS }
   }
 }

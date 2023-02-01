@@ -1,7 +1,7 @@
-import { JwtFromRequestFunction } from 'passport-jwt';
+import { JwtFromRequestFunction } from 'passport-jwt'
 
 export interface FirebaseAuthStrategyOptions {
-  extractor: JwtFromRequestFunction;
-  checkRevoked: boolean;
-  passReqToCallback: boolean;
+  extractor: JwtFromRequestFunction
+  checkRevoked: boolean
+  passReqToCallback: boolean
 }

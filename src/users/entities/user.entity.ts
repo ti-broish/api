@@ -1,9 +1,9 @@
-import { Checkin } from 'src/checkins/entities/checkin.entity';
-import { Protocol } from 'src/protocols/entities/protocol.entity';
-import { WorkItem } from 'src/protocols/entities/work-item.entity';
-import { Section } from 'src/sections/entities';
-import { Stream } from 'src/streams/entities/stream.entity';
-import { Violation } from 'src/violations/entities/violation.entity';
+import { Checkin } from 'src/checkins/entities/checkin.entity'
+import { Protocol } from 'src/protocols/entities/protocol.entity'
+import { WorkItem } from 'src/protocols/entities/work-item.entity'
+import { Section } from 'src/sections/entities'
+import { Stream } from 'src/streams/entities/stream.entity'
+import { Violation } from 'src/violations/entities/violation.entity'
 import {
   Entity,
   Column,
@@ -15,66 +15,66 @@ import {
   JoinTable,
   OneToOne,
   JoinColumn,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { Role } from '../../casl/role.enum';
-import { Picture } from '../../pictures/entities/picture.entity';
-import { Client } from './client.entity';
-import { Organization } from './organization.entity';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { Role } from '../../casl/role.enum'
+import { Picture } from '../../pictures/entities/picture.entity'
+import { Client } from './client.entity'
+import { Organization } from './organization.entity'
 
 @Entity('people')
 export class User {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @Column()
-  firstName: string;
+  firstName: string
 
   @Column()
-  lastName: string;
+  lastName: string
 
   @Column({ unique: true })
-  email: string;
+  email: string
 
   @Column()
-  phone: string;
+  phone: string
 
   @Column()
-  pin: string;
+  pin: string
 
   @ManyToOne(() => Organization, (organization) => organization.users)
-  organization: Organization;
+  organization: Organization
 
   @OneToMany(() => Picture, (picture) => picture.author, {
     onDelete: 'CASCADE',
   })
-  pictures: Picture[];
+  pictures: Picture[]
 
   @Column({ unique: true })
-  firebaseUid: string;
+  firebaseUid: string
 
   @Column()
-  hasAgreedToKeepData: boolean;
+  hasAgreedToKeepData: boolean
 
   @Column()
-  isEmailVerified: boolean = false;
+  isEmailVerified: boolean = false
 
   @Column('simple-json')
-  roles: Role[] = [Role.User, Role.Streamer];
+  roles: Role[] = [Role.User, Role.Streamer]
 
   @OneToMany(() => Client, (client) => client.owner, {
     cascade: ['remove'],
     onDelete: 'CASCADE',
   })
-  clients: Client[];
+  clients: Client[]
 
   @OneToMany(() => Checkin, (checkin) => checkin.actor, {
     cascade: ['remove'],
     onDelete: 'CASCADE',
   })
-  checkins: Checkin[];
+  checkins: Checkin[]
 
   @ManyToMany(() => Protocol)
   @JoinTable({
@@ -82,7 +82,7 @@ export class User {
     joinColumn: { name: 'assignee_id' },
     inverseJoinColumn: { name: 'protocol_id' },
   })
-  assignedProtocols: Protocol[];
+  assignedProtocols: Protocol[]
 
   @ManyToMany(() => Protocol)
   @JoinTable({
@@ -90,24 +90,24 @@ export class User {
     joinColumn: { name: 'assignee_id' },
     inverseJoinColumn: { name: 'violation_id' },
   })
-  assignedViolations: Violation[];
+  assignedViolations: Violation[]
 
   @OneToMany(() => WorkItem, (workItem: WorkItem): User => workItem.assignee)
-  assignedWorkItems: WorkItem[];
+  assignedWorkItems: WorkItem[]
 
   @OneToOne(() => Stream, {
     cascade: ['update'],
   })
   @JoinColumn({ name: 'stream_id' })
-  stream: Stream;
+  stream: Stream
 
   @ManyToOne(() => Section, { eager: true })
-  section: Section;
+  section: Section
 
   @CreateDateColumn({ type: 'timestamp' })
-  registeredAt: Date;
+  registeredAt: Date
 
   hasRole(role: Role): boolean {
-    return this.roles.includes(role);
+    return this.roles.includes(role)
   }
 }

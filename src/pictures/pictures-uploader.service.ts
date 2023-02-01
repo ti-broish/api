@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { FilesUploader } from '../files';
-import { Picture } from './entities/picture.entity';
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { FilesUploader } from '../files'
+import { Picture } from './entities/picture.entity'
 
 @Injectable()
 export class PicturesUploader {
@@ -11,11 +11,11 @@ export class PicturesUploader {
   ) {}
 
   async upload(base64EncodedFile: string): Promise<Picture> {
-    const picture = new Picture();
+    const picture = new Picture()
     picture.path = await this.uploader.uploadFileToCdn(
       await this.uploader.base64ToLocalFilePath(base64EncodedFile),
-    );
+    )
 
-    return picture;
+    return picture
   }
 }

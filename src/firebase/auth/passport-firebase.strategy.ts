@@ -1,56 +1,56 @@
-import { Logger } from '@nestjs/common';
-import { JwtFromRequestFunction } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport-strategy';
-import { Request } from 'express';
-import * as admin from 'firebase-admin';
+import { Logger } from '@nestjs/common'
+import { JwtFromRequestFunction } from 'passport-jwt'
+import { PassportStrategy } from '@nestjs/passport'
+import { Strategy } from 'passport-strategy'
+import { Request } from 'express'
+import * as admin from 'firebase-admin'
 import {
   FirebaseAuthStrategyOptions,
   FirebaseUser,
   FIREBASE_AUTH,
   UNAUTHORIZED,
-} from '.';
+} from '.'
 
 export class FirebaseAuthStrategy extends PassportStrategy(
   Strategy,
   'firebase-auth',
 ) {
-  readonly name = FIREBASE_AUTH;
-  private checkRevoked = false;
-  private passReqToCallback = false;
+  readonly name = FIREBASE_AUTH
+  private checkRevoked = false
+  private passReqToCallback = false
 
   constructor(
     options: FirebaseAuthStrategyOptions,
     private extractor: JwtFromRequestFunction,
     private logger = new Logger(FirebaseAuthStrategy.name),
   ) {
-    super();
+    super()
 
     if (!options.extractor) {
       throw new Error(
         '\n Extractor is not a function. You should provide an extractor. \n Read the docs: https://github.com/tfarras/nestjs-firebase-auth#readme',
-      );
+      )
     }
 
-    this.extractor = options.extractor;
-    this.checkRevoked = options.checkRevoked === true || false;
-    this.passReqToCallback = options.passReqToCallback === true || false;
+    this.extractor = options.extractor
+    this.checkRevoked = options.checkRevoked === true || false
+    this.passReqToCallback = options.passReqToCallback === true || false
   }
 
   async validate(
     payload: FirebaseUser,
     req?: Request | undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<any> {
-    return payload;
+    return payload
   }
 
   authenticate(req: Request): void {
-    const idToken = this.extractor(req);
+    const idToken = this.extractor(req)
 
     if (!idToken) {
-      this.fail(UNAUTHORIZED, 401);
+      this.fail(UNAUTHORIZED, 401)
 
-      return;
+      return
     }
 
     try {
@@ -64,12 +64,12 @@ export class FirebaseAuthStrategy extends PassportStrategy(
           ),
         )
         .catch((err) => {
-          this.fail({ err }, 401);
-        });
+          this.fail({ err }, 401)
+        })
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error(e)
 
-      this.fail(e, 401);
+      this.fail(e, 401)
     }
   }
 
@@ -79,12 +79,12 @@ export class FirebaseAuthStrategy extends PassportStrategy(
   ) {
     const result = this.passReqToCallback
       ? await this.validate(decodedIdToken, req)
-      : await this.validate(decodedIdToken);
+      : await this.validate(decodedIdToken)
 
     if (result) {
-      this.success(result);
+      this.success(result)
     }
 
-    this.fail(UNAUTHORIZED, 401);
+    this.fail(UNAUTHORIZED, 401)
   }
 }

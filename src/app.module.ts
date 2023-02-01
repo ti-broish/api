@@ -1,30 +1,26 @@
-import * as path from 'path';
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { SectionsModule } from './sections/sections.module';
-import { UsersModule } from './users/users.module';
-import { MeModule } from './me/me.module';
-import { PartiesModule } from './parties/parties.module';
-import { configSchema, TypeOrmConfigService } from './config';
-import { PicturesModule } from './pictures/pictures.module';
-import { ProtocolsModule } from './protocols/protocols.module';
-import { ViolationsModule } from './violations/violations.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { CaslModule } from './casl/casl.module';
-import {
-  AcceptLanguageResolver,
-  I18nJsonLoader,
-  I18nModule,
-} from 'nestjs-i18n';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters';
-import { StreamsModule } from './streams/streams.module';
-import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module';
-import { ResultsModule } from './results/results.module';
-import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor';
-import { CommandModule } from 'nestjs-command';
+import * as path from 'path'
+import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { AuthModule } from './auth/auth.module'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { SectionsModule } from './sections/sections.module'
+import { UsersModule } from './users/users.module'
+import { MeModule } from './me/me.module'
+import { PartiesModule } from './parties/parties.module'
+import { configSchema, TypeOrmConfigService } from './config'
+import { PicturesModule } from './pictures/pictures.module'
+import { ProtocolsModule } from './protocols/protocols.module'
+import { ViolationsModule } from './violations/violations.module'
+import { ScheduleModule } from '@nestjs/schedule'
+import { CaslModule } from './casl/casl.module'
+import { AcceptLanguageResolver, I18nJsonLoader, I18nModule } from 'nestjs-i18n'
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
+import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters'
+import { StreamsModule } from './streams/streams.module'
+import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module'
+import { ResultsModule } from './results/results.module'
+import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
+import { CommandModule } from 'nestjs-command'
 
 @Module({
   imports: [
@@ -83,7 +79,7 @@ import { CommandModule } from 'nestjs-command';
 export class AppModule {
   onApplicationBootstrap() {
     if (process.send) {
-      process.send('ready');
+      process.send('ready')
     }
   }
 }

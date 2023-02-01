@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class RenameReportsToViolations1609242815464
   implements MigrationInterface
@@ -16,7 +16,7 @@ export class RenameReportsToViolations1609242815464
         alter index "report_updates_report_id_timestamp_key" rename to "violation_updates_violation_id_timestamp_key";
         alter index "report_updates_report_id_type_timestamp_key" rename to "violation_updates_violation_id_type_timestamp_key";
         alter table "violations_pictures" rename constraint "reports_pictures_pkey" to "violations_pictures_pkey";
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -32,6 +32,6 @@ export class RenameReportsToViolations1609242815464
         alter table "violations" rename to "reports";
         alter table "violation_updates" rename to "report_updates";
         alter table "violations_pictures" rename to "reports_pictures";
-      `);
+      `)
   }
 }

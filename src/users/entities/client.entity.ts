@@ -4,34 +4,34 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   ManyToOne,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { User } from '.';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { User } from '.'
 
 @Entity('clients')
 export class Client {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @Column()
-  token: string;
+  token: string
 
   @ManyToOne(() => User, (owner) => owner.clients)
-  owner: User;
+  owner: User
 
   @Column({ type: 'boolean' })
-  isActive: boolean;
+  isActive: boolean
 
   @CreateDateColumn({ type: 'timestamp' })
-  registeredAt: Date;
+  registeredAt: Date
 
   activate(): void {
-    this.isActive = true;
+    this.isActive = true
   }
 
   deactivate(): void {
-    this.isActive = false;
+    this.isActive = false
   }
 }

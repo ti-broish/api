@@ -7,20 +7,17 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { Section, Town } from '../../sections/entities';
-import { Picture } from '../../pictures/entities/picture.entity';
-import { User } from '../../users/entities';
-import {
-  ViolationUpdate,
-  ViolationUpdateType,
-} from './violation-update.entity';
-import { ViolationComment } from './violation-comment.entity';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { Section, Town } from '../../sections/entities'
+import { Picture } from '../../pictures/entities/picture.entity'
+import { User } from '../../users/entities'
+import { ViolationUpdate, ViolationUpdateType } from './violation-update.entity'
+import { ViolationComment } from './violation-comment.entity'
 import {
   ViolationPublishingException,
   ViolationStatusException,
-} from './violation.exceptions';
+} from './violation.exceptions'
 
 export enum ViolationStatus {
   RECEIVED = 'received',
@@ -34,25 +31,25 @@ export class Violation {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @Column({ type: 'text' })
-  description: string;
+  description: string
 
   @Column({ type: 'varchar' })
-  status: ViolationStatus;
+  status: ViolationStatus
 
   @Column({ type: 'boolean' })
-  isPublished: boolean;
+  isPublished: boolean
 
   @Column({ type: 'varchar' })
-  publishedText: string;
+  publishedText: string
 
   @ManyToOne(() => Section, (section) => section.violations)
-  section?: Section;
+  section?: Section
 
   @ManyToOne(() => Town, (town) => town.violations)
-  town: Town;
+  town: Town
 
   @ManyToMany(() => Picture, {
     cascade: ['insert', 'update'],
@@ -62,7 +59,7 @@ export class Violation {
     joinColumn: { name: 'violation_id' },
     inverseJoinColumn: { name: 'picture_id' },
   })
-  pictures: Picture[];
+  pictures: Picture[]
 
   @ManyToMany(() => User)
   @JoinTable({
@@ -70,7 +67,7 @@ export class Violation {
     joinColumn: { name: 'violation_id' },
     inverseJoinColumn: { name: 'assignee_id' },
   })
-  assignees: User[];
+  assignees: User[]
 
   @OneToMany(
     () => ViolationUpdate,
@@ -79,7 +76,7 @@ export class Violation {
       cascade: ['insert', 'update'],
     },
   )
-  updates: ViolationUpdate[];
+  updates: ViolationUpdate[]
 
   @OneToMany(
     () => ViolationComment,
@@ -88,86 +85,86 @@ export class Violation {
       cascade: ['update'],
     },
   )
-  comments: ViolationComment[];
+  comments: ViolationComment[]
 
   getAuthor(): User {
     return this.updates.find(
       (update: ViolationUpdate) => update.type === ViolationUpdateType.SEND,
-    ).actor;
+    ).actor
   }
 
   public getUpdates(): ViolationUpdate[] {
-    return this.updates || [];
+    return this.updates || []
   }
 
   setReceivedStatus(sender: User): void {
     if (this.status) {
-      throw new ViolationStatusException(this, ViolationStatus.RECEIVED);
+      throw new ViolationStatusException(this, ViolationStatus.RECEIVED)
     }
-    this.status = ViolationStatus.RECEIVED;
-    this.addUpdate(ViolationUpdate.createSendUpdate(sender));
+    this.status = ViolationStatus.RECEIVED
+    this.addUpdate(ViolationUpdate.createSendUpdate(sender))
   }
 
   assign(actor: User, assignees: User[]): void {
     if (this.status === ViolationStatus.RECEIVED) {
-      this.status = ViolationStatus.PROCESSING;
+      this.status = ViolationStatus.PROCESSING
     }
-    this.assignees = assignees;
-    this.addUpdate(ViolationUpdate.createAsssignUpdate(actor, assignees));
+    this.assignees = assignees
+    this.addUpdate(ViolationUpdate.createAsssignUpdate(actor, assignees))
   }
 
   reject(actor: User): void {
     if (this.status !== ViolationStatus.PROCESSING) {
-      throw new ViolationStatusException(this, ViolationStatus.REJECTED);
+      throw new ViolationStatusException(this, ViolationStatus.REJECTED)
     }
 
-    this.status = ViolationStatus.REJECTED;
+    this.status = ViolationStatus.REJECTED
     if (this.isPublished) {
-      this.unpublish(actor);
+      this.unpublish(actor)
     }
-    this.addUpdate(ViolationUpdate.createRejectUpdate(actor));
+    this.addUpdate(ViolationUpdate.createRejectUpdate(actor))
   }
 
   process(actor: User): void {
     if (this.status !== ViolationStatus.PROCESSING) {
-      throw new ViolationStatusException(this, ViolationStatus.PROCESSED);
+      throw new ViolationStatusException(this, ViolationStatus.PROCESSED)
     }
 
-    this.status = ViolationStatus.PROCESSED;
-    this.addUpdate(ViolationUpdate.createProcessUpdate(actor));
+    this.status = ViolationStatus.PROCESSED
+    this.addUpdate(ViolationUpdate.createProcessUpdate(actor))
   }
 
   publish(user: User): void {
     if (![ViolationStatus.PROCESSING, ViolationStatus.PROCESSED]) {
-      throw ViolationPublishingException.forInvalidStatus(this);
+      throw ViolationPublishingException.forInvalidStatus(this)
     }
 
     if (this.isPublished) {
-      throw ViolationPublishingException.forInvalidPublishedState(this);
+      throw ViolationPublishingException.forInvalidPublishedState(this)
     }
 
-    this.isPublished = true;
-    this.addUpdate(ViolationUpdate.createPublishUpdate(user));
+    this.isPublished = true
+    this.addUpdate(ViolationUpdate.createPublishUpdate(user))
   }
 
   unpublish(user: User): void {
     if (!this.isPublished) {
-      throw ViolationPublishingException.forInvalidPublishedState(this);
+      throw ViolationPublishingException.forInvalidPublishedState(this)
     }
 
-    this.isPublished = false;
-    this.addUpdate(ViolationUpdate.createUnpublishUpdate(user));
+    this.isPublished = false
+    this.addUpdate(ViolationUpdate.createUnpublishUpdate(user))
   }
 
   private addUpdate(update: ViolationUpdate): void {
-    update.violation = this;
-    this.updates = (this.updates || []).concat([update]);
+    update.violation = this
+    this.updates = (this.updates || []).concat([update])
   }
 
   @AfterLoad()
   sortAttributes() {
     if (this?.pictures?.length) {
-      this.pictures.sort((a, b) => Math.sign(a.sortPosition - b.sortPosition));
+      this.pictures.sort((a, b) => Math.sign(a.sortPosition - b.sortPosition))
     }
   }
 }

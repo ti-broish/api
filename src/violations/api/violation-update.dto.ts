@@ -1,23 +1,23 @@
-import { Exclude, Expose, Type } from 'class-transformer';
-import { ViolationUpdateType } from '../entities/violation-update.entity';
-import { UserDto } from 'src/users/api/user.dto';
+import { Exclude, Expose, Type } from 'class-transformer'
+import { ViolationUpdateType } from '../entities/violation-update.entity'
+import { UserDto } from 'src/users/api/user.dto'
 
 @Exclude()
 export class ViolationUpdateDto {
   @Expose({ groups: ['read'] })
-  id: string;
+  id: string
 
   @Expose({ groups: ['violation.process'] })
   @Type(() => UserDto)
-  actor: UserDto;
+  actor: UserDto
 
   @Expose({ groups: ['violation.process'] })
   @Type(() => Date)
-  timestamp: Date;
+  timestamp: Date
 
   @Expose({ groups: ['violation.process'] })
-  type: ViolationUpdateType;
+  type: ViolationUpdateType
 
   @Expose({ groups: ['violation.process'] })
-  payload: Record<string, unknown>;
+  payload: Record<string, unknown>
 }

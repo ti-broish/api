@@ -1,24 +1,24 @@
-import { forwardRef, Inject } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Action } from 'src/casl/action.enum';
-import { CaslAbilityFactory } from 'src/casl/casl-ability.factory';
-import { SectionsRepository } from 'src/sections/entities/sections.repository';
-import { User } from 'src/users/entities';
-import { EntityNotFoundError } from 'typeorm';
-import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
+import { forwardRef, Inject } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { Action } from 'src/casl/action.enum'
+import { CaslAbilityFactory } from 'src/casl/casl-ability.factory'
+import { SectionsRepository } from 'src/sections/entities/sections.repository'
+import { User } from 'src/users/entities'
+import { EntityNotFoundError } from 'typeorm'
+import { Protocol, ProtocolStatus } from '../entities/protocol.entity'
 import {
   EmptyPersonalProtocolQueue,
   ProtocolsRepository,
-} from '../entities/protocols.repository';
+} from '../entities/protocols.repository'
 import {
   WorkItem,
   WorkItemType,
   WorkQueueError,
-} from '../entities/work-item.entity';
-import { WorkItemsRepository } from '../entities/work-items.repository';
-import { ProtocolDto } from './protocol.dto';
+} from '../entities/work-item.entity'
+import { WorkItemsRepository } from '../entities/work-items.repository'
+import { ProtocolDto } from './protocol.dto'
 
-const PROTOCOLS_VALIDATION_ITERATIONS = 'PROTOCOLS_VALIDATION_ITERATIONS';
+const PROTOCOLS_VALIDATION_ITERATIONS = 'PROTOCOLS_VALIDATION_ITERATIONS'
 
 export class WorkQueue {
   constructor(
@@ -33,24 +33,24 @@ export class WorkQueue {
   ) {}
 
   async addProtocolForValidation(protocol: Protocol): Promise<WorkItem[]> {
-    const iterations = this.config.get<number>(PROTOCOLS_VALIDATION_ITERATIONS);
-    const workItems: WorkItem[] = [];
+    const iterations = this.config.get<number>(PROTOCOLS_VALIDATION_ITERATIONS)
+    const workItems: WorkItem[] = []
 
-    [...Array(iterations).keys()].forEach(() =>
+    ;[...Array(iterations).keys()].forEach(() =>
       workItems.push(WorkItem.createProtocolValidationWorkItem(protocol)),
-    );
+    )
 
-    await this.worksItemsRepo.save(workItems);
+    await this.worksItemsRepo.save(workItems)
 
-    return workItems;
+    return workItems
   }
 
   async addProtocolForArbitration(protocol: Protocol): Promise<WorkItem> {
     const workItem =
-      WorkItem.createProtocolValidationDiffArbitrageWorkItem(protocol);
-    await this.worksItemsRepo.save(workItem);
+      WorkItem.createProtocolValidationDiffArbitrageWorkItem(protocol)
+    await this.worksItemsRepo.save(workItem)
 
-    return workItem;
+    return workItem
   }
 
   async assign(workItem: WorkItem, assignee: User): Promise<WorkItem> {
@@ -58,24 +58,24 @@ export class WorkQueue {
     // They were not needed until now and speeds up finding the right work item
     workItem.protocol = await this.protocolsRepo.findOneOrFail(
       workItem.protocol.id,
-    );
+    )
 
-    workItem.assign(assignee);
+    workItem.assign(assignee)
 
-    return await this.worksItemsRepo.save(workItem);
+    return await this.worksItemsRepo.save(workItem)
   }
 
   async retrieveItemForValidation(user: User): Promise<WorkItem | null> {
-    let previouslyAssignedWorkItem: WorkItem | null = null;
-    previouslyAssignedWorkItem = await this.getAssignedOpenWorkItem(user);
+    let previouslyAssignedWorkItem: WorkItem | null = null
+    previouslyAssignedWorkItem = await this.getAssignedOpenWorkItem(user)
 
     // If already assigned to an open work item, don't look for a new one
     // Workers of the queue should either complete or abandon the work item they are assigned to
     if (previouslyAssignedWorkItem !== null) {
-      return previouslyAssignedWorkItem;
+      return previouslyAssignedWorkItem
     }
 
-    return this.getAvailableWorkItemForValidation(user);
+    return this.getAvailableWorkItemForValidation(user)
   }
 
   async unassignFromProtocol(
@@ -86,14 +86,14 @@ export class WorkQueue {
     const workItem = await this.worksItemsRepo.findOne(
       protocol,
       assigneeToBeDeleted,
-    );
+    )
     if (!workItem) {
-      return;
+      return
     }
 
-    workItem.protocol = protocol;
-    workItem.unassign(actor);
-    this.worksItemsRepo.save(workItem);
+    workItem.protocol = protocol
+    workItem.unassign(actor)
+    this.worksItemsRepo.save(workItem)
   }
 
   async completeItem(
@@ -102,71 +102,69 @@ export class WorkQueue {
     callback?: () => Promise<void>,
   ): Promise<WorkItem> {
     return new Promise(async (resolve, reject) => {
-      const workItem = await this.worksItemsRepo.findOne(protocol, actor);
+      const workItem = await this.worksItemsRepo.findOne(protocol, actor)
       if (!workItem) {
-        reject(new WorkItemNotFoundError('Work item not found!'));
-        return;
+        reject(new WorkItemNotFoundError('Work item not found!'))
+        return
       }
 
-      workItem.protocol = protocol;
-      workItem.complete();
+      workItem.protocol = protocol
+      workItem.complete()
 
       if (callback) {
-        await callback();
+        await callback()
       }
-      await this.worksItemsRepo.save(workItem);
+      await this.worksItemsRepo.save(workItem)
 
-      resolve(workItem);
-    });
+      resolve(workItem)
+    })
   }
 
   private async getAvailableWorkItemForValidation(
     user: User,
   ): Promise<WorkItem> {
-    const ability = this.caslAbilityFactory.createForUser(user);
+    const ability = this.caslAbilityFactory.createForUser(user)
     if (!ability.can(Action.Update, Protocol)) {
-      throw new Error('User is not allowed to validate protocols!');
+      throw new Error('User is not allowed to validate protocols!')
     }
-    let workItem: WorkItem | null = null;
+    let workItem: WorkItem | null = null
 
-    const allowedWorkItemTypes = [WorkItemType.PROTOCOL_VALIDATION];
+    const allowedWorkItemTypes = [WorkItemType.PROTOCOL_VALIDATION]
 
     if (ability.can(Action.Manage, Protocol)) {
-      allowedWorkItemTypes.push(
-        WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE,
-      );
+      allowedWorkItemTypes.push(WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE)
     }
 
     try {
       workItem = await this.worksItemsRepo.findNextAvailableItem(
         user,
         allowedWorkItemTypes,
-      );
+      )
     } catch (error) {
       if (
         !(error instanceof EntityNotFoundError) &&
         !(error instanceof EmptyPersonalProtocolQueue)
       ) {
-        throw error;
+        throw error
       }
     }
 
-    return workItem;
+    return workItem
   }
 
   private async getAssignedOpenWorkItem(user: User): Promise<WorkItem | null> {
-    let workItem: WorkItem | null = null;
+    let workItem: WorkItem | null = null
 
     try {
-      workItem = await this.worksItemsRepo.findAssignedOpenItem(user);
+      workItem = await this.worksItemsRepo.findAssignedOpenItem(user)
     } catch (error) {
       if (!(error instanceof EntityNotFoundError)) {
-        throw error;
+        throw error
       }
-      return null;
+      return null
     }
 
-    return workItem;
+    return workItem
   }
 
   async checkResolution(
@@ -174,32 +172,32 @@ export class WorkQueue {
     workItem: WorkItem,
     protocol: Protocol,
   ): Promise<void> {
-    const ability = this.caslAbilityFactory.createForUser(actor);
+    const ability = this.caslAbilityFactory.createForUser(actor)
     if (workItem.type === WorkItemType.PROTOCOL_VALIDATION_DIFF_ARBITRAGE) {
       if (ability.can(Action.Manage, Protocol)) {
-        this.actOnResolution(actor, protocol);
+        this.actOnResolution(actor, protocol)
       }
-      return;
+      return
     }
 
     // Allow a single resolution per protocol
-    this.actOnResolution(actor, protocol);
-    return;
+    this.actOnResolution(actor, protocol)
+    return
 
-    const other = await this.findOtherSettledProtocols(protocol);
+    const other = await this.findOtherSettledProtocols(protocol)
     if (!other) {
-      return;
+      return
     }
 
-    const hasAgreement = ProtocolDto.compare(protocol, other);
+    const hasAgreement = ProtocolDto.compare(protocol, other)
 
     if (!hasAgreement) {
-      this.addProtocolForArbitration(protocol.parent);
+      this.addProtocolForArbitration(protocol.parent)
 
-      return;
+      return
     }
 
-    this.actOnResolution(actor, protocol);
+    this.actOnResolution(actor, protocol)
   }
 
   private async actOnResolution(
@@ -208,20 +206,20 @@ export class WorkQueue {
   ): Promise<void> {
     if (protocol.status !== ProtocolStatus.READY) {
       // TODO: check rejection reason for follow-up notification to sender
-      return;
+      return
     }
 
     const hasPublishedProtocol = await this.sectionsRepo.hasPublishedProtocol(
       protocol.section,
-    );
+    )
 
     if (hasPublishedProtocol) {
-      protocol.approve(actor);
+      protocol.approve(actor)
     } else {
-      protocol.publish(actor);
+      protocol.publish(actor)
     }
 
-    this.protocolsRepo.save(protocol);
+    this.protocolsRepo.save(protocol)
 
     // TODO: Send notification to the sender the protcol was published
   }
@@ -230,10 +228,10 @@ export class WorkQueue {
     source: Protocol,
   ): Promise<Protocol | null> {
     if (!source.parent) {
-      return null;
+      return null
     }
 
-    return this.protocolsRepo.findSettledProtocolFromParent(source);
+    return this.protocolsRepo.findSettledProtocolFromParent(source)
   }
 }
 

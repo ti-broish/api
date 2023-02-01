@@ -5,10 +5,10 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { Protocol } from './protocol.entity';
-import { User } from '../../users/entities';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { Protocol } from './protocol.entity'
+import { User } from '../../users/entities'
 
 export enum ProtocolActionType {
   SEND = 'send',
@@ -25,28 +25,28 @@ export class ProtocolAction {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @ManyToOne(() => Protocol, (protocol) => protocol.actions, { eager: true })
   @JoinColumn({
     name: 'protocol_id',
   })
-  protocol: Protocol;
+  protocol: Protocol
 
   @ManyToOne(() => User)
-  actor: User;
+  actor: User
 
   @Column({ type: 'varchar' })
-  action: ProtocolActionType;
+  action: ProtocolActionType
 
   @Column({ type: 'json' })
-  payload: Record<string, unknown>;
+  payload: Record<string, unknown>
 
   @CreateDateColumn()
-  timestamp: Date;
+  timestamp: Date
 
   public static createSendAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.SEND, actor);
+    return ProtocolAction.create(ProtocolActionType.SEND, actor)
   }
 
   public static createAsssignAction(
@@ -55,27 +55,27 @@ export class ProtocolAction {
   ): ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.ASSIGN, actor, {
       assignees: assignees.map((x) => x.id),
-    });
+    })
   }
 
   public static createRejectAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.REJECT, actor);
+    return ProtocolAction.create(ProtocolActionType.REJECT, actor)
   }
 
   public static createPublishAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.PUBLISH, actor);
+    return ProtocolAction.create(ProtocolActionType.PUBLISH, actor)
   }
 
   public static createApprovedAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.APPROVE, actor);
+    return ProtocolAction.create(ProtocolActionType.APPROVE, actor)
   }
 
   public static createReplaceAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.REPLACE, actor);
+    return ProtocolAction.create(ProtocolActionType.REPLACE, actor)
   }
 
   public static createReadyAction(actor: User): ProtocolAction {
-    return ProtocolAction.create(ProtocolActionType.READY, actor);
+    return ProtocolAction.create(ProtocolActionType.READY, actor)
   }
 
   private static create(
@@ -83,13 +83,13 @@ export class ProtocolAction {
     actor?: User,
     payload?: Record<string, unknown>,
   ): ProtocolAction {
-    const action = new ProtocolAction();
+    const action = new ProtocolAction()
     if (actor) {
-      action.actor = actor;
+      action.actor = actor
     }
-    action.action = actionType;
-    action.payload = payload;
+    action.action = actionType
+    action.payload = payload
 
-    return action;
+    return action
   }
 }

@@ -1,5 +1,5 @@
-import { Section } from 'src/sections/entities';
-import { User } from 'src/users/entities';
+import { Section } from 'src/sections/entities'
+import { User } from 'src/users/entities'
 import {
   Column,
   CreateDateColumn,
@@ -9,19 +9,19 @@ import {
   OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { StreamChunk } from './stream-chunk.entity';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { StreamChunk } from './stream-chunk.entity'
 
 @Entity('streams')
 export class Stream {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @ManyToOne(() => Section)
-  section?: Section;
+  section?: Section
 
   @OneToMany(
     () => StreamChunk,
@@ -30,58 +30,58 @@ export class Stream {
       cascade: ['insert', 'update'],
     },
   )
-  chunks: StreamChunk[];
+  chunks: StreamChunk[]
 
   @OneToOne(() => User, (user: User) => user.stream)
-  user: User;
+  user: User
 
   @Column({ name: 'stream_identifier' })
-  identifier: string;
+  identifier: string
 
   @Column()
-  streamUrl: string;
+  streamUrl: string
 
   @Column()
-  broadcastUrl: string;
+  broadcastUrl: string
 
   @Column()
-  isStreaming: boolean;
+  isStreaming: boolean
 
   @Column()
-  isAssigned: boolean;
+  isAssigned: boolean
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  createdAt: Date
 
   @UpdateDateColumn()
-  updatedAt?: Date;
+  updatedAt?: Date
 
   @Column()
-  isCensored: boolean;
+  isCensored: boolean
 
   assign(user: User, section: Section): void {
     if (this.isAssigned) {
-      throw new Error('Cannot assign an already assigned stream!');
+      throw new Error('Cannot assign an already assigned stream!')
     }
 
-    this.isAssigned = true;
-    this.section = section;
-    user.section = section;
-    user.stream = this;
+    this.isAssigned = true
+    this.section = section
+    user.section = section
+    user.stream = this
   }
 
   get viewUrl(): string | null {
     if (!this.section) {
-      return null;
+      return null
     }
 
-    const resultsUrl = process.env.CANONICAL_RESULTS.replace(/\/$/, '');
+    const resultsUrl = process.env.CANONICAL_RESULTS.replace(/\/$/, '')
 
-    return `${resultsUrl}/${this.section.id}`;
+    return `${resultsUrl}/${this.section.id}`
   }
 
   addChunk(chunk: StreamChunk): void {
-    this.chunks.push(chunk);
+    this.chunks.push(chunk)
   }
 
   start(): StreamChunk {
@@ -89,21 +89,21 @@ export class Stream {
       throw new StreamingError(
         'StreamingAlreadyStoppedError',
         'Trying to start a stream that has already been started',
-      );
+      )
     }
 
     if (this.isCensored != false) {
       throw new StreamingError(
         'StreamingIsCensoredError',
         'Cannot start censored stream',
-      );
+      )
     }
 
-    this.isStreaming = true;
-    const chunk = StreamChunk.start();
-    this.addChunk(chunk);
+    this.isStreaming = true
+    const chunk = StreamChunk.start()
+    this.addChunk(chunk)
 
-    return chunk;
+    return chunk
   }
 
   stop(start: Date, end: Date, url: string): void {
@@ -111,18 +111,18 @@ export class Stream {
       throw new StreamingError(
         'StreamingAlreadyStoppedError',
         'Trying to stop a stream that has already been stopped',
-      );
+      )
     }
 
     let lastActiveChunk: StreamChunk | undefined = this.chunks.find(
       (chunk: StreamChunk): boolean => chunk.isActive === true,
-    );
+    )
     if (lastActiveChunk === undefined) {
-      lastActiveChunk = this.start();
+      lastActiveChunk = this.start()
     }
 
-    lastActiveChunk.stop(start, end, url);
-    this.isStreaming = false;
+    lastActiveChunk.stop(start, end, url)
+    this.isStreaming = false
   }
 }
 

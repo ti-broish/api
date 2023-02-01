@@ -1,7 +1,7 @@
-import { StreamsRepository } from '../entities/streams.repository';
-import { Inject } from '@nestjs/common';
-import { Stream } from '../entities/stream.entity';
-import { StreamEventDto } from './stream-event.dto';
+import { StreamsRepository } from '../entities/streams.repository'
+import { Inject } from '@nestjs/common'
+import { Stream } from '../entities/stream.entity'
+import { StreamEventDto } from './stream-event.dto'
 
 export default class StreamManager {
   constructor(
@@ -9,23 +9,23 @@ export default class StreamManager {
   ) {}
 
   async processStreamEvent(event: StreamEventDto): Promise<Stream> {
-    const stream = await this.repo.findOneByIdentifierOrFail(event.identifier);
+    const stream = await this.repo.findOneByIdentifierOrFail(event.identifier)
 
     if (event.type === StreamEventDto.START) {
-      return this.start(stream);
+      return this.start(stream)
     }
 
     if (event.type === StreamEventDto.STOP) {
-      return this.stop(stream, event.start, event.end, event.url);
+      return this.stop(stream, event.start, event.end, event.url)
     }
 
-    throw new Error(`Unsupported streaming event: ${event.type}`);
+    throw new Error(`Unsupported streaming event: ${event.type}`)
   }
 
   async start(stream: Stream): Promise<Stream> {
-    stream.start();
+    stream.start()
 
-    return this.repo.save(stream);
+    return this.repo.save(stream)
   }
 
   async stop(
@@ -34,8 +34,8 @@ export default class StreamManager {
     end: Date,
     url: string,
   ): Promise<Stream> {
-    stream.stop(start, end, url);
+    stream.stop(start, end, url)
 
-    return this.repo.save(stream);
+    return this.repo.save(stream)
   }
 }

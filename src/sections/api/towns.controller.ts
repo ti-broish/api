@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   BadRequestException,
   Controller,
@@ -6,14 +6,14 @@ import {
   HttpCode,
   Query,
   UseGuards,
-} from '@nestjs/common';
-import { ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { Town } from '../entities';
-import { TownsRepository } from '../entities/towns.repository';
-import { TownDto } from './town.dto';
+} from '@nestjs/common'
+import { ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { Town } from '../entities'
+import { TownsRepository } from '../entities/towns.repository'
+import { TownDto } from './town.dto'
 
 @Controller('towns')
 export class TownsController {
@@ -49,19 +49,19 @@ export class TownsController {
     @Query('municipality') municipalityCode?: string,
   ): Promise<TownDto[]> {
     if (!countryCode) {
-      throw new BadRequestException('Query parameter "country" is required!');
+      throw new BadRequestException('Query parameter "country" is required!')
     }
     if (electionRegionCode && !municipalityCode) {
       throw new BadRequestException(
         'Query parameter "municipality" is required when "election_region" is provided!',
-      );
+      )
     }
     const towns: Town[] = await this.repo.filter(
       countryCode,
       electionRegionCode,
       municipalityCode,
-    );
+    )
 
-    return towns.map(TownDto.fromEntity);
+    return towns.map(TownDto.fromEntity)
   }
 }

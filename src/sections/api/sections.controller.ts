@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -7,15 +7,15 @@ import {
   ParseIntPipe,
   Query,
   UseGuards,
-} from '@nestjs/common';
-import { ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { ApiFirebaseAuth } from '../../auth/decorators/ApiFirebaseAuth.decorator';
-import { Section } from '../entities/section.entity';
-import { SectionsRepository } from '../entities/sections.repository';
-import { SectionDto } from './section.dto';
+} from '@nestjs/common'
+import { ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { ApiFirebaseAuth } from '../../auth/decorators/ApiFirebaseAuth.decorator'
+import { Section } from '../entities/section.entity'
+import { SectionsRepository } from '../entities/sections.repository'
+import { SectionDto } from './section.dto'
 
 @Controller('sections')
 @ApiFirebaseAuth()
@@ -45,7 +45,7 @@ export class SectionsController {
   ): Promise<SectionDto[]> {
     return (
       await this.repo.findByTownAndCityRegion(townId, cityRegionCode)
-    ).map((section: Section) => SectionDto.fromEntity(section));
+    ).map((section: Section) => SectionDto.fromEntity(section))
   }
 
   @Get(':section')
@@ -60,6 +60,6 @@ export class SectionsController {
     return SectionDto.fromEntity(
       await this.repo.findOneOrFailWithRelations(sectionCode),
       ['read', 'get'],
-    );
+    )
   }
 }

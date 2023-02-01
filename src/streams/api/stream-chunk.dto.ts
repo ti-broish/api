@@ -1,16 +1,16 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer'
 
 @Exclude()
 export class StreamChunkDto {
   @Expose({ groups: ['stream.watch', 'stream.feed'] })
-  id: string;
+  id: string
 
   @Expose({ groups: ['stream.watch', 'stream.feed'] })
-  url?: string;
+  url?: string
 
   @Expose({ groups: ['stream.watch', 'stream.feed'] })
-  startTime: Date;
+  startTime: Date
 
   @Expose({ groups: ['stream.watch', 'stream.feed'] })
-  endTime?: Date;
+  endTime?: Date
 }

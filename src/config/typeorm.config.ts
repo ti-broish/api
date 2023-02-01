@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm'
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies'
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
@@ -27,6 +27,6 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       },
       ssl: this.config.get('DATABASE_SSL'),
       namingStrategy: new SnakeNamingStrategy(),
-    } as TypeOrmModuleOptions;
+    } as TypeOrmModuleOptions
   }
 }

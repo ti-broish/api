@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { NestMinioModule, NestMinioOptions } from 'nestjs-minio';
-import { FilesUrlGenerator, FilesUploader } from '.';
+import { Module } from '@nestjs/common'
+import { ConfigModule, ConfigService } from '@nestjs/config'
+import { NestMinioModule, NestMinioOptions } from 'nestjs-minio'
+import { FilesUrlGenerator, FilesUploader } from '.'
 
 @Module({
   imports: [

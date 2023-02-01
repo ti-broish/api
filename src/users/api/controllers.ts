@@ -1,2 +1,2 @@
-export * from './organizations.controller';
-export * from './users.controller';
+export * from './organizations.controller'
+export * from './users.controller'

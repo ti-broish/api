@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class AddStreams1616969716481 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -18,12 +18,12 @@ export class AddStreams1616969716481 implements MigrationInterface {
           unique("broadcast_url"),
           constraint "streams_section_id_fkey" foreign key ("section_id") references "sections" ("id")
         );
-      `);
+      `)
 
     await queryRunner.query(`
         create index "streams_is_streaming_updated_at" on "streams" ("is_streaming", "updated_at");
         create index "streams_is_assigned_section_id" on "streams" ("is_assigned", "section_id");
-      `);
+      `)
 
     await queryRunner.query(`
         create table stream_chunks (
@@ -41,14 +41,14 @@ export class AddStreams1616969716481 implements MigrationInterface {
           constraint "stream_chunks_stream_id_fkey" foreign key ("stream_id") references "streams" ("id"),
           constraint "stream_chunks_section_id_fkey" foreign key ("section_id") references "sections" ("id")
         );
-      `);
+      `)
 
     await queryRunner.query(`
         create index "stream_chunks_author_id" on "stream_chunks" ("author_id");
         create index "stream_chunks_stream_id" on "stream_chunks" ("stream_id");
         create index "stream_chunks_is_active_section_id_start_timestamp" on "stream_chunks" ("is_active", "section_id", "start_timestamp");
         create index "stream_chunks_is_active_section_id_end_timestamp" on "stream_chunks" ("is_active", "section_id", "end_timestamp");
-      `);
+      `)
 
     await queryRunner.query(`
         alter table "people"
@@ -56,7 +56,7 @@ export class AddStreams1616969716481 implements MigrationInterface {
         add column "section_id" char(9) default null,
         add constraint "people_stream_id_fkey" FOREIGN KEY ("stream_id") REFERENCES "streams" ("id"),
         add constraint "people_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "sections" ("id");
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -66,11 +66,11 @@ export class AddStreams1616969716481 implements MigrationInterface {
         drop constraint "people_section_id_fkey",
         drop column "stream_id",
         drop column "section_id";
-      `);
+      `)
 
     await queryRunner.query(`
         drop table "stream_chunks";
         drop table "streams";
-      `);
+      `)
   }
 }

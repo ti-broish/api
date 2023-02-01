@@ -1,11 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 import {
   Exclude,
   Expose,
   plainToClass,
   Transform,
   Type,
-} from 'class-transformer';
+} from 'class-transformer'
 import {
   ArrayNotEmpty,
   IsArray,
@@ -18,19 +18,19 @@ import {
   Max,
   Min,
   ValidateNested,
-} from 'class-validator';
-import { Picture } from 'src/pictures/entities/picture.entity';
-import { UserDto } from 'src/users/api/user.dto';
-import { PictureDto } from '../../pictures/api/picture.dto';
-import { SectionDto } from '../../sections/api/section.dto';
-import { ProtocolResult } from '../entities/protocol-result.entity';
+} from 'class-validator'
+import { Picture } from 'src/pictures/entities/picture.entity'
+import { UserDto } from 'src/users/api/user.dto'
+import { PictureDto } from '../../pictures/api/picture.dto'
+import { SectionDto } from '../../sections/api/section.dto'
+import { ProtocolResult } from '../entities/protocol-result.entity'
 import {
   Protocol,
   ProtocolData,
   ProtocolRejectionReason,
   ProtocolStatus,
-} from '../entities/protocol.entity';
-import { ProtocolResultDto } from './protocol-result.dto';
+} from '../entities/protocol.entity'
+import { ProtocolResultDto } from './protocol-result.dto'
 
 export enum ProtocolStatusOverride {
   PROCESSED = 'processed',
@@ -40,7 +40,7 @@ export enum ProtocolStatusOverride {
 export class ProtocolDto {
   @ApiProperty()
   @Expose({ groups: ['read', 'protocol.protocolInResults'] })
-  id: number;
+  id: number
 
   @ApiProperty({ required: true })
   @Expose({
@@ -62,7 +62,7 @@ export class ProtocolDto {
   @ValidateNested({
     groups: ['create', 'replace'],
   })
-  section: SectionDto;
+  section: SectionDto
 
   @ApiProperty({ required: true })
   @Expose({
@@ -86,18 +86,18 @@ export class ProtocolDto {
     each: true,
     groups: ['create'],
   })
-  pictures: PictureDto[];
+  pictures: PictureDto[]
 
   @ApiProperty({ required: true })
   @Expose({ groups: ['author_read'] })
   @Type(() => UserDto)
-  assignees: UserDto[];
+  assignees: UserDto[]
 
   @Expose({ groups: ['read', 'protocol.protocolInResults'] })
-  status: ProtocolStatus | ProtocolStatusOverride;
+  status: ProtocolStatus | ProtocolStatusOverride
 
   @Expose({ name: 'rejectionReason', groups: ['read', 'compare'] })
-  reason: ProtocolRejectionReason;
+  reason: ProtocolRejectionReason
 
   @Type(() => ProtocolResultDto)
   @IsNotEmpty({ groups: ['read.results'] })
@@ -116,7 +116,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  results: ProtocolResultDto[] = [];
+  results: ProtocolResultDto[] = []
 
   @Expose({
     groups: [
@@ -128,7 +128,7 @@ export class ProtocolDto {
     ],
   })
   @IsBoolean({ groups: ['replace'] })
-  hasPaperBallots?: boolean;
+  hasPaperBallots?: boolean
 
   @IsOptional({ groups: ['read', 'replace', 'compare'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -138,11 +138,11 @@ export class ProtocolDto {
   @Expose({
     groups: ['read', 'read.results', 'replace', 'protocol.protocolInResults'],
   })
-  machinesCount?: number;
+  machinesCount?: number
 
   @IsBoolean({ groups: ['replace', 'compare'] })
   @Expose({ groups: ['read', 'read.results', 'replace'] })
-  isFinal: boolean;
+  isFinal: boolean
 
   @IsOptional({ groups: ['read', 'replace', 'compare'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -152,7 +152,7 @@ export class ProtocolDto {
   @Expose({
     groups: ['read', 'read.results', 'replace', 'protocol.protocolInResults'],
   })
-  additionalVotersCount?: number;
+  additionalVotersCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -168,7 +168,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  votersVotedCount?: number;
+  votersVotedCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -184,7 +184,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  uncastBallots?: number;
+  uncastBallots?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -200,7 +200,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  invalidAndUncastBallots?: number;
+  invalidAndUncastBallots?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -216,7 +216,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  nonMachineVotesCount?: number;
+  nonMachineVotesCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -232,7 +232,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  votersCount?: number;
+  votersCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -248,7 +248,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  totalVotesCast?: number;
+  totalVotesCast?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -264,7 +264,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  validVotesCount?: number;
+  validVotesCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -280,7 +280,7 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  invalidVotesCount?: number;
+  invalidVotesCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -296,14 +296,14 @@ export class ProtocolDto {
       'compare',
     ],
   })
-  machineVotesCount?: number;
+  machineVotesCount?: number
 
-  private author: UserDto;
+  private author: UserDto
 
   @Expose({ groups: ['protocol.validate'] })
   @Type(() => UserDto)
   getAuthor(): UserDto {
-    return this.author;
+    return this.author
   }
 
   public toEntity(groups: string[] = ['create']): Protocol {
@@ -313,36 +313,36 @@ export class ProtocolDto {
       {
         groups: groups,
       },
-    );
+    )
 
-    let sortPosition = 1;
+    let sortPosition = 1
     protocol.pictures = (protocol.pictures || []).map(
       (picture: Picture): Picture => {
-        picture.sortPosition = sortPosition;
-        sortPosition++;
+        picture.sortPosition = sortPosition
+        sortPosition++
 
-        return picture;
+        return picture
       },
       [],
-    );
+    )
 
     if (protocol.results) {
       protocol.results = this.results.map(
         (resultDto: ProtocolResultDto): ProtocolResult => resultDto.toEntity(),
-      );
-      const PROTOCOL_METADATA_KEYS = Object.keys(new ProtocolData());
+      )
+      const PROTOCOL_METADATA_KEYS = Object.keys(new ProtocolData())
       protocol.setData(
         PROTOCOL_METADATA_KEYS.reduce(
           (data: ProtocolData, key: string): ProtocolData => {
-            data[key] = this[key];
-            return data;
+            data[key] = this[key]
+            return data
           },
           {} as ProtocolData,
         ),
-      );
+      )
     }
 
-    return protocol;
+    return protocol
   }
 
   public static fromEntity(
@@ -356,12 +356,12 @@ export class ProtocolDto {
         excludeExtraneousValues: true,
         groups,
       },
-    );
+    )
 
     if (groups.includes('protocol.validate')) {
       protocolDto.author = UserDto.fromEntity(protocol.getAuthor(), [
         'protocol.validate',
-      ]);
+      ])
     }
 
     if (
@@ -370,24 +370,24 @@ export class ProtocolDto {
     ) {
       const PROTOCOL_METADATA_KEYS = Object.getOwnPropertyNames(
         new ProtocolData(),
-      );
+      )
       PROTOCOL_METADATA_KEYS.reduce(
         (dto: ProtocolDto, key: string): ProtocolData => {
-          dto[key] = protocol.metadata?.[key];
-          return dto;
+          dto[key] = protocol.metadata?.[key]
+          return dto
         },
         protocolDto,
-      );
+      )
     }
 
-    return protocolDto;
+    return protocolDto
   }
 
   static compare(protocolA: Protocol, protocolB: Protocol): boolean {
-    const dtoA = ProtocolDto.fromEntity(protocolA, ['compare']);
-    const dtoB = ProtocolDto.fromEntity(protocolB, ['compare']);
+    const dtoA = ProtocolDto.fromEntity(protocolA, ['compare'])
+    const dtoB = ProtocolDto.fromEntity(protocolB, ['compare'])
 
-    return JSON.stringify(dtoA) === JSON.stringify(dtoB);
+    return JSON.stringify(dtoA) === JSON.stringify(dtoB)
   }
 }
 
@@ -398,5 +398,5 @@ export class ProtocolRejectionDto {
   @IsIn(Object.values(ProtocolRejectionReason), {
     always: true,
   })
-  reason: ProtocolRejectionReason;
+  reason: ProtocolRejectionReason
 }

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
-import { ElectionRegion } from './electionRegion.entity';
-import { Municipality } from './municipality.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Brackets, Repository } from 'typeorm'
+import { ElectionRegion } from './electionRegion.entity'
+import { Municipality } from './municipality.entity'
 
 @Injectable()
 export class MunicipalitiesRepository {
@@ -24,7 +24,7 @@ export class MunicipalitiesRepository {
         electionRegionId: electionRegion.id,
       })
       .andWhere('municipality.code = :code', { code })
-      .getOneOrFail();
+      .getOneOrFail()
   }
 
   async findOneWithStatsOrFail(
@@ -38,29 +38,29 @@ export class MunicipalitiesRepository {
       .innerJoinAndSelect('towns.sections', 'sections')
       .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
       .andWhere('municipalities.id = :id', { id: municipality.id })
-      .getOneOrFail();
+      .getOneOrFail()
   }
 
   async findFromElectionRegionWithCityRegionsAndStats(
     electionRegionId: number,
   ): Promise<Municipality[]> {
-    const qb = this.repo.createQueryBuilder('municipalities');
+    const qb = this.repo.createQueryBuilder('municipalities')
 
-    qb.innerJoinAndSelect('municipalities.towns', 'towns');
-    qb.leftJoinAndSelect('towns.cityRegions', 'cityRegions');
-    qb.leftJoin('cityRegions.sections', 'sections');
-    qb.innerJoinAndSelect('municipalities.electionRegions', 'electionRegions');
-    qb.innerJoin('municipalities.electionRegions', 'electionRegion');
-    qb.andWhere('electionRegion.id = :electionRegionId', { electionRegionId });
+    qb.innerJoinAndSelect('municipalities.towns', 'towns')
+    qb.leftJoinAndSelect('towns.cityRegions', 'cityRegions')
+    qb.leftJoin('cityRegions.sections', 'sections')
+    qb.innerJoinAndSelect('municipalities.electionRegions', 'electionRegions')
+    qb.innerJoin('municipalities.electionRegions', 'electionRegion')
+    qb.andWhere('electionRegion.id = :electionRegionId', { electionRegionId })
     qb.andWhere(
       new Brackets((qba) => {
         qba.andWhere('sections.election_region_id = :electionRegionId', {
           electionRegionId,
-        });
-        qba.orWhere('sections.election_region_id is null');
+        })
+        qba.orWhere('sections.election_region_id is null')
       }),
-    );
+    )
 
-    return qb.getMany();
+    return qb.getMany()
   }
 }

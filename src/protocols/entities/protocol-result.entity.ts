@@ -5,39 +5,39 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { Protocol } from './protocol.entity';
-import { Party } from '../../parties/entities/party.entity';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { Protocol } from './protocol.entity'
+import { Party } from '../../parties/entities/party.entity'
 
 @Entity('protocol_results')
 export class ProtocolResult {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @ManyToOne(() => Protocol, (protocol) => protocol.results)
   @JoinColumn({
     name: 'protocol_id',
   })
-  protocol: Protocol;
+  protocol: Protocol
 
   @ManyToOne(() => Party)
   @JoinColumn({
     name: 'party_id',
   })
-  party: Party;
+  party: Party
 
   @Column()
-  validVotesCount: number;
+  validVotesCount: number
 
   @Column('jsonb')
-  machineVotes: number[];
+  machineVotes: number[]
 
   @Column()
-  nonMachineVotesCount: number;
+  nonMachineVotesCount: number
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 }

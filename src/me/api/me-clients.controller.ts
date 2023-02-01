@@ -6,11 +6,11 @@ import {
   UsePipes,
   ValidationPipe,
   Post,
-} from '@nestjs/common';
-import { InjectUser } from '../../auth/decorators/inject-user.decorator';
-import { ClientsRepository } from '../../users/entities/clients.repository';
-import { User } from '../../users/entities/user.entity';
-import { ClientDto } from '../../users/api/client.dto';
+} from '@nestjs/common'
+import { InjectUser } from '../../auth/decorators/inject-user.decorator'
+import { ClientsRepository } from '../../users/entities/clients.repository'
+import { User } from '../../users/entities/user.entity'
+import { ClientDto } from '../../users/api/client.dto'
 
 @Controller('me/clients')
 export class MeClientsController {
@@ -23,7 +23,7 @@ export class MeClientsController {
   async index(@InjectUser() user: User): Promise<ClientDto[]> {
     return (await this.clientsRepo.findAllForOwners([user])).map(
       ClientDto.fromEntity,
-    );
+    )
   }
 
   @Post()
@@ -41,10 +41,10 @@ export class MeClientsController {
     @InjectUser() user: User,
     @Body() clientDto: ClientDto,
   ): Promise<ClientDto> {
-    const client = clientDto.toEntity();
-    client.activate();
-    client.owner = user;
+    const client = clientDto.toEntity()
+    client.activate()
+    client.owner = user
 
-    return ClientDto.fromEntity(await this.clientsRepo.save(client));
+    return ClientDto.fromEntity(await this.clientsRepo.save(client))
   }
 }

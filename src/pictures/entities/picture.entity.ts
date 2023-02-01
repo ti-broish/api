@@ -4,34 +4,34 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   ManyToOne,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { User } from '../../users/entities';
-import { PathInterface } from '../path.interface';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { User } from '../../users/entities'
+import { PathInterface } from '../path.interface'
 
 @Entity('pictures', { orderBy: { sortPosition: 'ASC' } })
 export class Picture implements PathInterface {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @Column()
-  path: string;
+  path: string
 
   @Column()
-  sortPosition: number = 0;
+  sortPosition: number = 0
 
   @Column()
-  rotation: number = 0;
+  rotation: number = 0
 
   @CreateDateColumn({ type: 'timestamp' })
-  createdAt: Date;
+  createdAt: Date
 
   @ManyToOne(() => User)
-  author: User;
+  author: User
 
   getPath(): string {
-    return this.path;
+    return this.path
   }
 }

@@ -1,7 +1,7 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
-import { Public } from '../../auth/decorators';
-import { OrganizationsRepository } from '../entities/organizations.repository';
-import { OrganizationDto } from './organization.dto';
+import { Controller, Get, HttpCode } from '@nestjs/common'
+import { Public } from '../../auth/decorators'
+import { OrganizationsRepository } from '../entities/organizations.repository'
+import { OrganizationDto } from './organization.dto'
 
 @Controller('organizations')
 export class OrganizationsController {
@@ -11,6 +11,6 @@ export class OrganizationsController {
   @Public()
   @HttpCode(200)
   async index(): Promise<OrganizationDto[]> {
-    return (await this.repo.findAll()).map(OrganizationDto.fromEntity);
+    return (await this.repo.findAll()).map(OrganizationDto.fromEntity)
   }
 }

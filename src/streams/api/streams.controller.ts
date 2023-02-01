@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Body,
   Controller,
@@ -11,22 +11,22 @@ import {
   Param,
   Get,
   Query,
-} from '@nestjs/common';
-import { InjectUser, Public } from 'src/auth/decorators';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { SectionsRepository } from 'src/sections/entities/sections.repository';
-import { User } from 'src/users/entities';
-import { UsersRepository } from 'src/users/entities/users.repository';
-import { Stream } from '../entities/stream.entity';
-import { StreamsRepository } from '../entities/streams.repository';
-import { StreamDto } from './stream.dto';
+} from '@nestjs/common'
+import { InjectUser, Public } from 'src/auth/decorators'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { SectionsRepository } from 'src/sections/entities/sections.repository'
+import { User } from 'src/users/entities'
+import { UsersRepository } from 'src/users/entities/users.repository'
+import { Stream } from '../entities/stream.entity'
+import { StreamsRepository } from '../entities/streams.repository'
+import { StreamDto } from './stream.dto'
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
-} from 'src/utils/accepted-response';
-import { StreamCensor } from './stream-censor.service';
+} from 'src/utils/accepted-response'
+import { StreamCensor } from './stream-censor.service'
 
 @Controller('streams')
 export class StreamsController {
@@ -52,14 +52,14 @@ export class StreamsController {
     @Body() streamDto: StreamDto,
     @InjectUser() user: User,
   ): Promise<StreamDto> {
-    const stream = await this.streamsRepo.findAvailableStreamOrFail();
+    const stream = await this.streamsRepo.findAvailableStreamOrFail()
     const section = await this.sectionsRepo.findOneOrFailWithRelations(
       streamDto.toEntity().section.id,
-    );
-    stream.assign(user, section);
-    await this.usersRepo.save(user);
+    )
+    stream.assign(user, section)
+    await this.usersRepo.save(user)
 
-    return StreamDto.fromEntity(stream, ['read', StreamDto.READ]);
+    return StreamDto.fromEntity(stream, ['read', StreamDto.READ])
   }
 
   @Delete(':stream')
@@ -67,9 +67,9 @@ export class StreamsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
   delete(@Param('stream') streamId: string): AcceptedResponse {
-    this.streamCensor.censorStreamById(streamId);
+    this.streamCensor.censorStreamById(streamId)
 
-    return { status: ACCEPTED_RESPONSE_STATUS };
+    return { status: ACCEPTED_RESPONSE_STATUS }
   }
 
   @Public()
@@ -79,6 +79,6 @@ export class StreamsController {
     return (await this.streamsRepo.findUncensoredStreams(after)).map(
       (stream: Stream) =>
         StreamDto.fromEntity(stream, [StreamDto.WATCH, StreamDto.FEED]),
-    );
+    )
   }
 }

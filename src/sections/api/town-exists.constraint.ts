@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common'
 import {
   registerDecorator,
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
-} from 'class-validator';
-import { TownsRepository } from '../entities/towns.repository';
-import { TownDto } from './town.dto';
+} from 'class-validator'
+import { TownsRepository } from '../entities/towns.repository'
+import { TownDto } from './town.dto'
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -18,18 +18,18 @@ export class IsTownExistsConstraint implements ValidatorConstraintInterface {
 
   async validate(townCode?: number): Promise<boolean> {
     if (!townCode) {
-      return true;
+      return true
     }
 
     if (typeof townCode !== 'number' || townCode <= 0) {
-      return false;
+      return false
     }
 
-    return !!(await this.repo.findOneByCode(townCode));
+    return !!(await this.repo.findOneByCode(townCode))
   }
 
   defaultMessage?(validationArguments?: ValidationArguments): string {
-    return `Town with code "${validationArguments.value}" does not exist!`;
+    return `Town with code "${validationArguments.value}" does not exist!`
   }
 }
 
@@ -41,6 +41,6 @@ export function IsTownExists(validationOptions?: ValidationOptions) {
       options: validationOptions,
       constraints: [],
       validator: IsTownExistsConstraint,
-    });
-  };
+    })
+  }
 }

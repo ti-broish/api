@@ -1,17 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ProtocolStatus } from 'src/protocols/entities/protocol.entity';
-import { StatsDto } from 'src/results/api/stats.dto';
-import { Repository, SelectQueryBuilder } from 'typeorm';
-import { Section } from './section.entity';
-import { TownsRepository } from './towns.repository';
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { ProtocolStatus } from 'src/protocols/entities/protocol.entity'
+import { StatsDto } from 'src/results/api/stats.dto'
+import { Repository, SelectQueryBuilder } from 'typeorm'
+import { Section } from './section.entity'
+import { TownsRepository } from './towns.repository'
 
 const objectValuesToInt = (
   obj: Record<string, string>,
 ): Record<string, number> =>
   Object.fromEntries(
     Object.entries(obj).map(([key, value]) => [key, parseInt(value, 10)]),
-  );
+  )
 @Injectable()
 export class SectionsRepository {
   constructor(
@@ -22,15 +22,15 @@ export class SectionsRepository {
   ) {}
 
   getRepo() {
-    return this.repo;
+    return this.repo
   }
 
   findOne(id: string): Promise<Section | undefined> {
-    return this.repo.findOneBy({ id });
+    return this.repo.findOneBy({ id })
   }
 
   findOneOrFail(id: string): Promise<Section> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['town'] });
+    return this.repo.findOneOrFail({ where: { id }, relations: ['town'] })
   }
 
   findOneOrFailWithRelations(id: string): Promise<Section> {
@@ -43,7 +43,7 @@ export class SectionsRepository {
         'town.municipality',
         'cityRegion',
       ],
-    });
+    })
   }
 
   findByTownAndCityRegion(
@@ -62,13 +62,13 @@ export class SectionsRepository {
           code: townCode,
         },
       },
-    };
-
-    if (cityRegionCode) {
-      findOptions.join.innerJoinAndSelect.cityRegion = 'section.cityRegion';
     }
 
-    return this.repo.find(findOptions);
+    if (cityRegionCode) {
+      findOptions.join.innerJoinAndSelect.cityRegion = 'section.cityRegion'
+    }
+
+    return this.repo.find(findOptions)
   }
 
   async hasPublishedProtocol(section: Section): Promise<boolean> {
@@ -80,7 +80,7 @@ export class SectionsRepository {
         published: ProtocolStatus.PUBLISHED,
       })
       .limit(1)
-      .getOne());
+      .getOne())
   }
 
   async getResultsFor(
@@ -88,43 +88,43 @@ export class SectionsRepository {
     groupBySegment = 0,
   ): Promise<number[] | Record<string, number[]>> {
     if (groupBySegment > 0) {
-      return {};
+      return {}
     }
-    return [];
-    const qb = this.repo.createQueryBuilder('sections').select([]);
-    qb.addSelect('results.party_id', 'party_id');
-    qb.addSelect('SUM(results.validVotesCount)', 'validVotesCount');
+    return []
+    const qb = this.repo.createQueryBuilder('sections').select([])
+    qb.addSelect('results.party_id', 'party_id')
+    qb.addSelect('SUM(results.validVotesCount)', 'validVotesCount')
     if (segment.length > 0) {
-      qb.andWhere('sections.id like :segment', { segment: `${segment}%` });
+      qb.andWhere('sections.id like :segment', { segment: `${segment}%` })
     }
-    qb.innerJoin('sections.protocols', 'protocols');
-    qb.innerJoin('protocols.results', 'results');
+    qb.innerJoin('sections.protocols', 'protocols')
+    qb.innerJoin('protocols.results', 'results')
     qb.andWhere('protocols.status = :published', {
       published: ProtocolStatus.PUBLISHED,
-    });
+    })
     if (groupBySegment > 0) {
       qb.addSelect('MAX(LEFT(sections.id, :groupBySegment))', 'segment')
         .groupBy('LEFT(sections.id, :groupBySegment)')
-        .setParameters({ groupBySegment });
+        .setParameters({ groupBySegment })
     }
-    qb.addGroupBy('results.party_id');
+    qb.addGroupBy('results.party_id')
 
-    const rawResults = await qb.getRawMany();
+    const rawResults = await qb.getRawMany()
     if (groupBySegment === 0) {
       return rawResults.reduce(
         (acc, { party_id, validVotesCount }) =>
           acc.concat([party_id, parseInt(validVotesCount, 10)]),
         [],
-      );
+      )
     }
 
     return rawResults.reduce((acc, result) => {
       acc[result.segment] = (acc[result.segment] || []).concat([
         result.party_id,
         parseInt(result.validVotesCount, 10),
-      ]);
-      return acc;
-    }, {});
+      ])
+      return acc
+    }, {})
   }
 
   async getStatsFor(
@@ -173,15 +173,15 @@ export class SectionsRepository {
         .addSelect('COUNT(streams.id)', 'streamsCountActive')
         .innerJoin('sections.streams', 'streams')
         .andWhere('streams.isStreaming = TRUE'),
-    ];
+    ]
 
     const statsQueriesTown = [
       this.qbStatsTownViolations(segment, groupBySegment).addSelect(
         'COUNT(*)',
         'violationsCountTown',
       ),
-    ];
-    segment.length == 9 ? statsQueriesTown.pop() : statsQueriesTown;
+    ]
+    segment.length == 9 ? statsQueriesTown.pop() : statsQueriesTown
     const rawResults =
       groupBySegment > 0
         ? statsQueries.map((sqb) =>
@@ -190,39 +190,39 @@ export class SectionsRepository {
               .setParameters({ groupBySegment })
               .getRawMany(),
           )
-        : statsQueries.map((sqb) => sqb.getRawOne());
+        : statsQueries.map((sqb) => sqb.getRawOne())
     const rawResultsTown =
       groupBySegment > 0
         ? statsQueriesTown.map((sqb) => sqb.getRawMany())
-        : statsQueriesTown.map((sqb) => sqb.getRawOne());
-    const statsSections = await Promise.all(rawResults);
-    const statsTown = await Promise.all(rawResultsTown);
-    const stats = statsSections.concat(statsTown);
-    let violationsCountTown = 0;
+        : statsQueriesTown.map((sqb) => sqb.getRawOne())
+    const statsSections = await Promise.all(rawResults)
+    const statsTown = await Promise.all(rawResultsTown)
+    const stats = statsSections.concat(statsTown)
+    let violationsCountTown = 0
     stats.forEach((x) =>
       Object.keys(x).includes('violationsCountTown')
         ? (violationsCountTown = parseInt(x.violationsCountTown, 10))
         : (violationsCountTown = 0),
-    );
+    )
     stats.forEach((x) =>
       Object.keys(x).includes('violationsCount')
         ? (x.violationsCount =
             parseInt(x.violationsCount, 10) + violationsCountTown)
         : x.violatinsCount,
-    );
+    )
 
     if (groupBySegment > 0) {
-      const output = {};
+      const output = {}
 
       stats
         .filter((x) => x.length > 0)
         .forEach((stat) => {
           stat.forEach((singleStat) => {
             if (!output[singleStat.segment]) {
-              output[singleStat.segment] = new StatsDto();
+              output[singleStat.segment] = new StatsDto()
             }
             Object.keys(singleStat).forEach((key) => {
-              output[singleStat.segment][key] = parseInt(singleStat[key], 10);
+              output[singleStat.segment][key] = parseInt(singleStat[key], 10)
               Object.keys(output[singleStat.segment]).includes(
                 'violationsCountTown',
               )
@@ -232,28 +232,28 @@ export class SectionsRepository {
                       output[singleStat.segment].violationsCountTown,
                       10,
                     ))
-                : parseInt(output[singleStat.segment].violationsCount, 10);
-            });
-            delete singleStat.segment;
-          });
-        });
+                : parseInt(output[singleStat.segment].violationsCount, 10)
+            })
+            delete singleStat.segment
+          })
+        })
 
-      return output;
+      return output
     }
 
     return objectValuesToInt(
       stats.reduce((acc, x) => Object.assign(acc, x), {} as StatsDto),
-    );
+    )
   }
 
   private qbStats(
     segment: string,
     groupBySegment = 0,
   ): SelectQueryBuilder<Section> {
-    const qb = this.repo.createQueryBuilder('sections').select([]);
-    this.qbStatsWithQueryBuilder(segment, groupBySegment, qb);
+    const qb = this.repo.createQueryBuilder('sections').select([])
+    this.qbStatsWithQueryBuilder(segment, groupBySegment, qb)
 
-    return qb;
+    return qb
   }
 
   private qbStatsWithQueryBuilder(
@@ -262,40 +262,40 @@ export class SectionsRepository {
     qb: SelectQueryBuilder<Section>,
   ): SelectQueryBuilder<Section> {
     if (segment.length > 0) {
-      qb.where('sections.id like :segment', { segment: `${segment}%` });
+      qb.where('sections.id like :segment', { segment: `${segment}%` })
     }
     if (groupBySegment > 0) {
       qb.addSelect(
         'MAX(LEFT(sections.id, :groupBySegment))',
         'segment',
-      ).setParameters({ groupBySegment });
+      ).setParameters({ groupBySegment })
     }
 
-    return qb;
+    return qb
   }
 
   private qbStatsTownViolations(
     segment: string,
     groupBySegment = 0,
   ): SelectQueryBuilder<Section> {
-    const qb = this.repo.manager.createQueryBuilder().select([]);
+    const qb = this.repo.manager.createQueryBuilder().select([])
     qb.from((subQuery) => {
       return this.qbStatsWithQueryBuilder(segment, groupBySegment, subQuery)
         .from('sections', 'sections')
         .addSelect('sections.town_id')
-        .groupBy('sections.town_id');
+        .groupBy('sections.town_id')
     }, 'sections')
       .innerJoin(
         'violations',
         'violations',
         '"violations"."town_id" = "sections"."town_id"',
       )
-      .andWhere('violations.section_id IS NULL');
+      .andWhere('violations.section_id IS NULL')
     if (groupBySegment > 0) {
-      qb.groupBy('sections.segment');
-      qb.addSelect('segment');
+      qb.groupBy('sections.segment')
+      qb.addSelect('segment')
     }
 
-    return qb;
+    return qb
   }
 }

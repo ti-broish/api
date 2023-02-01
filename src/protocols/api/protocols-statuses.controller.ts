@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -6,12 +6,12 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
-} from '@nestjs/common';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { Protocol, ProtocolStatus } from '../entities/protocol.entity';
-import { ProtocolDto } from './protocol.dto';
+} from '@nestjs/common'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { Protocol, ProtocolStatus } from '../entities/protocol.entity'
+import { ProtocolDto } from './protocol.dto'
 
 @Controller('protocols/statuses')
 export class ProtocolsStatusesController {
@@ -21,14 +21,14 @@ export class ProtocolsStatusesController {
   @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   index(): ProtocolDto[] {
-    const result: ProtocolDto[] = [];
+    const result: ProtocolDto[] = []
 
     Object.values(ProtocolStatus).forEach((status: ProtocolStatus) => {
-      const v = new ProtocolDto();
-      v.status = status;
-      result.push(v);
-    });
+      const v = new ProtocolDto()
+      v.status = status
+      result.push(v)
+    })
 
-    return result;
+    return result
   }
 }

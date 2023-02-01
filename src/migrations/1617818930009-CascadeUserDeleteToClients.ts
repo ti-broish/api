@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class CascadeUserDeleteToClients1617818930009
   implements MigrationInterface
@@ -12,7 +12,7 @@ export class CascadeUserDeleteToClients1617818930009
           foreign key (owner_id)
           references people(id)
           on delete cascade;
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -23,6 +23,6 @@ export class CascadeUserDeleteToClients1617818930009
         add constraint clients_owner_id_fkey
           foreign key (owner_id)
           references people(id);
-      `);
+      `)
   }
 }

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class BroadcastsAndPostsDrop1675208068164 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -6,7 +6,7 @@ export class BroadcastsAndPostsDrop1675208068164 implements MigrationInterface {
         drop table broadcasts_users;
         drop table broadcasts;
         drop table posts;
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -25,11 +25,11 @@ export class BroadcastsAndPostsDrop1675208068164 implements MigrationInterface {
           constraint "posts_author_id_fkey" foreign key ("author_id") references "people" ("id"),
           constraint "posts_picture_id_fkey" foreign key ("picture_id") references "pictures" ("id")
         );
-      `);
+      `)
 
     await queryRunner.query(`
         create index "posts_publish_at_key" on "posts" ("publish_at");
-      `);
+      `)
 
     await queryRunner.query(`
         create table "broadcasts" (
@@ -45,11 +45,11 @@ export class BroadcastsAndPostsDrop1675208068164 implements MigrationInterface {
           primary key ("id"),
           constraint "broadcasts_author_id_fkey" foreign key ("author_id") references "people" ("id")
         );
-      `);
+      `)
 
     await queryRunner.query(`
         create index "broadcasts_publish_at_key" on "broadcasts" ("publish_at");
-      `);
+      `)
 
     await queryRunner.query(`
         create table "broadcasts_users" (
@@ -59,10 +59,10 @@ export class BroadcastsAndPostsDrop1675208068164 implements MigrationInterface {
           constraint "broadcasts_users_broadcast_id_fkey" foreign key ("broadcast_id") references "broadcasts" ("id"),
           constraint "broadcasts_users_user_id_fkey" foreign key ("user_id") references "people" ("id")
         );
-      `);
+      `)
 
     await queryRunner.query(`
         create index "broadcasts_users_user_id_key" on "broadcasts_users" ("user_id");
-      `);
+      `)
   }
 }

@@ -1,11 +1,11 @@
-import { Ability } from '@casl/ability';
-import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { ElectionRegion } from '../entities';
-import { ElectionRegionsRepository } from '../entities/electionRegions.repository';
-import { ElectionRegionDto } from './electionRegion.dto';
+import { Ability } from '@casl/ability'
+import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { ElectionRegion } from '../entities'
+import { ElectionRegionsRepository } from '../entities/electionRegions.repository'
+import { ElectionRegionDto } from './electionRegion.dto'
 
 @Controller('election_regions')
 export class ElectionRegionsController {
@@ -18,6 +18,6 @@ export class ElectionRegionsController {
   async index(): Promise<ElectionRegionDto[]> {
     return (await this.repo.findAllWithMunicipalities()).map(
       ElectionRegionDto.fromEntity,
-    );
+    )
   }
 }

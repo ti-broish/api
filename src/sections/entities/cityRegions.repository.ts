@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CityRegion } from './cityRegion.entity';
-import { ElectionRegion } from './electionRegion.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { CityRegion } from './cityRegion.entity'
+import { ElectionRegion } from './electionRegion.entity'
 
 @Injectable()
 export class CityRegionsRepository {
@@ -27,6 +27,6 @@ export class CityRegionsRepository {
       .andWhere('sections.election_region_id = :electionRegionId', {
         electionRegionId: electionRegion.id,
       })
-      .getOneOrFail();
+      .getOneOrFail()
   }
 }

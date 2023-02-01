@@ -1,16 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../users/entities';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { User } from '../../users/entities'
 import {
   Repository,
   SelectQueryBuilder,
   getConnection,
   In,
   Brackets,
-} from 'typeorm';
-import { ProtocolActionType } from './protocol-action.entity';
-import { Protocol, ProtocolStatus } from './protocol.entity';
-import { ProtocolFilters } from '../api/protocols-filters.dto';
+} from 'typeorm'
+import { ProtocolActionType } from './protocol-action.entity'
+import { Protocol, ProtocolStatus } from './protocol.entity'
+import { ProtocolFilters } from '../api/protocols-filters.dto'
 
 export class InvalidFiltersError extends Error {}
 
@@ -22,7 +22,7 @@ export class ProtocolsRepository {
   ) {}
 
   getRepo(): Repository<Protocol> {
-    return this.repo;
+    return this.repo
   }
 
   findOneOrFail(id: string): Promise<Protocol> {
@@ -38,13 +38,13 @@ export class ProtocolsRepository {
         'results.party',
         'assignees',
       ],
-    });
+    })
   }
 
   async save(protocol: Protocol): Promise<Protocol> {
-    await this.repo.save(protocol);
+    await this.repo.save(protocol)
 
-    return this.findOneOrFail(protocol.id);
+    return this.findOneOrFail(protocol.id)
   }
 
   findByAuthor(author: User): Promise<Protocol[]> {
@@ -64,7 +64,7 @@ export class ProtocolsRepository {
           action: ProtocolActionType.SEND,
         },
       },
-    });
+    })
   }
 
   queryBuilderWithFilters(
@@ -81,25 +81,25 @@ export class ProtocolsRepository {
       town,
       cityRegion,
       municipality,
-    } = filters;
+    } = filters
 
-    const qb = this.repo.createQueryBuilder('protocol');
+    const qb = this.repo.createQueryBuilder('protocol')
 
-    qb.innerJoinAndSelect('protocol.section', 'section');
-    qb.innerJoinAndSelect('section.town', 'town');
-    qb.innerJoinAndSelect('protocol.pictures', 'picture');
-    qb.innerJoinAndSelect('protocol.actions', 'action');
-    qb.innerJoinAndSelect('action.actor', 'actor');
+    qb.innerJoinAndSelect('protocol.section', 'section')
+    qb.innerJoinAndSelect('section.town', 'town')
+    qb.innerJoinAndSelect('protocol.pictures', 'picture')
+    qb.innerJoinAndSelect('protocol.actions', 'action')
+    qb.innerJoinAndSelect('action.actor', 'actor')
     qb.andWhere('action.action = :action', {
       action: ProtocolActionType.SEND,
-    });
-    qb.innerJoinAndSelect('actor.organization', 'organization');
+    })
+    qb.innerJoinAndSelect('actor.organization', 'organization')
 
     if (assignee) {
-      qb.innerJoinAndSelect('protocol.assignees', 'assignee');
-      qb.andWhere('assignee.id = :assignee', { assignee });
+      qb.innerJoinAndSelect('protocol.assignees', 'assignee')
+      qb.andWhere('assignee.id = :assignee', { assignee })
     } else {
-      qb.leftJoinAndSelect('protocol.assignees', 'assignee');
+      qb.leftJoinAndSelect('protocol.assignees', 'assignee')
     }
 
     if (electionRegion !== '32' && country && country !== '00') {
@@ -107,77 +107,77 @@ export class ProtocolsRepository {
       // while keeping performance quick as mostly doing filters by `section.id like ":prefix%"`
       throw new InvalidFiltersError(
         'Incompatible input filters! Domestic region cannot be combined with a country abroad.',
-      );
+      )
     }
 
     const sectionPrefix =
       (electionRegion || '') +
       (municipality || country || '') +
-      (cityRegion || '');
+      (cityRegion || '')
 
     if (sectionPrefix.length > 0) {
       qb.andWhere('section.id LIKE :sectionPrefix', {
         sectionPrefix: `${sectionPrefix}%`,
-      });
+      })
     }
     // Keep both filters in order to exclude confusing results from mixed filters
     if (section) {
       qb.andWhere('section.id LIKE :section', {
         section: `${section}%`,
-      });
+      })
     }
 
     if (town) {
-      qb.andWhere('town.code = :town', { town });
+      qb.andWhere('town.code = :town', { town })
     }
 
     if (status) {
-      qb.andWhere('protocol.status = :status', { status });
+      qb.andWhere('protocol.status = :status', { status })
     }
 
     if (organization) {
-      qb.andWhere('organization.id = :organization', { organization });
+      qb.andWhere('organization.id = :organization', { organization })
     }
 
     if (origin) {
-      qb.andWhere('protocol.origin = :origin', { origin });
+      qb.andWhere('protocol.origin = :origin', { origin })
     }
 
-    return qb;
+    return qb
   }
 
   async findAll(): Promise<Protocol[]> {
-    return this.repo.find();
+    return this.repo.find()
   }
 
   async findPublishedProtocolsFrom(
     partialSectionIds: string[],
   ): Promise<Protocol[]> {
-    const qb = this.repo.createQueryBuilder('protocol');
-    qb.innerJoinAndSelect('protocol.results', 'results');
-    qb.innerJoinAndSelect('protocol.section', 'section');
+    const qb = this.repo.createQueryBuilder('protocol')
+    qb.innerJoinAndSelect('protocol.results', 'results')
+    qb.innerJoinAndSelect('protocol.section', 'section')
     qb.andWhere(
       new Brackets((qbNested: SelectQueryBuilder<Protocol>) => {
         partialSectionIds.forEach((partialSectionId: string) => {
           qbNested.orWhere('section.id LIKE :sectionId', {
             sectionId: `${partialSectionId}%`,
-          });
-        });
+          })
+        })
       }),
-    );
+    )
     qb.andWhere('protocol.status = :status', {
       status: ProtocolStatus.PUBLISHED,
-    });
+    })
 
-    return qb.getMany();
+    return qb.getMany()
   }
 
   async markProtocolsAsPublished(protocols: Protocol[]): Promise<void> {
-    this.markProtocolsAs(ProtocolStatus.PUBLISHED, protocols);
+    this.markProtocolsAs(ProtocolStatus.PUBLISHED, protocols)
   }
 
   async markProtocolsAsReplaced(protocols: Protocol[]): Promise<void> {
-    this.markProtocolsAs(ProtocolStatus.REPLACED, protocols);
+    this.markProtocolsAs(ProtocolStatus.REPLACED, protocols)
   }
 
   private async markProtocolsAs(
@@ -189,7 +189,7 @@ export class ProtocolsRepository {
       .update(Protocol)
       .set({ status })
       .where({ id: In(protocols.map((protocol: Protocol) => protocol.id)) })
-      .execute();
+      .execute()
   }
 
   async getAllAssignedProtocols({
@@ -205,20 +205,20 @@ export class ProtocolsRepository {
         })
         .andWhere('action_assign.actor_id = :assignActorId', { assignActorId })
         .getRawMany()
-    ).map((protocol) => protocol.protocol_id);
+    ).map((protocol) => protocol.protocol_id)
   }
 
   async findBySection(sectionCode: string): Promise<Protocol[]> {
-    const qb = this.repo.createQueryBuilder('protocol');
-    qb.innerJoinAndSelect('protocol.section', 'section');
-    qb.leftJoinAndSelect('protocol.pictures', 'pictures');
-    qb.innerJoinAndSelect('protocol.results', 'results');
-    qb.andWhere('protocol.section = :id', { id: sectionCode });
+    const qb = this.repo.createQueryBuilder('protocol')
+    qb.innerJoinAndSelect('protocol.section', 'section')
+    qb.leftJoinAndSelect('protocol.pictures', 'pictures')
+    qb.innerJoinAndSelect('protocol.results', 'results')
+    qb.andWhere('protocol.section = :id', { id: sectionCode })
     qb.andWhere('protocol.status in (:...status)', {
       status: [ProtocolStatus.READY, ProtocolStatus.PUBLISHED],
-    });
+    })
 
-    return qb.getMany();
+    return qb.getMany()
   }
 
   async findSettledProtocolFromParent(child: Protocol) {
@@ -232,6 +232,6 @@ export class ProtocolsRepository {
       .andWhere('protocol.status IN (:...statuses)', {
         statuses: [ProtocolStatus.READY, ProtocolStatus.REJECTED],
       })
-      .getOne();
+      .getOne()
   }
 }

@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -6,16 +6,16 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
-} from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { Role } from 'src/casl/role.enum';
-import { User } from '../entities';
+} from '@nestjs/common'
+import { I18nService } from 'nestjs-i18n'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { Role } from 'src/casl/role.enum'
+import { User } from '../entities'
 
 interface RoleResponse {
-  [key: string]: string;
+  [key: string]: string
 }
 
 @Controller('users/roles')
@@ -32,7 +32,7 @@ export class UsersRolesController {
       Object.keys(Role).map((roleKey) =>
         this.formatRole(roleKey, Role[roleKey]),
       ),
-    );
+    )
   }
 
   private async formatRole(
@@ -44,6 +44,6 @@ export class UsersRolesController {
       roleLocalized: await this.i18n.translate(
         `role.ROLE_${roleKey.toUpperCase()}`,
       ),
-    } as RoleResponse;
+    } as RoleResponse
   }
 }
