@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/users/entities';
-import { Repository } from 'typeorm';
-import { Stream } from './stream.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { User } from 'src/users/entities'
+import { Repository } from 'typeorm'
+import { Stream } from './stream.entity'
 
 @Injectable()
 export class StreamsRepository {
@@ -17,18 +17,18 @@ export class StreamsRepository {
         isCensored: false,
       },
       relations: ['chunks', 'section', 'user'],
-    });
+    })
   }
 
   findOneByIdentifier(identifier: string): Promise<Stream> {
-    return this.repo.findOne({ where: { identifier } });
+    return this.repo.findOne({ where: { identifier } })
   }
 
   findOneByIdentifierOrFail(identifier: string): Promise<Stream> {
     return this.repo.findOneOrFail({
       where: { identifier },
       relations: ['chunks', 'section', 'user'],
-    });
+    })
   }
 
   findOneWithSectionOrFail(id: string): Promise<Stream> {
@@ -46,7 +46,7 @@ export class StreamsRepository {
         'section.town.municipality',
         'section.town.country',
       ],
-    });
+    })
   }
 
   findAvailableStreamOrFail(): Promise<Stream> {
@@ -55,7 +55,7 @@ export class StreamsRepository {
         isCensored: false,
         isAssigned: false,
       },
-    });
+    })
   }
 
   findForUser(user: User): Promise<Stream | null> {
@@ -78,7 +78,7 @@ export class StreamsRepository {
           id: user.id,
         },
       },
-    });
+    })
   }
 
   async findBySection(section: string): Promise<Stream[]> {
@@ -90,36 +90,36 @@ export class StreamsRepository {
         isCensored: false,
       },
       relations: ['chunks', 'section'],
-    });
+    })
   }
 
   findUncensoredStreams(after?: string): Promise<Stream[]> {
-    const qb = this.repo.createQueryBuilder('stream');
+    const qb = this.repo.createQueryBuilder('stream')
 
-    qb.leftJoinAndSelect('stream.chunks', 'chunks');
-    qb.innerJoinAndSelect('stream.section', 'section');
-    qb.leftJoinAndSelect('section.cityRegion', 'cityRegion');
-    qb.innerJoinAndSelect('section.electionRegion', 'electionRegion');
-    qb.innerJoinAndSelect('section.town', 'town');
-    qb.innerJoinAndSelect('town.country', 'country');
-    qb.leftJoinAndSelect('town.municipality', 'municipality');
-    qb.leftJoinAndSelect('municipality.electionRegions', 'electionRegions');
-    qb.where('chunks.isActive = false');
+    qb.leftJoinAndSelect('stream.chunks', 'chunks')
+    qb.innerJoinAndSelect('stream.section', 'section')
+    qb.leftJoinAndSelect('section.cityRegion', 'cityRegion')
+    qb.innerJoinAndSelect('section.electionRegion', 'electionRegion')
+    qb.innerJoinAndSelect('section.town', 'town')
+    qb.innerJoinAndSelect('town.country', 'country')
+    qb.leftJoinAndSelect('town.municipality', 'municipality')
+    qb.leftJoinAndSelect('municipality.electionRegions', 'electionRegions')
+    qb.where('chunks.isActive = false')
 
-    qb.andWhere('stream.isCensored = false');
+    qb.andWhere('stream.isCensored = false')
 
-    qb.limit(10);
-    qb.orderBy('stream.id', 'DESC');
+    qb.limit(10)
+    qb.orderBy('stream.id', 'DESC')
 
     // Simple cursor pagination
     if (after) {
-      qb.andWhere('stream.id < :after', { after });
+      qb.andWhere('stream.id < :after', { after })
     }
 
-    return qb.getMany();
+    return qb.getMany()
   }
 
   async save(stream: Stream): Promise<Stream> {
-    return await this.repo.save(stream);
+    return await this.repo.save(stream)
   }
 }

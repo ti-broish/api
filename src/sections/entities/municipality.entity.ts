@@ -1,38 +1,38 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
-import { CityRegion } from './cityRegion.entity';
-import { ElectionRegion } from './electionRegion.entity';
-import { Town } from './town.entity';
+import { ApiProperty } from '@nestjs/swagger'
+import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm'
+import { CityRegion } from './cityRegion.entity'
+import { ElectionRegion } from './electionRegion.entity'
+import { Town } from './town.entity'
 
 @Entity('municipalities')
 export class Municipality {
   @PrimaryColumn()
-  readonly id: number;
+  readonly id: number
 
   @Column('char', { length: 2 })
-  readonly code: string;
+  readonly code: string
 
   @Column()
-  readonly name: string;
+  readonly name: string
 
   @ManyToMany(
     () => ElectionRegion,
     (electionRegion) => electionRegion.municipalities,
   )
-  readonly electionRegions: ElectionRegion[];
+  readonly electionRegions: ElectionRegion[]
 
   @OneToMany(() => Town, (town) => town.municipality)
-  readonly towns: Town[];
+  readonly towns: Town[]
 
-  sectionsCount: number;
+  sectionsCount: number
 
   @ApiProperty({ type: () => CityRegion })
-  cityRegions: Record<string, CityRegion> = {};
+  cityRegions: Record<string, CityRegion> = {}
 
   public isMunicipalityHidden(): boolean {
     return (
       (this.towns.length === 1 && this.towns[0].cityRegions.length > 0) ||
       this.electionRegions.length > 1
-    );
+    )
   }
 }

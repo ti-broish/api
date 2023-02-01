@@ -8,14 +8,14 @@ import {
   UsePipes,
   ValidationPipe,
   ConflictException,
-} from '@nestjs/common';
-import { InjectUser } from '../../auth/decorators/inject-user.decorator';
-import { ProtocolsRepository } from '../../protocols/entities/protocols.repository';
-import { User } from '../../users/entities/user.entity';
-import { UsersRepository } from '../../users/entities/users.repository';
-import { UserDto } from '../../users/api/user.dto';
-import * as admin from 'firebase-admin';
-import { ViolationsRepository } from 'src/violations/entities/violations.repository';
+} from '@nestjs/common'
+import { InjectUser } from '../../auth/decorators/inject-user.decorator'
+import { ProtocolsRepository } from '../../protocols/entities/protocols.repository'
+import { User } from '../../users/entities/user.entity'
+import { UsersRepository } from '../../users/entities/users.repository'
+import { UserDto } from '../../users/api/user.dto'
+import * as admin from 'firebase-admin'
+import { ViolationsRepository } from 'src/violations/entities/violations.repository'
 
 @Controller('me')
 export class MeController {
@@ -30,7 +30,7 @@ export class MeController {
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Read, User))
   async get(@InjectUser() user: User): Promise<UserDto> {
-    return UserDto.fromEntity(user, [UserDto.READ, UserDto.ME_READ]);
+    return UserDto.fromEntity(user, [UserDto.READ, UserDto.ME_READ])
   }
 
   @Patch()
@@ -49,9 +49,9 @@ export class MeController {
     @InjectUser() user: User,
     @Body() userDto: UserDto,
   ): Promise<UserDto> {
-    const updatedUser = await this.usersRepo.update(userDto.updateEntity(user));
+    const updatedUser = await this.usersRepo.update(userDto.updateEntity(user))
 
-    return UserDto.fromEntity(updatedUser);
+    return UserDto.fromEntity(updatedUser)
   }
 
   @Delete()
@@ -59,17 +59,17 @@ export class MeController {
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: Ability) => ability.can(Action.Delete, User))
   async delete(@InjectUser() user: User): Promise<void> {
-    const submittedProtocols = await this.protocolsRepo.findByAuthor(user);
-    const submittedViolations = await this.violationsRepo.findByAuthor(user);
+    const submittedProtocols = await this.protocolsRepo.findByAuthor(user)
+    const submittedViolations = await this.violationsRepo.findByAuthor(user)
 
     if (submittedProtocols.length > 0 || submittedViolations.length > 0) {
       throw new ConflictException(
         'CANNOT_DELETE_USER_WITH_PROTOCOLS_OR_VIOLATIONS',
-      );
+      )
     }
 
-    const firebaseUid = user.firebaseUid;
-    await this.usersRepo.delete(user.id);
-    await admin.auth().deleteUser(firebaseUid);
+    const firebaseUid = user.firebaseUid
+    await this.usersRepo.delete(user.id)
+    await admin.auth().deleteUser(firebaseUid)
   }
 }

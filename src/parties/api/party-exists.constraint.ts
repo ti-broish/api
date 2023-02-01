@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common'
 import {
   registerDecorator,
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
-} from 'class-validator';
-import { PartiesRepository } from '../entities/parties.repository';
-import { PartyDto } from './party.dto';
+} from 'class-validator'
+import { PartiesRepository } from '../entities/parties.repository'
+import { PartyDto } from './party.dto'
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -18,14 +18,14 @@ export class IsPartyExistsConstraint implements ValidatorConstraintInterface {
 
   async validate(partyId?: number): Promise<boolean> {
     if (partyId === null || typeof partyId !== 'number' || partyId < 0) {
-      return false;
+      return false
     }
 
-    return !!(await this.repo.findOne(partyId));
+    return !!(await this.repo.findOne(partyId))
   }
 
   defaultMessage?(validationArguments?: ValidationArguments): string {
-    return `Party with ID "${validationArguments.value}" does not exist!`;
+    return `Party with ID "${validationArguments.value}" does not exist!`
   }
 }
 
@@ -37,6 +37,6 @@ export function IsPartyExists(validationOptions?: ValidationOptions) {
       options: validationOptions,
       constraints: [],
       validator: IsPartyExistsConstraint,
-    });
-  };
+    })
+  }
 }

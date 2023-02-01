@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type } from 'class-transformer'
 import {
   IsBooleanString,
   IsEnum,
@@ -7,62 +7,62 @@ import {
   IsOptional,
   IsString,
   Length,
-} from 'class-validator';
-import { IsTownExists } from 'src/sections/api/town-exists.constraint';
-import { IsOrganizationExists } from 'src/users/api/organization-exists.constraint';
-import { IsUserExists } from 'src/users/api/user-exists.constraint';
-import { PageDTO } from 'src/utils/page.dto';
-import { IsULID } from 'src/utils/ulid-constraint';
-import { ViolationStatus } from '../entities/violation.entity';
+} from 'class-validator'
+import { IsTownExists } from 'src/sections/api/town-exists.constraint'
+import { IsOrganizationExists } from 'src/users/api/organization-exists.constraint'
+import { IsUserExists } from 'src/users/api/user-exists.constraint'
+import { PageDTO } from 'src/utils/page.dto'
+import { IsULID } from 'src/utils/ulid-constraint'
+import { ViolationStatus } from '../entities/violation.entity'
 
 export class ViolationsFilters extends PageDTO {
   @IsOptional()
   @IsULID()
   @IsUserExists()
-  assignee: string;
+  assignee: string
 
   @IsOptional()
   @Length(1, 9)
   @IsNumberString()
-  section: string;
+  section: string
 
   @IsOptional()
   @IsString()
   @IsEnum(ViolationStatus)
-  status: ViolationStatus;
+  status: ViolationStatus
 
   @IsOptional()
   @IsNumberString()
   @Length(2, 2)
-  electionRegion: string;
+  electionRegion: string
 
   @IsOptional()
   @IsNumberString()
   @Length(2, 2)
-  municipality: string;
+  municipality: string
 
   @IsOptional()
   @IsNumberString()
   @Length(2, 2)
-  country: string;
+  country: string
 
   @IsOptional()
   @IsTownExists()
   @Type(() => Number)
-  town: number;
+  town: number
 
   @IsOptional()
   @IsNumberString()
   @Length(2, 2)
-  cityRegion: string;
+  cityRegion: string
 
   @IsOptional()
   @IsInt()
   @Type(() => Number)
   @IsOrganizationExists()
-  organization: number;
+  organization: number
 
   @IsOptional()
   @IsBooleanString()
-  published: boolean;
+  published: boolean
 }

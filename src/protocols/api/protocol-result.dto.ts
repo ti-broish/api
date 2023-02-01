@@ -1,4 +1,4 @@
-import { Expose, plainToClass, Transform, Type } from 'class-transformer';
+import { Expose, plainToClass, Transform, Type } from 'class-transformer'
 import {
   ArrayNotEmpty,
   IsArray,
@@ -9,10 +9,10 @@ import {
   Max,
   Min,
   ValidateNested,
-} from 'class-validator';
-import { PartyDto } from '../../parties/api/party.dto';
-import { ProtocolResult } from '../entities/protocol-result.entity';
-import { Protocol } from '../entities/protocol.entity';
+} from 'class-validator'
+import { PartyDto } from '../../parties/api/party.dto'
+import { ProtocolResult } from '../entities/protocol-result.entity'
+import { Protocol } from '../entities/protocol.entity'
 
 export class ProtocolResultDto {
   @Transform(
@@ -26,10 +26,10 @@ export class ProtocolResultDto {
   @Expose({
     groups: ['read', 'create', 'replace', 'protocol.protocolInResults'],
   })
-  party: PartyDto;
+  party: PartyDto
 
   @Expose({ groups: ['read', 'protocol.protocolInResults'] })
-  validVotesCount: number;
+  validVotesCount: number
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { each: true, groups: ['replace'] })
@@ -42,7 +42,7 @@ export class ProtocolResultDto {
   })
   @IsArray({ groups: ['replace'] })
   @ArrayNotEmpty({ groups: ['replace'] })
-  machineVotes?: number[];
+  machineVotes?: number[]
 
   @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
@@ -53,7 +53,7 @@ export class ProtocolResultDto {
   @Expose({
     groups: ['read', 'replace', 'protocol.protocolInResults', 'compare'],
   })
-  nonMachineVotesCount?: number;
+  nonMachineVotesCount?: number
 
   public toEntity(): ProtocolResult {
     const protocolResult = plainToClass<
@@ -61,16 +61,16 @@ export class ProtocolResultDto {
       Partial<ProtocolResultDto>
     >(ProtocolResult, this, {
       groups: ['create', 'replace'],
-    });
+    })
     const validVotes = (protocolResult.machineVotes || []).concat([
       protocolResult.nonMachineVotesCount || 0,
-    ]);
+    ])
 
     protocolResult.validVotesCount = validVotes.reduce(
       (sum: number, votes: number): number => sum + votes,
-    );
+    )
 
-    return protocolResult;
+    return protocolResult
   }
 
   public static fromEntity(entity: ProtocolResult): ProtocolResultDto {
@@ -81,6 +81,6 @@ export class ProtocolResultDto {
         excludeExtraneousValues: true,
         groups: ['read'],
       },
-    );
+    )
   }
 }

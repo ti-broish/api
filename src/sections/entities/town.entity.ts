@@ -1,4 +1,4 @@
-import { Violation } from '../../violations/entities/violation.entity';
+import { Violation } from '../../violations/entities/violation.entity'
 import {
   Entity,
   Column,
@@ -7,28 +7,28 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
-} from 'typeorm';
-import { CityRegion } from './cityRegion.entity';
-import { Country } from './country.entity';
-import { Municipality } from './municipality.entity';
-import { Section } from './section.entity';
+} from 'typeorm'
+import { CityRegion } from './cityRegion.entity'
+import { Country } from './country.entity'
+import { Municipality } from './municipality.entity'
+import { Section } from './section.entity'
 
 @Entity('towns')
 export class Town {
   @PrimaryGeneratedColumn()
-  readonly id: number;
+  readonly id: number
 
   @Column()
-  code: number;
+  code: number
 
   @Column()
-  readonly name: string;
+  readonly name: string
 
   @ManyToOne(() => Country, (country) => country.towns)
-  readonly country: Country;
+  readonly country: Country
 
   @ManyToOne(() => Municipality, (municipality) => municipality.towns)
-  readonly municipality: Municipality;
+  readonly municipality: Municipality
 
   @ManyToMany(() => CityRegion, (cityRegion) => cityRegion.towns)
   @JoinTable({
@@ -36,11 +36,11 @@ export class Town {
     joinColumn: { name: 'town_id' },
     inverseJoinColumn: { name: 'city_region_id' },
   })
-  cityRegions: CityRegion[];
+  cityRegions: CityRegion[]
 
   @OneToMany(() => Section, (section) => section.town)
-  readonly sections: Section[];
+  readonly sections: Section[]
 
   @OneToMany(() => Violation, (violation) => violation.town)
-  readonly violations: Violation[];
+  readonly violations: Violation[]
 }

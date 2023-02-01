@@ -1,15 +1,15 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common'
+import { TypeOrmModule } from '@nestjs/typeorm'
 import {
   SectionsRepository,
   CountriesRepository,
-} from './entities/repositories';
+} from './entities/repositories'
 import {
   SectionsController,
   CountriesController,
   ElectionRegionsController,
   TownsController,
-} from './api/controllers';
+} from './api/controllers'
 import {
   Section,
   Country,
@@ -17,14 +17,14 @@ import {
   Town,
   Municipality,
   CityRegion,
-} from './entities';
-import { ElectionRegionsRepository } from './entities/electionRegions.repository';
-import { TownsRepository } from './entities/towns.repository';
-import { IsSectionExistsConstraint } from './api/section-exists.constraint';
-import { IsTownExistsConstraint } from './api/town-exists.constraint';
-import { CaslModule } from 'src/casl/casl.module';
-import { MunicipalitiesRepository } from './entities/municipalities.repository';
-import { CityRegionsRepository } from './entities/cityRegions.repository';
+} from './entities'
+import { ElectionRegionsRepository } from './entities/electionRegions.repository'
+import { TownsRepository } from './entities/towns.repository'
+import { IsSectionExistsConstraint } from './api/section-exists.constraint'
+import { IsTownExistsConstraint } from './api/town-exists.constraint'
+import { CaslModule } from 'src/casl/casl.module'
+import { MunicipalitiesRepository } from './entities/municipalities.repository'
+import { CityRegionsRepository } from './entities/cityRegions.repository'
 
 @Module({
   imports: [

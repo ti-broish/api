@@ -1,6 +1,6 @@
-import { Request } from 'express';
+import { Request } from 'express'
 
-const PAGE_PARAM = 'page';
+const PAGE_PARAM = 'page'
 
 export function paginationRoute(
   req: Request,
@@ -9,13 +9,13 @@ export function paginationRoute(
   const parsedUrl = new URL(
     req.originalUrl,
     req.protocol + '://' + req.hostname,
-  );
+  )
 
   if (parsedUrl.searchParams.has(pageParam)) {
-    parsedUrl.searchParams.delete(pageParam);
+    parsedUrl.searchParams.delete(pageParam)
   }
 
-  const queryString = parsedUrl.searchParams.toString();
+  const queryString = parsedUrl.searchParams.toString()
 
-  return parsedUrl.pathname + (queryString ? '?' + queryString : '');
+  return parsedUrl.pathname + (queryString ? '?' + queryString : '')
 }

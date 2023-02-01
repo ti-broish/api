@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Party } from './party.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { Party } from './party.entity'
 
 @Injectable()
 export class PartiesRepository {
@@ -11,16 +11,16 @@ export class PartiesRepository {
   ) {}
 
   findAll(): Promise<Party[]> {
-    return this.repo.find();
+    return this.repo.find()
   }
 
   findAllForResults(): Promise<Party[]> {
     return this.repo.find({
       where: [{ isFeatured: true }, { id: 0 }],
-    });
+    })
   }
 
   findOne(id: number): Promise<Party> {
-    return this.repo.findOneBy({ id });
+    return this.repo.findOneBy({ id })
   }
 }

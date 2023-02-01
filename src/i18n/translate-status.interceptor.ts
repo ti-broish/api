@@ -3,13 +3,13 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-} from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+} from '@nestjs/common'
+import { I18nService } from 'nestjs-i18n'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
 
 interface ResponseObject {
-  [key: string]: any;
+  [key: string]: any
 }
 
 @Injectable()
@@ -22,9 +22,9 @@ export class TranslateStatusInterceptor implements NestInterceptor {
         return await this.translateStatus(
           context.switchToHttp().getRequest().i18nLang,
           response,
-        );
+        )
       }),
-    );
+    )
   }
 
   private async translateStatus(
@@ -32,7 +32,7 @@ export class TranslateStatusInterceptor implements NestInterceptor {
     object?: ResponseObject | ResponseObject[] | null | undefined,
   ): Promise<ResponseObject | ResponseObject[] | null | undefined> {
     if (!object) {
-      return object;
+      return object
     }
 
     if (Array.isArray(object)) {
@@ -41,30 +41,30 @@ export class TranslateStatusInterceptor implements NestInterceptor {
           (item: ResponseObject): Promise<ResponseObject> =>
             this.translateStatus(lang, item),
         ),
-      );
+      )
     }
 
     if (object.items && Array.isArray(object.items)) {
-      object.items = await this.translateStatus(lang, object.items);
+      object.items = await this.translateStatus(lang, object.items)
 
-      return object;
+      return object
     }
 
     if (object.status) {
-      object.statusLocalized = object.status;
+      object.statusLocalized = object.status
       const objectType = object.constructor.name
         .replace('Dto', '')
-        .toUpperCase();
+        .toUpperCase()
       try {
         object.statusLocalized = this.i18n.translate(
           `status.${objectType}_${object.status.toUpperCase()}`,
           { lang },
-        );
+        )
       } catch (error) {
-        console.warn(`Could not find translation for status ${object.status}`);
+        console.warn(`Could not find translation for status ${object.status}`)
       }
     }
 
-    return object;
+    return object
   }
 }

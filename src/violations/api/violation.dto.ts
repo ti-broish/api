@@ -4,7 +4,7 @@ import {
   plainToClass,
   Transform,
   Type,
-} from 'class-transformer';
+} from 'class-transformer'
 import {
   IsArray,
   IsBoolean,
@@ -14,25 +14,25 @@ import {
   MinLength,
   ValidateIf,
   ValidateNested,
-} from 'class-validator';
-import { SectionDto } from '../../sections/api/section.dto';
-import { PictureDto } from '../../pictures/api/picture.dto';
-import { Violation, ViolationStatus } from '../entities/violation.entity';
-import { TownDto } from '../../sections/api/town.dto';
-import { UserDto } from 'src/users/api/user.dto';
-import { ViolationUpdateDto } from './violation-update.dto';
-import { Picture } from 'src/pictures/entities/picture.entity';
-import { Protocol } from '../../protocols/entities/protocol.entity';
-import { ProtocolDto } from '../../protocols/api/protocol.dto';
-import { ViolationUpdateType } from '../entities/violation-update.entity';
+} from 'class-validator'
+import { SectionDto } from '../../sections/api/section.dto'
+import { PictureDto } from '../../pictures/api/picture.dto'
+import { Violation, ViolationStatus } from '../entities/violation.entity'
+import { TownDto } from '../../sections/api/town.dto'
+import { UserDto } from 'src/users/api/user.dto'
+import { ViolationUpdateDto } from './violation-update.dto'
+import { Picture } from 'src/pictures/entities/picture.entity'
+import { Protocol } from '../../protocols/entities/protocol.entity'
+import { ProtocolDto } from '../../protocols/api/protocol.dto'
+import { ViolationUpdateType } from '../entities/violation-update.entity'
 
 @Exclude()
 export class ViolationDto {
-  public static READ = 'violation.read';
-  public static FEED = 'violations.feed';
+  public static READ = 'violation.read'
+  public static FEED = 'violations.feed'
 
   @Expose({ groups: ['read', ViolationDto.FEED] })
-  id: string;
+  id: string
 
   @Expose({ groups: ['read', 'create', ViolationDto.FEED] })
   @Type(() => SectionDto)
@@ -45,7 +45,7 @@ export class ViolationDto {
   @ValidateNested({
     groups: ['create'],
   })
-  section?: SectionDto;
+  section?: SectionDto
 
   @Expose({ groups: ['read', 'create', ViolationDto.FEED] })
   @Type(() => TownDto)
@@ -58,7 +58,7 @@ export class ViolationDto {
   @ValidateNested({
     groups: ['create'],
   })
-  town: TownDto;
+  town: TownDto
 
   @Expose({ groups: ['read', 'create'] })
   @Type(() => PictureDto)
@@ -77,43 +77,43 @@ export class ViolationDto {
     each: true,
     groups: ['create'],
   })
-  pictures: PictureDto[];
+  pictures: PictureDto[]
 
   @Expose({ groups: ['read', 'create'] })
   @MinLength(20, { groups: ['create'] })
   @MaxLength(2000, { groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
-  description: string;
+  description: string
 
   @Expose({ groups: ['read', ViolationDto.FEED] })
-  status: ViolationStatus;
+  status: ViolationStatus
 
   @Expose({ groups: ['read', 'isPublishedUpdate'] })
   @IsBoolean({ groups: ['isPublishedUpdate'] })
-  isPublished: boolean;
+  isPublished: boolean
 
   @Expose({ groups: ['author_read'] })
   @Type(() => UserDto)
-  assignees: UserDto[];
+  assignees: UserDto[]
 
   @Expose({ groups: ['violation.process'] })
   @Type(() => ViolationUpdateDto)
-  updates: ViolationUpdateDto[];
+  updates: ViolationUpdateDto[]
 
-  private author: UserDto;
+  private author: UserDto
 
   @Expose({ groups: [] })
   @Type(() => UserDto)
   getAuthor(): UserDto {
-    return this.author;
+    return this.author
   }
 
   @Expose({ groups: ['read', 'isPublishedUpdate', ViolationDto.FEED] })
   @MinLength(20, { groups: ['isPublishedUpdate'] })
   @MaxLength(2000, { groups: ['isPublishedUpdate'] })
-  publishedText: string;
+  publishedText: string
 
-  createdAt: Date;
+  createdAt: Date
 
   public toEntity(): Violation {
     const violation = plainToClass<Violation, Partial<ViolationDto>>(
@@ -122,29 +122,29 @@ export class ViolationDto {
       {
         groups: ['create'],
       },
-    );
-    violation.town.code = this.town.id;
+    )
+    violation.town.code = this.town.id
 
-    let sortPosition = 1;
+    let sortPosition = 1
     violation.pictures = (violation.pictures || []).map(
       (picture: Picture): Picture => {
-        picture.sortPosition = sortPosition;
-        sortPosition++;
+        picture.sortPosition = sortPosition
+        sortPosition++
 
-        return picture;
+        return picture
       },
       [],
-    );
+    )
 
-    return violation;
+    return violation
   }
 
   public static fromProtocol(protocol: Protocol): ViolationDto {
-    const protocolDto = ProtocolDto.fromEntity(protocol);
-    const violationDto = new ViolationDto();
-    violationDto.section = protocolDto.section;
-    violationDto.pictures = protocolDto.pictures;
-    return violationDto;
+    const protocolDto = ProtocolDto.fromEntity(protocol)
+    const violationDto = new ViolationDto()
+    violationDto.section = protocolDto.section
+    violationDto.pictures = protocolDto.pictures
+    return violationDto
   }
 
   public static fromEntity(
@@ -158,18 +158,18 @@ export class ViolationDto {
         excludeExtraneousValues: true,
         groups,
       },
-    );
+    )
 
     if (groups.includes('author_read')) {
       violationDto.author = UserDto.fromEntity(violation.getAuthor(), [
         'author_read',
-      ]);
+      ])
     }
 
     violationDto.createdAt = (violation.updates || []).find(
       (update): boolean => update.type === ViolationUpdateType.SEND,
-    )?.timestamp;
+    )?.timestamp
 
-    return violationDto;
+    return violationDto
   }
 }

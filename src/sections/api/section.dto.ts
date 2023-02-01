@@ -1,15 +1,15 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
-import { IsNumberString, IsString, Length } from 'class-validator';
-import { StreamDto } from 'src/streams/api/stream.dto';
-import { ViolationDto } from 'src/violations/api/violation.dto';
-import { Section } from '../entities/section.entity';
-import { CityRegionDto } from './cityRegion.dto';
-import { ElectionRegionDto } from './electionRegion.dto';
-import { IsSectionExists } from './section-exists.constraint';
-import { TownDto } from './town.dto';
+import { ApiProperty } from '@nestjs/swagger'
+import { Exclude, Expose, plainToClass, Type } from 'class-transformer'
+import { IsNumberString, IsString, Length } from 'class-validator'
+import { StreamDto } from 'src/streams/api/stream.dto'
+import { ViolationDto } from 'src/violations/api/violation.dto'
+import { Section } from '../entities/section.entity'
+import { CityRegionDto } from './cityRegion.dto'
+import { ElectionRegionDto } from './electionRegion.dto'
+import { IsSectionExists } from './section-exists.constraint'
+import { TownDto } from './town.dto'
 
-const allowedGroups = ['read', 'get'];
+const allowedGroups = ['read', 'get']
 
 @Exclude()
 export class SectionDto {
@@ -35,7 +35,7 @@ export class SectionDto {
     { no_symbols: true },
     { groups: ['create', StreamDto.CREATE, 'replace'] },
   )
-  public id: string;
+  public id: string
 
   @ApiProperty()
   @Expose({
@@ -46,7 +46,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  public code: string;
+  public code: string
 
   @ApiProperty()
   @Expose({
@@ -57,7 +57,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  public place: string;
+  public place: string
 
   @Expose({
     groups: [
@@ -67,7 +67,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  votersCount: number;
+  votersCount: number
 
   @Expose({
     groups: [
@@ -77,7 +77,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  isMachine: boolean;
+  isMachine: boolean
 
   @Expose({
     groups: [
@@ -87,7 +87,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  isMobile: boolean;
+  isMobile: boolean
 
   @Type(() => ElectionRegionDto)
   @Expose({
@@ -100,7 +100,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  electionRegion: ElectionRegionDto;
+  electionRegion: ElectionRegionDto
 
   @Type(() => TownDto)
   @Expose({
@@ -112,7 +112,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  town: TownDto;
+  town: TownDto
 
   @Type(() => CityRegionDto)
   @Expose({
@@ -124,7 +124,7 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
-  cityRegion: CityRegionDto;
+  cityRegion: CityRegionDto
 
   public static fromEntity(
     entity: Section,
@@ -133,6 +133,6 @@ export class SectionDto {
     return plainToClass<SectionDto, Partial<Section>>(SectionDto, entity, {
       excludeExtraneousValues: true,
       groups: additionalGroups.filter((value) => allowedGroups.includes(value)),
-    });
+    })
   }
 }

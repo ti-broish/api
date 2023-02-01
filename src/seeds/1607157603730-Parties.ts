@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class Parties1607157603730 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -28,10 +28,10 @@ export class Parties1607157603730 implements MigrationInterface {
         ('21', 'ПП РЕПУБЛИКАНЦИ ЗА БЪЛГАРИЯ', 'Републиканци за България', 'f', '808080'),
         ('22', 'ПП ИМА ТАКЪВ НАРОД', 'Има такъв народ', 't', 'FFC300'),
         ('23', 'ДЕМОКРАТИЧНА БЪЛГАРИЯ – ОБЕДИНЕНИЕ (ДА България, ДСБ, Зелено движение)', 'Демократична България', 't', '034A80');
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    queryRunner.query(`TRUNCATE TABLE "parties" RESTART IDENTITY CASCADE`);
+    queryRunner.query(`TRUNCATE TABLE "parties" RESTART IDENTITY CASCADE`)
   }
 }

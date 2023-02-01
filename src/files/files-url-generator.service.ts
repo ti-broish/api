@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class FilesUrlGenerator {
@@ -8,6 +8,6 @@ export class FilesUrlGenerator {
   getUrl(bucketName: string, filePath: string): string {
     return `https://${this.config.get(
       'MINIO_ENDPOINT',
-    )}/${bucketName}/${filePath}`;
+    )}/${bucketName}/${filePath}`
   }
 }

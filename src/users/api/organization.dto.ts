@@ -1,8 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass } from 'class-transformer';
-import { IsNotEmpty, IsNumber } from 'class-validator';
-import { Organization } from '../entities/organization.entity';
-import { IsOrganizationExists } from './organization-exists.constraint';
+import { ApiProperty } from '@nestjs/swagger'
+import { Exclude, Expose, plainToClass } from 'class-transformer'
+import { IsNotEmpty, IsNumber } from 'class-validator'
+import { Organization } from '../entities/organization.entity'
+import { IsOrganizationExists } from './organization-exists.constraint'
 
 @Exclude()
 export class OrganizationDto {
@@ -13,15 +13,15 @@ export class OrganizationDto {
   @IsNumber({}, { groups: ['create', 'update'] })
   @IsNotEmpty({ groups: ['create', 'update'] })
   @IsOrganizationExists({ groups: ['create', 'update'] })
-  id: number;
+  id: number
 
   @ApiProperty()
   @Expose({ groups: ['read', 'protocol.validate', 'author_read'] })
-  name: string;
+  name: string
 
   @ApiProperty()
   @Expose({ groups: ['read', 'protocol.validate', 'author_read'] })
-  type: string;
+  type: string
 
   public static fromEntity(entity: Organization): OrganizationDto {
     return plainToClass<OrganizationDto, Partial<Organization>>(
@@ -31,6 +31,6 @@ export class OrganizationDto {
         excludeExtraneousValues: true,
         groups: ['read'],
       },
-    );
+    )
   }
 }

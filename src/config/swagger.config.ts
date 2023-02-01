@@ -1,5 +1,5 @@
-import { INestApplication } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { INestApplication } from '@nestjs/common'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
 export function setUpSwagger(app: INestApplication) {
   const options = new DocumentBuilder()
@@ -26,12 +26,12 @@ export function setUpSwagger(app: INestApplication) {
       },
       'Firebase bearer token',
     )
-    .build();
+    .build()
 
   const document = SwaggerModule.createDocument(app, options, {
     operationIdFactory: (controllerKey: string, methodKey: string) =>
       controllerKey.replace(/controller/gi, '') + '.' + methodKey,
     ignoreGlobalPrefix: false,
-  });
-  SwaggerModule.setup('docs', app, document);
+  })
+  SwaggerModule.setup('docs', app, document)
 }

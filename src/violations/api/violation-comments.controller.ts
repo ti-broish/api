@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -12,21 +12,21 @@ import {
   UseGuards,
   Query,
   Request,
-} from '@nestjs/common';
-import { Request as ExpressRequest } from 'express';
-import { paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { PageDTO } from 'src/utils/page.dto';
-import { paginationRoute } from 'src/utils/pagination-route';
-import { InjectUser } from '../../auth/decorators/inject-user.decorator';
-import { User } from '../../users/entities';
-import { ViolationComment } from '../entities/violation-comment.entity';
-import { ViolationCommentsRepository } from '../entities/violation-comments.repository';
-import { Violation } from '../entities/violation.entity';
-import { ViolationsRepository } from '../entities/violations.repository';
-import { ViolationCommentDto } from './violation-comment.dto';
+} from '@nestjs/common'
+import { Request as ExpressRequest } from 'express'
+import { paginate, Pagination } from 'nestjs-typeorm-paginate'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { PageDTO } from 'src/utils/page.dto'
+import { paginationRoute } from 'src/utils/pagination-route'
+import { InjectUser } from '../../auth/decorators/inject-user.decorator'
+import { User } from '../../users/entities'
+import { ViolationComment } from '../entities/violation-comment.entity'
+import { ViolationCommentsRepository } from '../entities/violation-comments.repository'
+import { Violation } from '../entities/violation.entity'
+import { ViolationsRepository } from '../entities/violations.repository'
+import { ViolationCommentDto } from './violation-comment.dto'
 
 @Controller('violations/:violation/comments')
 export class ViolationCommentsController {
@@ -47,7 +47,7 @@ export class ViolationCommentsController {
     @Param('violation') violationId: string,
     @Request() req: ExpressRequest,
   ): Promise<Pagination<ViolationCommentDto>> {
-    const violation = await this.violationsRepo.findOneOrFail(violationId);
+    const violation = await this.violationsRepo.findOneOrFail(violationId)
     const pagination = await paginate(
       this.violationCommentsRepo.queryBuilderForViolation(violation),
       {
@@ -55,7 +55,7 @@ export class ViolationCommentsController {
         limit: 20,
         route: paginationRoute(req),
       },
-    );
+    )
 
     return new Pagination<ViolationCommentDto>(
       await Promise.all(
@@ -65,7 +65,7 @@ export class ViolationCommentsController {
       ),
       pagination.meta,
       pagination.links,
-    );
+    )
   }
 
   @Post()
@@ -84,14 +84,14 @@ export class ViolationCommentsController {
     @Param('violation') violationId: string,
     @InjectUser() user: User,
   ): Promise<ViolationCommentDto> {
-    const violationComment = violationCommentDto.toEntity();
-    const violation = await this.violationsRepo.findOneOrFail(violationId);
-    violationComment.author = user;
-    violationComment.violation = violation;
+    const violationComment = violationCommentDto.toEntity()
+    const violation = await this.violationsRepo.findOneOrFail(violationId)
+    violationComment.author = user
+    violationComment.violation = violation
     const savedDto = ViolationCommentDto.fromEntity(
       await this.violationCommentsRepo.save(violationComment),
-    );
+    )
 
-    return savedDto;
+    return savedDto
   }
 }

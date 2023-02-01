@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
-import { ElectionRegion } from './electionRegion.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { EntityManager, Repository } from 'typeorm'
+import { ElectionRegion } from './electionRegion.entity'
 
 @Injectable()
 export class ElectionRegionsRepository {
@@ -11,7 +11,7 @@ export class ElectionRegionsRepository {
   ) {}
 
   async findOneOrFail(code: string): Promise<ElectionRegion> {
-    return this.repo.findOneOrFail({ where: { code } });
+    return this.repo.findOneOrFail({ where: { code } })
   }
 
   async findOneWithStatsOrFail(
@@ -24,46 +24,46 @@ export class ElectionRegionsRepository {
       .from('sections', 'sections')
       .andWhere('sections.election_region_id = :id', { id: electionRegion.id })
       .groupBy('sections.election_region_id')
-      .getRawOne();
+      .getRawOne()
 
     electionRegion.stats = Object.fromEntries(
       Object.entries(stats).map(([key, value]: [string, string]) => [
         key,
         parseInt(value, 10),
       ]),
-    );
+    )
 
-    return electionRegion;
+    return electionRegion
   }
 
   async findOneWithMunicipalitiesOrFail(code: string): Promise<ElectionRegion> {
-    const qb = this.repo.createQueryBuilder('electionRegions');
+    const qb = this.repo.createQueryBuilder('electionRegions')
 
-    qb.innerJoinAndSelect('electionRegions.municipalities', 'municipalities');
-    qb.whereInIds([code]);
+    qb.innerJoinAndSelect('electionRegions.municipalities', 'municipalities')
+    qb.whereInIds([code])
 
-    return qb.getOneOrFail();
+    return qb.getOneOrFail()
   }
 
   findAll(): Promise<ElectionRegion[]> {
-    return this.repo.find();
+    return this.repo.find()
   }
 
   findAllWithStats(): Promise<ElectionRegion[]> {
-    const qb = this.repo.createQueryBuilder('electionRegions');
+    const qb = this.repo.createQueryBuilder('electionRegions')
 
-    qb.innerJoin('electionRegions.sections', 'sections');
+    qb.innerJoin('electionRegions.sections', 'sections')
     qb.loadRelationCountAndMap(
       'electionRegions.sectionsCount',
       'electionRegions.sections',
-    );
-    qb.groupBy('electionRegions.id');
-    qb.orderBy('electionRegions.id', 'ASC');
+    )
+    qb.groupBy('electionRegions.id')
+    qb.orderBy('electionRegions.id', 'ASC')
 
-    return qb.getMany();
+    return qb.getMany()
   }
 
   findAllWithMunicipalities(): Promise<ElectionRegion[]> {
-    return this.repo.find({ relations: ['municipalities'] });
+    return this.repo.find({ relations: ['municipalities'] })
   }
 }

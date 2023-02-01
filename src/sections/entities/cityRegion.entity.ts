@@ -1,27 +1,27 @@
-import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm';
-import { Section } from './section.entity';
-import { Town } from './town.entity';
+import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm'
+import { Section } from './section.entity'
+import { Town } from './town.entity'
 
 @Entity('city_regions')
 export class CityRegion {
   @PrimaryColumn()
-  id: number;
+  id: number
 
   @Column('char', { length: 2 })
-  code: string;
+  code: string
 
   @Column()
-  name: string;
+  name: string
 
   @ManyToMany(() => Town, (town) => town.cityRegions)
-  towns: Town[];
+  towns: Town[]
 
   @OneToMany(() => Section, (section) => section.cityRegion)
-  sections: Section[];
+  sections: Section[]
 
   constructor(name: string, code: string, towns: Town[]) {
-    this.name = name;
-    this.code = code;
-    this.towns = towns;
+    this.name = name
+    this.code = code
+    this.towns = towns
   }
 }

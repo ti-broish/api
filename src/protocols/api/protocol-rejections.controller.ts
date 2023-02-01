@@ -1,4 +1,4 @@
-import { Ability } from '@casl/ability';
+import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -6,15 +6,15 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
-} from '@nestjs/common';
-import { I18nService } from 'nestjs-i18n';
-import { Action } from 'src/casl/action.enum';
-import { CheckPolicies } from 'src/casl/check-policies.decorator';
-import { PoliciesGuard } from 'src/casl/policies.guard';
-import { Protocol, ProtocolRejectionReason } from '../entities/protocol.entity';
+} from '@nestjs/common'
+import { I18nService } from 'nestjs-i18n'
+import { Action } from 'src/casl/action.enum'
+import { CheckPolicies } from 'src/casl/check-policies.decorator'
+import { PoliciesGuard } from 'src/casl/policies.guard'
+import { Protocol, ProtocolRejectionReason } from '../entities/protocol.entity'
 
 interface RejectionReasonResponse {
-  [key: string]: string;
+  [key: string]: string
 }
 
 @Controller('protocols/rejection-reasons')
@@ -34,7 +34,7 @@ export class ProtocolRejectionsController {
           ProtocolRejectionReason[rejectionReasonKey],
         ),
       ),
-    );
+    )
   }
 
   private async formatReason(
@@ -46,6 +46,6 @@ export class ProtocolRejectionsController {
       rejectionReasonLocalized: await this.i18n.translate(
         `protocol.REJECTION_REASON_${rejectionReasonKey.toUpperCase()}`,
       ),
-    } as RejectionReasonResponse;
+    } as RejectionReasonResponse
   }
 }

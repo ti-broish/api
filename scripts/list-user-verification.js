@@ -1,12 +1,13 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('../firebase.json');
+import admin from 'firebase-admin'
+import dotenv from 'dotenv'
+import serviceAccount from '../firebase.json'
 
-require('dotenv').config();
+dotenv.config()
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://ti-broish.firebaseio.com',
-});
-let hasErrors = false;
+})
+let hasErrors = false
 
 const listAllUsers = async () => {
   return new Promise(async (resolve, reject) => {
@@ -17,34 +18,34 @@ const listAllUsers = async () => {
         .listUsers(1000, nextPageToken)
         .then(async (listUsersResult) => {
           listUsersResult.users.forEach((userRecord) => {
-            const { email, emailVerified } = userRecord.toJSON();
-            console.log(email, emailVerified);
-          });
+            const { email, emailVerified } = userRecord.toJSON()
+            console.log(email, emailVerified)
+          })
           if (listUsersResult.pageToken) {
             // List next batch of users.
-            await listBatchOfUsers(listUsersResult.pageToken);
+            await listBatchOfUsers(listUsersResult.pageToken)
           } else {
-            resolve();
+            resolve()
           }
         })
         .catch((error) => {
-          console.log('Error listing users:', error);
-          hasErrors = true;
-        });
-    };
-    await listBatchOfUsers();
-  });
-};
+          console.log('Error listing users:', error)
+          hasErrors = true
+        })
+    }
+    await listBatchOfUsers()
+  })
+}
 
 const runScript = async () => {
   try {
     // Start listing users from the beginning, 1000 at a time.
-    await listAllUsers();
-    process.exit(hasErrors ? 1 : 0);
+    await listAllUsers()
+    process.exit(hasErrors ? 1 : 0)
   } catch (error) {
-    console.error(error);
-    process.exit(1);
+    console.error(error)
+    process.exit(1)
   }
-};
+}
 
-runScript();
+runScript()

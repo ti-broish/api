@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { User } from './user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
+import { User } from './user.entity'
 
 export enum OrganizationType {
   PARTY = 'party',
@@ -11,20 +11,20 @@ export enum OrganizationType {
 })
 export class Organization {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  name: string;
+  name: string
 
   @OneToMany(() => User, (user) => user.organization)
-  users: User[];
+  users: User[]
 
   @Column()
-  type: OrganizationType;
+  type: OrganizationType
 
   @Column()
-  sortPosition: number;
+  sortPosition: number
 
   @Column()
-  isHidden: boolean;
+  isHidden: boolean
 }

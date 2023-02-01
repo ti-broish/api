@@ -1,8 +1,8 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator';
-import { Party } from '../entities/party.entity';
-import { IsPartyExists } from './party-exists.constraint';
+import { ApiProperty } from '@nestjs/swagger'
+import { Exclude, Expose, plainToClass } from 'class-transformer'
+import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator'
+import { Party } from '../entities/party.entity'
+import { IsPartyExists } from './party-exists.constraint'
 
 @Exclude()
 export class PartyDto {
@@ -13,28 +13,28 @@ export class PartyDto {
   @IsNotEmpty({ groups: ['create'] })
   @Min(0, { groups: ['create'] })
   @IsInt({ groups: ['create'] })
-  id: number;
+  id: number
 
   @ApiProperty()
   @Expose({ groups: ['read'] })
-  name: string;
+  name: string
 
   @ApiProperty()
   @Expose({ groups: ['read'] })
-  displayName: string;
+  displayName: string
 
   @ApiProperty()
   @Expose({ groups: ['read'] })
-  isFeatured: boolean;
+  isFeatured: boolean
 
   @ApiProperty()
   @Expose({ groups: ['read'] })
-  color: string;
+  color: string
 
   public static fromEntity(entity: Party): PartyDto {
     return plainToClass<PartyDto, Partial<Party>>(PartyDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
-    });
+    })
   }
 }

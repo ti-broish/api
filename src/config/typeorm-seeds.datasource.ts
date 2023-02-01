@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource } from 'typeorm'
 
 export const SeedsDataSource = new DataSource({
   type: 'postgres',
@@ -10,4 +10,4 @@ export const SeedsDataSource = new DataSource({
   logging: true,
   synchronize: false,
   migrations: ['dist/seeds/*.js'],
-});
+})

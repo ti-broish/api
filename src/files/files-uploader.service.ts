@@ -1,11 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import * as base64Img from 'base64-img';
-import { MINIO_CONNECTION } from 'nestjs-minio';
-import { ulid } from 'ulid';
-import { Client as MinioClient } from 'minio';
-import * as mime from 'mime-types';
-import * as path from 'path';
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import * as base64Img from 'base64-img'
+import { MINIO_CONNECTION } from 'nestjs-minio'
+import { ulid } from 'ulid'
+import { Client as MinioClient } from 'minio'
+import * as mime from 'mime-types'
+import * as path from 'path'
 
 @Injectable()
 export class FilesUploader {
@@ -22,21 +22,21 @@ export class FilesUploader {
         ulid(),
         (error: Error, fullPath: string) => {
           if (error) {
-            reject(error);
-            return;
+            reject(error)
+            return
           }
-          resolve(fullPath);
+          resolve(fullPath)
         },
-      );
-    });
+      )
+    })
   }
 
   async uploadFileToCdn(filePath: string, bucket?: string): Promise<string> {
-    const pathArr = filePath.split('/');
-    const fileName = pathArr[pathArr.length - 1];
+    const pathArr = filePath.split('/')
+    const fileName = pathArr[pathArr.length - 1]
     const absolutePath = filePath.startsWith('/')
       ? filePath
-      : path.resolve(filePath);
+      : path.resolve(filePath)
     await this.minioClient.fPutObject(
       bucket || this.config.get('MINIO_PICTURES_BUCKET'),
       fileName,
@@ -44,8 +44,8 @@ export class FilesUploader {
       {
         'Content-Type': mime.lookup(fileName) || 'application/octet-stream',
       },
-    );
+    )
 
-    return fileName;
+    return fileName
   }
 }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity('parties', {
   orderBy: {
@@ -7,17 +7,17 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 })
 export class Party {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  name: string;
+  name: string
 
   @Column()
-  displayName: string;
+  displayName: string
 
   @Column()
-  isFeatured: boolean;
+  isFeatured: boolean
 
   @Column()
-  color: string;
+  color: string
 }

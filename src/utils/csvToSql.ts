@@ -1,36 +1,36 @@
-import { parse } from 'csv-parse';
-import { transform } from 'stream-transform';
-import { createReadStream, PathLike } from 'fs';
-import { Stream } from 'stream';
+import { parse } from 'csv-parse'
+import { transform } from 'stream-transform'
+import { createReadStream, PathLike } from 'fs'
+import { Stream } from 'stream'
 
 const escValue = (value: string): string => {
   if (value === 'NULL') {
-    return value;
+    return value
   }
 
-  return "'" + value.replace(/'/g, "''") + "'";
-};
+  return "'" + value.replace(/'/g, "''") + "'"
+}
 
-const escSymbol = (str: string): string => `"${str}"`;
+const escSymbol = (str: string): string => `"${str}"`
 
-const defaultEmptyColumnCallback = (): string => 'NULL';
+const defaultEmptyColumnCallback = (): string => 'NULL'
 
 const streamToString = (stream: Stream): Promise<string> => {
-  const chunks = [];
+  const chunks = []
 
   return new Promise((resolve, reject) => {
-    stream.on('data', (chunk) => chunks.push(chunk));
-    stream.on('error', reject);
-    stream.on('end', () => resolve(chunks.join('')));
-  });
-};
+    stream.on('data', (chunk) => chunks.push(chunk))
+    stream.on('error', reject)
+    stream.on('end', () => resolve(chunks.join('')))
+  })
+}
 
-const insertTemplate = `INSERT INTO :table (:columns) values (:values);\n`;
+const insertTemplate = `INSERT INTO :table (:columns) values (:values);\n`
 const createRecordsToInsertsTransformer = (
   tableName: string,
   emptyColumnCallback?: EmptyColumnDefaultValueFunction,
 ) => {
-  const insert = insertTemplate.replace(':table', escSymbol(tableName));
+  const insert = insertTemplate.replace(':table', escSymbol(tableName))
   return transform((record, callback) => {
     callback(
       null,
@@ -41,30 +41,30 @@ const createRecordsToInsertsTransformer = (
           Object.entries(record)
             .map(([key, value]: [string, string | number]) => {
               if (typeof value === 'number') {
-                value = value.toString();
+                value = value.toString()
               }
-              const str = value.trim();
+              const str = value.trim()
 
-              return escValue(str.length > 0 ? str : emptyColumnCallback(key));
+              return escValue(str.length > 0 ? str : emptyColumnCallback(key))
             })
             .join(', '),
         ),
-    );
-  });
-};
+    )
+  })
+}
 
 export type EmptyColumnDefaultValueFunction = {
-  (column: string): string;
-};
+  (column: string): string
+}
 
 export function csvToSql(
   csvPath: PathLike,
   tableName: string,
   options: {
-    delimiter?: string;
-    escape?: string;
-    columns?: boolean | string[];
-    emptyColumnCallback?: EmptyColumnDefaultValueFunction;
+    delimiter?: string
+    escape?: string
+    columns?: boolean | string[]
+    emptyColumnCallback?: EmptyColumnDefaultValueFunction
   } = {},
 ): Promise<string> {
   const {
@@ -72,16 +72,16 @@ export function csvToSql(
     escape = '"',
     columns = true,
     emptyColumnCallback = defaultEmptyColumnCallback,
-  } = options;
-  const parseRowsToObjects = parse({ delimiter, escape, columns });
+  } = options
+  const parseRowsToObjects = parse({ delimiter, escape, columns })
   const transformRecordsToSqlInserts = createRecordsToInsertsTransformer(
     tableName,
     emptyColumnCallback,
-  );
+  )
 
   return streamToString(
     createReadStream(csvPath)
       .pipe(parseRowsToObjects)
       .pipe(transformRecordsToSqlInserts),
-  );
+  )
 }

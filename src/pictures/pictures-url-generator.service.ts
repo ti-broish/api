@@ -1,7 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { FilesUrlGenerator } from '../files';
-import { PathInterface } from './path.interface';
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { FilesUrlGenerator } from '../files'
+import { PathInterface } from './path.interface'
 
 @Injectable()
 export class PicturesUrlGenerator {
@@ -15,6 +15,6 @@ export class PicturesUrlGenerator {
     return this.fileUrlGenerator.getUrl(
       this.config.get('MINIO_PICTURES_BUCKET'),
       pathable.getPath(),
-    );
+    )
   }
 }

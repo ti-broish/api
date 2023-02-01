@@ -5,10 +5,10 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
-} from 'typeorm';
-import { ulid } from 'ulid';
-import { User } from '../../users/entities';
-import { Violation } from './violation.entity';
+} from 'typeorm'
+import { ulid } from 'ulid'
+import { User } from '../../users/entities'
+import { Violation } from './violation.entity'
 
 @Entity('violation_comments', {
   orderBy: { createdAt: 'DESC' },
@@ -17,23 +17,23 @@ export class ViolationComment {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @Column({ type: 'text' })
-  text: string;
+  text: string
 
   @ManyToOne(() => Violation, (violation) => violation.comments)
   @JoinColumn({
     name: 'violation_id',
   })
-  violation: Violation;
+  violation: Violation
 
   @ManyToOne(() => User)
   @JoinColumn({
     name: 'author_id',
   })
-  author: User;
+  author: User
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: Date
 }

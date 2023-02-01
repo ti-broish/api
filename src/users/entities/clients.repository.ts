@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { User } from '.';
-import { Client } from './client.entity';
+import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { In, Repository } from 'typeorm'
+import { User } from '.'
+import { Client } from './client.entity'
 
 @Injectable()
 export class ClientsRepository {
@@ -12,11 +12,11 @@ export class ClientsRepository {
   ) {}
 
   findOne(id: string): Promise<Client | undefined> {
-    return this.repo.findOne({ where: { id }, relations: ['owner'] });
+    return this.repo.findOne({ where: { id }, relations: ['owner'] })
   }
 
   findOneOrFail(id: string): Promise<Client> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['owner'] });
+    return this.repo.findOneOrFail({ where: { id }, relations: ['owner'] })
   }
 
   findAllForOwners(owners: User[]): Promise<Client[]> {
@@ -29,16 +29,16 @@ export class ClientsRepository {
           id: In(owners.map((owner) => owner.id)),
         },
       },
-    });
+    })
   }
 
   async save(client: Client): Promise<Client> {
-    return await this.repo.save(client);
+    return await this.repo.save(client)
   }
 
   async update(client: Client): Promise<Client> {
-    await this.repo.update(client.id, client);
+    await this.repo.update(client.id, client)
 
-    return this.findOneOrFail(client.id);
+    return this.findOneOrFail(client.id)
   }
 }

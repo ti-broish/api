@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class AddViolationsAssignees1616574578219 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -11,12 +11,12 @@ export class AddViolationsAssignees1616574578219 implements MigrationInterface {
         CONSTRAINT "violations_assignees_violation_id_fkey" FOREIGN KEY ("violation_id") REFERENCES "violations" ("id"),
         CONSTRAINT "violations_assignees_assignee_id_fkey" FOREIGN KEY ("assignee_id") REFERENCES "people" ("id")
       );
-    `);
+    `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       DROP TABLE "violations_assignees";
-    `);
+    `)
   }
 }

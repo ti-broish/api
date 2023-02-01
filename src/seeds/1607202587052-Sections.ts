@@ -1,9 +1,9 @@
-import { csvToSql } from 'src/utils/csvToSql';
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { csvToSql } from 'src/utils/csvToSql'
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class Sections1607202587052 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`COMMIT;`);
+    await queryRunner.query(`COMMIT;`)
     await queryRunner.query(`
       create table if not exists "sections_seed" (
         "country_code" char(2),
@@ -26,25 +26,24 @@ export class Sections1607202587052 implements MigrationInterface {
         "is_ship" boolean,
         "is_covid" boolean
       );
-    `);
-
-    (
+    `)
+    ;(
       await csvToSql(
         __dirname + '/parl-2022-10-02/sections-2022-10-02.csv',
         'sections_seed',
       )
     )
       .split(';')
-      .map(async (sql) => await queryRunner.query(sql));
+      .map(async (sql) => await queryRunner.query(sql))
 
-    await queryRunner.query(`START TRANSACTION;`);
+    await queryRunner.query(`START TRANSACTION;`)
 
     await queryRunner.query(`
       insert into countries (code, name, is_abroad)
       select country_code, max(country_name), max(election_region_code) = '32'
       from sections_seed
       group by country_code;
-    `);
+    `)
 
     await queryRunner.query(`
       insert into election_regions (code, name, is_abroad)
@@ -52,7 +51,7 @@ export class Sections1607202587052 implements MigrationInterface {
       from sections_seed
       group by election_region_code
       order by election_region_code;
-    `);
+    `)
 
     await queryRunner.query(`
       insert into municipalities(code, name)
@@ -60,7 +59,7 @@ export class Sections1607202587052 implements MigrationInterface {
       from sections_seed
       where sections_seed.municipality_code is not null
       group by municipality_code, municipality_name
-    `);
+    `)
 
     await queryRunner.query(`
       insert into election_regions_municipalities(election_region_id, municipality_id)
@@ -72,7 +71,7 @@ export class Sections1607202587052 implements MigrationInterface {
         on municipalities.code = sections_seed.municipality_code
         and lower(municipalities.name) = lower(sections_seed.municipality_name)
       group by election_regions.id, municipalities.id
-    `);
+    `)
 
     await queryRunner.query(`
       insert into towns (name, code, country_id, municipality_id)
@@ -85,7 +84,7 @@ export class Sections1607202587052 implements MigrationInterface {
         and lower(municipalities.name) = lower(sections_seed.municipality_name)
       group by town_code
       order by max(country_code), max(election_region_code), town_code;
-    `);
+    `)
 
     await queryRunner.query(`
       insert into city_regions (code, name)
@@ -95,7 +94,7 @@ export class Sections1607202587052 implements MigrationInterface {
       and sections_seed.city_region_code != ''
       and sections_seed.city_region_code is not null
       group by sections_seed.city_region_code, sections_seed.city_region_name
-    `);
+    `)
 
     await queryRunner.query(`
       insert into city_regions_towns (town_id, city_region_id)
@@ -110,7 +109,7 @@ export class Sections1607202587052 implements MigrationInterface {
       and sections_seed.city_region_code != ''
       and sections_seed.city_region_code is not null
       group by towns.id, city_regions.id
-    `);
+    `)
 
     await queryRunner.query(`
       insert into sections (
@@ -150,7 +149,7 @@ export class Sections1607202587052 implements MigrationInterface {
         and lower(city_regions.name) = lower(sections_seed.city_region_name)
       group by sections_seed.election_region_code, sections_seed.country_code, sections_seed.town_code, sections_seed.section_id
       order by country_code, election_region_code, max(town_name);
-    `);
+    `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -163,6 +162,6 @@ export class Sections1607202587052 implements MigrationInterface {
       truncate table "municipalities" restart identity cascade;
       truncate table "countries" restart identity cascade;
       truncate table "city_regions_towns" restart identity cascade;
-    `);
+    `)
   }
 }

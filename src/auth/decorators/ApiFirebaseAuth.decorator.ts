@@ -1,5 +1,5 @@
-import { ApiSecurity } from '@nestjs/swagger';
+import { ApiSecurity } from '@nestjs/swagger'
 
 export function ApiFirebaseAuth(name = 'firebase') {
-  return ApiSecurity(name);
+  return ApiSecurity(name)
 }

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class ProtocolResultsCreatedAtDefault1608764410883
   implements MigrationInterface
@@ -6,12 +6,12 @@ export class ProtocolResultsCreatedAtDefault1608764410883
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
         alter table "protocol_results" alter column "created_at" set default CURRENT_TIMESTAMP;
-      `);
+      `)
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
         alter table "protocol_results" alter column "created_at" set default null;
-      `);
+      `)
   }
 }

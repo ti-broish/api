@@ -1,7 +1,7 @@
-import { ulid } from 'ulid';
-import { Section } from 'src/sections/entities';
-import { User } from 'src/users/entities';
-import { Entity, CreateDateColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { ulid } from 'ulid'
+import { Section } from 'src/sections/entities'
+import { User } from 'src/users/entities'
+import { Entity, CreateDateColumn, ManyToOne, PrimaryColumn } from 'typeorm'
 
 @Entity('checkins', {
   orderBy: {
@@ -12,14 +12,14 @@ export class Checkin {
   @PrimaryColumn('char', {
     length: 26,
   })
-  id: string = ulid();
+  id: string = ulid()
 
   @ManyToOne(() => User, (user: User) => user.checkins)
-  actor: User;
+  actor: User
 
   @ManyToOne(() => Section, (section) => section.violations)
-  section?: Section;
+  section?: Section
 
   @CreateDateColumn()
-  timestamp: Date;
+  timestamp: Date
 }

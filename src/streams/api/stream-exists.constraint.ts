@@ -1,13 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common'
 import {
   registerDecorator,
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
-} from 'class-validator';
-import { StreamsRepository } from '../entities/streams.repository';
-import { StreamEventDto } from './stream-event.dto';
+} from 'class-validator'
+import { StreamsRepository } from '../entities/streams.repository'
+import { StreamEventDto } from './stream-event.dto'
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -20,14 +20,14 @@ export class IsStreamIdentifierExistsConstraint
 
   async validate(streamIdentifier: string): Promise<boolean> {
     if (!streamIdentifier) {
-      return false;
+      return false
     }
 
-    return !!(await this.repo.findOneByIdentifier(streamIdentifier));
+    return !!(await this.repo.findOneByIdentifier(streamIdentifier))
   }
 
   defaultMessage?(validationArguments?: ValidationArguments): string {
-    return `Stream with identifier "${validationArguments.value}" does not exist!`;
+    return `Stream with identifier "${validationArguments.value}" does not exist!`
   }
 }
 
@@ -41,6 +41,6 @@ export function IsStreamIdentifierExists(
       options: validationOptions,
       constraints: [],
       validator: IsStreamIdentifierExistsConstraint,
-    });
-  };
+    })
+  }
 }

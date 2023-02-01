@@ -8,8 +8,8 @@ import {
   NotFoundException,
   Header,
   Inject,
-} from '@nestjs/common';
-import { Public } from 'src/auth/decorators';
+} from '@nestjs/common'
+import { Public } from 'src/auth/decorators'
 import {
   CityRegion,
   Country,
@@ -17,21 +17,21 @@ import {
   Municipality,
   Section,
   Town,
-} from 'src/sections/entities';
-import { ElectionRegionsRepository } from 'src/sections/entities/electionRegions.repository';
-import { MunicipalitiesRepository } from 'src/sections/entities/municipalities.repository';
-import { PartiesRepository } from 'src/parties/entities/parties.repository';
-import { CountriesRepository } from 'src/sections/entities/countries.repository';
-import { CityRegionsRepository } from 'src/sections/entities/cityRegions.repository';
-import { SectionsRepository } from 'src/sections/entities/sections.repository';
-import { StatsDto } from './stats.dto';
-import { ConfigService } from '@nestjs/config';
-import { CrumbMaker } from './crumb-maker.service';
-import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository';
-import { Protocol } from 'src/protocols/entities/protocol.entity';
-import { ProtocolDto } from 'src/protocols/api/protocol.dto';
-import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service';
-import { PictureDto } from 'src/pictures/api/picture.dto';
+} from 'src/sections/entities'
+import { ElectionRegionsRepository } from 'src/sections/entities/electionRegions.repository'
+import { MunicipalitiesRepository } from 'src/sections/entities/municipalities.repository'
+import { PartiesRepository } from 'src/parties/entities/parties.repository'
+import { CountriesRepository } from 'src/sections/entities/countries.repository'
+import { CityRegionsRepository } from 'src/sections/entities/cityRegions.repository'
+import { SectionsRepository } from 'src/sections/entities/sections.repository'
+import { StatsDto } from './stats.dto'
+import { ConfigService } from '@nestjs/config'
+import { CrumbMaker } from './crumb-maker.service'
+import { ProtocolsRepository } from 'src/protocols/entities/protocols.repository'
+import { Protocol } from 'src/protocols/entities/protocol.entity'
+import { ProtocolDto } from 'src/protocols/api/protocol.dto'
+import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service'
+import { PictureDto } from 'src/pictures/api/picture.dto'
 
 export enum NodeType {
   ELECTION = 'election',
@@ -65,30 +65,30 @@ export const mapToType = (
     | string,
 ): NodeType => {
   if (item instanceof ElectionRegion) {
-    return NodeType.ELECTION_REGION;
+    return NodeType.ELECTION_REGION
   }
   if (item instanceof Country) {
-    return NodeType.COUNTRY;
+    return NodeType.COUNTRY
   }
   if (item instanceof Municipality) {
-    return NodeType.MUNICIPALITY;
+    return NodeType.MUNICIPALITY
   }
   if (item instanceof Town) {
-    return NodeType.TOWN;
+    return NodeType.TOWN
   }
   if (item instanceof CityRegion) {
-    return NodeType.DISTRICT;
+    return NodeType.DISTRICT
   }
   if (item instanceof Section) {
-    return NodeType.SECTION;
+    return NodeType.SECTION
   }
 
   if (typeof item === 'string') {
-    return NodeType.ADDRESS;
+    return NodeType.ADDRESS
   }
 
-  throw new Error('Unexpected node type');
-};
+  throw new Error('Unexpected node type')
+}
 
 const townsToCityRegionsReducer = (
   acc: Record<string, CityRegion>,
@@ -96,24 +96,24 @@ const townsToCityRegionsReducer = (
 ) => {
   town.cityRegions.forEach((cityRegion: CityRegion) => {
     if (!acc[cityRegion.code]) {
-      acc[cityRegion.code] = cityRegion;
+      acc[cityRegion.code] = cityRegion
     }
     if (!acc[cityRegion.code].towns) {
-      acc[cityRegion.code].towns = [];
+      acc[cityRegion.code].towns = []
     }
-    acc[cityRegion.code].towns.push(town);
-  });
-  delete town.cityRegions;
-  return acc;
-};
+    acc[cityRegion.code].towns.push(town)
+  })
+  delete town.cityRegions
+  return acc
+}
 
 const groupByPlaceReducer = (
   acc: Record<string, Section[]>,
   section: Section,
 ) => {
-  (acc[section.place] = acc[section.place] || []).push(section);
-  return acc;
-};
+  ;(acc[section.place] = acc[section.place] || []).push(section)
+  return acc
+}
 
 const sectionMapper = ({ code, id, stats, results }) => ({
   id: code,
@@ -122,20 +122,20 @@ const sectionMapper = ({ code, id, stats, results }) => ({
   type: NodeType.SECTION,
   stats,
   results,
-});
+})
 
 const mapSections = ([place, sections]: [string, Section[]]) => ({
   name: place,
   type: mapToType(place),
   nodesType: NodesType.SECTIONS,
   nodes: sections.map(sectionMapper),
-});
+})
 
 const groupSectionsByPlaceReducer = (sections: Section[]) =>
-  Object.entries(sections.reduce(groupByPlaceReducer, {})).map(mapSections);
+  Object.entries(sections.reduce(groupByPlaceReducer, {})).map(mapSections)
 
 const makeSegment = (items: { code: string }[]) =>
-  items.reduce((acc, x) => `${acc}${x.code}`, '');
+  items.reduce((acc, x) => `${acc}${x.code}`, '')
 
 @Controller('results')
 @Public()
@@ -170,7 +170,7 @@ export class ResultsController {
           color,
         }),
       ),
-    };
+    }
   }
 
   @Get('index.json')
@@ -178,9 +178,9 @@ export class ResultsController {
   @Header('Cache-Control', 'max-age: 60')
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(): Promise<Record<string, any>> {
-    const stats = await this.sectionsRepo.getStatsFor();
-    const statsPerElectionRegion = await this.sectionsRepo.getStatsFor('', 2);
-    const electionRegionResults = await this.sectionsRepo.getResultsFor('', 2);
+    const stats = await this.sectionsRepo.getStatsFor()
+    const statsPerElectionRegion = await this.sectionsRepo.getStatsFor('', 2)
+    const electionRegionResults = await this.sectionsRepo.getResultsFor('', 2)
 
     return {
       id: null,
@@ -202,7 +202,7 @@ export class ResultsController {
           stats: statsPerElectionRegion[electionRegion.code] || {},
         }),
       ),
-    };
+    }
   }
 
   @Get(':segment.json')
@@ -213,47 +213,47 @@ export class ResultsController {
     @Param('segment') segment: string,
   ): Promise<Record<string, any>> {
     if (!segment.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
-      throw new NotFoundException();
+      throw new NotFoundException()
     }
 
     const segments = segment
       .split(/^(\d{2})(\d{2})?(\d{2})?(\d{3})?$/)
-      .filter((x) => !!x);
+      .filter((x) => !!x)
 
-    const electionRegionCode = segments.shift();
+    const electionRegionCode = segments.shift()
     const electionRegion = await this.electionRegionsRepo.findOneOrFail(
       electionRegionCode,
-    );
+    )
 
     if (!segments.length) {
-      return this.getElectionRegionResults(electionRegion);
+      return this.getElectionRegionResults(electionRegion)
     }
 
-    let municipality: Municipality, country: Country;
+    let municipality: Municipality, country: Country
 
     if (electionRegion.isAbroad) {
-      const countryCode = segments.shift();
+      const countryCode = segments.shift()
       if (countryCode === '00') {
-        throw new NotFoundException();
+        throw new NotFoundException()
       }
-      country = await this.countriesRepo.findOneOrFail(countryCode);
+      country = await this.countriesRepo.findOneOrFail(countryCode)
     } else {
       municipality = await this.municipalitiesRepo.findOneOrFail(
         electionRegion,
         segments.shift(),
-      );
+      )
     }
 
     if (!segments.length) {
       return electionRegion.isAbroad
         ? this.getCountryResults(electionRegion, country)
-        : this.getMunicipalityResults(electionRegion, municipality);
+        : this.getMunicipalityResults(electionRegion, municipality)
     }
 
-    const cityRegionCode = segments.shift();
+    const cityRegionCode = segments.shift()
 
     if (cityRegionCode === '00' && !segments.length) {
-      throw new NotFoundException();
+      throw new NotFoundException()
     }
 
     const cityRegion =
@@ -262,41 +262,37 @@ export class ResultsController {
             electionRegion,
             cityRegionCode,
           )
-        : null;
+        : null
 
     if (!segments.length) {
-      return this.getCityRegionResults(
-        electionRegion,
-        municipality,
-        cityRegion,
-      );
+      return this.getCityRegionResults(electionRegion, municipality, cityRegion)
     }
 
-    const section = await this.sectionsRepo.findOneOrFail(segment);
+    const section = await this.sectionsRepo.findOneOrFail(segment)
 
     return this.getSectionResults(
       electionRegion,
       electionRegion.isAbroad ? country : municipality,
       cityRegion,
       section,
-    );
+    )
   }
 
   private async getElectionRegionResults(
     parent: ElectionRegion,
   ): Promise<Record<string, any>> {
     const electionRegion =
-      await this.electionRegionsRepo.findOneWithStatsOrFail(parent);
-    let nodesType: NodesType, nodes: any[];
+      await this.electionRegionsRepo.findOneWithStatsOrFail(parent)
+    let nodesType: NodesType, nodes: any[]
     if (electionRegion.isAbroad) {
       const countryStats = await this.sectionsRepo.getStatsFor(
         electionRegion.code,
         4,
-      );
+      )
       const countryResults = await this.sectionsRepo.getResultsFor(
         electionRegion.code,
         4,
-      );
+      )
       nodes = (await this.countriesRepo.findAllAbroadWithStats()).map(
         (country) => ({
           id: country.code,
@@ -306,28 +302,28 @@ export class ResultsController {
           results: countryResults[makeSegment([electionRegion, country])] || [],
           stats: countryStats[makeSegment([electionRegion, country])] || {},
         }),
-      );
+      )
     } else {
-      nodesType = NodesType.MUNICIPALITIES;
+      nodesType = NodesType.MUNICIPALITIES
       const municipalities =
         await this.municipalitiesRepo.findFromElectionRegionWithCityRegionsAndStats(
           electionRegion.id,
-        );
+        )
       if (municipalities.length === 1) {
         const districtStats = await this.sectionsRepo.getStatsFor(
           makeSegment([electionRegion, municipalities[0]]),
           6,
-        );
+        )
         const districtResults = await this.sectionsRepo.getResultsFor(
           makeSegment([electionRegion, municipalities[0]]),
           6,
-        );
+        )
         if (municipalities[0].electionRegions.length > 1) {
-          nodesType = NodesType.DISTRICTS;
+          nodesType = NodesType.DISTRICTS
           const districts = municipalities[0].towns.reduce(
             townsToCityRegionsReducer,
             {},
-          );
+          )
           nodes = Object.entries(districts).map(([code, district]) => ({
             id: code,
             segment: makeSegment([electionRegion, municipalities[0], district]),
@@ -341,9 +337,9 @@ export class ResultsController {
               districtStats[
                 makeSegment([electionRegion, municipalities[0], district])
               ] || {},
-          }));
+          }))
         } else {
-          nodesType = NodesType.TOWNS;
+          nodesType = NodesType.TOWNS
           nodes = municipalities[0].towns.map(
             ({ code: id, name, cityRegions }) => ({
               id,
@@ -365,18 +361,18 @@ export class ResultsController {
                   ] || {},
               })),
             }),
-          );
+          )
         }
       } else {
         const municipalityStats = await this.sectionsRepo.getStatsFor(
           electionRegion.code,
           4,
-        );
+        )
         const municipalityResults = await this.sectionsRepo.getResultsFor(
           electionRegion.code,
           4,
-        );
-        nodesType = NodesType.MUNICIPALITIES;
+        )
+        nodesType = NodesType.MUNICIPALITIES
         nodes = municipalities.map(({ code: id, name }) => ({
           id,
           segment: `${electionRegion.code}${id}`,
@@ -384,7 +380,7 @@ export class ResultsController {
           type: NodeType.MUNICIPALITY,
           results: municipalityResults[`${electionRegion.code}${id}`] || [],
           stats: municipalityStats[`${electionRegion.code}${id}`] || {},
-        }));
+        }))
       }
     }
 
@@ -400,7 +396,7 @@ export class ResultsController {
       abroad: electionRegion.isAbroad,
       nodesType,
       nodes,
-    };
+    }
   }
 
   private async getMunicipalityResults(
@@ -408,21 +404,21 @@ export class ResultsController {
     municipality: Municipality,
   ): Promise<Record<string, any>> {
     if (municipality.isMunicipalityHidden()) {
-      throw new NotFoundException();
+      throw new NotFoundException()
     }
     municipality = await this.municipalitiesRepo.findOneWithStatsOrFail(
       electionRegion,
       municipality,
-    );
+    )
     const sectionsStats = await this.sectionsRepo.getStatsFor(
       makeSegment([electionRegion, municipality]),
       9,
-    );
+    )
     const sectionsResults = await this.sectionsRepo.getResultsFor(
       makeSegment([electionRegion, municipality]),
       9,
-    );
-    const { code, name } = municipality;
+    )
+    const { code, name } = municipality
 
     return {
       id: code,
@@ -446,13 +442,13 @@ export class ResultsController {
         nodesType: NodesType.ADDRESSES,
         nodes: groupSectionsByPlaceReducer(
           sections.map((section) => {
-            section.stats = sectionsStats[section.id] || {};
-            section.results = sectionsResults[section.id] || [];
-            return section;
+            section.stats = sectionsStats[section.id] || {}
+            section.results = sectionsResults[section.id] || []
+            return section
           }),
         ),
       })),
-    };
+    }
   }
 
   private async getCountryResults(
@@ -462,11 +458,11 @@ export class ResultsController {
     const sectionsStats = await this.sectionsRepo.getStatsFor(
       makeSegment([electionRegion, country]),
       9,
-    );
+    )
     const sectionsResults = await this.sectionsRepo.getResultsFor(
       makeSegment([electionRegion, country]),
       9,
-    );
+    )
 
     return {
       id: country.code,
@@ -489,13 +485,13 @@ export class ResultsController {
         NodesType: NodesType.ADDRESSES,
         nodes: groupSectionsByPlaceReducer(
           sections.map((section) => {
-            section.stats = sectionsStats[section.id] || {};
-            section.results = sectionsResults[section.id] || [];
-            return section;
+            section.stats = sectionsStats[section.id] || {}
+            section.results = sectionsResults[section.id] || []
+            return section
           }),
         ),
       })),
-    };
+    }
   }
 
   private async getCityRegionResults(
@@ -503,18 +499,18 @@ export class ResultsController {
     municipality: Municipality,
     district: CityRegion,
   ): Promise<Record<string, any>> {
-    let nodesType: NodesType, nodes: any[];
+    let nodesType: NodesType, nodes: any[]
     const sectionsStats = await this.sectionsRepo.getStatsFor(
       makeSegment([electionRegion, municipality, district]),
       9,
-    );
+    )
     const sectionsResults = await this.sectionsRepo.getResultsFor(
       makeSegment([electionRegion, municipality, district]),
       9,
-    );
+    )
 
     if (municipality.electionRegions.length > 1) {
-      nodesType = NodesType.TOWNS;
+      nodesType = NodesType.TOWNS
       nodes = district.towns.map(({ code, name, sections }) => ({
         id: code,
         name,
@@ -522,21 +518,21 @@ export class ResultsController {
         nodesType: NodesType.ADDRESSES,
         nodes: groupSectionsByPlaceReducer(
           sections.map((section) => {
-            section.stats = sectionsStats[section.id] || {};
-            section.results = sectionsResults[section.id] || [];
-            return section;
+            section.stats = sectionsStats[section.id] || {}
+            section.results = sectionsResults[section.id] || []
+            return section
           }),
         ),
-      }));
+      }))
     } else {
-      nodesType = NodesType.ADDRESSES;
+      nodesType = NodesType.ADDRESSES
       nodes = groupSectionsByPlaceReducer(
         district.sections.map((section) => {
-          section.stats = sectionsStats[section.id] || {};
-          section.results = sectionsResults[section.id] || [];
-          return section;
+          section.stats = sectionsStats[section.id] || {}
+          section.results = sectionsResults[section.id] || []
+          return section
         }),
-      );
+      )
     }
 
     return {
@@ -556,7 +552,7 @@ export class ResultsController {
       abroad: false,
       nodesType,
       nodes,
-    };
+    }
   }
 
   private async getSectionResults(
@@ -567,11 +563,11 @@ export class ResultsController {
   ): Promise<Record<string, any>> {
     section.stats = (await this.sectionsRepo.getStatsFor(
       section.id,
-    )) as StatsDto;
+    )) as StatsDto
     section.results = (await this.sectionsRepo.getResultsFor(
       section.id,
-    )) as number[];
-    section.protocols = await this.protocolsRepo.findBySection(section.id);
+    )) as number[]
+    section.protocols = await this.protocolsRepo.findBySection(section.id)
 
     return {
       ...sectionMapper(section),
@@ -587,14 +583,14 @@ export class ResultsController {
           ProtocolDto.fromEntity(protocol, ['protocol.protocolInResults']),
         ),
       ),
-    };
+    }
   }
   private updatePicturesUrl(protocolDto: ProtocolDto) {
     protocolDto.pictures.forEach(
       (picture: PictureDto) =>
         (picture.url = this.urlGenerator.getUrl(picture)),
-    );
+    )
 
-    return protocolDto;
+    return protocolDto
   }
 }

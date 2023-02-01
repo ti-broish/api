@@ -1,12 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose, plainToClass, Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator';
-import { StreamDto } from 'src/streams/api/stream.dto';
-import { Town } from '../entities';
-import { CityRegionDto } from './cityRegion.dto';
-import { CountryDto } from './country.dto';
-import { MunicipalityDto } from './municipality.dto';
-import { IsTownExists } from './town-exists.constraint';
+import { ApiProperty } from '@nestjs/swagger'
+import { Exclude, Expose, plainToClass, Type } from 'class-transformer'
+import { IsInt, IsNotEmpty, IsNumber, Min } from 'class-validator'
+import { StreamDto } from 'src/streams/api/stream.dto'
+import { Town } from '../entities'
+import { CityRegionDto } from './cityRegion.dto'
+import { CountryDto } from './country.dto'
+import { MunicipalityDto } from './municipality.dto'
+import { IsTownExists } from './town-exists.constraint'
 
 @Exclude()
 export class TownDto {
@@ -20,7 +20,7 @@ export class TownDto {
   @Min(1, { groups: ['create'] })
   @IsInt({ groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
-  id: number;
+  id: number
 
   @ApiProperty()
   @Expose({
@@ -31,7 +31,7 @@ export class TownDto {
       'protocol.protocolInResults',
     ],
   })
-  name: string;
+  name: string
 
   @ApiProperty()
   @Expose({
@@ -43,7 +43,7 @@ export class TownDto {
     ],
   })
   @Type(() => CityRegionDto)
-  cityRegions: CityRegionDto[];
+  cityRegions: CityRegionDto[]
 
   @ApiProperty()
   @Expose({
@@ -57,7 +57,7 @@ export class TownDto {
     ],
   })
   @Type(() => CountryDto)
-  country: CountryDto;
+  country: CountryDto
 
   @ApiProperty()
   @Expose({
@@ -71,12 +71,12 @@ export class TownDto {
     ],
   })
   @Type(() => MunicipalityDto)
-  municipality: MunicipalityDto;
+  municipality: MunicipalityDto
 
   public static fromEntity(entity: Town): TownDto {
     return plainToClass<TownDto, Partial<Town>>(TownDto, entity, {
       excludeExtraneousValues: true,
       groups: ['read'],
-    });
+    })
   }
 }

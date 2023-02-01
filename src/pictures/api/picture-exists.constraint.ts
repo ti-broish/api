@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common'
 import {
   registerDecorator,
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-} from 'class-validator';
-import { PicturesRepository } from '../entities/pictures.repository';
-import { PictureDto } from './picture.dto';
+} from 'class-validator'
+import { PicturesRepository } from '../entities/pictures.repository'
+import { PictureDto } from './picture.dto'
 
 @ValidatorConstraint({ async: true })
 @Injectable()
@@ -17,18 +17,18 @@ export class IsPictureExistsConstraint implements ValidatorConstraintInterface {
 
   async validate(pictureId?: string): Promise<boolean> {
     if (!pictureId) {
-      return true;
+      return true
     }
 
     if (typeof pictureId !== 'string') {
-      return false;
+      return false
     }
 
-    return !!(await this.repo.findOne(pictureId));
+    return !!(await this.repo.findOne(pictureId))
   }
 
   defaultMessage?(): string {
-    return 'Picture with $property "$value" does not exist!';
+    return 'Picture with $property "$value" does not exist!'
   }
 }
 
@@ -40,6 +40,6 @@ export function IsPictureExists(validationOptions?: ValidationOptions) {
       options: validationOptions,
       constraints: [],
       validator: IsPictureExistsConstraint,
-    });
-  };
+    })
+  }
 }
