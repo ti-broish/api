@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
+import { User } from 'src/users/entities'
 import { AppAbility, CaslAbilityFactory } from './casl-ability.factory'
 import { CHECK_POLICIES_KEY } from './check-policies.decorator'
 import { PolicyHandler } from './policy.handler'
@@ -18,7 +19,7 @@ export class PoliciesGuard implements CanActivate {
         context.getHandler(),
       ) || []
 
-    const { user } = context.switchToHttp().getRequest()
+    const { user }: { user: User | null } = context.switchToHttp().getRequest()
     const ability = this.caslAbilityFactory.createForUser(user)
 
     return policyHandlers.every((handler) =>
