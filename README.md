@@ -81,7 +81,7 @@ npm run test:cov
 
 ## Контакти
 
-- [team@demokrati.bg](mailto:team@demokrati.bg)
+- [team@tibroish.bg](mailto:team@tibroish.bg)
 
 ## Лиценз
 
