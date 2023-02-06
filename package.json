@@ -39,7 +39,7 @@
     "@nestjs/axios": "^1.0.1",
     "@nestjs/cli": "^9.2.0",
     "@nestjs/common": "^9.2.1",
-    "@nestjs/config": "^2.2.0",
+    "@nestjs/config": "^2.3.0",
     "@nestjs/core": "^9.2.1",
     "@nestjs/passport": "^9.0.1",
     "@nestjs/platform-express": "^9.2.1",
