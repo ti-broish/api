@@ -6,6 +6,7 @@ import {
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
 import { Observable } from 'rxjs'
+import { Request } from 'express'
 import { ALLOW_ONLY_FIREBASE_USER } from './decorators/allow-only-firebase-user.decorator'
 import { IS_PUBLIC_KEY } from './decorators/public.decorator'
 
@@ -48,7 +49,7 @@ export class FirebaseGuard extends AuthGuard('firebase') {
     if (typeof guardResultOrPromise === 'boolean') {
       return (
         guardResultOrPromise &&
-        !!context.switchToHttp().getRequest().firebaseUser
+        !!context.switchToHttp().getRequest<Request>().firebaseUser
       )
     }
 
@@ -57,7 +58,7 @@ export class FirebaseGuard extends AuthGuard('firebase') {
     }
     return guardResultOrPromise.catch((reason: Error) => {
       if (reason instanceof UnauthorizedException) {
-        return !!context.switchToHttp().getRequest().firebaseUser
+        return !!context.switchToHttp().getRequest<Request>().firebaseUser
       }
 
       throw reason
