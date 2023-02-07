@@ -1,4 +1,5 @@
 import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common'
+import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
 import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
@@ -13,6 +14,7 @@ export class ElectionRegionsController {
 
   @Get()
   @HttpCode(200)
+  @Public()
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Read, ElectionRegion),
