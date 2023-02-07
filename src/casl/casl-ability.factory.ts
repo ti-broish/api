@@ -67,7 +67,7 @@ export type AppAbility = PureAbility<[Actions, Subjects]>
 export class CaslAbilityFactory {
   constructor(private readonly config: ConfigService) {}
 
-  createForUser(user: User | null) {
+  createForUser(user: User | undefined) {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility)
 
@@ -88,7 +88,7 @@ export class CaslAbilityFactory {
     can(Action.Read, Violation, { isPublished: true })
 
     // If user is unauthenticated stop adding abilities
-    if (user === null) {
+    if (user === undefined) {
       return build()
     }
 
