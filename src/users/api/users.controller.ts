@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Post,
@@ -19,6 +18,7 @@ import {
 import { Request as ExpressRequest } from 'express'
 import { paginate, Pagination } from 'nestjs-typeorm-paginate'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { FirebaseUser } from 'src/firebase'
@@ -81,7 +81,7 @@ export class UsersController {
   @Get(':id')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, User))
   @UsePipes(new ValidationPipe({ transform: true }))
   async get(@Param('id') id: string): Promise<UserDto> {
     return UserDto.fromEntity(await this.repo.findOneOrFail(id), [
@@ -92,7 +92,7 @@ export class UsersController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, User))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: UsersFilters,
@@ -117,7 +117,7 @@ export class UsersController {
   @Patch(':id')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, User))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, User))
   @UsePipes(
     new ValidationPipe({
       transform: true,

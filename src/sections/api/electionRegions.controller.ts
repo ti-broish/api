@@ -1,6 +1,6 @@
-import { Ability } from '@casl/ability'
 import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { ElectionRegion } from '../entities'
@@ -14,7 +14,9 @@ export class ElectionRegionsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, ElectionRegion))
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Action.Read, ElectionRegion),
+  )
   async index(): Promise<ElectionRegionDto[]> {
     return (await this.repo.findAllWithMunicipalities()).map(
       ElectionRegionDto.fromEntity,

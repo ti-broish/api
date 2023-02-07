@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -16,6 +15,7 @@ import {
 import { Request as ExpressRequest } from 'express'
 import { paginate, Pagination } from 'nestjs-typeorm-paginate'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { PageDTO } from 'src/utils/page.dto'
@@ -40,7 +40,7 @@ export class ViolationCommentsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Violation))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: PageDTO,
@@ -71,7 +71,7 @@ export class ViolationCommentsController {
   @Post()
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(
     new ValidationPipe({
       transform: true,

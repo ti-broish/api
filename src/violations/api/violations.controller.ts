@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -19,6 +18,7 @@ import { Request as ExpressRequest } from 'express'
 import { paginate, Pagination } from 'nestjs-typeorm-paginate'
 import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { paginationRoute } from 'src/utils/pagination-route'
@@ -42,7 +42,7 @@ export class ViolationsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Violation))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: ViolationsFilters,
@@ -82,7 +82,7 @@ export class ViolationsController {
   @Post()
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Violation))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -132,7 +132,7 @@ export class ViolationsController {
   @Get(':id')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Violation))
   async get(@Param('id') id: string): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id)
     const dto = ViolationDto.fromEntity(violation, [
@@ -148,7 +148,7 @@ export class ViolationsController {
   @Post(':id/reject')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   async reject(
     @Param('id') id: string,
     @InjectUser() user: User,
@@ -169,7 +169,7 @@ export class ViolationsController {
   @Post(':id/process')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   async process(
     @Param('id') id: string,
     @InjectUser() user: User,
@@ -190,7 +190,7 @@ export class ViolationsController {
   @Patch(':id')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(
     new ValidationPipe({
       transform: true,

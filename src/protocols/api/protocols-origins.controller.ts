@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -9,6 +8,7 @@ import {
 } from '@nestjs/common'
 import { I18nService } from 'nestjs-i18n'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { Protocol, ProtocolOrigin } from '../entities/protocol.entity'
@@ -24,7 +24,7 @@ export class ProtocolsOriginsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(): Promise<OriginResponse[]> {
     return await Promise.all(

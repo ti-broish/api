@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -10,6 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { ApiFirebaseAuth } from '../../auth/decorators/ApiFirebaseAuth.decorator'
@@ -25,7 +25,7 @@ export class SectionsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Section))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Section))
   @ApiQuery({
     name: 'town',
     description: 'The town code to filter by',
@@ -51,7 +51,7 @@ export class SectionsController {
   @Get(':section')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Section))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Section))
   @ApiResponse({
     status: 200,
     description: 'Successful retrieval of a section',

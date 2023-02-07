@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -26,7 +25,7 @@ import { InjectUser } from '../../auth/decorators/inject-user.decorator'
 import { User } from '../../users/entities'
 import { Protocol } from '../entities/protocol.entity'
 import { ProtocolsRepository } from '../entities/protocols.repository'
-import { CaslAbilityFactory } from 'src/casl/casl-ability.factory'
+import { AppAbility, CaslAbilityFactory } from 'src/casl/casl-ability.factory'
 import { WorkQueue } from './work-queue.service'
 
 @Controller('protocols')
@@ -42,7 +41,7 @@ export class ProtocolAssigneesController {
   @Get(':protocol/assignees')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Protocol))
   async getAssignees(
     @Param('protocol') protocolId: string,
   ): Promise<UserDto[]> {
@@ -54,7 +53,7 @@ export class ProtocolAssigneesController {
   @Post(':protocol/assignees')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Protocol))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -78,7 +77,7 @@ export class ProtocolAssigneesController {
   @Delete(':protocol/assignees/:assignee')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Protocol))
   @UsePipes(
     new ValidationPipe({
       transform: true,

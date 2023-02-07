@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -41,6 +40,7 @@ import {
 import { BadRequestException } from '@nestjs/common'
 import { paginationRoute } from 'src/utils/pagination-route'
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -54,7 +54,7 @@ export class ProtocolsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: ProtocolFilters,
@@ -93,7 +93,7 @@ export class ProtocolsController {
   @Post()
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Protocol))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -122,7 +122,7 @@ export class ProtocolsController {
   @Post(':id/reject')
   @HttpCode(202)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Protocol))
   async reject(
     @Param('id') id: string,
     @Body('reason') reason: ProtocolRejectionReason,
@@ -163,7 +163,7 @@ export class ProtocolsController {
   @Post(':id/replace')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) =>
+  @CheckPolicies((ability: AppAbility) =>
     ability.can(Action.Create, ProtocolResult),
   )
   @UsePipes(
@@ -205,7 +205,7 @@ export class ProtocolsController {
   @Post('assign')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Protocol))
   async assign(
     @InjectUser() user: User,
     @Res() response: Response,
@@ -229,7 +229,7 @@ export class ProtocolsController {
   @Get(':id')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Protocol))
   async get(@Param('id') id: string): Promise<ProtocolDto> {
     const protocol = await this.repo.findOneOrFail(id)
     const dto = ProtocolDto.fromEntity(protocol, [

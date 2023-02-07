@@ -19,7 +19,7 @@ export class MeClientsController {
   @Get()
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Client))
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Client))
   async index(@InjectUser() user: User): Promise<ClientDto[]> {
     return (await this.clientsRepo.findAllForOwners([user])).map(
       ClientDto.fromEntity,
@@ -29,7 +29,7 @@ export class MeClientsController {
   @Post()
   @HttpCode(201)
   // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability: Ability) => ability.can(Action.Create, Client))
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Client))
   @UsePipes(
     new ValidationPipe({
       transform: true,

@@ -18,7 +18,7 @@ export class MeViolationController {
   @Get()
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Violation))
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Violation))
   async index(@InjectUser() user: User): Promise<ViolationDto[]> {
     const violations = (await this.violationsRepo.findByAuthor(user)).map(
       (violation: Violation): ViolationDto =>

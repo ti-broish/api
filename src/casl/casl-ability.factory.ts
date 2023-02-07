@@ -1,4 +1,4 @@
-import { Ability, AbilityBuilder, AbilityClass } from '@casl/ability'
+import { AbilityBuilder, createMongoAbility, PureAbility } from '@casl/ability'
 import { Injectable } from '@nestjs/common'
 import { Party } from 'src/parties/entities/party.entity'
 import { Picture } from 'src/pictures/entities/picture.entity'
@@ -61,16 +61,15 @@ type Actions =
   | Action.Manage
   | Action.Delete
   | Action.Publish
-export type AppAbility = Ability<[Actions, Subjects]>
+export type AppAbility = PureAbility<[Actions, Subjects]>
 
 @Injectable()
 export class CaslAbilityFactory {
   constructor(private readonly config: ConfigService) {}
 
   createForUser(user: User | null) {
-    const { can, build } = new AbilityBuilder<Ability<[Action, Subjects]>>(
-      Ability as AbilityClass<AppAbility>,
-    )
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility)
 
     // Unauthenticated users can read organisations, sections, localities and parties
     can(Action.Read, [

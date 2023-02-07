@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -16,6 +15,7 @@ import { ApiResponse } from '@nestjs/swagger'
 import { StreamsRepository } from 'src/streams/entities/streams.repository'
 import { StreamDto } from 'src/streams/api/stream.dto'
 import { Stream } from 'src/streams/entities/stream.entity'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 
 @Controller('me/stream')
 export class MeStreamController {
@@ -38,7 +38,7 @@ export class MeStreamController {
       'You cannot stream yet - you should either select a section first or wait for the end of election day',
   })
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Stream))
   async stream(@InjectUser() user: User): Promise<StreamDto> {
     const stream = await this.streamsRepo.findForUser(user)
 
@@ -52,7 +52,7 @@ export class MeStreamController {
   @Post('start')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Stream))
   streamStart(): void {
     // TODO
   }
@@ -60,7 +60,7 @@ export class MeStreamController {
   @Post('stop')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Stream))
   streamStop(): void {
     // TODO
   }

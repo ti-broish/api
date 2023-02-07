@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   BadRequestException,
   Controller,
@@ -9,6 +8,7 @@ import {
 } from '@nestjs/common'
 import { ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { Town } from '../entities'
@@ -22,7 +22,7 @@ export class TownsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Town))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Town))
   @ApiQuery({
     name: 'country',
     description: 'The country code to filter by',
