@@ -32,7 +32,7 @@ export class FirebaseStrategy extends PassportStrategy(
 
     if (user && firebaseUser.email_verified !== user.isEmailVerified) {
       user.isEmailVerified = firebaseUser.email_verified
-      this.usersRepo.save(user)
+      void this.usersRepo.save(user)
     }
 
     return user
