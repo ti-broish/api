@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Body,
   Controller,
@@ -27,6 +26,7 @@ import {
   ACCEPTED_RESPONSE_STATUS,
 } from 'src/utils/accepted-response'
 import { StreamCensor } from './stream-censor.service'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 
 @Controller('streams')
 export class StreamsController {
@@ -40,7 +40,7 @@ export class StreamsController {
   @Post()
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Stream))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Stream))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -65,7 +65,7 @@ export class StreamsController {
   @Delete(':stream')
   @HttpCode(202)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Stream))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Stream))
   delete(@Param('stream') streamId: string): AcceptedResponse {
     this.streamCensor.censorStreamById(streamId)
 

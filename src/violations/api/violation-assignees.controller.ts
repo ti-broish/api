@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -28,6 +27,7 @@ import { InjectUser } from '../../auth/decorators/inject-user.decorator'
 import { User } from '../../users/entities'
 import { Violation } from '../entities/violation.entity'
 import { ViolationsRepository } from '../entities/violations.repository'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 
 @Controller('violations')
 export class ViolationAssigneesController {
@@ -40,7 +40,7 @@ export class ViolationAssigneesController {
   @Get(':violation/assignees')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   async getAssignees(
     @Param('violation') violationId: string,
   ): Promise<UserDto[]> {
@@ -52,7 +52,7 @@ export class ViolationAssigneesController {
   @Put(':violation/assignees')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -85,7 +85,7 @@ export class ViolationAssigneesController {
   @Post(':violation/assignees')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -108,7 +108,7 @@ export class ViolationAssigneesController {
   @Delete(':violation/assignees/:assignee')
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Violation))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(
     new ValidationPipe({
       transform: true,

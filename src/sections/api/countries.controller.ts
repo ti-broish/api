@@ -1,7 +1,8 @@
-import { Ability } from '@casl/ability'
 import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
+import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { Country } from '../entities'
@@ -14,8 +15,9 @@ export class CountriesController {
 
   @Get()
   @HttpCode(200)
+  @Public()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Country))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Country))
   @ApiResponse({
     status: 200,
     description: 'Successful index of all countries',

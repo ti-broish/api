@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -12,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { InjectUser } from '../../auth/decorators/inject-user.decorator'
@@ -35,7 +35,7 @@ export class PicturesController {
 
   @Post()
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Create, Picture))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Picture))
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadFile(
     @Body() upload: UploadImageDto,
@@ -53,7 +53,7 @@ export class PicturesController {
   @Get(':id')
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Read, Picture))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Picture))
   async get(@Param('id') id: string): Promise<PictureDto> {
     const picture = await this.repo.findOneOrFail(id)
     const pictureDto = PictureDto.fromEntity(picture)

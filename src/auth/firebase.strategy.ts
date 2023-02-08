@@ -24,15 +24,15 @@ export class FirebaseStrategy extends PassportStrategy(
   async validate(
     firebaseUser: FirebaseUser,
     req?: Request,
-  ): Promise<User | null> {
+  ): Promise<User | undefined> {
     req.firebaseUser = firebaseUser ?? null
 
     const user =
-      (await this.usersRepo.findByFirebaseUid(firebaseUser.uid)) ?? null
+      (await this.usersRepo.findByFirebaseUid(firebaseUser.uid)) ?? undefined
 
     if (user && firebaseUser.email_verified !== user.isEmailVerified) {
       user.isEmailVerified = firebaseUser.email_verified
-      this.usersRepo.save(user)
+      void this.usersRepo.save(user)
     }
 
     return user

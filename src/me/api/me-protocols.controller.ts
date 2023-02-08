@@ -26,7 +26,7 @@ export class MeProtocolsController {
   @Get()
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, Protocol))
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(@InjectUser() user: User): Promise<ProtocolDto[]> {
     const protocols = await this.protocolsRepo.findByAuthor(user)

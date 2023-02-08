@@ -28,7 +28,7 @@ export class MeController {
   @Get()
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability: Ability) => ability.can(Action.Read, User))
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
   async get(@InjectUser() user: User): Promise<UserDto> {
     return UserDto.fromEntity(user, [UserDto.READ, UserDto.ME_READ])
   }
@@ -36,7 +36,7 @@ export class MeController {
   @Patch()
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability: Ability) => ability.can(Action.Update, User))
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, User))
   @UsePipes(
     new ValidationPipe({
       transform: true,
@@ -57,7 +57,7 @@ export class MeController {
   @Delete()
   @HttpCode(202)
   // @UseGuards(PoliciesGuard)
-  // @CheckPolicies((ability: Ability) => ability.can(Action.Delete, User))
+  // @CheckPolicies((ability: AppAbility) => ability.can(Action.Delete, User))
   async delete(@InjectUser() user: User): Promise<void> {
     const submittedProtocols = await this.protocolsRepo.findByAuthor(user)
     const submittedViolations = await this.violationsRepo.findByAuthor(user)

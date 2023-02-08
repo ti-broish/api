@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { Observable } from 'rxjs'
+import { Request } from 'express'
+import { firstValueFrom, Observable } from 'rxjs'
 import { ALLOW_ONLY_FIREBASE_USER } from './decorators/allow-only-firebase-user.decorator'
 import { IS_PUBLIC_KEY } from './decorators/public.decorator'
 
@@ -21,7 +22,9 @@ export class FirebaseGuard extends AuthGuard('firebase') {
     super(reflector)
   }
 
-  canActivate(context: ExecutionContext) {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -48,16 +51,16 @@ export class FirebaseGuard extends AuthGuard('firebase') {
     if (typeof guardResultOrPromise === 'boolean') {
       return (
         guardResultOrPromise &&
-        !!context.switchToHttp().getRequest().firebaseUser
+        !!context.switchToHttp().getRequest<Request>().firebaseUser
       )
     }
 
     if (guardResultOrPromise instanceof Observable) {
-      guardResultOrPromise = guardResultOrPromise.toPromise()
+      guardResultOrPromise = firstValueFrom(guardResultOrPromise)
     }
     return guardResultOrPromise.catch((reason: Error) => {
       if (reason instanceof UnauthorizedException) {
-        return !!context.switchToHttp().getRequest().firebaseUser
+        return !!context.switchToHttp().getRequest<Request>().firebaseUser
       }
 
       throw reason

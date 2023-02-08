@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -9,6 +8,7 @@ import {
 } from '@nestjs/common'
 import { I18nService } from 'nestjs-i18n'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { Protocol, ProtocolRejectionReason } from '../entities/protocol.entity'
@@ -24,7 +24,7 @@ export class ProtocolRejectionsController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Update, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(): Promise<RejectionReasonResponse[]> {
     return await Promise.all(

@@ -1,4 +1,4 @@
-import { Ability, AbilityBuilder, AbilityClass } from '@casl/ability'
+import { AbilityBuilder, createMongoAbility, PureAbility } from '@casl/ability'
 import { Injectable } from '@nestjs/common'
 import { Party } from 'src/parties/entities/party.entity'
 import { Picture } from 'src/pictures/entities/picture.entity'
@@ -61,16 +61,36 @@ type Actions =
   | Action.Manage
   | Action.Delete
   | Action.Publish
-export type AppAbility = Ability<[Actions, Subjects]>
+export type AppAbility = PureAbility<[Actions, Subjects]>
 
 @Injectable()
 export class CaslAbilityFactory {
   constructor(private readonly config: ConfigService) {}
 
-  createForUser(user: User) {
-    const { can, build } = new AbilityBuilder<Ability<[Action, Subjects]>>(
-      Ability as AbilityClass<AppAbility>,
-    )
+  createForUser(user: User | undefined) {
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility)
+
+    // Unauthenticated users can read organisations, sections, localities and parties
+    can(Action.Read, [
+      Organization,
+      Section,
+      CityRegion,
+      Town,
+      Municipality,
+      ElectionRegion,
+      Country,
+      Party,
+    ])
+    // Unauthenticated users can send pictures and violations with pictures
+    can(Action.Create, [Picture, Protocol, Violation])
+    // Unauthenticated users can see published violations
+    can(Action.Read, Violation, { isPublished: true })
+
+    // If user is unauthenticated stop adding abilities
+    if (user === undefined) {
+      return build()
+    }
 
     if (user.hasRole(Role.Admin)) {
       // read access to everything
@@ -130,20 +150,8 @@ export class CaslAbilityFactory {
 
     // Check for the default role so we can revoke access to people
     if (user.hasRole(Role.User)) {
-      can(Action.Read, Organization)
-      can(Action.Read, [
-        Section,
-        CityRegion,
-        Town,
-        Municipality,
-        ElectionRegion,
-        Country,
-      ])
-      can(Action.Create, [Picture, Protocol, ProtocolResult, Violation])
       // TODO: Read own protocols and their status and actions taken
       // can(Action.Read, Protocol, { 'actions.actor.id': user.id, 'actions.type': ProtocolActionType.SEND });
-      can(Action.Read, Party)
-      can(Action.Read, Violation, { isPublished: true })
       // TODO: Read own violations and violation updates
       // can(Action.Read, Violation, { 'updates.actor.id': user.id });
       can([Action.Read, Action.Update], User, { id: user.id })

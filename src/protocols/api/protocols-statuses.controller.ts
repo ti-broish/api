@@ -1,4 +1,3 @@
-import { Ability } from '@casl/ability'
 import {
   Controller,
   Get,
@@ -8,6 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { Action } from 'src/casl/action.enum'
+import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity'
@@ -18,7 +18,7 @@ export class ProtocolsStatusesController {
   @Get()
   @HttpCode(200)
   @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: Ability) => ability.can(Action.Manage, Protocol))
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Protocol))
   @UsePipes(new ValidationPipe({ transform: true }))
   index(): ProtocolDto[] {
     const result: ProtocolDto[] = []
