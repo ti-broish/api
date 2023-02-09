@@ -81,6 +81,7 @@ export class CaslAbilityFactory {
       ElectionRegion,
       Country,
       Party,
+      Picture,
     ])
     // Unauthenticated users can send pictures and violations with pictures
     can(Action.Create, [Picture, Protocol, Violation])
