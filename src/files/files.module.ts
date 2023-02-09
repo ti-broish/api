@@ -14,10 +14,10 @@ import { FilesUrlGenerator, FilesUploader } from '.'
         ({
           endPoint: configService.get('MINIO_ENDPOINT'),
           port: configService.get('MINIO_PORT'),
-          useSSL: true,
+          useSSL: configService.get<boolean>('MINIO_SSL'),
           accessKey: configService.get('MINIO_ACCESS_KEY'),
           secretKey: configService.get('MINIO_SECRET_KEY'),
-          password: configService.get('DATABASE_PASSWORD'),
+          password: configService.get<string>('DATABASE_PASSWORD'),
         } as NestMinioOptions),
     }),
   ],

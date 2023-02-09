@@ -6,8 +6,6 @@ export class FilesUrlGenerator {
   constructor(@Inject(ConfigService) private readonly config: ConfigService) {}
 
   getUrl(bucketName: string, filePath: string): string {
-    return `https://${this.config.get(
-      'MINIO_ENDPOINT',
-    )}/${bucketName}/${filePath}`
+    return `${this.config.get<string>('MINIO_URL')}/${bucketName}/${filePath}`
   }
 }
