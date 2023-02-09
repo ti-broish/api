@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   UseGuards,
 } from '@nestjs/common'
+import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
 import { AppAbility } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
@@ -24,6 +25,7 @@ import { PictureDto } from './picture.dto'
 import { UploadImageDto } from './upload-image.dto'
 
 @Controller('pictures')
+@Public()
 export class PicturesController {
   constructor(
     @Inject(PicturesUploader)
