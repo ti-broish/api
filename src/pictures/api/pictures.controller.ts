@@ -39,10 +39,10 @@ export class PicturesController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadFile(
     @Body() upload: UploadImageDto,
-    @InjectUser() user: User,
+    @InjectUser() user: User | undefined,
   ): Promise<PictureDto> {
     const picture = await this.picturesUploader.upload(upload.image)
-    picture.author = user
+    picture.author = user || null
 
     const pictureDto = PictureDto.fromEntity(await this.repo.save(picture))
     pictureDto.url = this.urlGenerator.getUrl(pictureDto)

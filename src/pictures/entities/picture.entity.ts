@@ -29,7 +29,7 @@ export class Picture implements PathInterface {
   createdAt: Date
 
   @ManyToOne(() => User)
-  author: User
+  author?: User
 
   getPath(): string {
     return this.path
