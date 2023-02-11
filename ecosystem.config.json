@@ -2,6 +2,7 @@
   "apps": [
     {
       "name": "ti-broish-api",
+      "append_env_to_name": true,
       "script": "npm",
       "args": "start",
 
