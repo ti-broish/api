@@ -2,7 +2,8 @@
   "apps": [
     {
       "name": "ti-broish-api",
-      "script": "dist/main.js",
+      "script": "npm",
+      "args": "start",
 
       "_": "// Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/",
       "watch": false,
