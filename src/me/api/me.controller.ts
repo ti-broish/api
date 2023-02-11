@@ -29,7 +29,7 @@ export class MeController {
   @HttpCode(200)
   // @UseGuards(PoliciesGuard)
   // @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, User))
-  async get(@InjectUser() user: User): Promise<UserDto> {
+  get(@InjectUser() user: User): UserDto {
     return UserDto.fromEntity(user, [UserDto.READ, UserDto.ME_READ])
   }
 

@@ -37,10 +37,10 @@ export class FirebaseAuthStrategy extends PassportStrategy(
     this.passReqToCallback = options.passReqToCallback === true || false
   }
 
-  async validate(
+  validate(
     payload: FirebaseUser,
     req?: Request | undefined, // eslint-disable-line @typescript-eslint/no-unused-vars
-  ): Promise<any> {
+  ): any {
     return payload
   }
 
@@ -49,7 +49,6 @@ export class FirebaseAuthStrategy extends PassportStrategy(
 
     if (!idToken) {
       this.fail(UNAUTHORIZED, 401)
-
       return
     }
 
@@ -63,7 +62,7 @@ export class FirebaseAuthStrategy extends PassportStrategy(
             this.passReqToCallback ? req : undefined,
           ),
         )
-        .catch((err) => {
+        .catch((err: Error) => {
           this.fail({ err }, 401)
         })
     } catch (e) {
@@ -73,16 +72,17 @@ export class FirebaseAuthStrategy extends PassportStrategy(
     }
   }
 
-  private async validateDecodedIdToken(
+  private validateDecodedIdToken(
     decodedIdToken: FirebaseUser,
     req?: Request,
-  ) {
-    const result = this.passReqToCallback
-      ? await this.validate(decodedIdToken, req)
-      : await this.validate(decodedIdToken)
+  ): void {
+    const result: FirebaseUser = this.passReqToCallback
+      ? this.validate(decodedIdToken, req)
+      : this.validate(decodedIdToken)
 
     if (result) {
       this.success(result)
+      return
     }
 
     this.fail(UNAUTHORIZED, 401)
