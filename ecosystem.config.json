@@ -28,7 +28,7 @@
       "repo": "https://github.com/ti-broish/api.git",
       "path": "/var/www/ti-broish-api-20210711",
       "post-setup": "ls -la",
-      "post-deploy": "npm run postdeploy -- --env production"
+      "post-deploy": "npm run postdeploy -- production --env production"
     },
     "staging": {
       "user": "deploy",
@@ -37,7 +37,7 @@
       "repo": "https://github.com/ti-broish/api.git",
       "path": "/var/www/ti-broish-api-staging",
       "post-setup": "ls -la",
-      "post-deploy": "npm run postdeploy -- --env staging"
+      "post-deploy": "npm run postdeploy -- staging --env staging"
     }
   }
 }
