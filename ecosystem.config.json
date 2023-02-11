@@ -36,7 +36,7 @@
       "repo": "https://github.com/ti-broish/api.git",
       "path": "/var/www/ti-broish-api-staging",
       "post-setup": "ls -la",
-      "post-deploy": "npm run postdeploy --env ti-broish-api-staging"
+      "post-deploy": "npm run postdeploy -- --env ti-broish-api-staging"
     }
   }
 }
