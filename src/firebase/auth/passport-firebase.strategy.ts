@@ -82,6 +82,7 @@ export class FirebaseAuthStrategy extends PassportStrategy(
 
     if (result) {
       this.success(result)
+      return
     }
 
     this.fail(UNAUTHORIZED, 401)
