@@ -17,7 +17,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "deploy:demo": "pm2 deploy demo-ecosystem.config.js production update",
     "lint": "eslint \"{src,scripts,test,@types}/**/*.{ts,js}\" --fix --quiet",
     "lint:ci": "eslint \"{src,scripts,test,@types}/**/*.{ts,js}\" --fix-dry-run --quiet",
     "test": "jest --passWithNoTests",
@@ -31,7 +30,8 @@
     "migration:revert": "typeorm-ts-node-esm -d ./src/config/typeorm.datasource.ts migration:revert",
     "seed:run": "typeorm-ts-node-esm -d ./src/config/typeorm-seeds.datasource.ts migration:run",
     "seed:revert": "typeorm-ts-node-esm -d ./src/config/typeorm-seeds.datasource.ts migration:revert",
-    "firebase:token": "node ./scripts/get-token.js"
+    "firebase:token": "node ./scripts/get-token.js",
+    "postdeploy": "npm ci --only=production --ignore-scripts --no-audit --loglevel=error --cache .npm --prefer-offline --silent && npm run build && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/ && NODE_ENV=production npm run migration:run && pm2 startOrReload ecosystem.config.json"
   },
   "dependencies": {
     "@anchan828/typeorm-decorators": "^1.0.46",
