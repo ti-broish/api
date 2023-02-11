@@ -28,12 +28,12 @@ import { CommandModule } from 'nestjs-command'
       ignoreEnvVars: true,
       validationSchema: configSchema,
       validationOptions: {
-        allowUnknown: false,
+        allowUnknown: true,
         cache: process.env.NODE_ENV === 'production',
         debug: process.env.NODE_ENV !== 'production',
         stack: process.env.NODE_ENV !== 'production',
       },
-      envFilePath: ['.env', '.env.schema'],
+      envFilePath: ['.env'],
       cache: process.env.NODE_ENV === 'production',
     }),
     I18nModule.forRootAsync({
