@@ -24,7 +24,18 @@ import { CommandModule } from 'nestjs-command'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ validationSchema: configSchema }),
+    ConfigModule.forRoot({
+      ignoreEnvVars: true,
+      validationSchema: configSchema,
+      validationOptions: {
+        allowUnknown: false,
+        cache: process.env.NODE_ENV === 'production',
+        debug: process.env.NODE_ENV !== 'production',
+        stack: process.env.NODE_ENV !== 'production',
+      },
+      envFilePath: ['.env', '.env.schema'],
+      cache: process.env.NODE_ENV === 'production',
+    }),
     I18nModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
