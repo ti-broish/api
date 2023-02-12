@@ -22,7 +22,7 @@ jobs:
       - run: |
           mkdir ~/.ssh
           chmod u+rwx,go-rwx ~/.ssh
-          echo "Host ti-broish-api\n    Hostname ${{ secrets.DEPLOY_SSH_HOST }}" >> ~/.ssh/config
+          echo -e "Host ti-broish-api\n    Hostname ${{ secrets.DEPLOY_SSH_HOST }}" >> ~/.ssh/config
           chmod u+rw,go-rwx ~/.ssh/config
 
       - uses: webfactory/ssh-agent@v0.7.0
