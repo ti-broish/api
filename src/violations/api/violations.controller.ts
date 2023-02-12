@@ -93,7 +93,7 @@ export class ViolationsController {
   )
   async create(
     @Body() violationDto: ViolationDto,
-    @InjectUser() user: User | undefined,
+    @InjectUser() user?: User,
   ): Promise<ViolationDto> {
     const violation = violationDto.toEntity()
     violation.setReceivedStatus(user)

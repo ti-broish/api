@@ -44,7 +44,7 @@ export class ViolationUpdate {
   @CreateDateColumn()
   timestamp: Date
 
-  public static createSendUpdate(actor: User): ViolationUpdate {
+  public static createSendUpdate(actor?: User): ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.SEND, actor)
   }
 

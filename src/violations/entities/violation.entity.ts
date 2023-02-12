@@ -97,7 +97,7 @@ export class Violation {
     return this.updates || []
   }
 
-  setReceivedStatus(sender: User): void {
+  setReceivedStatus(sender?: User): void {
     if (this.status) {
       throw new ViolationStatusException(this, ViolationStatus.RECEIVED)
     }
