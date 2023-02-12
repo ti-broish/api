@@ -26,6 +26,8 @@ jobs:
 
       - run: ssh-keyscan -H ${{ secrets.DEPLOY_SSH_HOST }} >> ~/.ssh/known_hosts
 
+      - run: npm install -g pm2@^5
+
       - run: npm run deploy:staging
 
 
