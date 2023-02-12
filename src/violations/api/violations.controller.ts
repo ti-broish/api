@@ -80,6 +80,7 @@ export class ViolationsController {
   }
 
   @Post()
+  @Public()
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Violation))
@@ -92,7 +93,7 @@ export class ViolationsController {
   )
   async create(
     @Body() violationDto: ViolationDto,
-    @InjectUser() user: User,
+    @InjectUser() user?: User,
   ): Promise<ViolationDto> {
     const violation = violationDto.toEntity()
     violation.setReceivedStatus(user)
