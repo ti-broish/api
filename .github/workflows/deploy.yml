@@ -10,7 +10,7 @@ on:
 
 jobs:
   tests:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.ref, 'refs/branches/') }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Run Tests & Build
     runs-on: ubuntu-latest
 
