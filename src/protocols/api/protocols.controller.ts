@@ -41,6 +41,7 @@ import { BadRequestException } from '@nestjs/common'
 import { paginationRoute } from 'src/utils/pagination-route'
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service'
 import { AppAbility } from 'src/casl/casl-ability.factory'
+import { Public } from 'src/auth/decorators'
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -92,6 +93,7 @@ export class ProtocolsController {
 
   @Post()
   @HttpCode(201)
+  @Public()
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Protocol))
   @UsePipes(
@@ -103,7 +105,7 @@ export class ProtocolsController {
   )
   async create(
     @Body() protocolDto: ProtocolDto,
-    @InjectUser() user: User,
+    @InjectUser() user?: User,
   ): Promise<ProtocolDto> {
     const protocol = protocolDto.toEntity()
     protocol.receive(user)
