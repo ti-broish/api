@@ -32,7 +32,7 @@ import { ViolationDto } from './violation.dto'
 import { ViolationsFilters } from './violations-filters.dto'
 
 @Controller('violations')
-export class ViolationsController {
+export default class ViolationsController {
   constructor(
     @Inject(ViolationsRepository) private readonly repo: ViolationsRepository,
     @Inject(PicturesUrlGenerator)
@@ -57,23 +57,10 @@ export class ViolationsController {
       },
     )
 
-    const processViolation = async (violation: Violation) => {
-      const dto = ViolationDto.fromEntity(violation, [
-        'read',
-        'violation.process',
-        'author_read',
-      ])
-      this.updatePicturesUrl(dto)
-
-      return dto
-    }
-
-    const promises: Promise<ViolationDto>[] =
-      pagination.items.map(processViolation)
-    const violationDtoItems = await Promise.all(promises)
-
     return new Pagination<ViolationDto>(
-      violationDtoItems,
+      pagination.items.map<ViolationDto>((violation: Violation) =>
+        this.processViolation(violation),
+      ),
       pagination.meta,
       pagination.links,
     )
@@ -97,14 +84,7 @@ export class ViolationsController {
   ): Promise<ViolationDto> {
     const violation = violationDto.toEntity()
     violation.setReceivedStatus(user)
-    const savedDto = ViolationDto.fromEntity(await this.repo.save(violation), [
-      'read',
-      'violation.process',
-      'author_read',
-    ])
-    this.updatePicturesUrl(savedDto)
-
-    return savedDto
+    return this.processViolation(await this.repo.save(violation))
   }
 
   @Public()
@@ -135,15 +115,7 @@ export class ViolationsController {
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Violation))
   async get(@Param('id') id: string): Promise<ViolationDto> {
-    const violation = await this.repo.findOneOrFail(id)
-    const dto = ViolationDto.fromEntity(violation, [
-      'read',
-      'violation.process',
-      'author_read',
-    ])
-    this.updatePicturesUrl(dto)
-
-    return dto
+    return this.processViolation(await this.repo.findOneOrFail(id))
   }
 
   @Post(':id/reject')
@@ -157,14 +129,7 @@ export class ViolationsController {
     const violation = await this.repo.findOneOrFail(id)
     violation.reject(user)
 
-    const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
-      'read',
-      'violation.process',
-      'author_read',
-    ])
-    this.updatePicturesUrl(dto)
-
-    return dto
+    return this.processViolation(await this.repo.save(violation))
   }
 
   @Post(':id/process')
@@ -178,14 +143,7 @@ export class ViolationsController {
     const violation = await this.repo.findOneOrFail(id)
     violation.process(user)
 
-    const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
-      'read',
-      'violation.process',
-      'author_read',
-    ])
-    this.updatePicturesUrl(dto)
-
-    return dto
+    return this.processViolation(await this.repo.save(violation))
   }
 
   @Patch(':id')
@@ -216,15 +174,12 @@ export class ViolationsController {
     }
 
     violation.publishedText = violationDto.publishedText
-    const dto = ViolationDto.fromEntity(await this.repo.save(violation), [
+    return this.processViolation(await this.repo.save(violation), [
       'read',
       'violation.process',
       'author_read',
       'isPublishedUpdate',
     ])
-    this.updatePicturesUrl(dto)
-
-    return dto
   }
 
   private updatePicturesUrl(violationDto: ViolationDto) {
@@ -234,5 +189,15 @@ export class ViolationsController {
     )
 
     return violationDto
+  }
+
+  private processViolation(
+    violation: Violation,
+    groups: string[] = ['read', 'violation.process', 'author_read'],
+  ): ViolationDto {
+    const dto = ViolationDto.fromEntity(violation, groups)
+    this.updatePicturesUrl(dto)
+
+    return dto
   }
 }
