@@ -158,7 +158,7 @@ export class Protocol {
     return this.status === ProtocolStatus.SETTLED
   }
 
-  receive(sender: User): void {
+  receive(sender?: User): void {
     if (this.status) {
       throw new ProtocolStatusException(this, ProtocolStatus.RECEIVED)
     }
