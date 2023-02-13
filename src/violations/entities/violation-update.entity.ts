@@ -33,7 +33,7 @@ export class ViolationUpdate {
   violation: Violation
 
   @ManyToOne(() => User)
-  actor: User
+  actor: User | null
 
   @Column({ type: 'varchar' })
   type: ViolationUpdateType
