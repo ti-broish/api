@@ -228,12 +228,6 @@ export class ViolationsRepository {
       })
     }
 
-    if (filters.organization) {
-      qb.andWhere('organization.id = :organization', {
-        organization: filters.organization,
-      })
-    }
-
     return qb
   }
 

@@ -2,14 +2,12 @@ import { Type } from 'class-transformer'
 import {
   IsBooleanString,
   IsEnum,
-  IsInt,
   IsNumberString,
   IsOptional,
   IsString,
   Length,
 } from 'class-validator'
 import { IsTownExists } from 'src/sections/api/town-exists.constraint'
-import { IsOrganizationExists } from 'src/users/api/organization-exists.constraint'
 import { IsUserExists } from 'src/users/api/user-exists.constraint'
 import { PageDTO } from 'src/utils/page.dto'
 import { IsULID } from 'src/utils/ulid-constraint'
@@ -55,12 +53,6 @@ export class ViolationsFilters extends PageDTO {
   @IsNumberString()
   @Length(2, 2)
   cityRegion: string
-
-  @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  @IsOrganizationExists()
-  organization: number
 
   @IsOptional()
   @IsBooleanString()
