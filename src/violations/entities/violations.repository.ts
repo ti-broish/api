@@ -159,13 +159,7 @@ export class ViolationsRepository {
 
     qb.innerJoinAndSelect('violation.town', 'town')
     qb.innerJoinAndSelect('violation.updates', 'updates')
-    qb.innerJoinAndSelect('updates.actor', 'actor')
-    qb.innerJoin('violation.updates', 'update_send')
-    qb.andWhere('update_send.type = :update', {
-      update: ViolationUpdateType.SEND,
-    })
-    qb.innerJoin('update_send.actor', 'sender')
-    qb.innerJoinAndSelect('sender.organization', 'organization')
+    qb.leftJoinAndSelect('updates.actor', 'actor')
     qb.leftJoinAndSelect('violation.pictures', 'picture')
 
     if (filters.assignee) {
