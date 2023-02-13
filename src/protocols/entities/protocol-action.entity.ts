@@ -45,7 +45,7 @@ export class ProtocolAction {
   @CreateDateColumn()
   timestamp: Date
 
-  public static createSendAction(actor: User): ProtocolAction {
+  public static createSendAction(actor?: User): ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.SEND, actor)
   }
 

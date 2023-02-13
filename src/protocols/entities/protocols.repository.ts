@@ -88,12 +88,16 @@ export class ProtocolsRepository {
     qb.innerJoinAndSelect('protocol.section', 'section')
     qb.innerJoinAndSelect('section.town', 'town')
     qb.innerJoinAndSelect('protocol.pictures', 'picture')
-    qb.innerJoinAndSelect('protocol.actions', 'action')
-    qb.innerJoinAndSelect('action.actor', 'actor')
-    qb.andWhere('action.action = :action', {
-      action: ProtocolActionType.SEND,
-    })
-    qb.innerJoinAndSelect('actor.organization', 'organization')
+    qb.innerJoinAndSelect(
+      'protocol.actions',
+      'action',
+      'action.action = :action',
+      {
+        action: ProtocolActionType.SEND,
+      },
+    )
+    qb.leftJoinAndSelect('action.actor', 'actor')
+    qb.leftJoinAndSelect('actor.organization', 'organization')
 
     if (assignee) {
       qb.innerJoinAndSelect('protocol.assignees', 'assignee')
