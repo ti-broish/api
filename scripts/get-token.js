@@ -1,23 +1,43 @@
-import fs from 'fs'
-import dotenv from 'dotenv'
-import FirebaseTokenGetter from 'firebase-idtoken-getter'
+/* eslint-disable @typescript-eslint/no-var-requires */
+const fs = require('fs')
+const path = require('path')
+const admin = require('firebase-admin')
+const dotenv = require('dotenv')
+const fetch = require('node-fetch')
 
 const envConfig = dotenv.parse(fs.readFileSync('./.env'))
 
-const FirebaseTokenGetterObject = new FirebaseTokenGetter(
+const serviceAccount = require(path.join(
+  '..',
   envConfig.GOOGLE_APPLICATION_CREDENTIALS,
-  process.argv[2] ?? envConfig.FIREBASE_UID,
-  envConfig.FIREBASE_API_KEY,
-  envConfig.GOOGLE_CLOUD_PROJECT,
-)
+))
 
-const getIdtoken = async () => {
-  try {
-    const token = await FirebaseTokenGetterObject.createIdTokenBycustomToken()
-    console.log(token)
-  } catch (error) {
-    console.error(error)
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+})
+
+admin
+  .auth()
+  .createCustomToken(envConfig.FIREBASE_UID, {})
+  .then((token) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return fetch(
+      `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${envConfig.FIREBASE_API_KEY}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          token,
+          returnSecureToken: true,
+        }),
+      },
+    )
+  })
+  .then((result) => result.json())
+  .then(({ idToken }) => {
+    console.log(idToken)
+    process.exit(0)
+  })
+  .catch((error) => {
+    console.error('Error creating id token: ', error)
     process.exit(1)
-  }
-}
-getIdtoken()
+  })
