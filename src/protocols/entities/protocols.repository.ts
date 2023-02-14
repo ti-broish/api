@@ -85,8 +85,8 @@ export class ProtocolsRepository {
 
     const qb = this.repo.createQueryBuilder('protocol')
 
-    qb.innerJoinAndSelect('protocol.section', 'section')
-    qb.innerJoinAndSelect('section.town', 'town')
+    qb.leftJoinAndSelect('protocol.section', 'section')
+    qb.leftJoinAndSelect('section.town', 'town')
     qb.innerJoinAndSelect('protocol.pictures', 'picture')
     qb.innerJoinAndSelect(
       'protocol.actions',
