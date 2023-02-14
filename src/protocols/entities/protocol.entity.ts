@@ -80,7 +80,7 @@ export class Protocol {
   metadata: ProtocolData
 
   @ManyToOne(() => Section, (section) => section.protocols, { eager: true })
-  section: Section
+  section?: Section
 
   @ManyToMany(() => Picture, {
     cascade: ['insert', 'update'],
