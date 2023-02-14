@@ -301,6 +301,11 @@ export class ProtocolDto {
   })
   machineVotesCount?: number
 
+  @Expose({
+    groups: ['protocol.validate'],
+  })
+  origin: string
+
   private author: UserDto
 
   @Expose({ groups: ['protocol.validate'] })
