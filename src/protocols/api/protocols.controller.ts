@@ -107,11 +107,11 @@ export class ProtocolsController {
     @Body() protocolDto: ProtocolDto,
     @InjectUser() user?: User,
   ): Promise<ProtocolDto> {
-    const protocol = protocolDto.toEntity()
+    const protocol = protocolDto.toEntity(['create'])
     protocol.receive(user)
 
     const savedProtocol = await this.repo.save(protocol)
-    this.workQueue.addProtocolForValidation(protocol)
+    void this.workQueue.addProtocolForValidation(protocol)
     const savedDto = ProtocolDto.fromEntity(savedProtocol, [
       'read',
       'author_read',

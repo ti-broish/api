@@ -53,12 +53,15 @@ export class ProtocolDto {
     ],
   })
   @Type(() => SectionDto)
-  @IsOptional({ groups: ['replace'] })
+  @IsOptional({ groups: ['create'] })
   @Transform(
-    ({ value: id }) => plainToClass(SectionDto, { id }, { groups: ['create'] }),
-    { groups: ['create'] },
+    ({ value: id }): any =>
+      id
+        ? plainToClass(SectionDto, { id }, { groups: ['create', 'replace'] })
+        : id,
+    { groups: ['create', 'replace'] },
   )
-  @IsNotEmpty({ groups: ['create'] })
+  @IsNotEmpty({ groups: ['replace'] })
   @ValidateNested({
     groups: ['create', 'replace'],
   })
@@ -297,6 +300,11 @@ export class ProtocolDto {
     ],
   })
   machineVotesCount?: number
+
+  @Expose({
+    groups: ['protocol.validate'],
+  })
+  origin: string
 
   private author: UserDto
 
