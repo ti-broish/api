@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   UseGuards,
 } from '@nestjs/common'
+import { Recaptcha } from '@nestlab/google-recaptcha'
 import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
 import { AppAbility } from 'src/casl/casl-ability.factory'
@@ -35,6 +36,7 @@ export class PicturesController {
     private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
 
+  @Recaptcha()
   @Post()
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Picture))

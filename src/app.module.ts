@@ -21,9 +21,20 @@ import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module'
 import { ResultsModule } from './results/results.module'
 import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
 import { CommandModule } from 'nestjs-command'
+import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha'
 
 @Module({
   imports: [
+    GoogleRecaptchaModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        score: configService.get('GOOGLE_RECAPTCHA_SCORE'),
+        secretKey: configService.get('GOOGLE_RECAPTCHA_SECRET_KEY'),
+        response: (req) => (req.headers['x-recaptcha-token'] as string) ?? '',
+        skipIf: configService.get('GOOGLE_RECAPTCHA_ENABLED') === false,
+      }),
+    }),
     ConfigModule.forRoot({
       ignoreEnvVars: true,
       validationSchema: configSchema,

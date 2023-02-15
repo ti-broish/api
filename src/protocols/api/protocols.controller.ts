@@ -1,3 +1,4 @@
+import { Recaptcha } from '@nestlab/google-recaptcha/decorators/recaptcha'
 import {
   Controller,
   Get,
@@ -91,6 +92,7 @@ export class ProtocolsController {
     )
   }
 
+  @Recaptcha()
   @Post()
   @HttpCode(201)
   @Public()
