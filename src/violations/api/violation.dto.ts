@@ -25,6 +25,7 @@ import { Picture } from 'src/pictures/entities/picture.entity'
 import { Protocol } from '../../protocols/entities/protocol.entity'
 import { ProtocolDto } from '../../protocols/api/protocol.dto'
 import { ViolationUpdateType } from '../entities/violation-update.entity'
+import { User } from 'src/users/entities'
 
 @Exclude()
 export class ViolationDto {
@@ -102,7 +103,7 @@ export class ViolationDto {
 
   private author: UserDto
 
-  @Expose({ groups: [] })
+  @Expose({ groups: ['author_read'] })
   @Type(() => UserDto)
   getAuthor(): UserDto {
     return this.author
@@ -160,10 +161,9 @@ export class ViolationDto {
       },
     )
 
-    if (groups.includes('author_read')) {
-      violationDto.author = UserDto.fromEntity(violation.getAuthor(), [
-        'author_read',
-      ])
+    let author: User | null
+    if (groups.includes('author_read') && (author = violation.getAuthor())) {
+      violationDto.author = UserDto.fromEntity(author, ['author_read'])
     }
 
     violationDto.createdAt = (violation.updates || []).find(
