@@ -50,25 +50,21 @@ export class SectionsRepository {
     townCode: number,
     cityRegionCode?: string,
   ): Promise<Section[]> {
-    const findOptions: { [k: string]: any } = {
-      join: {
-        alias: 'section',
-        innerJoinAndSelect: {
-          town: 'section.town',
-        },
-      },
-      where: {
-        town: {
-          code: townCode,
-        },
-      },
-    }
+    const qb = this.repo.createQueryBuilder('sections')
+    qb.innerJoinAndSelect('sections.town', 'town', 'town.code = :townCode', {
+      townCode,
+    })
 
     if (cityRegionCode) {
-      findOptions.join.innerJoinAndSelect.cityRegion = 'section.cityRegion'
+      qb.innerJoinAndSelect(
+        'sections.cityRegion',
+        'cityRegion',
+        'cityRegion.code = :cityRegionCode',
+        { cityRegionCode },
+      )
     }
 
-    return this.repo.find(findOptions)
+    return qb.getMany()
   }
 
   async hasPublishedProtocol(section: Section): Promise<boolean> {
