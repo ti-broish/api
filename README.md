@@ -45,6 +45,12 @@ docker compose exec ti-broish-api npm run seed:run
 npm run firebase:token
 ```
 
+#### Работа с ReCAPTCHA
+
+Регистрирайте приложението си за ReCAPTCHA като следвате стъпките [описани тук](https://firebase.google.com/docs/app-check/web/recaptcha-provider#project-setup).
+
+При локално стартирано приложение трябва да закоментирате следния ред `skipIf: process.env.NODE_ENV !== 'production',` в `app.module.ts`.
+
 ## Стартиране
 
 ```shell
