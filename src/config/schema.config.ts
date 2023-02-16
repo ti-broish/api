@@ -16,7 +16,7 @@ export const configSchema = Joi.object({
   GOOGLE_CLOUD_PROJECT: Joi.string().required(),
   GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
   GOOGLE_RECAPTCHA_SECRET_KEY: Joi.string().required(),
-  GOOGLE_RECAPTCHA_ENABLED: Joi.boolean().default(true),
+  GOOGLE_RECAPTCHA_ENABLED: Joi.boolean().default(false),
   GOOGLE_RECAPTCHA_SCORE: Joi.number().default(0.75),
   FIREBASE_API_KEY: Joi.string().default('').optional(),
   FIREBASE_UID: Joi.string().default('').optional(),
