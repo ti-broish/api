@@ -22,6 +22,7 @@ import { ResultsModule } from './results/results.module'
 import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
 import { CommandModule } from 'nestjs-command'
 import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha'
+import { Request } from 'express'
 
 @Module({
   imports: [
@@ -31,7 +32,8 @@ import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha'
       useFactory: (configService: ConfigService) => ({
         score: configService.get('GOOGLE_RECAPTCHA_SCORE'),
         secretKey: configService.get('GOOGLE_RECAPTCHA_SECRET_KEY'),
-        response: (req) => (req.headers['x-recaptcha-token'] as string) ?? '',
+        response: (req: Request) =>
+          (req.headers['x-recaptcha-token'] as string) ?? '',
         skipIf: configService.get('GOOGLE_RECAPTCHA_ENABLED') === false,
       }),
     }),
