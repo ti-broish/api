@@ -32,6 +32,9 @@ export class Section {
   @Column()
   isShip: boolean
 
+  @Column()
+  riskLevel: RiskLevel = RiskLevel.LOW
+
   @ManyToOne(() => ElectionRegion, (electionRegion) => electionRegion.sections)
   electionRegion: ElectionRegion
 
@@ -52,4 +55,10 @@ export class Section {
 
   stats: StatsDto
   results: number[]
+}
+
+export enum RiskLevel {
+  HIGH = 'high',
+  MID = 'mid',
+  LOW = 'low',
 }
