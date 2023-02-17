@@ -169,6 +169,12 @@ export class SectionsRepository {
         .addSelect('COUNT(streams.id)', 'streamsCountActive')
         .innerJoin('sections.streams', 'streams')
         .andWhere('streams.isStreaming = TRUE'),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(sections.id)', 'highRisk')
+        .andWhere("sections.riskLevel = 'high'"),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(sections.id)', 'midRisk')
+        .andWhere("sections.riskLevel = 'mid'"),
     ]
 
     const statsQueriesTown = [
