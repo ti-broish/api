@@ -56,7 +56,7 @@ export class ProtocolDto {
   @IsOptional({ groups: ['create'] })
   @Transform(
     ({ value: id }): any =>
-      id
+      typeof id === 'string'
         ? plainToClass(SectionDto, { id }, { groups: ['create', 'replace'] })
         : id,
     { groups: ['create', 'replace'] },
