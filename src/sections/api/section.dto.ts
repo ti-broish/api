@@ -59,6 +59,17 @@ export class SectionDto {
   })
   public place: string
 
+  @ApiProperty()
+  @Expose({
+    groups: [
+      'read',
+      ViolationDto.FEED,
+      StreamDto.FEED,
+      'protocol.protocolInResults',
+    ],
+  })
+  public riskLevel: string
+
   @Expose({
     groups: [
       'get',
