@@ -29,6 +29,7 @@ export class ProtocolsRepository {
     return this.repo.findOneOrFail({
       where: { id },
       relations: [
+        'section',
         'parent',
         'pictures',
         'results',

@@ -112,9 +112,7 @@ export class Protocol {
   @OneToMany(
     () => ProtocolResult,
     (result: ProtocolResult) => result.protocol,
-    {
-      cascade: ['insert', 'update'],
-    },
+    { cascade: ['insert', 'update'] },
   )
   results: ProtocolResult[]
 
