@@ -1,43 +1,39 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const fs = require('fs')
 const path = require('path')
-const admin = require('firebase-admin')
-const dotenv = require('dotenv')
-const fetch = require('node-fetch')
+const {
+  initializeApp: initializeAdminApp,
+  cert,
+} = require('firebase-admin/app')
+const { getAuth: adminAuth } = require('firebase-admin/auth')
+const { initializeApp } = require('firebase/app')
+const { getAuth, signInWithCustomToken } = require('firebase/auth')
+const { config } = require('dotenv')
 
-const envConfig = dotenv.parse(fs.readFileSync('./.env'))
+config()
 
 const serviceAccount = require(path.join(
   '..',
-  envConfig.GOOGLE_APPLICATION_CREDENTIALS,
+  process.env.GOOGLE_APPLICATION_CREDENTIALS,
 ))
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+initializeAdminApp({ credential: cert(serviceAccount) })
+initializeApp({
+  projectId: serviceAccount.project_id,
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: `${serviceAccount.project_id}.firebaseapp.com`,
 })
 
-admin
-  .auth()
-  .createCustomToken(envConfig.FIREBASE_UID, {})
-  .then((token) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return fetch(
-      `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${envConfig.FIREBASE_API_KEY}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          token,
-          returnSecureToken: true,
-        }),
-      },
-    )
-  })
-  .then((result) => result.json())
-  .then(({ idToken }) => {
-    console.log(idToken)
+async function printTokenForUser(firebaseUserUid) {
+  try {
+    const token = await adminAuth().createCustomToken(firebaseUserUid, {})
+    const userCredential = await signInWithCustomToken(getAuth(), token)
+    const decodedToken = await userCredential.user.getIdToken()
+    console.log(decodedToken)
     process.exit(0)
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Error creating id token: ', error)
     process.exit(1)
-  })
+  }
+}
+
+printTokenForUser(process.env.FIREBASE_UID)
