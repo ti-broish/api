@@ -115,13 +115,14 @@ const groupByPlaceReducer = (
   return acc
 }
 
-const sectionMapper = ({ code, id, stats, results }) => ({
+const sectionMapper = ({ code, id, stats, results, riskLevel }: Section) => ({
   id: code,
   segment: id,
   name: `Секция ${code}`,
   type: NodeType.SECTION,
   stats,
   results,
+  riskLevel: riskLevel,
 })
 
 const mapSections = ([place, sections]: [string, Section[]]) => ({

@@ -18,4 +18,8 @@ export class StatsDto {
   processedViolations?: number = 0
 
   publishedViolations?: number = 0
+
+  highRisk?: number = 0
+
+  midRisk?: number = 0
 }
