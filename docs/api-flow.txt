@@ -16,9 +16,6 @@ GET    /posts
 GET    /posts/:post
 POST /posts
 
-# Create a new broadcast for a push notification
-POST   /broadcasts
-
 # List countries
 GET    /countries
 [
