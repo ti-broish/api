@@ -38,7 +38,7 @@
   "dependencies": {
     "@anchan828/typeorm-decorators": "^1.0.48",
     "@casl/ability": "^6.3.3",
-    "@nestjs/axios": "^1.0.0",
+    "@nestjs/axios": "^2.0.0",
     "@nestjs/cli": "^9.2.0",
     "@nestjs/common": "^9.2.1",
     "@nestjs/config": "^2.3.0",
