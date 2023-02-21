@@ -9,5 +9,6 @@ export const SeedsDataSource = new DataSource({
   database: 'ti_broish',
   logging: true,
   synchronize: false,
+  migrationsTableName: 'seeds',
   migrations: ['dist/seeds/*.js'],
 })
