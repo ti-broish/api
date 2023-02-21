@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../users/entities'
 import { Repository } from 'typeorm'
-import { shuffle } from 'lodash'
 import { WorkItem, WorkItemType } from './work-item.entity'
 import { Protocol } from './protocol.entity'
 import {
@@ -67,6 +66,8 @@ export class WorkItemsRepository {
       .innerJoinAndSelect('workItem.protocol', 'protocol')
       .innerJoinAndSelect('protocol.pictures', 'pictures')
       .andWhere('workItem.isAssigned = false')
+      .setLock('pessimistic_write')
+      .setOnLocked('skip_locked')
       .andWhere('workItem.isComplete = false')
       .andWhere('workItem.type IN (:...types)', { types })
       .limit(1)
@@ -77,15 +78,15 @@ export class WorkItemsRepository {
       })
     }
 
-    const batch = await qb.getMany()
+    const workItem = await qb.getOne()
 
-    if (batch.length === 0) {
+    if (!workItem) {
       throw new EmptyPersonalProtocolQueue(
         'Cannot find an available protocol for you!',
       )
     }
 
-    return shuffle<WorkItem>(batch)[0]
+    return workItem
   }
 
   async findAssignedOpenItem(user: User): Promise<WorkItem> {
