@@ -11,7 +11,6 @@ import { configSchema, TypeOrmConfigService } from './config'
 import { PicturesModule } from './pictures/pictures.module'
 import { ProtocolsModule } from './protocols/protocols.module'
 import { ViolationsModule } from './violations/violations.module'
-import { ScheduleModule } from '@nestjs/schedule'
 import { CaslModule } from './casl/casl.module'
 import { AcceptLanguageResolver, I18nJsonLoader, I18nModule } from 'nestjs-i18n'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
@@ -79,7 +78,6 @@ import { Request } from 'express'
     PicturesModule,
     ProtocolsModule,
     ViolationsModule,
-    ScheduleModule.forRoot(),
     CaslModule,
     StreamsModule,
     ResultsModule,
