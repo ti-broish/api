@@ -37,7 +37,6 @@ export class UserDto {
 
   @Expose({
     groups: [
-      'broadcast.create',
       UserDto.READ,
       UserDto.ME_READ,
       UserDto.ADMIN_READ,
@@ -47,15 +46,15 @@ export class UserDto {
     ],
   })
   @IsUserExists({
-    groups: ['broadcast.create', 'assignee'],
+    groups: ['assignee'],
     message: 'USER_DOES_NOT_EXIST',
   })
   @IsString({
-    groups: ['broadcast.create', 'assignee'],
+    groups: ['assignee'],
     message: 'USER_ID_STRING',
   })
   @IsNotEmpty({
-    groups: ['broadcast.create', 'assignee'],
+    groups: ['assignee'],
     message: 'USER_ID_NOT_EMPTY',
   })
   id: string

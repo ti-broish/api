@@ -9,9 +9,6 @@
 - [x] GET /posts/:id
 - [x] POST /posts
 - [ ] PATCH /posts/:id
-- [x] GET /broadcasts
-- [x] GET /broadcasts/:id
-- [x] POST /broadcasts
 
 - [ ] GET /violations?status,assignee,section,town
 - [ ] POST /violations/assign
