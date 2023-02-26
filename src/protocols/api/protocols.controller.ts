@@ -213,20 +213,17 @@ export class ProtocolsController {
   async assign(
     @InjectUser() user: User,
     @Res() response: Response,
-  ): Promise<ProtocolDto | null> {
-    const workItem = await this.workQueue.retrieveItemForValidation(user)
-
+  ): Promise<ProtocolDto | string> {
+    const workItem = await this.workQueue.assignNextAvailableWorkItem(user)
     if (workItem === null) {
       response.status(HttpStatus.NO_CONTENT)
       response.send('')
-      return null
+      return ''
     }
 
-    const { protocol } = await this.workQueue.assign(workItem, user)
-    const savedDto = ProtocolDto.fromEntity(protocol)
+    const savedDto = ProtocolDto.fromEntity(workItem.protocol)
     this.updatePicturesUrl(savedDto)
     response.send(savedDto)
-
     return savedDto
   }
 

@@ -10,19 +10,37 @@ import {
 } from './protocols.repository'
 
 @Injectable()
-export class WorkItemsRepository {
+export class WorkItemsRepository extends Repository<WorkItem> {
   constructor(
-    @InjectRepository(WorkItem) private readonly repo: Repository<WorkItem>,
+    @InjectRepository(WorkItem) repository: Repository<WorkItem>,
     @Inject(ProtocolsRepository)
     private readonly protocolsRepo: ProtocolsRepository,
-  ) {}
-
-  getRepo(): Repository<WorkItem> {
-    return this.repo
+  ) {
+    super(
+      repository.target,
+      repository.manager,
+      repository.manager.connection.createQueryRunner(),
+    )
   }
 
-  findOne(protocol: Protocol, assignee: User): Promise<WorkItem | null> {
-    return this.repo.findOne({
+  async start(): Promise<void> {
+    await this.queryRunner.connect()
+    await this.queryRunner.startTransaction()
+  }
+
+  async commit(): Promise<void> {
+    await this.queryRunner.commitTransaction()
+  }
+
+  async rollback(): Promise<void> {
+    await this.queryRunner.rollbackTransaction()
+  }
+
+  findOneByProtocolAndAssignee(
+    protocol: Protocol,
+    assignee: User,
+  ): Promise<WorkItem | null> {
+    return super.findOne({
       join: {
         alias: 'workItem',
         innerJoin: {
@@ -44,15 +62,25 @@ export class WorkItemsRepository {
 
   async save(workItem: WorkItem): Promise<WorkItem>
   async save(workItems: WorkItem[]): Promise<WorkItem[]>
-
   async save(input: WorkItem | WorkItem[]): Promise<WorkItem | WorkItem[]> {
-    const workItems: WorkItem[] = Array.isArray(input) ? input : [input]
+    const isArray = Array.isArray(input)
+    const workItems: WorkItem[] = isArray ? input : [input]
+    const results = await this.saveWorkItems(workItems)
+
+    return isArray ? results : results[0]
+  }
+
+  private async saveWorkItems(workItems: WorkItem[]): Promise<WorkItem[]> {
     if (workItems.length === 0) {
       throw new Error('No work items provided')
     }
-    await this.repo.save(workItems)
+    if (this.queryRunner.isTransactionActive) {
+      await this.queryRunner.manager.save(workItems)
+    } else {
+      await super.save(workItems)
+    }
 
-    return Array.isArray(input) ? workItems : workItems[0]
+    return workItems
   }
 
   async findNextAvailableItem(
@@ -61,7 +89,7 @@ export class WorkItemsRepository {
   ): Promise<WorkItem> {
     const allAssignedProtocols =
       await this.protocolsRepo.getAllAssignedProtocols(user)
-    const qb = this.repo
+    const qb = super
       .createQueryBuilder('workItem')
       .innerJoinAndSelect('workItem.protocol', 'protocol')
       .innerJoinAndSelect('protocol.pictures', 'pictures')
@@ -90,7 +118,7 @@ export class WorkItemsRepository {
   }
 
   async findAssignedOpenItem(user: User): Promise<WorkItem> {
-    const qb = this.repo
+    const qb = super
       .createQueryBuilder('workItem')
       .innerJoinAndSelect('workItem.protocol', 'protocol')
       .innerJoinAndSelect('protocol.pictures', 'pictures')
@@ -103,7 +131,7 @@ export class WorkItemsRepository {
   }
 
   async findCompletedItems(): Promise<WorkItem[]> {
-    return this.repo
+    return super
       .createQueryBuilder('workItem')
       .innerJoinAndSelect('workItem.protocol', 'protocol')
       .innerJoinAndSelect('protocol.children', 'children')
