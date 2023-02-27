@@ -57,7 +57,7 @@
     "csv-parse": "^5.3.3",
     "dateformat": "^4.6.3",
     "dotenv": "^16.0.3",
-    "firebase": "^9.16.0",
+    "firebase": "^9.17.1",
     "firebase-admin": "^11.5.0",
     "install": "^0.13.0",
     "joi": "^17.7.0",
