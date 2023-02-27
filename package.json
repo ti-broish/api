@@ -36,7 +36,7 @@
     "postdeploy": "npm ci --only=production --ignore-scripts --no-audit --loglevel=error --cache .npm --prefer-offline --silent && npm run build && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/ && NODE_ENV=production npm run migration:run && pm2 startOrReload ecosystem.config.json"
   },
   "dependencies": {
-    "@anchan828/typeorm-decorators": "^1.0.48",
+    "@anchan828/typeorm-decorators": "^1.0.50",
     "@casl/ability": "^6.3.3",
     "@nestjs/axios": "^1.0.0",
     "@nestjs/cli": "^9.2.0",
