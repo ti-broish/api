@@ -11,7 +11,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       ...AppDataSource.options,
-      entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+      autoLoadEntities: true,
       synchronize: false,
       extra: {
         max: this.config.get<number>('DATABASE_MAX_CONNECTIONS', 14),

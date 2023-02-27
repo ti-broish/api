@@ -14,10 +14,11 @@ import StreamManager from './api/stream-manager.service'
 import { forwardRef } from '@nestjs/common'
 import { SectionStreamsController } from './api/section-streams.controller'
 import { IsStreamIdentifierExistsConstraint } from './api/stream-exists.constraint'
+import { StreamChunk } from './entities/stream-chunk.entity'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Stream]),
+    TypeOrmModule.forFeature([Stream, StreamChunk]),
     UsersModule,
     CaslModule,
     forwardRef(() => SectionsModule),

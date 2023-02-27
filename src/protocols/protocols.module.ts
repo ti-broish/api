@@ -19,10 +19,18 @@ import { WorkItem } from './entities/work-item.entity'
 import { ProtocolRejectionsController } from './api/protocol-rejections.controller'
 import { ProtocolResolutionCommand } from './commands/protocol-resolution.command'
 import { CommandModule } from 'nestjs-command'
+import { ProtocolAction } from './entities/protocol-action.entity'
+import { ProtocolResult } from './entities/protocol-result.entity'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Protocol, Violation, WorkItem]),
+    TypeOrmModule.forFeature([
+      Protocol,
+      ProtocolAction,
+      ProtocolResult,
+      Violation,
+      WorkItem,
+    ]),
     CaslModule,
     PicturesModule,
     UsersModule,
