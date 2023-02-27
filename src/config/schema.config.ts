@@ -13,6 +13,7 @@ export const configSchema = Joi.object({
   DATABASE_PASSWORD: Joi.string().required(),
   DATABASE_NAME: Joi.string().default('ti_broish'),
   DATABASE_SSL: Joi.boolean().default(false),
+  DATABASE_MAX_CONNECTIONS: Joi.number().default(14),
   GOOGLE_CLOUD_PROJECT: Joi.string().required(),
   GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
   GOOGLE_RECAPTCHA_SECRET_KEY: Joi.string().required(),
