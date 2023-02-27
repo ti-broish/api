@@ -9,6 +9,7 @@ const {
   DATABASE_USERNAME,
   DATABASE_PASSWORD,
   DATABASE_PORT,
+  DATABASE_SSL,
 } = process.env
 
 export const AppDataSource = new DataSource({
@@ -20,5 +21,6 @@ export const AppDataSource = new DataSource({
   database: DATABASE_NAME,
   logging: true,
   synchronize: false,
+  ssl: DATABASE_SSL !== 'false',
   migrations: ['dist/migrations/*.js'],
 })
