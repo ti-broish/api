@@ -1,14 +1,8 @@
 import { DataSource } from 'typeorm'
+import { AppDataSource } from './typeorm.datasource'
 
 export const SeedsDataSource = new DataSource({
-  type: 'postgres',
-  host: 'ti-broish-db',
-  port: 5432,
-  username: 'postgres',
-  password: 'ti-broish',
-  database: 'ti_broish',
-  logging: true,
-  synchronize: false,
+  ...AppDataSource.options,
   migrationsTableName: 'seeds',
   migrations: ['dist/seeds/*.js'],
 })

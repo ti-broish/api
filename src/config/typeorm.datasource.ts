@@ -22,5 +22,6 @@ export const AppDataSource = new DataSource({
   logging: true,
   synchronize: false,
   ssl: DATABASE_SSL !== 'false',
+  migrationsTableName: 'migrations',
   migrations: ['dist/migrations/*.js'],
 })
