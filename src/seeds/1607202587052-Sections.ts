@@ -156,6 +156,7 @@ export class Sections1607202587052 implements MigrationInterface {
     await queryRunner.query(`
       truncate table "election_regions_municipalities" restart identity cascade;
       truncate table "sections" restart identity cascade;
+      truncate table "sections_seed" restart identity cascade;
       truncate table "city_regions" restart identity cascade;
       truncate table "towns" restart identity cascade;
       truncate table "election_regions" restart identity cascade;
