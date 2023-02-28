@@ -60,7 +60,7 @@
     "firebase": "^9.16.0",
     "firebase-admin": "^11.5.0",
     "install": "^0.13.0",
-    "joi": "^17.7.0",
+    "joi": "^17.8.3",
     "lodash": "^4.17.21",
     "lodash.merge": "^4.6.2",
     "mime-types": "^2.1.35",
