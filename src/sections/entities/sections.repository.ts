@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity'
 import { StatsDto } from 'src/results/api/stats.dto'
-import { Repository, SelectQueryBuilder } from 'typeorm'
+import { In, Repository, SelectQueryBuilder } from 'typeorm'
 import { Section } from './section.entity'
 import { TownsRepository } from './towns.repository'
 
@@ -306,5 +306,47 @@ export class SectionsRepository {
     }
 
     return qb
+  }
+
+  async updatePopulation(sections: Map<string, number>): Promise<void> {
+    const sectionIds = Array.from(sections.keys())
+    const queryRunner = this.repo.manager.connection.createQueryRunner()
+
+    try {
+      await queryRunner.connect()
+      await queryRunner.startTransaction()
+
+      // Find all existing sections by primary key
+      const existingSections = await queryRunner.manager.find<Section>(
+        Section,
+        {
+          where: { id: In(sectionIds) },
+          lock: { mode: 'pessimistic_write' },
+        },
+      )
+
+      // Validate that all section ids in CSV exist in the database
+      const existingSectionIds = existingSections.map((section) => section.id)
+      const invalidSectionIds = sectionIds.filter(
+        (id: string) => !existingSectionIds.includes(id),
+      )
+      if (invalidSectionIds.length > 0) {
+        throw new Error(`Invalid section ids: ${invalidSectionIds.join(', ')}`)
+      }
+
+      // Update population column in section entities
+      existingSections.forEach((existingSection: Section) => {
+        existingSection.population = sections.get(existingSection.id)
+      })
+
+      // Save updated section entities in a single batch
+      await queryRunner.manager.save(existingSections)
+      await queryRunner.commitTransaction()
+    } catch (e) {
+      await queryRunner.rollbackTransaction()
+      throw e
+    } finally {
+      await queryRunner.release()
+    }
   }
 }
