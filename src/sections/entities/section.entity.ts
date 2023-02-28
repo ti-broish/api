@@ -35,6 +35,9 @@ export class Section {
   @Column()
   riskLevel: RiskLevel = RiskLevel.LOW
 
+  @Column()
+  population: number = 0
+
   @ManyToOne(() => ElectionRegion, (electionRegion) => electionRegion.sections)
   electionRegion: ElectionRegion
 

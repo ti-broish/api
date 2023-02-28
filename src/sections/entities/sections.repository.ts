@@ -175,6 +175,13 @@ export class SectionsRepository {
       this.qbStats(segment, groupBySegment)
         .addSelect('COUNT(sections.id)', 'midRisk')
         .andWhere("sections.riskLevel = 'mid'"),
+      this.qbStats(segment, groupBySegment).addSelect(
+        'SUM(sections.population)',
+        'population',
+      ),
+      this.qbStats(segment, groupBySegment)
+        .addSelect('COUNT(sections.id)', 'populated')
+        .andWhere('sections.population > 0'),
     ]
 
     const statsQueriesTown = [
