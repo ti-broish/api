@@ -331,7 +331,9 @@ export class SectionsRepository {
         (id: string) => !existingSectionIds.includes(id),
       )
       if (invalidSectionIds.length > 0) {
-        throw new Error(`Invalid section ids: ${invalidSectionIds.join(', ')}`)
+        throw new RangeError(
+          `Invalid section ids: ${invalidSectionIds.join(', ')}`,
+        )
       }
 
       // Update population column in section entities

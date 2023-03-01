@@ -87,13 +87,26 @@ export class SectionsController {
     @UploadedFile() file: Express.Multer.File,
     @Res() res: Response,
   ): Promise<string> {
-    // Parse CSV file
-    const sections = await parseSectionsPopulationCsv(
-      Readable.from(file.buffer),
-    )
+    let sections: Map<string, number>
+    try {
+      // Parse CSV file
+      sections = await parseSectionsPopulationCsv(Readable.from(file.buffer))
 
-    // Update population in database
-    await this.repo.updatePopulation(sections)
+      // Update population in database
+      await this.repo.updatePopulation(sections)
+    } catch (e) {
+      const typedError = e as Error
+      if (
+        typedError instanceof RangeError ||
+        typedError instanceof ReferenceError
+      ) {
+        res.status(HttpStatus.BAD_REQUEST).send(typedError.message)
+      } else {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(typedError.message)
+      }
+      return typedError?.message
+    }
+
     const response = `Updated population for ${sections.size} sections.`
     res.send(response)
 

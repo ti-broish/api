@@ -19,7 +19,7 @@ export function parseSectionsPopulationCsv(
           const population = parseInt(section.population, 10)
           if (isNaN(population)) {
             reject(
-              new Error(
+              new RangeError(
                 `Invalid population value: ${section.population} for section ${section.section}`,
               ),
             )
@@ -29,7 +29,7 @@ export function parseSectionsPopulationCsv(
         }
       })
       .on('error', (error: Error) => {
-        reject(new Error(`Failed to parse CSV file: ${error.message}`))
+        reject(new ReferenceError(`Failed to parse CSV file: ${error.message}`))
       })
       .on('end', () => {
         resolve(sections)
