@@ -96,8 +96,7 @@ export class CaslAbilityFactory {
     if (user.hasRole(Role.Admin)) {
       // read access to everything
       can(Action.Read, 'all')
-      can([Action.Manage], User)
-      can([Action.Manage], Protocol)
+      can(Action.Manage, [User, Protocol, Section])
       can(Action.Update, User, [
         'email',
         'phone',

@@ -2,11 +2,17 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
+  Put,
   Query,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
+import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
@@ -17,6 +23,9 @@ import { ApiFirebaseAuth } from '../../auth/decorators/ApiFirebaseAuth.decorator
 import { Section } from '../entities/section.entity'
 import { SectionsRepository } from '../entities/sections.repository'
 import { SectionDto } from './section.dto'
+import { parseSectionsPopulationCsv } from '../population.parser'
+import { Readable } from 'stream'
+import { Response } from 'express'
 
 @Controller('sections')
 @ApiFirebaseAuth()
@@ -63,5 +72,44 @@ export class SectionsController {
       await this.repo.findOneOrFailWithRelations(sectionCode),
       ['read', 'get'],
     )
+  }
+
+  @Put('population')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Section))
+  @ApiResponse({
+    status: 200,
+    description: 'Successful update of sections population',
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async updatePopulation(
+    @UploadedFile() file: Express.Multer.File,
+    @Res() res: Response,
+  ): Promise<string> {
+    let sections: Map<string, number>
+    try {
+      // Parse CSV file
+      sections = await parseSectionsPopulationCsv(Readable.from(file.buffer))
+
+      // Update population in database
+      await this.repo.updatePopulation(sections)
+    } catch (e) {
+      const typedError = e as Error
+      if (
+        typedError instanceof RangeError ||
+        typedError instanceof ReferenceError
+      ) {
+        res.status(HttpStatus.BAD_REQUEST).send(typedError.message)
+      } else {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(typedError.message)
+      }
+      return typedError?.message
+    }
+
+    const response = `Updated population for ${sections.size} sections.`
+    res.send(response)
+
+    return response
   }
 }
