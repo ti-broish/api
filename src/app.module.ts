@@ -1,4 +1,3 @@
-import * as path from 'path'
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { AuthModule } from './auth/auth.module'
@@ -7,34 +6,30 @@ import { SectionsModule } from './sections/sections.module'
 import { UsersModule } from './users/users.module'
 import { MeModule } from './me/me.module'
 import { PartiesModule } from './parties/parties.module'
-import { configSchema, TypeOrmConfigService } from './config'
+import {
+  configSchema,
+  TypeOrmConfigService,
+  GoogleRecaptchaConfigService,
+} from './config'
 import { PicturesModule } from './pictures/pictures.module'
 import { ProtocolsModule } from './protocols/protocols.module'
 import { ViolationsModule } from './violations/violations.module'
 import { CaslModule } from './casl/casl.module'
-import { AcceptLanguageResolver, I18nJsonLoader, I18nModule } from 'nestjs-i18n'
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { I18nExceptionsFilter, NotFoundExceptionFilter } from './filters'
 import { StreamsModule } from './streams/streams.module'
 import { FirebaseAdminCoreModule } from './firebase/firebase-admin.module'
 import { ResultsModule } from './results/results.module'
-import { TranslateStatusInterceptor } from './i18n/translate-status.interceptor'
+import { I18nModule, TranslateStatusInterceptor } from './i18n'
 import { CommandModule } from 'nestjs-command'
 import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha'
-import { Request } from 'express'
 
 @Module({
   imports: [
     GoogleRecaptchaModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        score: configService.get('GOOGLE_RECAPTCHA_SCORE'),
-        secretKey: configService.get('GOOGLE_RECAPTCHA_SECRET_KEY'),
-        response: (req: Request) =>
-          (req.headers['x-recaptcha-token'] as string) ?? '',
-        skipIf: configService.get('GOOGLE_RECAPTCHA_ENABLED') === false,
-      }),
+      useClass: GoogleRecaptchaConfigService,
     }),
     ConfigModule.forRoot({
       ignoreEnvVars: true,
@@ -48,18 +43,7 @@ import { Request } from 'express'
       envFilePath: ['.env'],
       cache: process.env.NODE_ENV === 'production',
     }),
-    I18nModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        fallbackLanguage: configService.get('NEST_LANG', 'bg'),
-        loaderOptions: {
-          path: path.join(__dirname, '/i18n/'),
-        },
-      }),
-      resolvers: [AcceptLanguageResolver],
-      loader: I18nJsonLoader,
-      inject: [ConfigService],
-    }),
+    I18nModule,
     FirebaseAdminCoreModule.forRootAsync({
       useFactory: () => ({}),
       inject: [ConfigService],
