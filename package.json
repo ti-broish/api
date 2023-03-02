@@ -46,6 +46,7 @@
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.3.9",
     "@nestjs/swagger": "^6.2.1",
+    "@nestjs/throttler": "^4.0.0",
     "@nestjs/typeorm": "^9.0.1",
     "@nestlab/google-recaptcha": "^3.2.0",
     "@sindresorhus/slugify": "^1.1.2",
