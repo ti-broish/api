@@ -25,7 +25,8 @@ import { SectionsRepository } from '../entities/sections.repository'
 import { SectionDto } from './section.dto'
 import { parseSectionsPopulationCsv } from '../population.parser'
 import { Readable } from 'stream'
-import { Response } from 'express'
+import { Response, Express } from 'express'
+import 'multer'
 
 @Controller('sections')
 @ApiFirebaseAuth()
