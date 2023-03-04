@@ -27,7 +27,7 @@
       "host": ["ti-broish-api"],
       "ref": "origin/main",
       "repo": "https://github.com/ti-broish/api.git",
-      "path": "/var/www/ti-broish-api-20210711",
+      "path": "/var/www/ti-broish-20230402",
       "post-setup": "ls -la",
       "post-deploy": "npm run postdeploy -- production --env production"
     },
