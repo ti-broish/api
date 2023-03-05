@@ -24,4 +24,6 @@ export class StatsDto {
   midRisk?: number = 0
 
   population?: number = 0
+
+  populated?: number = 0
 }
