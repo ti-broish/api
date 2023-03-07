@@ -79,7 +79,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^4.1.2",
     "rxjs": "^7.8.0",
-    "stream-transform": "^3.2.1",
+    "stream-transform": "^3.2.2",
     "swagger-ui-express": "^4.6.0",
     "typeorm": "^0.3.11",
     "typeorm-naming-strategies": "^4.1.0",
