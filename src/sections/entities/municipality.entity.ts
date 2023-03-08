@@ -3,9 +3,10 @@ import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm'
 import { CityRegion } from './cityRegion.entity'
 import { ElectionRegion } from './electionRegion.entity'
 import { Town } from './town.entity'
+import { WithCode } from './withCode.interface'
 
 @Entity('municipalities')
-export class Municipality {
+export class Municipality implements WithCode {
   @PrimaryColumn()
   readonly id: number
 

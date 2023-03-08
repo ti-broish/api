@@ -32,6 +32,7 @@ import { Protocol } from 'src/protocols/entities/protocol.entity'
 import { ProtocolDto } from 'src/protocols/api/protocol.dto'
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service'
 import { PictureDto } from 'src/pictures/api/picture.dto'
+import { WithCode } from 'src/sections/entities/withCode.interface'
 
 export enum NodeType {
   ELECTION = 'election',
@@ -135,8 +136,8 @@ const mapSections = ([place, sections]: [string, Section[]]) => ({
 const groupSectionsByPlaceReducer = (sections: Section[]) =>
   Object.entries(sections.reduce(groupByPlaceReducer, {})).map(mapSections)
 
-const makeSegment = (items: { code: string }[]) =>
-  items.reduce((acc, x) => `${acc}${x.code}`, '')
+const makeSegment = (items: WithCode[]): string =>
+  items.map(({ code }): string => code).join('')
 
 @Controller('results')
 @Public()
