@@ -186,7 +186,7 @@ export class ResultsController {
     return {
       id: null,
       segment: '',
-      name: this.config.get('ELECTION_CAMPAIGN_NAME'),
+      name: this.config.get<string>('ELECTION_CAMPAIGN_NAME'),
       type: NodeType.ELECTION,
       results: (await this.sectionsRepo.getResultsFor()) || [],
       stats,
@@ -209,67 +209,42 @@ export class ResultsController {
   @Get(':segment.json')
   @HttpCode(200)
   @Header('Cache-Control', 'max-age: 60')
-  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async subset(
-    @Param('segment') segment: string,
+    @Param('segment')
+    segment: string,
   ): Promise<Record<string, any>> {
     if (!segment.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
       throw new NotFoundException()
     }
 
-    const segments = segment
-      .split(/^(\d{2})(\d{2})?(\d{2})?(\d{3})?$/)
-      .filter((x) => !!x)
+    const section = await this.sectionsRepo.findOneByPartialIdOrFail(segment)
 
-    const electionRegionCode = segments.shift()
-    const electionRegion = await this.electionRegionsRepo.findOneOrFail(
-      electionRegionCode,
-    )
+    const electionRegion = section.electionRegion
 
-    if (!segments.length) {
+    if (segment.length === 2) {
       return this.getElectionRegionResults(electionRegion)
     }
 
     let municipality: Municipality, country: Country
 
     if (electionRegion.isAbroad) {
-      const countryCode = segments.shift()
-      if (countryCode === '00') {
-        throw new NotFoundException()
-      }
-      country = await this.countriesRepo.findOneOrFail(countryCode)
+      country = section.town.country
     } else {
-      municipality = await this.municipalitiesRepo.findOneOrFail(
-        electionRegion,
-        segments.shift(),
-      )
+      municipality = section.town.municipality
     }
 
-    if (!segments.length) {
+    if (segment.length === 4) {
       return electionRegion.isAbroad
         ? this.getCountryResults(electionRegion, country)
         : this.getMunicipalityResults(electionRegion, municipality)
     }
 
-    const cityRegionCode = segments.shift()
+    const cityRegion = section.cityRegion
 
-    if (cityRegionCode === '00' && !segments.length) {
-      throw new NotFoundException()
-    }
-
-    const cityRegion =
-      cityRegionCode !== '00'
-        ? await this.cityRegionsRepo.findOneOrFail(
-            electionRegion,
-            cityRegionCode,
-          )
-        : null
-
-    if (!segments.length) {
+    if (segment.length === 6) {
       return this.getCityRegionResults(electionRegion, municipality, cityRegion)
     }
-
-    const section = await this.sectionsRepo.findOneOrFail(segment)
 
     return this.getSectionResults(
       electionRegion,

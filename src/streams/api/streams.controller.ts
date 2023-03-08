@@ -53,7 +53,7 @@ export class StreamsController {
     @InjectUser() user: User,
   ): Promise<StreamDto> {
     const stream = await this.streamsRepo.findAvailableStreamOrFail()
-    const section = await this.sectionsRepo.findOneOrFailWithRelations(
+    const section = await this.sectionsRepo.findOneOrFail(
       streamDto.toEntity().section.id,
     )
     stream.assign(user, section)

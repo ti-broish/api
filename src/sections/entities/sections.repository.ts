@@ -2,7 +2,13 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { ProtocolStatus } from 'src/protocols/entities/protocol.entity'
 import { StatsDto } from 'src/results/api/stats.dto'
-import { In, Repository, SelectQueryBuilder } from 'typeorm'
+import {
+  EntityNotFoundError,
+  In,
+  Repository,
+  SelectQueryBuilder,
+} from 'typeorm'
+import { CITY_REGION_NONE, ELECTION_REGION_ABROAD } from '../sections.constants'
 import { Section } from './section.entity'
 import { TownsRepository } from './towns.repository'
 
@@ -30,20 +36,49 @@ export class SectionsRepository {
   }
 
   findOneOrFail(id: string): Promise<Section> {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['town'] })
+    if (!id.match(/^\d{9}$/)) {
+      throw new EntityNotFoundError(Section, { id })
+    }
+
+    const qb = this.joinRelationsBasedOnSegments(id)
+
+    qb.where('sections.id = :id', { id })
+
+    return qb.getOneOrFail()
   }
 
-  findOneOrFailWithRelations(id: string): Promise<Section> {
-    return this.repo.findOneOrFail({
-      where: { id },
-      relations: [
-        'town',
-        'town.country',
-        'electionRegion',
-        'town.municipality',
-        'cityRegion',
-      ],
-    })
+  findOneByPartialIdOrFail(id: string): Promise<Section> {
+    if (!id.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
+      throw new EntityNotFoundError(Section, { id })
+    }
+
+    const qb = this.joinRelationsBasedOnSegments(id)
+
+    qb.where('sections.id like :id', { id: `${id}%` })
+
+    return qb.getOneOrFail()
+  }
+
+  private joinRelationsBasedOnSegments(
+    segment: string,
+  ): SelectQueryBuilder<Section> {
+    const [electionRegionCode, , cityRegionCode] = segment
+      .split(/^(\d{2})(\d{2})?(\d{2})?(\d{3})?$/)
+      .filter((x) => !!x)
+
+    const qb = this.repo.createQueryBuilder('sections')
+
+    qb.innerJoinAndSelect('sections.electionRegion', 'electionRegion')
+    qb.innerJoinAndSelect('sections.town', 'town')
+    qb.innerJoinAndSelect('town.country', 'country')
+    if (electionRegionCode !== ELECTION_REGION_ABROAD) {
+      qb.innerJoinAndSelect('town.municipality', 'municipality')
+      if (cityRegionCode && cityRegionCode !== CITY_REGION_NONE) {
+        qb.innerJoinAndSelect('sections.cityRegion', 'cityRegion')
+      }
+    }
+
+    return qb
   }
 
   findByTownAndCityRegion(
