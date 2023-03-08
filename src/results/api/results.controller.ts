@@ -22,7 +22,6 @@ import { ElectionRegionsRepository } from 'src/sections/entities/electionRegions
 import { MunicipalitiesRepository } from 'src/sections/entities/municipalities.repository'
 import { PartiesRepository } from 'src/parties/entities/parties.repository'
 import { CountriesRepository } from 'src/sections/entities/countries.repository'
-import { CityRegionsRepository } from 'src/sections/entities/cityRegions.repository'
 import { SectionsRepository } from 'src/sections/entities/sections.repository'
 import { StatsDto } from './stats.dto'
 import { ConfigService } from '@nestjs/config'
@@ -32,6 +31,11 @@ import { Protocol } from 'src/protocols/entities/protocol.entity'
 import { ProtocolDto } from 'src/protocols/api/protocol.dto'
 import { PicturesUrlGenerator } from 'src/pictures/pictures-url-generator.service'
 import { PictureDto } from 'src/pictures/api/picture.dto'
+import {
+  MUNICIPALITIES_HIDDEN,
+  MUNICIPALITIES_MULTI_REGION,
+} from 'src/sections/sections.constants'
+import { TownsRepository } from 'src/sections/entities/towns.repository'
 import { WithCode } from 'src/sections/entities/withCode.interface'
 
 export enum NodeType {
@@ -149,7 +153,7 @@ export class ResultsController {
     private readonly partiesRepo: PartiesRepository,
     private readonly municipalitiesRepo: MunicipalitiesRepository,
     private readonly countriesRepo: CountriesRepository,
-    private readonly cityRegionsRepo: CityRegionsRepository,
+    private readonly townsRepo: TownsRepository,
     private readonly sectionsRepo: SectionsRepository,
     private readonly protocolsRepo: ProtocolsRepository,
     @Inject(PicturesUrlGenerator)
@@ -256,10 +260,8 @@ export class ResultsController {
   }
 
   private async getElectionRegionResults(
-    parent: ElectionRegion,
+    electionRegion: ElectionRegion,
   ): Promise<Record<string, any>> {
-    const electionRegion =
-      await this.electionRegionsRepo.findOneWithStatsOrFail(parent)
     let nodesType: NodesType, nodes: any[]
     if (electionRegion.isAbroad) {
       const countryStats = await this.sectionsRepo.getStatsFor(
@@ -295,7 +297,11 @@ export class ResultsController {
           makeSegment([electionRegion, municipalities[0]]),
           6,
         )
-        if (municipalities[0].electionRegions.length > 1) {
+        if (
+          MUNICIPALITIES_MULTI_REGION.includes(
+            `${electionRegion.code}${municipalities[0].code}`,
+          )
+        ) {
           nodesType = NodesType.DISTRICTS
           const districts = municipalities[0].towns.reduce(
             townsToCityRegionsReducer,
@@ -380,13 +386,14 @@ export class ResultsController {
     electionRegion: ElectionRegion,
     municipality: Municipality,
   ): Promise<Record<string, any>> {
-    if (municipality.isMunicipalityHidden()) {
+    if (
+      MUNICIPALITIES_HIDDEN.includes(
+        `${electionRegion.code}${municipality.code}`,
+      )
+    ) {
       throw new NotFoundException()
     }
-    municipality = await this.municipalitiesRepo.findOneWithStatsOrFail(
-      electionRegion,
-      municipality,
-    )
+
     const sectionsStats = await this.sectionsRepo.getStatsFor(
       makeSegment([electionRegion, municipality]),
       9,
@@ -412,19 +419,21 @@ export class ResultsController {
       crumbs: this.crumbMaker.makeCrumbs([electionRegion]),
       abroad: false,
       nodesType: NodesType.TOWNS,
-      nodes: municipality.towns.map(({ code: id, name, sections }) => ({
-        id,
-        name,
-        type: NodeType.TOWN,
-        nodesType: NodesType.ADDRESSES,
-        nodes: groupSectionsByPlaceReducer(
-          sections.map((section) => {
-            section.stats = sectionsStats[section.id] || {}
-            section.results = sectionsResults[section.id] || []
-            return section
-          }),
-        ),
-      })),
+      nodes: (await this.townsRepo.findByMunicipality(municipality.id)).map(
+        ({ code: id, name, sections }) => ({
+          id,
+          name,
+          type: NodeType.TOWN,
+          nodesType: NodesType.ADDRESSES,
+          nodes: groupSectionsByPlaceReducer(
+            sections.map((section) => {
+              section.stats = sectionsStats[section.id] || {}
+              section.results = sectionsResults[section.id] || []
+              return section
+            }),
+          ),
+        }),
+      ),
     }
   }
 
@@ -455,19 +464,21 @@ export class ResultsController {
       crumbs: this.crumbMaker.makeCrumbs([electionRegion]),
       abroad: true,
       nodesType: NodesType.TOWNS,
-      nodes: country.towns.map(({ code, name, sections }) => ({
-        id: code,
-        name,
-        type: NodeType.TOWN,
-        NodesType: NodesType.ADDRESSES,
-        nodes: groupSectionsByPlaceReducer(
-          sections.map((section) => {
-            section.stats = sectionsStats[section.id] || {}
-            section.results = sectionsResults[section.id] || []
-            return section
-          }),
-        ),
-      })),
+      nodes: (await this.townsRepo.filter(country.code)).map(
+        ({ code, name, sections }) => ({
+          id: code,
+          name,
+          type: NodeType.TOWN,
+          NodesType: NodesType.ADDRESSES,
+          nodes: groupSectionsByPlaceReducer(
+            sections.map((section) => {
+              section.stats = sectionsStats[section.id] || {}
+              section.results = sectionsResults[section.id] || []
+              return section
+            }),
+          ),
+        }),
+      ),
     }
   }
 
@@ -486,29 +497,37 @@ export class ResultsController {
       9,
     )
 
-    if (municipality.electionRegions.length > 1) {
+    if (
+      MUNICIPALITIES_MULTI_REGION.includes(
+        `${electionRegion.code}${municipality.code}`,
+      )
+    ) {
       nodesType = NodesType.TOWNS
-      nodes = district.towns.map(({ code, name, sections }) => ({
-        id: code,
-        name,
-        type: NodeType.TOWN,
-        nodesType: NodesType.ADDRESSES,
-        nodes: groupSectionsByPlaceReducer(
-          sections.map((section) => {
-            section.stats = sectionsStats[section.id] || {}
-            section.results = sectionsResults[section.id] || []
-            return section
-          }),
-        ),
-      }))
+      nodes = (await this.townsRepo.findByCityRegion(district.id)).map(
+        ({ code, name, sections }) => ({
+          id: code,
+          name,
+          type: NodeType.TOWN,
+          nodesType: NodesType.ADDRESSES,
+          nodes: groupSectionsByPlaceReducer(
+            sections.map((section) => {
+              section.stats = sectionsStats[section.id] || {}
+              section.results = sectionsResults[section.id] || []
+              return section
+            }),
+          ),
+        }),
+      )
     } else {
       nodesType = NodesType.ADDRESSES
       nodes = groupSectionsByPlaceReducer(
-        district.sections.map((section) => {
-          section.stats = sectionsStats[section.id] || {}
-          section.results = sectionsResults[section.id] || []
-          return section
-        }),
+        (await this.sectionsRepo.findByCityRegion(district.id)).map(
+          (section) => {
+            section.stats = sectionsStats[section.id] || {}
+            section.results = sectionsResults[section.id] || []
+            return section
+          },
+        ),
       )
     }
 

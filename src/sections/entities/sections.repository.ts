@@ -37,26 +37,26 @@ export class SectionsRepository {
 
   findOneOrFail(id: string): Promise<Section> {
     if (!id.match(/^\d{9}$/)) {
-      throw new EntityNotFoundError(Section, { id })
+      throw new EntityNotFoundError(Section, id)
     }
 
     const qb = this.joinRelationsBasedOnSegments(id)
 
-    qb.where('sections.id = :id', { id })
+    qb.where('section.id = :id', { id })
 
-    return qb.getOneOrFail()
+    return qb.limit(1).getOneOrFail()
   }
 
   findOneByPartialIdOrFail(id: string): Promise<Section> {
     if (!id.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
-      throw new EntityNotFoundError(Section, { id })
+      throw new EntityNotFoundError(Section, id)
     }
 
     const qb = this.joinRelationsBasedOnSegments(id)
 
-    qb.where('sections.id like :id', { id: `${id}%` })
+    qb.where('section.id like :id', { id: `${id}%` })
 
-    return qb.getOneOrFail()
+    return qb.limit(1).getOneOrFail()
   }
 
   private joinRelationsBasedOnSegments(
@@ -66,15 +66,15 @@ export class SectionsRepository {
       .split(/^(\d{2})(\d{2})?(\d{2})?(\d{3})?$/)
       .filter((x) => !!x)
 
-    const qb = this.repo.createQueryBuilder('sections')
+    const qb = this.repo.createQueryBuilder('section')
 
-    qb.innerJoinAndSelect('sections.electionRegion', 'electionRegion')
-    qb.innerJoinAndSelect('sections.town', 'town')
+    qb.innerJoinAndSelect('section.electionRegion', 'electionRegion')
+    qb.innerJoinAndSelect('section.town', 'town')
     qb.innerJoinAndSelect('town.country', 'country')
     if (electionRegionCode !== ELECTION_REGION_ABROAD) {
       qb.innerJoinAndSelect('town.municipality', 'municipality')
       if (cityRegionCode && cityRegionCode !== CITY_REGION_NONE) {
-        qb.innerJoinAndSelect('sections.cityRegion', 'cityRegion')
+        qb.innerJoinAndSelect('section.cityRegion', 'cityRegion')
       }
     }
 
@@ -385,5 +385,12 @@ export class SectionsRepository {
     } finally {
       await queryRunner.release()
     }
+  }
+
+  findByCityRegion(cityRegionId: number): Promise<Section[]> {
+    const qb = this.repo.createQueryBuilder('section')
+    qb.innerJoin('section.cityRegion', 'cityRegion')
+    qb.andWhere('cityRegion.id = :cityRegionId', { cityRegionId })
+    return qb.getMany()
   }
 }

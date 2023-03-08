@@ -48,7 +48,7 @@ export class TownsRepository {
         'electionRegions.code = :electionRegionCode',
         { electionRegionCode },
       )
-      qb.innerJoin(
+      qb.innerJoinAndSelect(
         'town.sections',
         'section',
         'section.election_region_id = electionRegions.id',
@@ -60,6 +60,22 @@ export class TownsRepository {
       )
     }
 
+    return qb.getMany()
+  }
+
+  findByCityRegion(cityRegionId: number): Promise<Town[]> {
+    const qb = this.repo.createQueryBuilder('town')
+    qb.innerJoin('town.cityRegions', 'cityRegion')
+    qb.innerJoinAndSelect('town.sections', 'sections')
+    qb.andWhere('cityRegion.id = :cityRegionId', { cityRegionId })
+    return qb.getMany()
+  }
+
+  findByMunicipality(municipalityId: number): Promise<Town[]> {
+    const qb = this.repo.createQueryBuilder('town')
+    qb.innerJoin('town.municipality', 'municipality')
+    qb.innerJoinAndSelect('town.sections', 'sections')
+    qb.andWhere('municipality.id = :municipalityId', { municipalityId })
     return qb.getMany()
   }
 }

@@ -29,11 +29,4 @@ export class Municipality implements WithCode {
 
   @ApiProperty({ type: () => CityRegion })
   cityRegions: Record<string, CityRegion> = {}
-
-  public isMunicipalityHidden(): boolean {
-    return (
-      (this.towns.length === 1 && this.towns[0].cityRegions.length > 0) ||
-      this.electionRegions.length > 1
-    )
-  }
 }
