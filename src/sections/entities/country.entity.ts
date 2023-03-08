@@ -1,6 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
-import { CityRegion } from '.'
 import { Town } from './town.entity'
 import { WithCode } from './withCode.interface'
 
@@ -22,7 +20,4 @@ export class Country implements WithCode {
   public readonly towns: Town[]
 
   sectionsCount: number
-
-  @ApiProperty({ type: () => CityRegion })
-  cityRegions: Record<string, CityRegion> = {}
 }

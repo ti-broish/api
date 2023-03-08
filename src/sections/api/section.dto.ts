@@ -6,10 +6,11 @@ import { ViolationDto } from 'src/violations/api/violation.dto'
 import { Section } from '../entities/section.entity'
 import { CityRegionDto } from './cityRegion.dto'
 import { ElectionRegionDto } from './electionRegion.dto'
+import { MunicipalityDto } from './municipality.dto'
 import { IsSectionExists } from './section-exists.constraint'
 import { TownDto } from './town.dto'
 
-const allowedGroups = ['read', 'get']
+const allowedGroups = ['read', 'get', 'partialMatch']
 
 @Exclude()
 export class SectionDto {
@@ -116,6 +117,7 @@ export class SectionDto {
     groups: [
       'get',
       'read',
+      'partialMatch',
       StreamDto.READ,
       ViolationDto.FEED,
       StreamDto.FEED,
@@ -129,6 +131,7 @@ export class SectionDto {
     groups: [
       'get',
       'read',
+      'partialMatch',
       StreamDto.READ,
       StreamDto.FEED,
       'protocol.protocolInResults',
@@ -141,6 +144,7 @@ export class SectionDto {
     groups: [
       'get',
       'read',
+      'partialMatch',
       StreamDto.READ,
       ViolationDto.FEED,
       'protocol.protocolInResults',

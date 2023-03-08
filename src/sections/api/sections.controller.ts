@@ -27,6 +27,7 @@ import { parseSectionsPopulationCsv } from '../population.parser'
 import { Readable } from 'stream'
 import { Response, Express } from 'express'
 import 'multer'
+import { EntityNotFoundError } from 'typeorm'
 
 @Controller('sections')
 @ApiFirebaseAuth()
@@ -68,11 +69,24 @@ export class SectionsController {
     status: 200,
     description: 'Successful retrieval of a section',
   })
-  async get(@Param('section') sectionCode: string): Promise<SectionDto> {
-    return SectionDto.fromEntity(await this.repo.findOneOrFail(sectionCode), [
-      'read',
-      'get',
-    ])
+  async get(
+    @Param('section') sectionCode: string,
+    @Res() res: Response,
+  ): Promise<SectionDto> {
+    try {
+      const section = await this.repo.findOneOrFail(sectionCode)
+      res.send(SectionDto.fromEntity(section, ['read', 'get']))
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        res.status(HttpStatus.NOT_FOUND)
+        const partialSection = await this.repo.findOneByPartialIdOrFail(
+          sectionCode.slice(0, 6),
+        )
+        res.send(SectionDto.fromEntity(partialSection, ['partialMatch']))
+        return
+      }
+      throw e
+    }
   }
 
   @Put('population')
