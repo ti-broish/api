@@ -22,7 +22,7 @@ import { UsersRepository } from '../../users/entities/users.repository'
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
-} from '../../utils/accepted-response'
+} from '../../http/accepted-response'
 import { InjectUser } from '../../auth/decorators/inject-user.decorator'
 import { User } from '../../users/entities'
 import { Violation } from '../entities/violation.entity'

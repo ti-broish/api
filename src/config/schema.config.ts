@@ -41,4 +41,6 @@ export const configSchema = Joi.object({
   STREAMS_WEBHOOK_USERNAME: Joi.string().required(),
   STREAMS_WEBHOOK_PASSWORD: Joi.string().required(),
   ELECTION_CAMPAIGN_NAME: Joi.string().default('Парламентарни избори'),
+  THROTTLE_TTL: Joi.number().default(60),
+  THROTTLE_LIMIT: Joi.number().default(10),
 })

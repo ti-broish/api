@@ -37,7 +37,7 @@ import { ViolationDto } from '../../violations/api/violation.dto'
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
-} from '../../utils/accepted-response'
+} from 'src/http/accepted-response'
 import { BadRequestException } from '@nestjs/common'
 import { paginationRoute } from 'src/utils/pagination-route'
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service'

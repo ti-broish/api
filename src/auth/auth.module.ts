@@ -5,7 +5,7 @@ import { UsersModule } from '../users/users.module'
 import { FirebaseGuard } from './firebase.guard'
 import { BasicStrategy } from './auth-basic.strategy'
 import { FirebaseStrategy } from './firebase.strategy'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule } from 'src/config'
 
 @Module({
   imports: [PassportModule, UsersModule, ConfigModule],

@@ -16,7 +16,7 @@ import { StreamingError } from '../entities/stream.entity'
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
-} from 'src/utils/accepted-response'
+} from 'src/http/accepted-response'
 
 @Public()
 @UseGuards(AuthGuard('basic'))
