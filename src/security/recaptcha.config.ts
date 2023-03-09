@@ -13,12 +13,26 @@ export class GoogleRecaptchaConfigService
   constructor(@Inject(ConfigService) private readonly config: ConfigService) {}
 
   createGoogleRecaptchaOptions(): GoogleRecaptchaModuleOptions {
+    const allowlist = (this.config.get<string>('IP_ALLOWLIST') || '')
+      .split(',')
+      .filter((x) => x.trim())
+
     return {
       score: this.config.get<number>('GOOGLE_RECAPTCHA_SCORE'),
       secretKey: this.config.get<string>('GOOGLE_RECAPTCHA_SECRET_KEY'),
       response: (req: Request) =>
         (req.headers['x-recaptcha-token'] as string) ?? '',
-      skipIf: this.config.get('GOOGLE_RECAPTCHA_ENABLED') === false,
+      skipIf: (req) => {
+        if (this.config.get<boolean>('GOOGLE_RECAPTCHA_ENABLED') === false) {
+          return true
+        }
+
+        const r = <Request>req
+
+        const ip = (r.headers['x-forwarded-for'] as string) ?? r.ip
+
+        return allowlist.includes(ip)
+      },
     }
   }
 }
