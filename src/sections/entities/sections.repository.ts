@@ -83,10 +83,6 @@ export class SectionsRepository {
     segment = '',
     groupBySegment = 0,
   ): Promise<number[] | Record<string, number[]>> {
-    if (groupBySegment > 0) {
-      return {}
-    }
-    return []
     const qb = this.repo.createQueryBuilder('sections').select([])
     qb.addSelect('results.party_id', 'party_id')
     qb.addSelect('SUM(results.validVotesCount)', 'validVotesCount')
