@@ -43,6 +43,7 @@ import { paginationRoute } from 'src/utils/pagination-route'
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service'
 import { AppAbility } from 'src/casl/casl-ability.factory'
 import { Public } from 'src/auth/decorators'
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
 
 @Controller('protocols')
 export class ProtocolsController {
@@ -92,12 +93,13 @@ export class ProtocolsController {
     )
   }
 
-  @Recaptcha()
   @Post()
   @HttpCode(201)
   @Public()
-  @UseGuards(PoliciesGuard)
+  @UseGuards(PoliciesGuard, ThrottlerGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Protocol))
+  @Throttle(4, 60)
+  @Recaptcha()
   @UsePipes(
     new ValidationPipe({
       transform: true,

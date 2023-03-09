@@ -31,6 +31,7 @@ import { Violation } from '../entities/violation.entity'
 import { ViolationsRepository } from '../entities/violations.repository'
 import { ViolationDto } from './violation.dto'
 import { ViolationsFilters } from './violations-filters.dto'
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
 
 @Controller('violations')
 export default class ViolationsController {
@@ -42,8 +43,9 @@ export default class ViolationsController {
 
   @Get()
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
+  @UseGuards(PoliciesGuard, ThrottlerGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Violation))
+  @Throttle(2, 60)
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: ViolationsFilters,
@@ -67,12 +69,12 @@ export default class ViolationsController {
     )
   }
 
-  @Recaptcha()
   @Post()
   @Public()
   @HttpCode(201)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Violation))
+  @Recaptcha()
   @UsePipes(
     new ValidationPipe({
       transform: true,
