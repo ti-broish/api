@@ -21,6 +21,7 @@ export const configSchema = Joi.object({
   GOOGLE_RECAPTCHA_SCORE: Joi.number().default(0.75),
   FIREBASE_API_KEY: Joi.string().default('').optional(),
   FIREBASE_UID: Joi.string().default('').optional(),
+  IP_ALLOWLIST: Joi.string().default('').optional(),
   CACHE_TTL: Joi.number().default(5),
   CACHE_HOST: Joi.string().default('127.0.0.1'),
   CACHE_PORT: Joi.number().default(6379),
@@ -41,4 +42,6 @@ export const configSchema = Joi.object({
   STREAMS_WEBHOOK_USERNAME: Joi.string().required(),
   STREAMS_WEBHOOK_PASSWORD: Joi.string().required(),
   ELECTION_CAMPAIGN_NAME: Joi.string().default('Парламентарни избори'),
+  THROTTLE_TTL: Joi.number().default(60),
+  THROTTLE_LIMIT: Joi.number().default(10),
 })

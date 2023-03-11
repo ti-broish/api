@@ -1,13 +1,8 @@
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
-import { AppModule } from './app.module'
-import {
-  setUpSwagger,
-  enableCors,
-  setBodySize,
-  enableGracefulShutfown,
-  useContainerForValidator,
-} from './config'
+import { AppModule } from './app'
+import { setUpSwagger, enableCors, setBodySize } from './http'
+import { enableGracefulShutfown, useContainerForValidator } from './config'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

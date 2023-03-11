@@ -3,7 +3,7 @@ import { FirebaseAdminModuleAsyncOptions } from './firebase-admin.interface'
 import {
   FIREBASE_ADMIN_MODULE_OPTIONS,
   FIREBASE_ADMIN_INJECT,
-} from './firebase-admin.constant'
+} from './firebase-admin.constants'
 import * as admin from 'firebase-admin'
 
 @Global()
@@ -33,7 +33,7 @@ export class FirebaseAdminCoreModule {
   static forRootAsync(options: FirebaseAdminModuleAsyncOptions): DynamicModule {
     const firebaseAdminModuleOptions = {
       provide: FIREBASE_ADMIN_MODULE_OPTIONS,
-      useFactory: options.useFactory,
+      useFactory: options.useFactory || (() => ({})),
       inject: options.inject || [],
     }
 

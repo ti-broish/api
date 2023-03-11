@@ -24,7 +24,7 @@ import { StreamDto } from './stream.dto'
 import {
   AcceptedResponse,
   ACCEPTED_RESPONSE_STATUS,
-} from 'src/utils/accepted-response'
+} from 'src/http/accepted-response'
 import { StreamCensor } from './stream-censor.service'
 import { AppAbility } from 'src/casl/casl-ability.factory'
 

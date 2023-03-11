@@ -19,6 +19,7 @@ export const AppDataSource = new DataSource({
   username: DATABASE_USERNAME,
   password: DATABASE_PASSWORD,
   database: DATABASE_NAME,
+  schema: 'public',
   logging: true,
   synchronize: false,
   ssl: DATABASE_SSL !== 'false',

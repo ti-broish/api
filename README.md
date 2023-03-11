@@ -49,7 +49,7 @@ npm run firebase:token
 
 Регистрирайте приложението си за ReCAPTCHA като следвате стъпките [описани тук](https://firebase.google.com/docs/app-check/web/recaptcha-provider#project-setup).
 
-При локално стартирано приложение трябва да закоментирате следния ред `skipIf: process.env.NODE_ENV !== 'production',` в `app.module.ts`.
+При локално стартирано приложение трябва да закоментирате следния ред `skipIf: process.env.NODE_ENV !== 'production',` в `app.ts`.
 
 ## Стартиране
 

@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   UseGuards,
 } from '@nestjs/common'
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
 import { Recaptcha } from '@nestlab/google-recaptcha'
 import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
@@ -36,10 +37,11 @@ export class PicturesController {
     private readonly urlGenerator: PicturesUrlGenerator,
   ) {}
 
-  @Recaptcha()
   @Post()
-  @UseGuards(PoliciesGuard)
+  @UseGuards(PoliciesGuard, ThrottlerGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Picture))
+  @Throttle(30, 60)
+  @Recaptcha()
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadFile(
     @Body() upload: UploadImageDto,
