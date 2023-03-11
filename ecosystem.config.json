@@ -19,6 +19,7 @@
         "NODE_ENV": "production"
       },
       "instances": "max",
+      "merge_logs": true,
       "error_file": "var/log/err.log",
       "out_file": "var/log/out.log",
       "log_file": "var/log/combined.log"
