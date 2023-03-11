@@ -14,28 +14,6 @@ export class ElectionRegionsRepository {
     return this.repo.findOneOrFail({ where: { code } })
   }
 
-  async findOneWithStatsOrFail(
-    electionRegion: ElectionRegion,
-  ): Promise<ElectionRegion> {
-    const stats = await this.entityManager
-      .createQueryBuilder(this.repo.queryRunner)
-      .addSelect('sum(sections.voters_count)', 'voters')
-      .addSelect('count(sections.id)', 'sectionsCount')
-      .from('sections', 'sections')
-      .andWhere('sections.election_region_id = :id', { id: electionRegion.id })
-      .groupBy('sections.election_region_id')
-      .getRawOne()
-
-    electionRegion.stats = Object.fromEntries(
-      Object.entries(stats).map(([key, value]: [string, string]) => [
-        key,
-        parseInt(value, 10),
-      ]),
-    )
-
-    return electionRegion
-  }
-
   async findOneWithMunicipalitiesOrFail(code: string): Promise<ElectionRegion> {
     const qb = this.repo.createQueryBuilder('electionRegions')
 

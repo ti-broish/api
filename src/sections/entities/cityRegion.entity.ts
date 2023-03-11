@@ -1,9 +1,10 @@
 import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm'
 import { Section } from './section.entity'
 import { Town } from './town.entity'
+import { WithCode } from './withCode.interface'
 
 @Entity('city_regions')
-export class CityRegion {
+export class CityRegion implements WithCode {
   @PrimaryColumn()
   id: number
 

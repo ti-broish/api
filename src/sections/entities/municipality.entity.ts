@@ -3,9 +3,10 @@ import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from 'typeorm'
 import { CityRegion } from './cityRegion.entity'
 import { ElectionRegion } from './electionRegion.entity'
 import { Town } from './town.entity'
+import { WithCode } from './withCode.interface'
 
 @Entity('municipalities')
-export class Municipality {
+export class Municipality implements WithCode {
   @PrimaryColumn()
   readonly id: number
 
@@ -28,11 +29,4 @@ export class Municipality {
 
   @ApiProperty({ type: () => CityRegion })
   cityRegions: Record<string, CityRegion> = {}
-
-  public isMunicipalityHidden(): boolean {
-    return (
-      (this.towns.length === 1 && this.towns[0].cityRegions.length > 0) ||
-      this.electionRegions.length > 1
-    )
-  }
 }

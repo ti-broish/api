@@ -2,9 +2,10 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import { CityRegion } from '.'
 import { Town } from './town.entity'
+import { WithCode } from './withCode.interface'
 
 @Entity('countries')
-export class Country {
+export class Country implements WithCode {
   @PrimaryGeneratedColumn()
   public readonly id: number
 

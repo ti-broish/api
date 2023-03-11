@@ -68,11 +68,11 @@ export class SectionsController {
     status: 200,
     description: 'Successful retrieval of a section',
   })
-  async get(@Param('section') sectionCode?: string): Promise<SectionDto> {
-    return SectionDto.fromEntity(
-      await this.repo.findOneOrFailWithRelations(sectionCode),
-      ['read', 'get'],
-    )
+  async get(@Param('section') sectionCode: string): Promise<SectionDto> {
+    return SectionDto.fromEntity(await this.repo.findOneOrFail(sectionCode), [
+      'read',
+      'get',
+    ])
   }
 
   @Put('population')

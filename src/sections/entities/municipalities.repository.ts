@@ -17,27 +17,12 @@ export class MunicipalitiesRepository {
     return this.repo
       .createQueryBuilder('municipality')
       .innerJoin('municipality.electionRegions', 'electionRegion')
-      .innerJoinAndSelect('municipality.electionRegions', 'electionRegions')
       .innerJoinAndSelect('municipality.towns', 'towns')
       .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
       .andWhere('electionRegion.id = :electionRegionId', {
         electionRegionId: electionRegion.id,
       })
       .andWhere('municipality.code = :code', { code })
-      .getOneOrFail()
-  }
-
-  async findOneWithStatsOrFail(
-    electionRegion: ElectionRegion,
-    municipality: Municipality,
-  ): Promise<Municipality> {
-    return this.repo
-      .createQueryBuilder('municipalities')
-      .innerJoinAndSelect('municipalities.electionRegions', 'electionRegions')
-      .innerJoinAndSelect('municipalities.towns', 'towns')
-      .innerJoinAndSelect('towns.sections', 'sections')
-      .leftJoinAndSelect('towns.cityRegions', 'cityRegions')
-      .andWhere('municipalities.id = :id', { id: municipality.id })
       .getOneOrFail()
   }
 
@@ -49,7 +34,6 @@ export class MunicipalitiesRepository {
     qb.innerJoinAndSelect('municipalities.towns', 'towns')
     qb.leftJoinAndSelect('towns.cityRegions', 'cityRegions')
     qb.leftJoin('cityRegions.sections', 'sections')
-    qb.innerJoinAndSelect('municipalities.electionRegions', 'electionRegions')
     qb.innerJoin('municipalities.electionRegions', 'electionRegion')
     qb.andWhere('electionRegion.id = :electionRegionId', { electionRegionId })
     qb.andWhere(

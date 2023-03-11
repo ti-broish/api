@@ -10,9 +10,10 @@ import {
 import { Country } from './country.entity'
 import { Municipality } from './municipality.entity'
 import { Section } from './section.entity'
+import { WithCode } from './withCode.interface'
 
 @Entity('election_regions')
-export class ElectionRegion {
+export class ElectionRegion implements WithCode {
   @PrimaryGeneratedColumn()
   public readonly id: number
 

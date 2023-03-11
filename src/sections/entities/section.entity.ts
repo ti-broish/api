@@ -6,9 +6,10 @@ import { ElectionRegion } from './electionRegion.entity'
 import { Town } from './town.entity'
 import { StatsDto } from 'src/results/api/stats.dto'
 import { Stream } from 'src/streams/entities/stream.entity'
+import { WithCode } from './withCode.interface'
 
 @Entity('sections')
-export class Section {
+export class Section implements WithCode {
   public static readonly SECTION_ID_LENGTH = 9
 
   @PrimaryColumn('char', { length: Section.SECTION_ID_LENGTH })
