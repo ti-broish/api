@@ -50,6 +50,7 @@ export class TownDto {
     groups: [
       'get',
       'read',
+      'partialMatch',
       StreamDto.READ,
       'violations.feed',
       'stream.feed',
@@ -64,6 +65,7 @@ export class TownDto {
     groups: [
       'get',
       'read',
+      'partialMatch',
       StreamDto.READ,
       'violations.feed',
       'stream.feed',
