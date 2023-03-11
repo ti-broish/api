@@ -15,7 +15,7 @@
       "env_production": {
         "NODE_ENV": "production"
       },
-      "instances": 4,
+      "instances": 1,
       "error_file": "var/log/err.log",
       "out_file": "var/log/out.log",
       "log_file": "var/log/combined.log"
