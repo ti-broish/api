@@ -1,17 +1,13 @@
-name: Deploy
+name: Deployment to Production
 
 on:
-  workflow_run:
-    workflows: ["Build, Test & Lint"]
-    branches:
-      - main
-    types:
-      - completed
+  push:
+    tags:
+      - '**'
 
 jobs:
   tests:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    name: Run Tests & Build
+    name: Deploy to Production
     runs-on: ubuntu-latest
 
     steps:
@@ -34,4 +30,4 @@ jobs:
 
       - run: npm install -g pm2@^5
 
-      - run: npm run deploy:staging
+      - run: npm run deploy:production
