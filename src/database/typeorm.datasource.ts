@@ -20,7 +20,7 @@ export const AppDataSource = new DataSource({
   password: DATABASE_PASSWORD,
   database: DATABASE_NAME,
   schema: 'public',
-  logging: true,
+  logging: process.env.NODE_ENV === 'development',
   synchronize: false,
   ssl: DATABASE_SSL !== 'false',
   migrationsTableName: 'migrations',
