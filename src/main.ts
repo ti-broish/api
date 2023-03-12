@@ -3,10 +3,13 @@ import { ConfigService } from '@nestjs/config'
 import { AppModule } from './app'
 import { setUpSwagger, enableCors, setBodySize } from './http'
 import { enableGracefulShutfown, useContainerForValidator } from './config'
+import { LogLevel } from '@nestjs/common'
 
 async function bootstrap() {
+  const debugLogs: LogLevel[] =
+    process.env.NODE_ENV === 'production' ? [] : ['log', 'debug', 'verbose']
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+    logger: ['error', 'warn', ...debugLogs],
   })
   setUpSwagger(app)
   useContainerForValidator(app.select(AppModule))
