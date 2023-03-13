@@ -21,6 +21,7 @@ import {
 } from 'class-validator'
 import { Picture } from 'src/pictures/entities/picture.entity'
 import { UserDto } from 'src/users/api/user.dto'
+import { User } from 'src/users/entities'
 import { PictureDto } from '../../pictures/api/picture.dto'
 import { SectionDto } from '../../sections/api/section.dto'
 import { ProtocolResult } from '../entities/protocol-result.entity'
@@ -366,10 +367,12 @@ export class ProtocolDto {
       },
     )
 
-    if (groups.includes('protocol.validate')) {
-      protocolDto.author = UserDto.fromEntity(protocol.getAuthor(), [
-        'protocol.validate',
-      ])
+    let author: User | null
+    if (
+      groups.includes('protocol.validate') &&
+      (author = protocol.getAuthor())
+    ) {
+      protocolDto.author = UserDto.fromEntity(author, ['protocol.validate'])
     }
 
     if (

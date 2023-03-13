@@ -34,7 +34,7 @@ export class ProtocolAction {
   protocol: Protocol
 
   @ManyToOne(() => User)
-  actor: User
+  actor: User | null
 
   @Column({ type: 'varchar' })
   action: ProtocolActionType

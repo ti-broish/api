@@ -142,7 +142,7 @@ export class Protocol {
     return this.actions || []
   }
 
-  getAuthor(): User {
+  getAuthor(): User | null {
     return this.actions.find(
       (action: ProtocolAction) => action.action === ProtocolActionType.SEND,
     ).actor
