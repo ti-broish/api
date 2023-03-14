@@ -250,6 +250,7 @@ export class ProtocolsController {
 
   @Patch(':id/contact')
   @HttpCode(HttpStatus.ACCEPTED)
+  @Public()
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Protocol))
   @Throttle(4, 60)
