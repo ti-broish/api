@@ -220,6 +220,54 @@ export class ProtocolDto {
       'compare',
     ],
   })
+  nonMachineCastBallotsCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  machineCastBallotsCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  castBallotsCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
   nonMachineVotesCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -301,6 +349,54 @@ export class ProtocolDto {
     ],
   })
   machineVotesCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  partyNonMachineVotesCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  partyMachineVotesCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  partyValidVotesCount?: number
 
   @Expose({
     groups: ['protocol.validate'],
