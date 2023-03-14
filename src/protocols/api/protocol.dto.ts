@@ -74,8 +74,9 @@ export class ProtocolDto {
   @Transform(
     ({ value: ids }) =>
       Array.isArray(ids)
-        ? ids.map((id) =>
-            plainToClass(PictureDto, { id }, { groups: ['create'] }),
+        ? ids.map(
+            (id): PictureDto =>
+              plainToClass(PictureDto, { id }, { groups: ['create'] }),
           )
         : ids,
     { groups: ['create'] },
@@ -380,7 +381,7 @@ export class ProtocolDto {
         new ProtocolData(),
       )
       PROTOCOL_METADATA_KEYS.reduce(
-        (dto: ProtocolDto, key: string): ProtocolData => {
+        (dto: ProtocolDto, key: string): ProtocolDto => {
           dto[key] = protocol.metadata?.[key]
           return dto
         },
