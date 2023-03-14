@@ -15,6 +15,7 @@ import {
 } from 'src/violations/entities/violation.exceptions'
 import {
   ProtocolHasResultsException,
+  ProtocolStatusConflictException,
   ProtocolStatusException,
 } from '../protocols/entities/protocol.exceptions'
 
@@ -28,6 +29,7 @@ interface ExceptionResponse {
 @Catch(
   ProtocolHasResultsException,
   ProtocolStatusException,
+  ProtocolStatusConflictException,
   ViolationStatusException,
   ViolationPublishingException,
   HttpException,

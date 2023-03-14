@@ -17,6 +17,7 @@ import { User } from '../../users/entities'
 import {
   ProtocolStatusException,
   ProtocolHasResultsException,
+  ProtocolStatusConflictException,
 } from './protocol.exceptions'
 import { WorkItem } from './work-item.entity'
 
@@ -142,10 +143,24 @@ export class Protocol {
     return this.actions || []
   }
 
-  getAuthor(): User {
+  getAuthor(): User | null {
     return this.actions.find(
       (action: ProtocolAction) => action.action === ProtocolActionType.SEND,
     ).actor
+  }
+
+  getAuthorEmail(): string | null {
+    const author = this.getAuthor()
+    if (author !== null) {
+      return author.email
+    }
+
+    return <string | null>(
+      this.actions.find(
+        (action: ProtocolAction) =>
+          action.action === ProtocolActionType.SET_CONTACT,
+      )?.payload.email
+    )
   }
 
   isReceived(): boolean {
@@ -162,6 +177,13 @@ export class Protocol {
     }
     this.status = ProtocolStatus.RECEIVED
     this.addAction(ProtocolAction.createSendAction(sender))
+  }
+
+  setContact(contactEmail: string): void {
+    if (!this.isReceived()) {
+      throw new ProtocolStatusConflictException(this)
+    }
+    this.addAction(ProtocolAction.createSetContactAction(contactEmail))
   }
 
   assign(actor: User, assignees: User[]): void {

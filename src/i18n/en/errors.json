@@ -51,6 +51,7 @@
   "PROTOCOL_CANNOT_CHANGE_STATUS_FROM_PUBLISHED_TO_READY": "Protocol cannot change status from published to ready",
   "PROTOCOL_CANNOT_CHANGE_STATUS_FROM_PUBLISHED_TO_APPROVED": "Protocol cannot change status from published to approved",
   "PROTOCOL_CANNOT_CHANGE_STATUS_FROM_PUBLISHED_TO_PUBLISHED": "Protocol cannot change status from published to published",
+  "PROTOCOL_CONFLICT_IN_STATUS": "Operation cannot be performed due to conflict in the protocol status",
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_RECEIVED_TO_PROCESSED": "Violation cannot change status from received to processed",
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_RECEIVED_TO_REJECTED": "Violation cannot change status from received to rejected",
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_PROCESSING_TO_RECEIVED": "Violation cannot change status from processing to received",

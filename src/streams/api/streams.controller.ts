@@ -10,6 +10,7 @@ import {
   Param,
   Get,
   Query,
+  HttpStatus,
 } from '@nestjs/common'
 import { InjectUser, Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
@@ -63,7 +64,7 @@ export class StreamsController {
   }
 
   @Delete(':stream')
-  @HttpCode(202)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Stream))
   delete(@Param('stream') streamId: string): AcceptedResponse {

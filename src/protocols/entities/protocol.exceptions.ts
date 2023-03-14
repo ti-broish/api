@@ -33,6 +33,26 @@ export class ProtocolStatusException
   }
 }
 
+export class ProtocolStatusConflictException
+  extends Error
+  implements ProtocolException
+{
+  private protocol: Protocol
+
+  constructor(protocol: Protocol, message?: string) {
+    super(message || 'PROTOCOL_CONFLICT_IN_STATUS')
+    this.protocol = protocol
+  }
+
+  getProtocol(): Protocol {
+    return this.protocol
+  }
+
+  getMessage(): string {
+    return this.message
+  }
+}
+
 export class ProtocolHasResultsException
   extends Error
   implements ProtocolException

@@ -12,6 +12,7 @@ import { User } from '../../users/entities'
 
 export enum ProtocolActionType {
   SEND = 'send',
+  SET_CONTACT = 'contact',
   ASSIGN = 'assign',
   REJECT = 'reject',
   READY = 'ready',
@@ -34,7 +35,7 @@ export class ProtocolAction {
   protocol: Protocol
 
   @ManyToOne(() => User)
-  actor: User
+  actor: User | null
 
   @Column({ type: 'varchar' })
   action: ProtocolActionType
@@ -47,6 +48,12 @@ export class ProtocolAction {
 
   public static createSendAction(actor?: User): ProtocolAction {
     return ProtocolAction.create(ProtocolActionType.SEND, actor)
+  }
+
+  public static createSetContactAction(email: string): ProtocolAction {
+    return ProtocolAction.create(ProtocolActionType.SET_CONTACT, null, {
+      email,
+    })
   }
 
   public static createAsssignAction(
