@@ -14,6 +14,7 @@ import {
   Res,
   HttpStatus,
   Request,
+  Patch,
 } from '@nestjs/common'
 import { Request as ExpressRequest, Response } from 'express'
 import { paginate, Pagination } from 'nestjs-typeorm-paginate'
@@ -31,7 +32,7 @@ import {
   InvalidFiltersError,
   ProtocolsRepository,
 } from '../entities/protocols.repository'
-import { ProtocolDto } from './protocol.dto'
+import { ProtocolContactDto, ProtocolDto } from './protocol.dto'
 import { ProtocolFilters } from './protocols-filters.dto'
 import { ViolationDto } from '../../violations/api/violation.dto'
 import {
@@ -245,6 +246,29 @@ export class ProtocolsController {
     this.updatePicturesUrl(dto)
 
     return dto
+  }
+
+  @Patch(':id/contact')
+  @HttpCode(HttpStatus.ACCEPTED)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Protocol))
+  @Throttle(4, 60)
+  @Recaptcha()
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['setContact'] },
+      groups: ['setContact'],
+    }),
+  )
+  async setContact(
+    @Param('id') id: string,
+    @Body() contactDto: ProtocolContactDto,
+  ): Promise<string> {
+    const protocol = await this.repo.findOneOrFail(id)
+    protocol.setContact(contactDto.email)
+    await this.repo.save(protocol)
+    return ''
   }
 
   private updatePicturesUrl(protocolDto: ProtocolDto | ViolationDto) {

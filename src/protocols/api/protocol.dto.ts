@@ -10,6 +10,7 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsBoolean,
+  IsEmail,
   IsIn,
   IsInt,
   IsNotEmpty,
@@ -410,4 +411,20 @@ export class ProtocolRejectionDto {
     always: true,
   })
   reason: ProtocolRejectionReason
+}
+
+@Exclude()
+export class ProtocolContactDto {
+  @ApiProperty()
+  @Expose({ groups: ['setContact'] })
+  @IsEmail({}, { groups: ['setContact'], message: 'USER_EMAIL_INVALID' })
+  @Transform(
+    ({ value: email }: { value: string }) =>
+      email ? email.toLowerCase() : email,
+    {
+      groups: ['setContact'],
+    },
+  )
+  @IsNotEmpty({ groups: ['setContact'], message: 'USER_EMAIL_NOT_EMPTY' })
+  email: string
 }
