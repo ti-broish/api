@@ -56,7 +56,7 @@
     "body-parser": "^1.20.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "csv-parse": "^5.3.3",
+    "csv-parse": "^5.3.6",
     "dateformat": "^4.6.3",
     "dotenv": "^16.0.3",
     "firebase": "^9.17.1",
