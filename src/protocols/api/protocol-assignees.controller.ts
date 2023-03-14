@@ -11,6 +11,7 @@ import {
   UseGuards,
   Delete,
   ForbiddenException,
+  HttpStatus,
 } from '@nestjs/common'
 import { Action } from '../../casl/action.enum'
 import { CheckPolicies } from '../../casl/check-policies.decorator'
@@ -51,7 +52,7 @@ export class ProtocolAssigneesController {
   }
 
   @Post(':protocol/assignees')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Protocol))
   @UsePipes(
@@ -75,7 +76,7 @@ export class ProtocolAssigneesController {
   }
 
   @Delete(':protocol/assignees/:assignee')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Protocol))
   @UsePipes(

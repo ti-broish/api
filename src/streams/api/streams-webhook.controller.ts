@@ -6,6 +6,7 @@ import {
   UsePipes,
   ValidationPipe,
   HttpCode,
+  HttpStatus,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { Public } from 'src/auth/decorators'
@@ -25,7 +26,7 @@ export class StreamsWebhookController {
   constructor(private readonly streamManager: StreamManager) {}
 
   @Post()
-  @HttpCode(202)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UsePipes(new ValidationPipe({ transform: true }))
   async webhook(@Body() webhook: StreamEventDto): Promise<AcceptedResponse> {
     try {

@@ -13,6 +13,7 @@ import {
   ParseArrayPipe,
   Delete,
   NotFoundException,
+  HttpStatus,
 } from '@nestjs/common'
 import { Action } from '../../casl/action.enum'
 import { CheckPolicies } from '../../casl/check-policies.decorator'
@@ -50,7 +51,7 @@ export class ViolationAssigneesController {
   }
 
   @Put(':violation/assignees')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(
@@ -83,7 +84,7 @@ export class ViolationAssigneesController {
   }
 
   @Post(':violation/assignees')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(
@@ -106,7 +107,7 @@ export class ViolationAssigneesController {
   }
 
   @Delete(':violation/assignees/:assignee')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
   @UsePipes(

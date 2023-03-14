@@ -126,7 +126,7 @@ export class ProtocolsController {
   }
 
   @Post(':id/reject')
-  @HttpCode(202)
+  @HttpCode(HttpStatus.ACCEPTED)
   @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Protocol))
   async reject(
