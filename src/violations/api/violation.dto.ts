@@ -119,6 +119,7 @@ export class ViolationDto {
   })
   secret: string
 
+  @Expose({ groups: ['read', 'isPublishedUpdate', ViolationDto.FEED] })
   createdAt: Date
 
   public toEntity(): Violation {
