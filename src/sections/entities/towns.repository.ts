@@ -68,6 +68,7 @@ export class TownsRepository {
     qb.innerJoin('town.cityRegions', 'cityRegion')
     qb.innerJoinAndSelect('town.sections', 'sections')
     qb.andWhere('cityRegion.id = :cityRegionId', { cityRegionId })
+    qb.andWhere('sections.city_region_id = :cityRegionId', { cityRegionId })
     return qb.getMany()
   }
 
