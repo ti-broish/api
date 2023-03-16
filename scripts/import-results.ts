@@ -40,6 +40,7 @@ const inserterFactory = (tableName: string) => {
 }
 
 const protocolInsert = inserterFactory('protocols')
+// TODO: update this to use the new protocol.metadata jsonb column
 const protocolDataInsert = inserterFactory('protocol_data')
 const protocolActionInsert = inserterFactory('protocol_actions')
 const protocolResultsInsert = inserterFactory('protocol_results')
