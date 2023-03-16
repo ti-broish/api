@@ -76,8 +76,9 @@ export class ProtocolDto {
   @Transform(
     ({ value: ids }) =>
       Array.isArray(ids)
-        ? ids.map((id) =>
-            plainToClass(PictureDto, { id }, { groups: ['create'] }),
+        ? ids.map(
+            (id): PictureDto =>
+              plainToClass(PictureDto, { id }, { groups: ['create'] }),
           )
         : ids,
     { groups: ['create'] },
@@ -221,6 +222,54 @@ export class ProtocolDto {
       'compare',
     ],
   })
+  nonMachineCastBallotsCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  machineCastBallotsCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  castBallotsCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
   nonMachineVotesCount?: number
 
   @IsOptional({ groups: ['read', 'replace'] })
@@ -303,6 +352,54 @@ export class ProtocolDto {
   })
   machineVotesCount?: number
 
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  partyNonMachineVotesCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  partyMachineVotesCount?: number
+
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @Expose({
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
+  })
+  partyValidVotesCount?: number
+
   @Expose({
     groups: ['protocol.validate'],
   })
@@ -384,7 +481,7 @@ export class ProtocolDto {
         new ProtocolData(),
       )
       PROTOCOL_METADATA_KEYS.reduce(
-        (dto: ProtocolDto, key: string): ProtocolData => {
+        (dto: ProtocolDto, key: string): ProtocolDto => {
           dto[key] = protocol.metadata?.[key]
           return dto
         },

@@ -45,19 +45,46 @@ export enum ProtocolRejectionReason {
 
 export class ProtocolData {
   constructor(
+    // Хартиен
     public hasPaperBallots?: boolean,
+    // Хартиено-Машинен
     public machinesCount?: number,
+    // Чернова/Оригинал
     public isFinal?: boolean,
+    // 1. Брой на избирателите в избирателния списък при предаването му на СИК
     public votersCount?: number,
+    // 2. Брой на избирателите, вписани в допълнителната страница (под чертата) на избирателния списък в изборния ден
     public additionalVotersCount?: number,
+    // 3. Брой на гласувалите избиратели според положените подписи в избирателния списък, включително и подписите в допълнителната страница (под чертата)
     public votersVotedCount?: number,
+    // 4. Хартиени бюлетини извън избирателната кутия
+    // 4.а) брой на неизползваните хартиени бюлетини
     public uncastBallots?: number,
+    // 4.б) общ брой на недействителните хартиени бюлетини по чл. 227, 228 и чл. 265, ал. 5, сгрешените бюлетини и унищожените от СИК бюлетини по други поводи (за създаване на образци за таблата пред изборното помещение и увредени механично при откъсване от кочана)
     public invalidAndUncastBallots?: number,
-    public totalVotesCast?: number,
-    public nonMachineVotesCount?: number,
-    public machineVotesCount?: number,
+    // 5. Брой на намерените в избирателните кутии бюлетини
+    // 5.(х) брой на намерените в избирателните кутии хартиени бюлетини
+    public nonMachineCastBallotsCount?: number,
+    // 5.(м) брой на намерените в избирателните кутии машинни бюлетини
+    public machineCastBallotsCount?: number,
+    // 5.(о) общ брой на намерените в избирателните кутии бюлетини
+    public castBallotsCount?: number,
+    // 6. Брой на недействителните гласове от хартиени бюлетини
     public invalidVotesCount?: number,
+    // 7. Общ брой на всички действителни гласове (бюлетини)
+    // 7.(х) Брой на всички действителни гласове с хартиени бюлетини
+    public nonMachineVotesCount?: number,
+    // 7.(м) Брой на всички действителни гласове с машинни бюлетини
+    public machineVotesCount?: number,
+    // 7.(o) Общ брой на всички действителни гласове (бюлетини)
     public validVotesCount?: number,
+    // 7.1. Брой на действителните гласове, подадени за кандидатските листи на партии, коалиции и инициативни комитети
+    // 7.1.(х) Брой на действителните гласове с хартиени бюлетини за кандидатски листи
+    public partyNonMachineVotesCount?: number,
+    // 7.1.(м) Брой на действителните гласове с машинни бюлетини за кандидатски листи
+    public partyMachineVotesCount?: number,
+    // 7.1.(о) Общ брой на действителните гласове за кандидатски листи
+    public partyValidVotesCount?: number,
   ) {}
 }
 
