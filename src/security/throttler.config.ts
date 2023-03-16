@@ -20,6 +20,7 @@ export class ThrottlerConfig implements ThrottlerOptionsFactory {
       limit: this.config.get('throttler.limit'),
       ignoreUserAgents: [/^axios/i, /^httpie/i],
       skipIf: (context: ExecutionContext) => {
+        if (this.config.get('NODE_ENV') === 'development') return true
         const request: Request = context.switchToHttp().getRequest()
         const ip =
           <string | undefined>request.headers['x-forwarded-for'] || request.ip
