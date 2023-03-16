@@ -2,14 +2,18 @@ import {
   Exclude,
   Expose,
   plainToClass,
+  plainToInstance,
   Transform,
   Type,
 } from 'class-transformer'
 import {
   IsArray,
   IsBoolean,
+  IsEmail,
   IsNotEmpty,
   IsOptional,
+  IsPhoneNumber,
+  IsString,
   MaxLength,
   MinLength,
   ValidateIf,
@@ -24,7 +28,10 @@ import { ViolationUpdateDto } from './violation-update.dto'
 import { Picture } from 'src/pictures/entities/picture.entity'
 import { Protocol } from '../../protocols/entities/protocol.entity'
 import { ProtocolDto } from '../../protocols/api/protocol.dto'
-import { ViolationUpdateType } from '../entities/violation-update.entity'
+import {
+  ViolationContact,
+  ViolationUpdateType,
+} from '../entities/violation-update.entity'
 import { User } from 'src/users/entities'
 
 @Exclude()
@@ -101,11 +108,11 @@ export class ViolationDto {
   @Type(() => ViolationUpdateDto)
   updates: ViolationUpdateDto[]
 
-  private author: UserDto
+  private author: UserDto | ViolationContact
 
   @Expose({ groups: ['author_read'] })
   @Type(() => UserDto)
-  getAuthor(): UserDto {
+  getAuthor(): UserDto | ViolationContact {
     return this.author
   }
 
@@ -118,6 +125,29 @@ export class ViolationDto {
     groups: ['created'],
   })
   secret: string
+
+  @Expose({ groups: ['create', 'contact'] })
+  @IsNotEmpty({ groups: ['create'] })
+  @IsString({ groups: ['create'] })
+  @MaxLength(200, { groups: ['create'] })
+  name: string
+
+  @Expose({ groups: ['create', 'contact'] })
+  @IsNotEmpty({ groups: ['create'] })
+  @IsString({ groups: ['create'] })
+  @MaxLength(200, { groups: ['create'] })
+  @IsEmail({}, { groups: ['create'] })
+  email: string
+
+  @Expose({ groups: ['create', 'contact'] })
+  @IsNotEmpty({ groups: ['create'] })
+  @IsString({ groups: ['create'] })
+  @MaxLength(200, { groups: ['create'] })
+  @IsPhoneNumber(null, {
+    groups: ['create'],
+    message: 'USER_PHONE_INVALID',
+  })
+  phone: string
 
   @Expose({ groups: ['read', 'isPublishedUpdate', ViolationDto.FEED] })
   createdAt: Date
@@ -146,6 +176,17 @@ export class ViolationDto {
     return violation
   }
 
+  public toViolationContact(): ViolationContact {
+    return plainToInstance<ViolationContactDto, Partial<ViolationDto>>(
+      ViolationContactDto,
+      this,
+      {
+        groups: ['contact'],
+        excludeExtraneousValues: true,
+      },
+    )
+  }
+
   public static fromProtocol(protocol: Protocol): ViolationDto {
     const protocolDto = ProtocolDto.fromEntity(protocol)
     const violationDto = new ViolationDto()
@@ -167,9 +208,13 @@ export class ViolationDto {
       },
     )
 
-    let author: User | null
+    let author: User | ViolationContact
     if (groups.includes('author_read') && (author = violation.getAuthor())) {
-      violationDto.author = UserDto.fromEntity(author, ['author_read'])
+      if (author instanceof User) {
+        violationDto.author = UserDto.fromEntity(author, ['author_read'])
+      } else {
+        violationDto.author = author
+      }
     }
 
     violationDto.createdAt = (violation.updates || []).find(
@@ -178,4 +223,15 @@ export class ViolationDto {
 
     return violationDto
   }
+}
+
+export class ViolationContactDto implements ViolationContact {
+  @Expose({ groups: ['contact'] })
+  name: string
+
+  @Expose({ groups: ['contact'] })
+  email: string
+
+  @Expose({ groups: ['contact'] })
+  phone: string
 }

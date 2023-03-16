@@ -89,7 +89,14 @@ export default class ViolationsController {
     @InjectUser() user?: User,
   ): Promise<ViolationDto> {
     return this.processViolation(
-      await this.repo.save(violationDto.toEntity().setReceivedStatus(user)),
+      await this.repo.save(
+        violationDto
+          .toEntity()
+          .setReceivedStatus(
+            user,
+            user ? null : violationDto.toViolationContact(),
+          ),
+      ),
       ['read', 'violation.process', 'author_read', 'created'],
     )
   }
