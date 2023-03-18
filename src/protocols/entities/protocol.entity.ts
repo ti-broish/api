@@ -9,6 +9,7 @@ import {
   PrimaryColumn,
 } from 'typeorm'
 import { ulid } from 'ulid'
+import { randomBytes } from 'crypto'
 import { ProtocolAction, ProtocolActionType } from './protocol-action.entity'
 import { ProtocolResult } from './protocol-result.entity'
 import { Section } from '../../sections/entities'
@@ -107,6 +108,9 @@ export class Protocol {
   @Column('jsonb')
   metadata: ProtocolData
 
+  @Column({ type: 'varchar' })
+  secret: string
+
   @ManyToOne(() => Section, (section) => section.protocols, { eager: true })
   section?: Section
 
@@ -161,6 +165,10 @@ export class Protocol {
 
   @OneToMany(() => Protocol, (protocol: Protocol): Protocol => protocol.parent)
   children: Protocol[]
+
+  public constructor() {
+    this.secret = randomBytes(8).toString('base64')
+  }
 
   public getResults(): ProtocolResult[] {
     return this.results || []
