@@ -58,6 +58,8 @@ export class TownsRepository {
         'city_region',
         'city_region.id = "section"."city_region_id"',
       )
+    } else {
+      qb.innerJoinAndSelect('town.sections', 'sections')
     }
 
     return qb.getMany()
