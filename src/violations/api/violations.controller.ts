@@ -14,12 +14,13 @@ import {
   Patch,
   Request,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common'
 import { Request as ExpressRequest } from 'express'
 import { paginate, Pagination } from 'nestjs-typeorm-paginate'
 import { Public } from 'src/auth/decorators'
 import { Action } from 'src/casl/action.enum'
-import { AppAbility } from 'src/casl/casl-ability.factory'
+import { AppAbility, CaslAbilityFactory } from 'src/casl/casl-ability.factory'
 import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { paginationRoute } from 'src/utils/pagination-route'
@@ -39,6 +40,7 @@ export default class ViolationsController {
     @Inject(ViolationsRepository) private readonly repo: ViolationsRepository,
     @Inject(PicturesUrlGenerator)
     private readonly urlGenerator: PicturesUrlGenerator,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   @Get()
@@ -116,11 +118,28 @@ export default class ViolationsController {
   }
 
   @Get(':id')
+  @Public()
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Violation))
-  async get(@Param('id') id: string): Promise<ViolationDto> {
-    return this.processViolation(await this.repo.findOneOrFail(id))
+  async get(
+    @Param('id') id: string,
+    @InjectUser() user?: User,
+    @Query('secret') secret?: string,
+  ): Promise<ViolationDto> {
+    const violation = await this.repo.findOneOrFail(id)
+    const ability = this.caslAbilityFactory.createForUser(user)
+    const canAccessPublishedViolation = ability.can(Action.Read, violation)
+    const canAccessOwnViolation = secret === violation.secret
+    if (!canAccessPublishedViolation && !canAccessOwnViolation) {
+      throw new ForbiddenException()
+    }
+
+    const canManageViolation = ability.can(Action.Manage, violation)
+    return this.processViolation(
+      violation,
+      canManageViolation || canAccessOwnViolation
+        ? ['read', 'violation.process', 'author_read']
+        : [ViolationDto.FEED],
+    )
   }
 
   @Post(':id/reject')
