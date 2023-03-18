@@ -86,9 +86,10 @@ export default class ViolationsController {
     @Body() violationDto: ViolationDto,
     @InjectUser() user?: User,
   ): Promise<ViolationDto> {
-    const violation = violationDto.toEntity()
-    violation.setReceivedStatus(user)
-    return this.processViolation(await this.repo.save(violation))
+    return this.processViolation(
+      await this.repo.save(violationDto.toEntity().setReceivedStatus(user)),
+      ['read', 'violation.process', 'author_read', 'created'],
+    )
   }
 
   @Public()
@@ -187,7 +188,7 @@ export default class ViolationsController {
   }
 
   private updatePicturesUrl(violationDto: ViolationDto) {
-    violationDto.pictures.forEach(
+    violationDto.pictures?.forEach(
       (picture: PictureDto) =>
         (picture.url = this.urlGenerator.getUrl(picture)),
     )

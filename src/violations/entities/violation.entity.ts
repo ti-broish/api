@@ -105,12 +105,14 @@ export class Violation {
     return this.updates || []
   }
 
-  setReceivedStatus(sender?: User): void {
+  setReceivedStatus(sender?: User): Violation {
     if (this.status) {
       throw new ViolationStatusException(this, ViolationStatus.RECEIVED)
     }
     this.status = ViolationStatus.RECEIVED
     this.addUpdate(ViolationUpdate.createSendUpdate(sender))
+
+    return this
   }
 
   assign(actor: User, assignees: User[]): void {

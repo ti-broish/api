@@ -120,6 +120,7 @@ export class ProtocolsController {
     const savedDto = ProtocolDto.fromEntity(savedProtocol, [
       'read',
       'author_read',
+      'created',
     ])
     this.updatePicturesUrl(savedDto)
 

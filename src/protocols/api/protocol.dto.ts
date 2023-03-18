@@ -405,6 +405,11 @@ export class ProtocolDto {
   })
   origin: string
 
+  @Expose({
+    groups: ['created'],
+  })
+  secret: string
+
   private author: UserDto
 
   @Expose({ groups: ['protocol.validate'] })
