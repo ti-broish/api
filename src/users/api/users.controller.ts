@@ -23,11 +23,7 @@ import { CheckPolicies } from 'src/casl/check-policies.decorator'
 import { PoliciesGuard } from 'src/casl/policies.guard'
 import { FirebaseUser } from 'src/firebase'
 import { paginationRoute } from 'src/utils/pagination-route'
-import {
-  AllowOnlyFirebaseUser,
-  InjectFirebaseUser,
-  InjectUser,
-} from '../../auth/decorators'
+import { InjectFirebaseUser, InjectUser, Public } from '../../auth/decorators'
 import { User } from '../entities'
 import { UsersRepository } from '../entities/users.repository'
 import RegistrationService, { RegistrationError } from './registration.service'
@@ -43,7 +39,7 @@ export class UsersController {
   ) {}
 
   @Post()
-  @AllowOnlyFirebaseUser()
+  @Public()
   @HttpCode(201)
   @UsePipes(
     new ValidationPipe({
@@ -54,7 +50,7 @@ export class UsersController {
   )
   async create(
     @Body() userDto: UserDto,
-    @InjectFirebaseUser() firebaseUser: FirebaseUser,
+    @InjectFirebaseUser() firebaseUser: FirebaseUser | null,
     @InjectUser() authUser: User | undefined,
   ): Promise<UserDto> {
     try {
