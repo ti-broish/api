@@ -18,6 +18,13 @@ export default class RegistrationService {
     firebaseUser: FirebaseUser | null,
     userDto: UserDto,
   ): Promise<User> {
+    if (!firebaseUser) {
+      throw new RegistrationError(
+        'RegistrationForbiddenError',
+        'Trying to sign up without a firebase auth token',
+      )
+    }
+
     const userSignup = userDto.toEntity()
 
     if (userSignup.firebaseUid !== firebaseUser.uid) {

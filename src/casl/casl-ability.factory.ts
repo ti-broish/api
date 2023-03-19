@@ -1,4 +1,11 @@
-import { AbilityBuilder, createMongoAbility, PureAbility } from '@casl/ability'
+import {
+  AbilityBuilder,
+  ExtractSubjectType,
+  FieldMatcher,
+  InferSubjects,
+  MatchConditions,
+  PureAbility,
+} from '@casl/ability'
 import { Injectable } from '@nestjs/common'
 import { Party } from 'src/parties/entities/party.entity'
 import { Picture } from 'src/pictures/entities/picture.entity'
@@ -61,15 +68,21 @@ type Actions =
   | Action.Manage
   | Action.Delete
   | Action.Publish
-export type AppAbility = PureAbility<[Actions, Subjects]>
+
+export type AppAbility = PureAbility<[Actions, Subjects], MatchConditions>
+
+const lambdaMatcher = (matchConditions: MatchConditions) => matchConditions
+const detectSubjectType = (object: object) =>
+  object.constructor as ExtractSubjectType<InferSubjects<Subjects>>
+const fieldMatcher: FieldMatcher = (fields) => (field) => fields.includes(field)
 
 @Injectable()
 export class CaslAbilityFactory {
   constructor(private readonly config: ConfigService) {}
 
-  createForUser(user: User | undefined) {
+  createForUser(user: User | undefined): AppAbility {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility)
+    const { can, build } = new AbilityBuilder<AppAbility>(PureAbility)
 
     // Unauthenticated users can read organisations, sections, localities and parties
     can(Action.Read, [
@@ -86,11 +99,15 @@ export class CaslAbilityFactory {
     // Unauthenticated users can send pictures and violations with pictures
     can(Action.Create, [Picture, Protocol, Violation])
     // Unauthenticated users can see published violations
-    can(Action.Read, Violation, { isPublished: true })
+    can(Action.Read, Violation, (violation: Violation) => violation.isPublished)
 
     // If user is unauthenticated stop adding abilities
     if (user === undefined) {
-      return build()
+      return build({
+        conditionsMatcher: lambdaMatcher,
+        detectSubjectType,
+        fieldMatcher,
+      })
     }
 
     if (user.hasRole(Role.Admin)) {
@@ -137,7 +154,7 @@ export class CaslAbilityFactory {
     if (user.hasRole(Role.Validator) || user.hasRole(Role.Admin)) {
       can(Action.Read, [Protocol, ProtocolResult])
       can(Action.Create, [ProtocolResult])
-      can(Action.Update, Protocol, ['status'])
+      can(Action.Update, Protocol)
       // Can see the organization of the user submitted the protocol
       can(Action.Read, User, ['organization'])
       // TODO: allow reading only the data of the submitter, not the organization of all users
@@ -154,12 +171,20 @@ export class CaslAbilityFactory {
       // can(Action.Read, Protocol, { 'actions.actor.id': user.id, 'actions.type': ProtocolActionType.SEND });
       // TODO: Read own violations and violation updates
       // can(Action.Read, Violation, { 'updates.actor.id': user.id });
-      can([Action.Read, Action.Update], User, { id: user.id })
+      can([Action.Read, Action.Update], User, (x: User) => x.id === user.id)
       // TODO: Disallow deleting own user account if protocols have been submitted
-      can(Action.Delete, User, { id: user.id })
-      can([Action.Read, Action.Create], Client, { owner: user })
+      can(Action.Delete, User, (x: User) => x.id === user.id)
+      can(
+        [Action.Read, Action.Create],
+        Client,
+        (x: Client) => x.owner.id === user.id,
+      )
     }
 
-    return build()
+    return build({
+      conditionsMatcher: lambdaMatcher,
+      detectSubjectType,
+      fieldMatcher,
+    })
   }
 }

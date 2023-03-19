@@ -114,6 +114,11 @@ export class ViolationDto {
   @MaxLength(2000, { groups: ['isPublishedUpdate'] })
   publishedText: string
 
+  @Expose({
+    groups: ['created'],
+  })
+  secret: string
+
   createdAt: Date
 
   public toEntity(): Violation {

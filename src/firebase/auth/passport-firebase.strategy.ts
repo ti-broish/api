@@ -76,7 +76,7 @@ export class FirebaseAuthStrategy extends PassportStrategy(
     decodedIdToken: FirebaseUser,
     req?: Request,
   ): void {
-    const result: FirebaseUser = this.passReqToCallback
+    const result: any = this.passReqToCallback
       ? this.validate(decodedIdToken, req)
       : this.validate(decodedIdToken)
 

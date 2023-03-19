@@ -9,6 +9,7 @@ import {
   PrimaryColumn,
 } from 'typeorm'
 import { ulid } from 'ulid'
+import { randomBytes } from 'crypto'
 import { Section, Town } from '../../sections/entities'
 import { Picture } from '../../pictures/entities/picture.entity'
 import { User } from '../../users/entities'
@@ -44,6 +45,9 @@ export class Violation {
 
   @Column({ type: 'varchar' })
   publishedText: string
+
+  @Column({ type: 'varchar' })
+  secret: string
 
   @ManyToOne(() => Section, (section) => section.violations)
   section?: Section
@@ -87,6 +91,10 @@ export class Violation {
   )
   comments: ViolationComment[]
 
+  public constructor() {
+    this.secret = randomBytes(8).toString('base64')
+  }
+
   getAuthor(): User {
     return this.updates.find(
       (update: ViolationUpdate) => update.type === ViolationUpdateType.SEND,
@@ -97,12 +105,14 @@ export class Violation {
     return this.updates || []
   }
 
-  setReceivedStatus(sender?: User): void {
+  setReceivedStatus(sender?: User): Violation {
     if (this.status) {
       throw new ViolationStatusException(this, ViolationStatus.RECEIVED)
     }
     this.status = ViolationStatus.RECEIVED
     this.addUpdate(ViolationUpdate.createSendUpdate(sender))
+
+    return this
   }
 
   assign(actor: User, assignees: User[]): void {

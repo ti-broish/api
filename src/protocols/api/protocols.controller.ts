@@ -15,6 +15,7 @@ import {
   HttpStatus,
   Request,
   Patch,
+  ForbiddenException,
 } from '@nestjs/common'
 import { Request as ExpressRequest, Response } from 'express'
 import { paginate, Pagination } from 'nestjs-typeorm-paginate'
@@ -42,7 +43,7 @@ import {
 import { BadRequestException } from '@nestjs/common'
 import { paginationRoute } from 'src/utils/pagination-route'
 import { WorkItemNotFoundError, WorkQueue } from './work-queue.service'
-import { AppAbility } from 'src/casl/casl-ability.factory'
+import { AppAbility, CaslAbilityFactory } from 'src/casl/casl-ability.factory'
 import { Public } from 'src/auth/decorators'
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
 
@@ -53,6 +54,7 @@ export class ProtocolsController {
     @Inject(PicturesUrlGenerator)
     private readonly urlGenerator: PicturesUrlGenerator,
     private readonly workQueue: WorkQueue,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
   ) {}
 
   @Get()
@@ -120,6 +122,7 @@ export class ProtocolsController {
     const savedDto = ProtocolDto.fromEntity(savedProtocol, [
       'read',
       'author_read',
+      'created',
     ])
     this.updatePicturesUrl(savedDto)
 
@@ -231,18 +234,26 @@ export class ProtocolsController {
   }
 
   @Get(':id')
+  @Public()
   @HttpCode(200)
-  @UseGuards(PoliciesGuard)
-  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Protocol))
-  async get(@Param('id') id: string): Promise<ProtocolDto> {
+  async get(
+    @Param('id') id: string,
+    @InjectUser() user?: User,
+    @Query('secret') secret?: string,
+  ): Promise<ProtocolDto> {
+    const ability = this.caslAbilityFactory.createForUser(user)
     const protocol = await this.repo.findOneOrFail(id)
-    const dto = ProtocolDto.fromEntity(protocol, [
-      'read',
-      'protocol.validate',
-      'author_read',
-      'get',
-      'read.results',
-    ])
+    const canAccessProtocol = ability.can(Action.Read, protocol)
+    const canAccessOwnProtocol = secret === protocol.secret
+    if (!canAccessProtocol && !canAccessOwnProtocol) {
+      throw new ForbiddenException()
+    }
+    const dto = ProtocolDto.fromEntity(
+      protocol,
+      canAccessProtocol
+        ? ['read', 'protocol.validate', 'author_read', 'get', 'read.results']
+        : ['read'],
+    )
     this.updatePicturesUrl(dto)
 
     return dto
