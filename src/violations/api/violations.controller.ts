@@ -136,8 +136,10 @@ export default class ViolationsController {
     const canManageViolation = ability.can(Action.Manage, violation)
     return this.processViolation(
       violation,
-      canManageViolation || canAccessOwnViolation
+      canManageViolation
         ? ['read', 'violation.process', 'author_read']
+        : canAccessOwnViolation
+        ? ['read']
         : [ViolationDto.FEED],
     )
   }

@@ -243,16 +243,17 @@ export class ProtocolsController {
   ): Promise<ProtocolDto> {
     const ability = this.caslAbilityFactory.createForUser(user)
     const protocol = await this.repo.findOneOrFail(id)
-    if (!ability.can(Action.Read, protocol) && secret !== protocol.secret) {
+    const canAccessProtocol = ability.can(Action.Read, protocol)
+    const canAccessOwnProtocol = secret === protocol.secret
+    if (!canAccessProtocol && !canAccessOwnProtocol) {
       throw new ForbiddenException()
     }
-    const dto = ProtocolDto.fromEntity(protocol, [
-      'read',
-      'protocol.validate',
-      'author_read',
-      'get',
-      'read.results',
-    ])
+    const dto = ProtocolDto.fromEntity(
+      protocol,
+      canAccessProtocol
+        ? ['read', 'protocol.validate', 'author_read', 'get', 'read.results']
+        : ['read'],
+    )
     this.updatePicturesUrl(dto)
 
     return dto
