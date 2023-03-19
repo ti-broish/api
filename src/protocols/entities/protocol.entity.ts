@@ -38,10 +38,8 @@ export enum ProtocolOrigin {
 }
 
 export enum ProtocolRejectionReason {
-  INCOMPLETE_PAPER_PROTOCOL = 'incomplete-paper-protocol',
-  INCOMPLETE_PAPER_MACHINE_PROTOCOL = 'incomplete-paper-machine-protocol',
-  MALICE_INPUT = 'malice-input',
-  REJECTION_WITH_NO_NOTIFICATION = 'rejection-with-no-notification',
+  NOT_A_PROTOCOL = 'not-a-protocol',
+  INCOMPLETE_PROTOCOL = 'incomplete-protocol',
 }
 
 export class ProtocolData {

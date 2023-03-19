@@ -1,6 +1,4 @@
 {
-  "REJECTION_REASON_INCOMPLETE_PAPER_PROTOCOL": "Непълно съдържание на протокол от секция с хартиен протокол. Моля изпратете протокола отново.",
-  "REJECTION_REASON_INCOMPLETE_PAPER_MACHINE_PROTOCOL": "Непълно съдържание на протокола и/или машинната разпечатка от секция с машина. Моля, изпратете и двата документа отново.",
-  "REJECTION_REASON_MALICE_INPUT": "Съмнения за умишлени нарушения във въведените данни на протокола.",
-  "REJECTION_REASON_REJECTION_WITH_NO_NOTIFICATION": "Отхвърли без известие до застъпник."
+  "REJECTION_REASON_NOT_A_PROTOCOL": "Not a protocol",
+  "REJECTION_REASON_INCOMPLETE_PROTOCOL": "Low quality or incomplete protocol"
 }
