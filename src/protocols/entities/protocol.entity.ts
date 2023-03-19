@@ -39,7 +39,6 @@ export enum ProtocolOrigin {
 export enum ProtocolRejectionReason {
   NOT_A_PROTOCOL = 'not-a-protocol',
   INCOMPLETE_PROTOCOL = 'incomplete-protocol',
-  WRONG_INPUT = 'wrong-input',
 }
 
 export class ProtocolData {

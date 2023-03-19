@@ -1,5 +1,4 @@
 {
   "REJECTION_REASON_NOT_A_PROTOCOL": "Не е протокол",
-  "REJECTION_REASON_INCOMPLETE_PROTOCOL": "Непълен протокол",
-  "REJECTION_REASON_WRONG_INPUT": "Грешни данни"
+  "REJECTION_REASON_INCOMPLETE_PROTOCOL": "Лошо качество или нарушена цялост"
 }

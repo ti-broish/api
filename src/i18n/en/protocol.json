@@ -1,5 +1,4 @@
 {
   "REJECTION_REASON_NOT_A_PROTOCOL": "Not a protocol",
-  "REJECTION_REASON_INCOMPLETE_PROTOCOL": "Incomplete protocol",
-  "REJECTION_REASON_WRONG_INPUT": "Wrong data"
+  "REJECTION_REASON_INCOMPLETE_PROTOCOL": "Low quality or incomplete protocol"
 }
