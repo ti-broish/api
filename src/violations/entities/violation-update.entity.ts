@@ -44,8 +44,23 @@ export class ViolationUpdate {
   @CreateDateColumn()
   timestamp: Date
 
-  public static createSendUpdate(actor?: User): ViolationUpdate {
-    return ViolationUpdate.create(ViolationUpdateType.SEND, actor)
+  public static createSendUpdate(
+    actor?: User,
+    contact?: ViolationContact,
+  ): ViolationUpdate {
+    if (!actor && !contact) {
+      throw new Error('Either actor or contact must be provided')
+    }
+
+    if (actor) {
+      return ViolationUpdate.create(ViolationUpdateType.SEND, actor)
+    }
+
+    return ViolationUpdate.create(
+      ViolationUpdateType.SEND,
+      null,
+      contact as unknown as Record<string, unknown>,
+    )
   }
 
   public static createAsssignUpdate(
@@ -87,4 +102,16 @@ export class ViolationUpdate {
 
     return update
   }
+}
+
+export interface ViolationContact {
+  name: string
+  email: string
+  phone: string
+}
+
+export class ViolationContact implements ViolationContact {
+  name: string
+  email: string
+  phone: string
 }

@@ -13,7 +13,11 @@ import { randomBytes } from 'crypto'
 import { Section, Town } from '../../sections/entities'
 import { Picture } from '../../pictures/entities/picture.entity'
 import { User } from '../../users/entities'
-import { ViolationUpdate, ViolationUpdateType } from './violation-update.entity'
+import {
+  ViolationContact,
+  ViolationUpdate,
+  ViolationUpdateType,
+} from './violation-update.entity'
 import { ViolationComment } from './violation-comment.entity'
 import {
   ViolationPublishingException,
@@ -95,22 +99,32 @@ export class Violation {
     this.secret = randomBytes(8).toString('base64')
   }
 
-  getAuthor(): User {
-    return this.updates.find(
+  getAuthor(): User | ViolationContact {
+    const sendUpdate = this.updates.find(
       (update: ViolationUpdate) => update.type === ViolationUpdateType.SEND,
-    ).actor
+    )
+
+    if (sendUpdate.actor) {
+      return sendUpdate.actor
+    }
+
+    return sendUpdate.payload as unknown as ViolationContact
   }
 
   public getUpdates(): ViolationUpdate[] {
     return this.updates || []
   }
 
-  setReceivedStatus(sender?: User): Violation {
+  setReceivedStatus(sender?: User, contact?: ViolationContact): Violation {
+    if (!sender && !contact) {
+      throw new Error('Either sender or contact must be provided')
+    }
+
     if (this.status) {
       throw new ViolationStatusException(this, ViolationStatus.RECEIVED)
     }
     this.status = ViolationStatus.RECEIVED
-    this.addUpdate(ViolationUpdate.createSendUpdate(sender))
+    this.addUpdate(ViolationUpdate.createSendUpdate(sender, contact))
 
     return this
   }
