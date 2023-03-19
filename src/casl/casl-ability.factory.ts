@@ -1,6 +1,7 @@
 import {
   AbilityBuilder,
   ExtractSubjectType,
+  FieldMatcher,
   InferSubjects,
   MatchConditions,
   PureAbility,
@@ -73,6 +74,7 @@ export type AppAbility = PureAbility<[Actions, Subjects], MatchConditions>
 const lambdaMatcher = (matchConditions: MatchConditions) => matchConditions
 const detectSubjectType = (object: object) =>
   object.constructor as ExtractSubjectType<InferSubjects<Subjects>>
+const fieldMatcher: FieldMatcher = (fields) => (field) => fields.includes(field)
 
 @Injectable()
 export class CaslAbilityFactory {
@@ -104,6 +106,7 @@ export class CaslAbilityFactory {
       return build({
         conditionsMatcher: lambdaMatcher,
         detectSubjectType,
+        fieldMatcher,
       })
     }
 
@@ -151,7 +154,7 @@ export class CaslAbilityFactory {
     if (user.hasRole(Role.Validator) || user.hasRole(Role.Admin)) {
       can(Action.Read, [Protocol, ProtocolResult])
       can(Action.Create, [ProtocolResult])
-      can(Action.Update, Protocol, ['status'])
+      can(Action.Update, Protocol)
       // Can see the organization of the user submitted the protocol
       can(Action.Read, User, ['organization'])
       // TODO: allow reading only the data of the submitter, not the organization of all users
@@ -181,6 +184,7 @@ export class CaslAbilityFactory {
     return build({
       conditionsMatcher: lambdaMatcher,
       detectSubjectType,
+      fieldMatcher,
     })
   }
 }
