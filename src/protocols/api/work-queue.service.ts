@@ -238,7 +238,7 @@ export class WorkQueue {
 
     void this.protocolsRepo.save(protocol)
 
-    // TODO: Send notification to the sender the protcol was published
+    // TODO: Send notification to the sender the protocol was published
   }
 
   private async findOtherSettledProtocols(
