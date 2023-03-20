@@ -48,7 +48,7 @@
     "@nestjs/swagger": "^6.2.1",
     "@nestjs/throttler": "^4.0.0",
     "@nestjs/typeorm": "^9.0.1",
-    "@nestlab/google-recaptcha": "^3.2.0",
+    "@nestlab/google-recaptcha": "^3.3.0",
     "@sindresorhus/slugify": "^1.1.2",
     "@types/multer": "^1.4.7",
     "axios": "^1.2.1",
