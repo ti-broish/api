@@ -529,4 +529,9 @@ export class ProtocolContactDto {
   )
   @IsNotEmpty({ groups: ['setContact'], message: 'USER_EMAIL_NOT_EMPTY' })
   email: string
+
+  @Expose({
+    groups: ['setContact'],
+  })
+  secret: string
 }

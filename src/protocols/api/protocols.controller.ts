@@ -278,6 +278,9 @@ export class ProtocolsController {
     @Body() contactDto: ProtocolContactDto,
   ): Promise<string> {
     const protocol = await this.repo.findOneOrFail(id)
+    if (protocol.secret !== contactDto.secret) {
+      throw new ForbiddenException()
+    }
     protocol.setContact(contactDto.email)
     await this.repo.save(protocol)
     return ''
