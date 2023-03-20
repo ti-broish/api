@@ -201,11 +201,6 @@ export class WorkQueue {
       return
     }
 
-    // Allow a single resolution per protocol
-    void this.actOnResolution(actor, protocol)
-    return
-
-    // TODO: Re-enable this to allow multiple resolutions per protocol
     const other = await this.findOtherSettledProtocols(protocol)
     if (!other) {
       return
