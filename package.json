@@ -85,7 +85,7 @@
     "typeorm": "^0.3.11",
     "typeorm-naming-strategies": "^4.1.0",
     "ulid": "^2.3.0",
-    "yargs": "^17.6.2"
+    "yargs": "^17.7.1"
   },
   "devDependencies": {
     "@nestjs/schematics": "^9.0.4",
