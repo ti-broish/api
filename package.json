@@ -71,7 +71,7 @@
     "moment-timezone": "^0.5.40",
     "nestjs-command": "^3.1.3",
     "nestjs-i18n": "^10.2.6",
-    "nestjs-minio": "^2.3.1",
+    "nestjs-minio": "^2.3.2",
     "nestjs-typeorm-paginate": "^4.0.3",
     "passport": "^0.6.0",
     "passport-http": "^0.3.0",
