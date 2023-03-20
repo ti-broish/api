@@ -74,6 +74,11 @@ export class WorkItemsRepository extends Repository<WorkItem> {
     if (workItems.length === 0) {
       throw new Error('No work items provided')
     }
+    workItems.forEach((workItem) => {
+      workItem.queuePosition = (workItem.queuePosition || 0)
+        .toString(2)
+        .padStart(7, '0')
+    })
     if (this.queryRunner.isTransactionActive) {
       await this.queryRunner.manager.save(workItems)
     } else {
