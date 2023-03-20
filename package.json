@@ -39,7 +39,7 @@
     "@anchan828/typeorm-decorators": "^1.0.51",
     "@casl/ability": "^6.3.3",
     "@nestjs/axios": "^2.0.0",
-    "@nestjs/cli": "^9.2.0",
+    "@nestjs/cli": "^9.3.0",
     "@nestjs/common": "^9.2.1",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.2.1",
