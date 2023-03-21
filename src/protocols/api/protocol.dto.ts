@@ -25,6 +25,10 @@ import { UserDto } from 'src/users/api/user.dto'
 import { User } from 'src/users/entities'
 import { PictureDto } from '../../pictures/api/picture.dto'
 import { SectionDto } from '../../sections/api/section.dto'
+import {
+  ProtocolAction,
+  ProtocolActionType,
+} from '../entities/protocol-action.entity'
 import { ProtocolResult } from '../entities/protocol-result.entity'
 import {
   Protocol,
@@ -410,6 +414,9 @@ export class ProtocolDto {
   })
   secret: string
 
+  @Expose({ groups: ['read'] })
+  createdAt: Date
+
   private author: UserDto
 
   @Expose({ groups: ['protocol.validate'] })
@@ -493,6 +500,11 @@ export class ProtocolDto {
         protocolDto,
       )
     }
+
+    protocolDto.createdAt = (protocol.actions || []).find(
+      (action: ProtocolAction): boolean =>
+        action.action === ProtocolActionType.SEND,
+    )?.timestamp
 
     return protocolDto
   }
