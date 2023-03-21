@@ -45,9 +45,8 @@ export default class ViolationsController {
 
   @Get()
   @HttpCode(200)
-  @UseGuards(PoliciesGuard, ThrottlerGuard)
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Manage, Violation))
-  @Throttle(2, 60)
   @UsePipes(new ValidationPipe({ transform: true }))
   async index(
     @Query() query: ViolationsFilters,
@@ -74,8 +73,9 @@ export default class ViolationsController {
   @Post()
   @Public()
   @HttpCode(201)
-  @UseGuards(PoliciesGuard)
+  @UseGuards(PoliciesGuard, ThrottlerGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Violation))
+  @Throttle(2, 60)
   @Recaptcha()
   @UsePipes(
     new ValidationPipe({
