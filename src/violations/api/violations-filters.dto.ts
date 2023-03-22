@@ -41,7 +41,7 @@ export class ViolationsFilters extends PageDTO {
 
   @IsOptional()
   @IsNumberString()
-  @Length(2, 2)
+  @Length(3, 3)
   country: string
 
   @IsOptional()

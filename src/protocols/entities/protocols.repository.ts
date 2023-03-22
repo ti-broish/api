@@ -11,6 +11,10 @@ import {
 import { ProtocolActionType } from './protocol-action.entity'
 import { Protocol, ProtocolStatus } from './protocol.entity'
 import { ProtocolFilters } from '../api/protocols-filters.dto'
+import {
+  COUNTRY_DOMESTIC,
+  ELECTION_REGION_ABROAD,
+} from 'src/sections/sections.constants'
 
 export class InvalidFiltersError extends Error {}
 
@@ -107,7 +111,11 @@ export class ProtocolsRepository {
       qb.leftJoinAndSelect('protocol.assignees', 'assignee')
     }
 
-    if (electionRegion !== '32' && country && country !== '00') {
+    if (
+      electionRegion !== ELECTION_REGION_ABROAD &&
+      country &&
+      country !== COUNTRY_DOMESTIC
+    ) {
       // this is useful to prevent cases where country code matches municipality code
       // while keeping performance quick as mostly doing filters by `section.id like ":prefix%"`
       throw new InvalidFiltersError(
