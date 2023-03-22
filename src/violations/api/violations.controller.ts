@@ -33,6 +33,7 @@ import { ViolationsRepository } from '../entities/violations.repository'
 import { ViolationDto } from './violation.dto'
 import { ViolationsFilters } from './violations-filters.dto'
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
+import { SECTION_SEGMENT_BREAKDOWN } from 'src/sections/sections-pattern'
 
 @Controller('violations')
 export default class ViolationsController {
@@ -115,7 +116,7 @@ export default class ViolationsController {
   @Get('feed/:segment')
   @HttpCode(200)
   async feedFilter(@Param('segment') segment: string): Promise<ViolationDto[]> {
-    if (!segment.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
+    if (!segment.match(SECTION_SEGMENT_BREAKDOWN)) {
       throw new NotFoundException()
     }
     return (await this.repo.findPublishedViolationsSegment(segment)).map(

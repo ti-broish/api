@@ -8,6 +8,7 @@ import {
   Repository,
   SelectQueryBuilder,
 } from 'typeorm'
+import { SECTION_SEGMENT_BREAKDOWN } from '../sections-pattern'
 import { CITY_REGION_NONE, ELECTION_REGION_ABROAD } from '../sections.constants'
 import { Section } from './section.entity'
 import { TownsRepository } from './towns.repository'
@@ -48,7 +49,7 @@ export class SectionsRepository {
   }
 
   findOneByPartialIdOrFail(id: string): Promise<Section> {
-    if (!id.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
+    if (!id.match(SECTION_SEGMENT_BREAKDOWN)) {
       throw new EntityNotFoundError(Section, id)
     }
 
@@ -62,16 +63,15 @@ export class SectionsRepository {
   private joinRelationsBasedOnSegments(
     segment: string,
   ): SelectQueryBuilder<Section> {
-    const [electionRegionCode, , cityRegionCode] = segment
-      .split(/^(\d{2})(\d{2})?(\d{2})?(\d{3})?$/)
-      .filter((x) => !!x)
+    const matches = SECTION_SEGMENT_BREAKDOWN.exec(segment)
+    const { electionRegionCode, cityRegionCode } = matches.groups
 
     const qb = this.repo.createQueryBuilder('section')
 
     qb.innerJoinAndSelect('section.electionRegion', 'electionRegion')
     qb.innerJoinAndSelect('section.town', 'town')
     qb.innerJoinAndSelect('town.country', 'country')
-    if (electionRegionCode !== ELECTION_REGION_ABROAD) {
+    if (electionRegionCode) {
       qb.innerJoinAndSelect('town.municipality', 'municipality')
       if (cityRegionCode && cityRegionCode !== CITY_REGION_NONE) {
         qb.innerJoinAndSelect('section.cityRegion', 'cityRegion')
