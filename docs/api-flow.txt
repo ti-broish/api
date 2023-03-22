@@ -20,12 +20,12 @@ POST /posts
 GET    /countries
 [
   {
-    code: "00",
+    code: "000",
     name: "България",
     isAbroad: false
   },
   {
-    code: "01",
+    code: "001",
     name: "Австралия",
     isAbroad: true
   }
@@ -45,7 +45,7 @@ GET    /election_regions
 # Query towns by country (for towns abroad)
 GET    /towns?country=:country
 # Query towns by country, election region and municipality (for domestic towns)
-GET    /towns?country=00&election_region=:election_region&municipality=:municipality
+GET    /towns?country=000&election_region=:election_region&municipality=:municipality
 [
   {
     id: 1234,
