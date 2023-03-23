@@ -37,6 +37,7 @@ import {
 } from 'src/sections/sections.constants'
 import { TownsRepository } from 'src/sections/entities/towns.repository'
 import { WithCode } from 'src/sections/entities/withCode.interface'
+import { SECTION_SEGMENT_BREAKDOWN } from 'src/sections/sections-pattern'
 
 export enum NodeType {
   ELECTION = 'election',
@@ -216,155 +217,156 @@ export class ResultsController {
   @Header('Cache-Control', 'max-age: 60')
   @UsePipes(new ValidationPipe({ transform: true, disableErrorMessages: true }))
   async subset(
-    @Param('segment')
-    segment: string,
+    @Param('segment') segment: string,
   ): Promise<Record<string, any>> {
-    if (!segment.match(/^\d{2}(\d{2}(\d{2}(\d{3})?)?)?$/)) {
+    const matches = SECTION_SEGMENT_BREAKDOWN.exec(segment)
+    if (matches === null) {
       throw new NotFoundException()
     }
+
+    const {
+      municipalityCode,
+      cityRegionCode,
+      abroadRegionCode,
+      countryCode,
+      sectionCodeAbroad,
+      sectionCodeDomestic,
+    } = matches.groups
 
     const section = await this.sectionsRepo.findOneByPartialIdOrFail(segment)
 
     const electionRegion = section.electionRegion
 
-    if (segment.length === 2) {
-      return this.getElectionRegionResults(electionRegion)
+    if (abroadRegionCode) {
+      return this.getAbroadResults(section, countryCode, sectionCodeAbroad)
     }
 
-    let municipality: Municipality, country: Country
-
-    if (electionRegion.isAbroad) {
-      country = section.town.country
-    } else {
-      municipality = section.town.municipality
+    if (!municipalityCode) {
+      return this.getDomesticElectionRegionResults(electionRegion)
     }
 
-    if (segment.length === 4) {
-      return electionRegion.isAbroad
-        ? this.getCountryResults(electionRegion, country)
-        : this.getMunicipalityResults(electionRegion, municipality)
+    const municipality = section.town.municipality
+
+    if (!cityRegionCode) {
+      return this.getMunicipalityResults(electionRegion, municipality)
     }
 
     const cityRegion = section.cityRegion
 
-    if (segment.length === 6) {
+    if (!sectionCodeDomestic) {
       return this.getCityRegionResults(electionRegion, municipality, cityRegion)
     }
 
     return this.getSectionResults(
       electionRegion,
-      electionRegion.isAbroad ? country : municipality,
+      municipality,
       cityRegion,
       section,
     )
   }
 
-  private async getElectionRegionResults(
+  private async getAbroadResults(
+    section: Section,
+    countryCode: string | null,
+    sectionCodeAbroad: string | null,
+  ): Promise<Record<string, any>> {
+    const electionRegion = section.electionRegion
+    if (!countryCode) {
+      return this.getAbroadElectionRegionResults(electionRegion)
+    }
+    const country = section.town.country
+    if (!sectionCodeAbroad) {
+      return this.getCountryResults(electionRegion, country)
+    }
+
+    return this.getSectionResults(electionRegion, country, null, section)
+  }
+
+  private async getDomesticElectionRegionResults(
     electionRegion: ElectionRegion,
   ): Promise<Record<string, any>> {
     let nodesType: NodesType, nodes: any[]
-    if (electionRegion.isAbroad) {
-      const countryStats = await this.sectionsRepo.getStatsFor(
-        electionRegion.code,
-        4,
+    nodesType = NodesType.MUNICIPALITIES
+    const municipalities =
+      await this.municipalitiesRepo.findFromElectionRegionWithCityRegionsAndStats(
+        electionRegion.id,
       )
-      const countryResults = await this.sectionsRepo.getResultsFor(
-        electionRegion.code,
-        4,
+    if (municipalities.length === 1) {
+      const districtStats = await this.sectionsRepo.getStatsFor(
+        makeSegment([electionRegion, municipalities[0]]),
+        6,
       )
-      nodes = (await this.countriesRepo.findAllAbroadWithStats()).map(
-        (country) => ({
-          id: country.code,
-          segment: makeSegment([electionRegion, country]),
-          name: country.name,
-          type: mapToType(country),
-          results: countryResults[makeSegment([electionRegion, country])] || [],
-          stats: countryStats[makeSegment([electionRegion, country])] || {},
-        }),
+      const districtResults = await this.sectionsRepo.getResultsFor(
+        makeSegment([electionRegion, municipalities[0]]),
+        6,
       )
-    } else {
-      nodesType = NodesType.MUNICIPALITIES
-      const municipalities =
-        await this.municipalitiesRepo.findFromElectionRegionWithCityRegionsAndStats(
-          electionRegion.id,
+      if (
+        MUNICIPALITIES_MULTI_REGION.includes(
+          `${electionRegion.code}${municipalities[0].code}`,
         )
-      if (municipalities.length === 1) {
-        const districtStats = await this.sectionsRepo.getStatsFor(
-          makeSegment([electionRegion, municipalities[0]]),
-          6,
+      ) {
+        nodesType = NodesType.DISTRICTS
+        const districts = municipalities[0].towns.reduce(
+          townsToCityRegionsReducer,
+          {},
         )
-        const districtResults = await this.sectionsRepo.getResultsFor(
-          makeSegment([electionRegion, municipalities[0]]),
-          6,
-        )
-        if (
-          MUNICIPALITIES_MULTI_REGION.includes(
-            `${electionRegion.code}${municipalities[0].code}`,
-          )
-        ) {
-          nodesType = NodesType.DISTRICTS
-          const districts = municipalities[0].towns.reduce(
-            townsToCityRegionsReducer,
-            {},
-          )
-          nodes = Object.entries(districts).map(([code, district]) => ({
-            id: code,
-            segment: makeSegment([electionRegion, municipalities[0], district]),
-            name: district.name,
-            type: mapToType(district),
-            results:
-              districtResults[
-                makeSegment([electionRegion, municipalities[0], district])
-              ] || [],
-            stats:
-              districtStats[
-                makeSegment([electionRegion, municipalities[0], district])
-              ] || {},
-          }))
-        } else {
-          nodesType = NodesType.TOWNS
-          nodes = municipalities[0].towns.map(
-            ({ code: id, name, cityRegions }) => ({
-              id,
-              name,
-              type: NodeType.TOWN,
-              nodesType: NodesType.DISTRICTS,
-              nodes: cityRegions.map(({ name, code: id }) => ({
-                id,
-                segment: `${electionRegion.code}${municipalities[0].code}${id}`,
-                name,
-                type: NodeType.DISTRICT,
-                results:
-                  districtResults[
-                    `${electionRegion.code}${municipalities[0].code}${id}`
-                  ] || [],
-                stats:
-                  districtStats[
-                    `${electionRegion.code}${municipalities[0].code}${id}`
-                  ] || {},
-              })),
-            }),
-          )
-        }
-      } else {
-        const municipalityStats = await this.sectionsRepo.getStatsFor(
-          electionRegion.code,
-          4,
-        )
-        const municipalityResults = await this.sectionsRepo.getResultsFor(
-          electionRegion.code,
-          4,
-        )
-        nodesType = NodesType.MUNICIPALITIES
-        nodes = municipalities.map(({ code: id, name }) => ({
-          id,
-          segment: `${electionRegion.code}${id}`,
-          name,
-          type: NodeType.MUNICIPALITY,
-          results: municipalityResults[`${electionRegion.code}${id}`] || [],
-          stats: municipalityStats[`${electionRegion.code}${id}`] || {},
+        nodes = Object.entries(districts).map(([code, district]) => ({
+          id: code,
+          segment: makeSegment([electionRegion, municipalities[0], district]),
+          name: district.name,
+          type: mapToType(district),
+          results:
+            districtResults[
+              makeSegment([electionRegion, municipalities[0], district])
+            ] || [],
+          stats:
+            districtStats[
+              makeSegment([electionRegion, municipalities[0], district])
+            ] || {},
         }))
+      } else {
+        nodesType = NodesType.TOWNS
+        nodes = municipalities[0].towns.map(
+          ({ code: id, name, cityRegions }) => ({
+            id,
+            name,
+            type: NodeType.TOWN,
+            nodesType: NodesType.DISTRICTS,
+            nodes: cityRegions.map(({ name, code: id }) => ({
+              id,
+              segment: `${electionRegion.code}${municipalities[0].code}${id}`,
+              name,
+              type: NodeType.DISTRICT,
+              results:
+                districtResults[
+                  `${electionRegion.code}${municipalities[0].code}${id}`
+                ] || [],
+              stats:
+                districtStats[
+                  `${electionRegion.code}${municipalities[0].code}${id}`
+                ] || {},
+            })),
+          }),
+        )
       }
+    } else {
+      const municipalityStats = await this.sectionsRepo.getStatsFor(
+        electionRegion.code,
+        4,
+      )
+      const municipalityResults = await this.sectionsRepo.getResultsFor(
+        electionRegion.code,
+        4,
+      )
+      nodesType = NodesType.MUNICIPALITIES
+      nodes = municipalities.map(({ code: id, name }) => ({
+        id,
+        segment: `${electionRegion.code}${id}`,
+        name,
+        type: NodeType.MUNICIPALITY,
+        results: municipalityResults[`${electionRegion.code}${id}`] || [],
+        stats: municipalityStats[`${electionRegion.code}${id}`] || {},
+      }))
     }
 
     return {
@@ -376,9 +378,48 @@ export class ResultsController {
         (await this.sectionsRepo.getResultsFor(electionRegion.code)) || [],
       stats: (await this.sectionsRepo.getStatsFor(electionRegion.code)) || {},
       crumbs: this.crumbMaker.makeCrumbs([]),
-      abroad: electionRegion.isAbroad,
+      abroad: false,
       nodesType,
       nodes,
+    }
+  }
+
+  private async getAbroadElectionRegionResults(
+    electionRegion: ElectionRegion,
+  ): Promise<Record<string, any>> {
+    const countryStats = await this.sectionsRepo.getStatsFor(
+      electionRegion.code,
+      5,
+    )
+    const countryResults = await this.sectionsRepo.getResultsFor(
+      electionRegion.code,
+      5,
+    )
+
+    return {
+      id: electionRegion.code,
+      segment: `${electionRegion.code}`,
+      name: electionRegion.name,
+      type: mapToType(electionRegion),
+      results:
+        (await this.sectionsRepo.getResultsFor(electionRegion.code)) || [],
+      stats: (await this.sectionsRepo.getStatsFor(electionRegion.code)) || {},
+      crumbs: this.crumbMaker.makeCrumbs([]),
+      abroad: true,
+      nodesType: NodesType.COUNTRIES,
+      nodes: (await this.countriesRepo.findAllAbroadWithStats()).map(
+        (country) => {
+          const segment = makeSegment([electionRegion, country])
+          return {
+            id: country.code,
+            segment,
+            name: country.name,
+            type: mapToType(country),
+            results: countryResults[segment] || [],
+            stats: countryStats[segment] || {},
+          }
+        },
+      ),
     }
   }
 

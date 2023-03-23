@@ -7,7 +7,7 @@ export class Country implements WithCode {
   @PrimaryGeneratedColumn()
   public readonly id: number
 
-  @Column('char', { length: 2 })
+  @Column('char', { length: 3 })
   public readonly code: string
 
   @Column()

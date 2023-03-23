@@ -7,6 +7,10 @@ import { ViolationUpdateType } from './violation-update.entity'
 import { ViolationsFilters } from '../api/violations-filters.dto'
 import { TownsRepository } from 'src/sections/entities/towns.repository'
 import { SectionsRepository } from 'src/sections/entities/sections.repository'
+import {
+  COUNTRY_DOMESTIC,
+  ELECTION_REGION_ABROAD,
+} from 'src/sections/sections.constants'
 
 @Injectable()
 export class ViolationsRepository {
@@ -179,7 +183,7 @@ export class ViolationsRepository {
     }
 
     if (filters.electionRegion) {
-      if (filters.electionRegion != '32') {
+      if (filters.electionRegion != ELECTION_REGION_ABROAD) {
         qb.innerJoin('town.municipality', 'municipality')
         qb.innerJoin('municipality.electionRegions', 'electionRegions')
         qb.andWhere('electionRegions.code = :electionRegion', {
@@ -201,7 +205,7 @@ export class ViolationsRepository {
         if (filters.country) {
           qb.andWhere('country.code = :country', { country: filters.country })
         } else {
-          qb.andWhere('country.code != :country', { country: '00' })
+          qb.andWhere('country.code != :country', { country: COUNTRY_DOMESTIC })
         }
       }
 
