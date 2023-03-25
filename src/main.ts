@@ -7,8 +7,7 @@ import { LogLevel } from '@nestjs/common'
 import { ClusterService } from './http/cluster.service'
 
 async function bootstrap() {
-  const debugLogs: LogLevel[] =
-    process.env.NODE_ENV === 'production' ? [] : ['log', 'debug', 'verbose']
+  const debugLogs: LogLevel[] = ['log', 'debug', 'verbose']
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'warn', ...debugLogs],
   })
