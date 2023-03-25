@@ -41,7 +41,6 @@ export class PicturesController {
   @UseGuards(PoliciesGuard, ThrottlerGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Picture))
   @Throttle(30, 60)
-  @Recaptcha()
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadFile(
     @Body() upload: UploadImageDto,
