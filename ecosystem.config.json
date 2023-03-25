@@ -20,9 +20,9 @@
       },
       "instances": "max",
       "merge_logs": true,
-      "error_file": "var/log/err.log",
-      "out_file": "var/log/out.log",
-      "log_file": "var/log/combined.log",
+      "error_file": "./var/log/err.log",
+      "out_file": "./var/log/out.log",
+      "log_file": "./var/log/combined.log",
       "log_rotate_interval": "1d",
       "log_max_size": "100M"
     }
