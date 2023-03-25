@@ -20,6 +20,7 @@ export class GoogleRecaptchaConfigService
     return {
       score: this.config.get<number>('GOOGLE_RECAPTCHA_SCORE'),
       secretKey: this.config.get<string>('GOOGLE_RECAPTCHA_SECRET_KEY'),
+      debug: this.config.get<boolean>('GOOGLE_RECAPTCHA_DEBUG'),
       response: (req: Request) =>
         (req.headers['x-recaptcha-token'] as string) ?? '',
       skipIf: (req) => {
