@@ -4,6 +4,7 @@ import { AppModule } from './app'
 import { setUpSwagger, enableCors, setBodySize } from './http'
 import { enableGracefulShutfown, useContainerForValidator } from './config'
 import { LogLevel } from '@nestjs/common'
+import { ClusterService } from './http/cluster.service'
 
 async function bootstrap() {
   const debugLogs: LogLevel[] =
@@ -18,4 +19,4 @@ async function bootstrap() {
   enableCors(app)
   await app.listen(app.get(ConfigService).get<number>('PORT', 4000))
 }
-void bootstrap()
+ClusterService.clusterize(bootstrap)
