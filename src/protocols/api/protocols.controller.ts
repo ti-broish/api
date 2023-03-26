@@ -248,9 +248,11 @@ export class ProtocolsController {
     if (!canAccessProtocol && !canAccessOwnProtocol) {
       throw new ForbiddenException()
     }
+
+    const canManageProtocol = ability.can(Action.Manage, protocol)
     const dto = ProtocolDto.fromEntity(
       protocol,
-      canAccessProtocol
+      canManageProtocol || canAccessOwnProtocol
         ? ['read', 'protocol.validate', 'author_read', 'get', 'read.results']
         : ['read'],
     )

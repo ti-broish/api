@@ -98,8 +98,9 @@ export class CaslAbilityFactory {
     ])
     // Unauthenticated users can send pictures and violations with pictures
     can(Action.Create, [Picture, Protocol, Violation])
-    // Unauthenticated users can see published violations
+    // Unauthenticated users can see published violations and protocols
     can(Action.Read, Violation, (violation: Violation) => violation.isPublished)
+    can(Action.Read, Protocol, (protocol: Protocol) => protocol.isPublished())
 
     // If user is unauthenticated stop adding abilities
     if (user === undefined) {

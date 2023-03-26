@@ -290,6 +290,10 @@ export class Protocol {
     return this.results.length > 0
   }
 
+  isPublished(): boolean {
+    return this.status === ProtocolStatus.PUBLISHED
+  }
+
   private addAction(action: ProtocolAction): void {
     action.protocol = this
     this.actions = (this.actions || []).concat([action])
