@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
+import { COUNTRY_DOMESTIC } from '../sections.constants'
 import { Town } from './town.entity'
 
 @Injectable()
@@ -29,6 +30,10 @@ export class TownsRepository {
   ): Promise<Town[]> {
     if (electionRegionCode && !municipalityCode) {
       throw new Error('Cannot filter towns by just election region!')
+    }
+
+    if (countryCode === '00') {
+      countryCode = COUNTRY_DOMESTIC
     }
 
     const qb = this.repo.createQueryBuilder('town')
