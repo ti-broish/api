@@ -7,7 +7,7 @@ import {
   Inject,
 } from '@nestjs/common'
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { I18nService } from 'nestjs-i18n'
 import {
   ViolationPublishingException,
@@ -23,7 +23,7 @@ interface ExceptionResponse {
   message: string | string[]
   error: string // for backwards-compatibility with default validation response
   errorType: string
-  statusCode: number
+  status: number
 }
 
 @Catch(
@@ -46,30 +46,31 @@ export class I18nExceptionsFilter extends BaseExceptionFilter {
     this.i18n = i18n
   }
 
-  async catch(exception: Error, host: ArgumentsHost) {
+  async catch(exception: Error, host: ArgumentsHost): Promise<void> {
     const context = host.switchToHttp()
     const errorType = exception.constructor.name
     const response = {
-      statusCode: HttpStatus.CONFLICT,
+      status: HttpStatus.CONFLICT,
       errorType,
       message: exception.message,
       error: errorType,
     } as ExceptionResponse
 
     if (exception instanceof HttpException) {
-      const httpResponse = exception.getResponse() as Pick<
-        ExceptionResponse,
-        'message' | 'statusCode' | 'error'
-      >
-      Object.assign(response, httpResponse)
+      Object.assign(response, {
+        status: exception.getStatus(),
+        message: exception.message,
+        errorType: exception.name,
+        error: exception.name,
+      })
     }
 
     response.message = await this.translate(
-      context.getRequest().i18nLang,
-      response.message,
+      context.getRequest<Request>().i18nLang,
+      response.errorType,
     )
 
-    context.getResponse<Response>().status(response.statusCode).json(response)
+    context.getResponse<Response>().status(response.status).json(response)
   }
 
   private async translate(
