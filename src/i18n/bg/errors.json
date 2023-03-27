@@ -71,5 +71,6 @@
   "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_REJECTED": "Сигналът не може да бъде публикуван когато е отхвърлен",
   "STREAM_NOT_ASSIGNED_STREAM": "Не можете да излъчвате - трябва да сте селектирали секция и да е след края на изборния ден",
   "ERROR_CANNOT_ADD_PROTOCOL_TO_VALIDATION_QUEUE_IF_NOT_SETTLED": "Не може да се добави протокол в опашката за валидиране, ако не е със статус получен.",
-  "ERROR_CANNOT_ADD_PROTOCOL_TO_ARBITRATION_QUEUE_IF_NOT_SETTLED": "Не може да се добави протокол в опашката за арбитраж, ако не е вече обработен."
+  "ERROR_CANNOT_ADD_PROTOCOL_TO_ARBITRATION_QUEUE_IF_NOT_SETTLED": "Не може да се добави протокол в опашката за арбитраж, ако не е вече обработен.",
+  "GoogleRecaptchaException.invalid-input-response": "Не сте подали Google Recaptcha token"
 }

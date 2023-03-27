@@ -7,6 +7,10 @@ import {
   Inject,
 } from '@nestjs/common'
 import { BaseExceptionFilter, HttpAdapterHost } from '@nestjs/core'
+import {
+  GoogleRecaptchaException,
+  GoogleRecaptchaNetworkException,
+} from '@nestlab/google-recaptcha'
 import { Request, Response } from 'express'
 import { I18nService } from 'nestjs-i18n'
 import {
@@ -33,6 +37,8 @@ interface ExceptionResponse {
   ViolationStatusException,
   ViolationPublishingException,
   HttpException,
+  GoogleRecaptchaException,
+  GoogleRecaptchaNetworkException,
 )
 @Injectable()
 export class I18nExceptionsFilter extends BaseExceptionFilter {
@@ -63,6 +69,10 @@ export class I18nExceptionsFilter extends BaseExceptionFilter {
         errorType: exception.name,
         error: exception.name,
       })
+
+      if (exception instanceof GoogleRecaptchaException) {
+        response.errorType = `${response.errorType}.${exception.errorCodes[0]}`
+      }
     }
 
     response.message = await this.translate(
