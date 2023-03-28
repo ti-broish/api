@@ -27,7 +27,7 @@ interface ExceptionResponse {
   message: string | string[]
   error: string // for backwards-compatibility with default validation response
   errorType: string
-  status: number
+  statusCode: number
 }
 
 @Catch(
@@ -55,32 +55,36 @@ export class I18nExceptionsFilter extends BaseExceptionFilter {
   async catch(exception: Error, host: ArgumentsHost): Promise<void> {
     const context = host.switchToHttp()
     const errorType = exception.constructor.name
-    const response = {
-      status: HttpStatus.CONFLICT,
+    let response = {
+      statusCode: HttpStatus.CONFLICT,
       errorType,
       message: exception.message,
       error: errorType,
     } as ExceptionResponse
 
     if (exception instanceof HttpException) {
-      Object.assign(response, {
-        status: exception.getStatus(),
-        message: exception.message,
-        errorType: exception.name,
-        error: exception.name,
-      })
+      const httpResponse = exception.getResponse() as
+        | Pick<ExceptionResponse, 'message' | 'statusCode' | 'error'>
+        | string
+      if (typeof httpResponse === 'object') {
+        response = Object.assign(response, httpResponse)
+      } else {
+        response.message = httpResponse
+        response.statusCode = exception.getStatus()
+        response.error = httpResponse
+      }
 
       if (exception instanceof GoogleRecaptchaException) {
-        response.errorType = `${response.errorType}.${exception.errorCodes[0]}`
+        response.message = `${response.errorType}.${exception.errorCodes[0]}`
       }
     }
 
     response.message = await this.translate(
       context.getRequest<Request>().i18nLang,
-      response.errorType,
+      response.message,
     )
 
-    context.getResponse<Response>().status(response.status).json(response)
+    context.getResponse<Response>().status(response.statusCode).json(response)
   }
 
   private async translate(
