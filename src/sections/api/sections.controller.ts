@@ -1,16 +1,21 @@
 import {
+  Body,
+  ConflictException,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
+  Post,
   Put,
   Query,
   Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiQuery, ApiResponse } from '@nestjs/swagger'
@@ -87,6 +92,47 @@ export class SectionsController {
       }
       throw e
     }
+  }
+
+  @Post()
+  @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Section))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['create.section'] },
+      groups: ['create.section'],
+    }),
+  )
+  @ApiResponse({
+    status: 201,
+    description: 'Successful creation of a section',
+  })
+  async create(@Body() sectionDto: SectionDto): Promise<SectionDto> {
+    console.log('Creating section', sectionDto)
+    const existingSection = await this.repo.findOne(sectionDto.id)
+    if (existingSection) {
+      console.log('Section already exists')
+      throw new ConflictException(
+        `Section with ID ${sectionDto.id} already exists`,
+      )
+    }
+    const partialSection = await this.repo.findOneByPartialIdOrFail(
+      sectionDto.id.slice(0, 6),
+    )
+
+    const section = {
+      ...partialSection,
+      town: sectionDto.town,
+      id: sectionDto.id,
+      code: sectionDto.id.slice(7),
+      place: '',
+    } as Section
+
+    await this.repo.save(section)
+
+    return SectionDto.fromEntity(section, ['read', 'get'])
   }
 
   @Put('population')

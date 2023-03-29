@@ -1,12 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Exclude, Expose, plainToClass, Type } from 'class-transformer'
+import {
+  Exclude,
+  Expose,
+  plainToClass,
+  Transform,
+  Type,
+} from 'class-transformer'
 import { IsNumberString, IsString, Length } from 'class-validator'
 import { StreamDto } from 'src/streams/api/stream.dto'
 import { ViolationDto } from 'src/violations/api/violation.dto'
 import { Section } from '../entities/section.entity'
 import { CityRegionDto } from './cityRegion.dto'
 import { ElectionRegionDto } from './electionRegion.dto'
-import { MunicipalityDto } from './municipality.dto'
 import { IsSectionExists } from './section-exists.constraint'
 import { TownDto } from './town.dto'
 
@@ -19,6 +24,7 @@ export class SectionDto {
     groups: [
       'read',
       'create',
+      'create.section',
       StreamDto.CREATE,
       StreamDto.WATCH,
       ViolationDto.FEED,
@@ -29,12 +35,14 @@ export class SectionDto {
   })
   @IsSectionExists({ groups: ['create', StreamDto.CREATE, 'replace'] })
   @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH, {
-    groups: ['create', StreamDto.CREATE, 'replace'],
+    groups: ['create', 'create.section', StreamDto.CREATE, 'replace'],
   })
-  @IsString({ groups: ['create', StreamDto.CREATE, 'replace'] })
+  @IsString({
+    groups: ['create', 'create.section', StreamDto.CREATE, 'replace'],
+  })
   @IsNumberString(
     { no_symbols: true },
-    { groups: ['create', StreamDto.CREATE, 'replace'] },
+    { groups: ['create', 'create.section', StreamDto.CREATE, 'replace'] },
   )
   public id: string
 
@@ -129,6 +137,7 @@ export class SectionDto {
   @Type(() => TownDto)
   @Expose({
     groups: [
+      'create.section',
       'get',
       'read',
       'partialMatch',
@@ -137,6 +146,11 @@ export class SectionDto {
       'protocol.protocolInResults',
     ],
   })
+  @Transform(
+    ({ value: id }) =>
+      plainToClass(TownDto, { id }, { groups: ['create.section'] }),
+    { groups: ['create.section'] },
+  )
   town: TownDto
 
   @Type(() => CityRegionDto)

@@ -389,4 +389,8 @@ export class SectionsRepository {
     qb.andWhere('cityRegion.id = :cityRegionId', { cityRegionId })
     return qb.getMany()
   }
+
+  async save(section: Section): Promise<Section> {
+    return await this.repo.save(section)
+  }
 }
