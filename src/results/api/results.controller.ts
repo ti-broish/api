@@ -38,6 +38,8 @@ import {
 import { TownsRepository } from 'src/sections/entities/towns.repository'
 import { WithCode } from 'src/sections/entities/withCode.interface'
 import { SECTION_SEGMENT_BREAKDOWN } from 'src/sections/sections-pattern'
+import { PartyDto } from 'src/parties/api/party.dto'
+import { Party } from 'src/parties/entities/party.entity'
 
 export enum NodeType {
   ELECTION = 'election',
@@ -169,13 +171,8 @@ export class ResultsController {
     return {
       name: this.config.get('ELECTION_CAMPAIGN_NAME'),
       endOfElectionDayTimestamp: this.config.get('STREAMING_TIMESTAMP'),
-      parties: (await this.partiesRepo.findAllForResults()).map(
-        ({ id, name, displayName, color }) => ({
-          id,
-          name: name.replace(/\d+\.\s+(.*)/, '$1'),
-          displayName: displayName.replace(/\d+\.\s+(.*)/, '$1'),
-          color,
-        }),
+      parties: (await this.partiesRepo.findAll()).map((party: Party) =>
+        PartyDto.fromEntity(party),
       ),
     }
   }
