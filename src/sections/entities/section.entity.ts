@@ -19,19 +19,19 @@ export class Section implements WithCode {
   code: string
 
   @Column()
-  place: string
+  place: string = ''
 
   @Column()
-  votersCount: number
+  votersCount: number = 0
 
   @Column()
-  isMachine: boolean
+  isMachine: boolean = false
 
   @Column()
-  isMobile: boolean
+  isMobile: boolean = false
 
   @Column()
-  isShip: boolean
+  isShip: boolean = false
 
   @Column()
   riskLevel: RiskLevel = RiskLevel.LOW

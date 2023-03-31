@@ -160,6 +160,8 @@ export class CaslAbilityFactory {
       can(Action.Read, User, ['organization'])
       // TODO: allow reading only the data of the submitter, not the organization of all users
       can(Action.Publish, Protocol)
+      // Can create sections in existing localities when validating protocols
+      can(Action.Create, Section)
     }
 
     if (user.hasRole(Role.SuperValidator) || user.hasRole(Role.Admin)) {

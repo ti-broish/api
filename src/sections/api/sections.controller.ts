@@ -1,16 +1,21 @@
 import {
+  Body,
+  ConflictException,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
+  Post,
   Put,
   Query,
   Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiQuery, ApiResponse } from '@nestjs/swagger'
@@ -28,11 +33,15 @@ import { Readable } from 'stream'
 import { Response, Express } from 'express'
 import 'multer'
 import { EntityNotFoundError } from 'typeorm'
+import { TownsRepository } from '../entities/towns.repository'
 
 @Controller('sections')
 @ApiFirebaseAuth()
 export class SectionsController {
-  constructor(private readonly repo: SectionsRepository) {}
+  constructor(
+    private readonly repo: SectionsRepository,
+    private readonly townsRepo: TownsRepository,
+  ) {}
 
   @Get()
   @HttpCode(200)
@@ -87,6 +96,47 @@ export class SectionsController {
       }
       throw e
     }
+  }
+
+  @Post()
+  @HttpCode(201)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Section))
+  @UsePipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { groups: ['create.section'] },
+      groups: ['create.section'],
+    }),
+  )
+  @ApiResponse({
+    status: 201,
+    description: 'Successful creation of a section',
+  })
+  async create(@Body() sectionDto: SectionDto): Promise<SectionDto> {
+    const existingSection = await this.repo.findOne(sectionDto.id)
+    if (existingSection) {
+      throw new ConflictException(
+        `Section with ID ${sectionDto.id} already exists`,
+      )
+    }
+    const partialSection = await this.repo.findOneByPartialIdOrFail(
+      sectionDto.id.slice(0, 6),
+    )
+
+    const section = {
+      id: sectionDto.id,
+      town: await this.townsRepo.findOneByCodeOrFail(sectionDto.town.id),
+      code: sectionDto.id.slice(6),
+      place: '',
+      isMobile: true,
+      electionRegion: partialSection.electionRegion,
+      cityRegion: partialSection.cityRegion,
+    } as Section
+
+    const savedSection = await this.repo.save(section)
+
+    return SectionDto.fromEntity(savedSection, ['read', 'get'])
   }
 
   @Put('population')

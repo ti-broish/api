@@ -13,13 +13,19 @@ export class TownDto {
   @ApiProperty()
   @Expose({
     name: 'code',
-    groups: ['read', 'create', 'violations.feed', 'protocol.protocolInResults'],
+    groups: [
+      'read',
+      'create',
+      'create.section',
+      'violations.feed',
+      'protocol.protocolInResults',
+    ],
   })
-  @IsTownExists({ groups: ['create'] })
-  @IsNumber({}, { groups: ['create'] })
-  @Min(1, { groups: ['create'] })
-  @IsInt({ groups: ['create'] })
-  @IsNotEmpty({ groups: ['create'] })
+  @IsTownExists({ groups: ['create', 'create.section'] })
+  @IsNumber({}, { groups: ['create', 'create.section'] })
+  @Min(1, { groups: ['create', 'create.section'] })
+  @IsInt({ groups: ['create', 'create.section'] })
+  @IsNotEmpty({ groups: ['create', 'create.section'] })
   id: number
 
   @ApiProperty()
