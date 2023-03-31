@@ -147,8 +147,8 @@ export class SectionDto {
     ],
   })
   @Transform(
-    ({ value: id }) =>
-      plainToClass(TownDto, { id }, { groups: ['create.section'] }),
+    ({ value: id }): TownDto =>
+      plainToClass(TownDto, { code: id }, { groups: ['create.section'] }),
     { groups: ['create.section'] },
   )
   town: TownDto

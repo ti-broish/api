@@ -391,6 +391,7 @@ export class SectionsRepository {
   }
 
   async save(section: Section): Promise<Section> {
-    return await this.repo.save(section)
+    await this.repo.save(section)
+    return this.findOneOrFail(section.id)
   }
 }

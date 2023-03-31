@@ -33,11 +33,15 @@ import { Readable } from 'stream'
 import { Response, Express } from 'express'
 import 'multer'
 import { EntityNotFoundError } from 'typeorm'
+import { TownsRepository } from '../entities/towns.repository'
 
 @Controller('sections')
 @ApiFirebaseAuth()
 export class SectionsController {
-  constructor(private readonly repo: SectionsRepository) {}
+  constructor(
+    private readonly repo: SectionsRepository,
+    private readonly townsRepo: TownsRepository,
+  ) {}
 
   @Get()
   @HttpCode(200)
@@ -110,10 +114,8 @@ export class SectionsController {
     description: 'Successful creation of a section',
   })
   async create(@Body() sectionDto: SectionDto): Promise<SectionDto> {
-    console.log('Creating section', sectionDto)
     const existingSection = await this.repo.findOne(sectionDto.id)
     if (existingSection) {
-      console.log('Section already exists')
       throw new ConflictException(
         `Section with ID ${sectionDto.id} already exists`,
       )
@@ -123,16 +125,18 @@ export class SectionsController {
     )
 
     const section = {
-      ...partialSection,
-      town: sectionDto.town,
       id: sectionDto.id,
-      code: sectionDto.id.slice(7),
+      town: await this.townsRepo.findOneByCodeOrFail(sectionDto.town.id),
+      code: sectionDto.id.slice(6),
       place: '',
+      isMobile: true,
+      electionRegion: partialSection.electionRegion,
+      cityRegion: partialSection.cityRegion,
     } as Section
 
-    await this.repo.save(section)
+    const savedSection = await this.repo.save(section)
 
-    return SectionDto.fromEntity(section, ['read', 'get'])
+    return SectionDto.fromEntity(savedSection, ['read', 'get'])
   }
 
   @Put('population')
