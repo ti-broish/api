@@ -6,7 +6,7 @@ export class Sections1607202587052 implements MigrationInterface {
     await queryRunner.query(`COMMIT;`)
     await queryRunner.query(`
       create table if not exists "sections_seed" (
-        "country_code" char(2),
+        "country_code" char(3),
         "country_name" varchar,
         "election_region_code" char(2),
         "election_region_name" varchar,
@@ -40,7 +40,7 @@ export class Sections1607202587052 implements MigrationInterface {
 
     await queryRunner.query(`
       insert into countries (code, name, is_abroad)
-      select country_code, max(country_name), max(election_region_code) = '32'
+      select country_code::bpchar(3), max(country_name), max(election_region_code) = '32'
       from sections_seed
       group by country_code;
     `)
@@ -58,6 +58,7 @@ export class Sections1607202587052 implements MigrationInterface {
       select municipality_code, municipality_name
       from sections_seed
       where sections_seed.municipality_code is not null
+      and sections_seed.municipality_code != '00'
       group by municipality_code, municipality_name
     `)
 
@@ -91,6 +92,7 @@ export class Sections1607202587052 implements MigrationInterface {
       select city_region_code, max(city_region_name)
       from sections_seed
       where sections_seed.city_region_code != '00'
+      and sections_seed.city_region_code != '0'
       and sections_seed.city_region_code != ''
       and sections_seed.city_region_code is not null
       group by sections_seed.city_region_code, sections_seed.city_region_name
@@ -106,6 +108,7 @@ export class Sections1607202587052 implements MigrationInterface {
         on city_regions.code = sections_seed.city_region_code
         and lower(city_regions.name) = lower(sections_seed.city_region_name)
       where sections_seed.city_region_code != '00'
+      and sections_seed.city_region_code != '0'
       and sections_seed.city_region_code != ''
       and sections_seed.city_region_code is not null
       group by towns.id, city_regions.id
