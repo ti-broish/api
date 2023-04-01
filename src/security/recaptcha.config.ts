@@ -13,9 +13,15 @@ export class GoogleRecaptchaConfigService
   constructor(@Inject(ConfigService) private readonly config: ConfigService) {}
 
   createGoogleRecaptchaOptions(): GoogleRecaptchaModuleOptions {
-    const allowlist = (this.config.get<string>('IP_ALLOWLIST') || '')
+    const ipAllowlist = (this.config.get<string>('IP_ALLOWLIST') || '')
       .split(',')
       .filter((x) => x.trim())
+    const userAgentAllowlist = (
+      this.config.get<string>('USER_AGENT_ALLOWLIST') || ''
+    )
+      .split(',')
+      .filter((x) => !!x.trim())
+      .map((x) => new RegExp(x.trim(), 'i'))
 
     return {
       score: this.config.get<number>('GOOGLE_RECAPTCHA_SCORE'),
@@ -32,7 +38,13 @@ export class GoogleRecaptchaConfigService
 
         const ip = (r.headers['x-forwarded-for'] as string) ?? r.ip
 
-        return allowlist.includes(ip)
+        if (ipAllowlist.includes(ip)) {
+          return true
+        }
+
+        if (userAgentAllowlist.some((x) => x.test(r.headers['user-agent']))) {
+          return true
+        }
       },
     }
   }
