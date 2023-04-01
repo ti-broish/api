@@ -42,6 +42,29 @@ export enum ProtocolStatusOverride {
   PROCESSED = 'processed',
 }
 
+const compareObjects = (a: any, b: any): boolean => {
+  if (a === b) return true
+  if (
+    typeof a !== 'object' ||
+    typeof b !== 'object' ||
+    a === null ||
+    b === null
+  )
+    return false
+
+  const keysA = Object.keys(a).sort()
+  const keysB = Object.keys(b).sort()
+
+  if (keysA.length !== keysB.length) return false
+
+  for (let i = 0; i < keysA.length; i++) {
+    if (keysA[i] !== keysB[i]) return false
+    if (!compareObjects(a[keysA[i]], b[keysB[i]])) return false
+  }
+
+  return true
+}
+
 @Exclude()
 export class ProtocolDto {
   @ApiProperty()
@@ -513,7 +536,7 @@ export class ProtocolDto {
     const dtoA = ProtocolDto.fromEntity(protocolA, ['compare'])
     const dtoB = ProtocolDto.fromEntity(protocolB, ['compare'])
 
-    return JSON.stringify(dtoA) === JSON.stringify(dtoB)
+    return compareObjects(dtoA, dtoB)
   }
 }
 
