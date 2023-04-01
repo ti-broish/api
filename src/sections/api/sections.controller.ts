@@ -72,7 +72,6 @@ export class SectionsController {
 
   @Get(':section')
   @HttpCode(200)
-  @Public()
   @ApiResponse({
     status: 200,
     description: 'Successful retrieval of a section',
