@@ -6,6 +6,7 @@ import { ulid } from 'ulid'
 import { Client as MinioClient } from 'minio'
 import * as mime from 'mime-types'
 import * as path from 'path'
+import * as fs from 'fs'
 
 @Injectable()
 export class FilesUploader {
@@ -46,6 +47,24 @@ export class FilesUploader {
       },
     )
 
+    try {
+      void this.deleteLocalFile(absolutePath)
+    } catch (err) {
+      console.error(err)
+    }
+
     return fileName
+  }
+
+  private deleteLocalFile(path: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      fs.unlink(path, (err) => {
+        if (!err) {
+          resolve(path)
+          return
+        }
+        reject(err)
+      })
+    })
   }
 }
