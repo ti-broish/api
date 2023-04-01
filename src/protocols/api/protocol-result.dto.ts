@@ -28,7 +28,15 @@ export class ProtocolResultDto {
   })
   party: PartyDto
 
-  @Expose({ groups: ['read', 'protocol.protocolInResults'] })
+  @Expose({
+    groups: ['read', 'replace', 'protocol.protocolInResults', 'compare'],
+  })
+  @IsOptional({ groups: ['read', 'replace'] })
+  @IsNumber({}, { groups: ['replace'] })
+  @IsNotEmpty({ groups: ['replace'] })
+  @Min(0, { groups: ['replace'] })
+  @Max(5000, { groups: ['replace'] })
+  @IsInt({ groups: ['replace'] })
   validVotesCount: number
 
   @IsOptional({ groups: ['read', 'replace'] })
