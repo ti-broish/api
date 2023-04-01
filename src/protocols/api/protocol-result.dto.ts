@@ -56,21 +56,13 @@ export class ProtocolResultDto {
   nonMachineVotesCount?: number
 
   public toEntity(): ProtocolResult {
-    const protocolResult = plainToClass<
+    return plainToClass<ProtocolResult, Partial<ProtocolResultDto>>(
       ProtocolResult,
-      Partial<ProtocolResultDto>
-    >(ProtocolResult, this, {
-      groups: ['create', 'replace'],
-    })
-    const validVotes = (protocolResult.machineVotes || []).concat([
-      protocolResult.nonMachineVotesCount || 0,
-    ])
-
-    protocolResult.validVotesCount = validVotes.reduce(
-      (sum: number, votes: number): number => sum + votes,
+      this,
+      {
+        groups: ['create', 'replace'],
+      },
     )
-
-    return protocolResult
   }
 
   public static fromEntity(entity: ProtocolResult): ProtocolResultDto {
