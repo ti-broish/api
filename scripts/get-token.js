@@ -36,4 +36,4 @@ async function printTokenForUser(firebaseUserUid) {
   }
 }
 
-printTokenForUser(process.env.FIREBASE_UID)
+void printTokenForUser(process.argv[2] || process.env.FIREBASE_UID)
