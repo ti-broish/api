@@ -152,7 +152,11 @@ export class CaslAbilityFactory {
       can([Action.Manage], Stream)
     }
 
-    if (user.hasRole(Role.Validator) || user.hasRole(Role.Admin)) {
+    if (
+      user.hasRole(Role.Validator) ||
+      user.hasRole(Role.SuperValidator) ||
+      user.hasRole(Role.Admin)
+    ) {
       can(Action.Read, [Protocol, ProtocolResult])
       can(Action.Create, [ProtocolResult])
       can(Action.Update, Protocol)
