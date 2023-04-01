@@ -113,6 +113,6 @@ export class ProtocolAssigneesController {
       return true
     }
 
-    throw new ForbiddenException('Cannot change assignments for others users!')
+    throw new ForbiddenException('Cannot change assignments for other users!')
   }
 }
