@@ -173,17 +173,23 @@ export class ProtocolDto {
   })
   machinesCount?: number
 
-  @IsBoolean({ groups: ['replace', 'compare'] })
-  @Expose({ groups: ['read', 'read.results', 'replace'] })
+  @IsBoolean({ groups: ['replace'] })
+  @Expose({ groups: ['read', 'read.results', 'replace', 'compare'] })
   isFinal: boolean
 
-  @IsOptional({ groups: ['read', 'replace', 'compare'] })
+  @IsOptional({ groups: ['read', 'replace'] })
   @IsNumber({}, { groups: ['replace'] })
   @IsInt({ groups: ['replace'] })
   @Min(0, { groups: ['replace'] })
   @Max(5000, { groups: ['replace'] })
   @Expose({
-    groups: ['read', 'read.results', 'replace', 'protocol.protocolInResults'],
+    groups: [
+      'read',
+      'read.results',
+      'replace',
+      'protocol.protocolInResults',
+      'compare',
+    ],
   })
   additionalVotersCount?: number
 
