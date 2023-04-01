@@ -524,10 +524,12 @@ export class ProtocolDto {
       )
     }
 
-    protocolDto.createdAt = (protocol.actions || []).find(
-      (action: ProtocolAction): boolean =>
-        action.action === ProtocolActionType.SEND,
-    )?.timestamp
+    if (groups.includes('read')) {
+      protocolDto.createdAt = (protocol.actions || []).find(
+        (action: ProtocolAction): boolean =>
+          action.action === ProtocolActionType.SEND,
+      )?.timestamp
+    }
 
     return protocolDto
   }
