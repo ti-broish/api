@@ -72,7 +72,8 @@ export class SectionsController {
 
   @Get(':section')
   @HttpCode(200)
-  @Public()
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Read, Section))
   @ApiResponse({
     status: 200,
     description: 'Successful retrieval of a section',
