@@ -99,9 +99,8 @@ export class ProtocolsController {
   @Post()
   @HttpCode(201)
   @Public()
-  @UseGuards(PoliciesGuard, ThrottlerGuard)
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Protocol))
-  @Throttle(10, 60)
   @Recaptcha()
   @UsePipes(
     new ValidationPipe({

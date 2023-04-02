@@ -38,9 +38,8 @@ export class PicturesController {
   ) {}
 
   @Post()
-  @UseGuards(PoliciesGuard, ThrottlerGuard)
+  @UseGuards(PoliciesGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Picture))
-  @Throttle(30, 60)
   @UsePipes(new ValidationPipe({ transform: true }))
   async uploadFile(
     @Body() upload: UploadImageDto,
