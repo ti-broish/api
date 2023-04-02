@@ -99,10 +99,14 @@ export class Violation {
     this.secret = randomBytes(8).toString('base64')
   }
 
-  getAuthor(): User | ViolationContact {
+  getAuthor(): User | ViolationContact | null {
     const sendUpdate = this.updates.find(
       (update: ViolationUpdate) => update.type === ViolationUpdateType.SEND,
     )
+
+    if (!sendUpdate) {
+      return null
+    }
 
     if (sendUpdate.actor) {
       return sendUpdate.actor
