@@ -38,6 +38,15 @@
       "post-setup": "ls -la",
       "post-deploy": "npm run postdeploy -- production --env production --cwd /var/www/ti-broish-20230402"
     },
+    "prod-test": {
+      "user": "deploy",
+      "host": ["ti-broish-api"],
+      "ref": "origin/main",
+      "repo": "https://github.com/ti-broish/api.git",
+      "path": "/var/www/ti-broish-prod-test",
+      "post-setup": "ls -la",
+      "post-deploy": "npm run postdeploy -- prod-test --env production --cwd /var/www/ti-broish-prod-test"
+    },
     "staging": {
       "user": "deploy",
       "host": ["ti-broish-api"],

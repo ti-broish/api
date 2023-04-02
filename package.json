@@ -33,6 +33,7 @@
     "firebase:token": "node ./scripts/get-token.js",
     "deploy:production": "pm2 deploy ecosystem.config.json production update",
     "deploy:staging": "pm2 deploy ecosystem.config.json staging update",
+    "deploy:prod:test": "pm2 deploy ecosystem.config.json prod-test update",
     "postdeploy": "npm ci --only=production --ignore-scripts --no-audit --loglevel=error --cache .npm --prefer-offline --silent && npm run build && cp $PWD/../shared/.env $PWD/../shared/firebase.json $PWD/ && NODE_ENV=production npm run migration:run && pm2 startOrReload ecosystem.config.json"
   },
   "dependencies": {
