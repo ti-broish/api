@@ -71,6 +71,8 @@ export class WorkQueue {
     } catch (e) {
       await qr.rollbackTransaction()
       throw e
+    } finally {
+      await qr.release()
     }
   }
 
