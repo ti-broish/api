@@ -18,7 +18,7 @@
       "env_staging": {
         "NODE_ENV": "production"
       },
-      "instances": "max",
+      "instances": 1,
       "exec_mode": "cluster",
       "merge_logs": true,
       "error_file": "./var/log/err.log",
