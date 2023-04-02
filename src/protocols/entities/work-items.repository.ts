@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { User } from '../../users/entities'
-import { Repository } from 'typeorm'
+import { QueryRunner, Repository } from 'typeorm'
 import { WorkItem, WorkItemType } from './work-item.entity'
 import { Protocol } from './protocol.entity'
 import {
@@ -16,24 +16,7 @@ export class WorkItemsRepository extends Repository<WorkItem> {
     @Inject(ProtocolsRepository)
     private readonly protocolsRepo: ProtocolsRepository,
   ) {
-    super(
-      repository.target,
-      repository.manager,
-      repository.manager.connection.createQueryRunner(),
-    )
-  }
-
-  async start(): Promise<void> {
-    await this.queryRunner.connect()
-    await this.queryRunner.startTransaction()
-  }
-
-  async commit(): Promise<void> {
-    await this.queryRunner.commitTransaction()
-  }
-
-  async rollback(): Promise<void> {
-    await this.queryRunner.rollbackTransaction()
+    super(repository.target, repository.manager)
   }
 
   findOneByProtocolAndAssignee(
@@ -79,23 +62,20 @@ export class WorkItemsRepository extends Repository<WorkItem> {
         .toString(2)
         .padStart(7, '0')
     })
-    if (this.queryRunner.isTransactionActive) {
-      await this.queryRunner.manager.save(workItems)
-    } else {
-      await super.save(workItems)
-    }
+    await super.save(workItems)
 
     return workItems
   }
 
   async findNextAvailableItem(
+    qr: QueryRunner,
     user: User,
     types: WorkItemType[],
   ): Promise<WorkItem> {
     const allAssignedProtocols =
-      await this.protocolsRepo.getAllAssignedProtocols(user)
-    const qb = super
-      .createQueryBuilder('workItem')
+      await this.protocolsRepo.getAllAssignedProtocols(qr, user)
+    const qb = qr.manager
+      .createQueryBuilder(WorkItem, 'workItem')
       .innerJoinAndSelect('workItem.protocol', 'protocol')
       .innerJoinAndSelect('protocol.pictures', 'pictures')
       .andWhere('workItem.isAssigned = false')
@@ -122,9 +102,9 @@ export class WorkItemsRepository extends Repository<WorkItem> {
     return workItem
   }
 
-  async findAssignedOpenItem(user: User): Promise<WorkItem> {
-    const qb = super
-      .createQueryBuilder('workItem')
+  async findAssignedOpenItem(qr: QueryRunner, user: User): Promise<WorkItem> {
+    const qb = qr.manager
+      .createQueryBuilder(WorkItem, 'workItem')
       .innerJoinAndSelect('workItem.protocol', 'protocol')
       .innerJoinAndSelect('protocol.pictures', 'pictures')
       .andWhere('workItem.assignee_id = :assignee', { assignee: user.id })

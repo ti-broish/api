@@ -4,7 +4,7 @@ import { Action } from 'src/casl/action.enum'
 import { CaslAbilityFactory } from 'src/casl/casl-ability.factory'
 import { SectionsRepository } from 'src/sections/entities/sections.repository'
 import { User } from 'src/users/entities'
-import { EntityNotFoundError } from 'typeorm'
+import { EntityNotFoundError, QueryRunner } from 'typeorm'
 import { Protocol, ProtocolStatus } from '../entities/protocol.entity'
 import {
   EmptyPersonalProtocolQueue,
@@ -54,24 +54,31 @@ export class WorkQueue {
   }
 
   async assignNextAvailableWorkItem(user: User): Promise<WorkItem | null> {
+    let qr: QueryRunner = null
     try {
-      await this.workItemsRepo.start()
-      const workItem = await this.retrieveItemForValidation(user)
+      qr = this.workItemsRepo.manager.connection.createQueryRunner()
+      await qr.connect()
+      await qr.startTransaction()
+      const workItem = await this.retrieveItemForValidation(qr, user)
       if (workItem === null) {
-        await this.workItemsRepo.rollback()
+        await qr.rollbackTransaction()
         return null
       }
 
-      const result = await this.assign(workItem, user)
-      await this.workItemsRepo.commit()
+      const result = await this.assign(qr, workItem, user)
+      await qr.commitTransaction()
       return result
     } catch (e) {
-      await this.workItemsRepo.rollback()
+      await qr.rollbackTransaction()
       throw e
     }
   }
 
-  async assign(workItem: WorkItem, assignee: User): Promise<WorkItem> {
+  async assign(
+    qr: QueryRunner,
+    workItem: WorkItem,
+    assignee: User,
+  ): Promise<WorkItem> {
     // Load all necessary protocol relations
     // They were not needed until now and speeds up finding the right work item
     workItem.protocol = await this.protocolsRepo.findOneOrFail(
@@ -80,12 +87,15 @@ export class WorkQueue {
 
     workItem.assign(assignee)
 
-    return await this.workItemsRepo.save(workItem)
+    return await qr.manager.save(workItem)
   }
 
-  async retrieveItemForValidation(user: User): Promise<WorkItem | null> {
+  async retrieveItemForValidation(
+    qr: QueryRunner,
+    user: User,
+  ): Promise<WorkItem | null> {
     let previouslyAssignedWorkItem: WorkItem | null = null
-    previouslyAssignedWorkItem = await this.getAssignedOpenWorkItem(user)
+    previouslyAssignedWorkItem = await this.getAssignedOpenWorkItem(qr, user)
 
     // If already assigned to an open work item, don't look for a new one
     // Workers of the queue should either complete or abandon the work item they are assigned to
@@ -93,7 +103,7 @@ export class WorkQueue {
       return previouslyAssignedWorkItem
     }
 
-    return this.getAvailableWorkItemForValidation(user)
+    return this.getAvailableWorkItemForValidation(qr, user)
   }
 
   async unassignFromProtocol(
@@ -142,6 +152,7 @@ export class WorkQueue {
   }
 
   private async getAvailableWorkItemForValidation(
+    qr: QueryRunner,
     user: User,
   ): Promise<WorkItem> {
     const ability = this.caslAbilityFactory.createForUser(user)
@@ -158,6 +169,7 @@ export class WorkQueue {
 
     try {
       workItem = await this.workItemsRepo.findNextAvailableItem(
+        qr,
         user,
         allowedWorkItemTypes,
       )
@@ -173,11 +185,14 @@ export class WorkQueue {
     return workItem
   }
 
-  private async getAssignedOpenWorkItem(user: User): Promise<WorkItem | null> {
+  private async getAssignedOpenWorkItem(
+    qr: QueryRunner,
+    user: User,
+  ): Promise<WorkItem | null> {
     let workItem: WorkItem | null = null
 
     try {
-      workItem = await this.workItemsRepo.findAssignedOpenItem(user)
+      workItem = await this.workItemsRepo.findAssignedOpenItem(qr, user)
     } catch (error) {
       if (!(error instanceof EntityNotFoundError)) {
         throw error

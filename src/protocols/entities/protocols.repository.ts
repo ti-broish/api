@@ -7,6 +7,7 @@ import {
   getConnection,
   In,
   Brackets,
+  QueryRunner,
 } from 'typeorm'
 import { ProtocolActionType } from './protocol-action.entity'
 import { Protocol, ProtocolStatus } from './protocol.entity'
@@ -205,12 +206,13 @@ export class ProtocolsRepository {
       .execute()
   }
 
-  async getAllAssignedProtocols({
-    id: assignActorId,
-  }: User): Promise<string[]> {
+  async getAllAssignedProtocols(
+    qr: QueryRunner,
+    { id: assignActorId }: User,
+  ): Promise<string[]> {
     return (
-      await this.repo
-        .createQueryBuilder('protocol')
+      await qr.manager
+        .createQueryBuilder(Protocol, 'protocol')
         .select('protocol.id')
         .innerJoin('protocol.actions', 'action_assign')
         .andWhere('action_assign.action = :assignAction', {
