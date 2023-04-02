@@ -188,7 +188,6 @@ export class ProtocolsController {
     @InjectUser() user: User,
   ): Promise<ProtocolDto> {
     const replacement = replacementDto.toEntity(['replace'])
-    console.log('replacement', replacement)
     const prevProtocol = await this.repo.findOneOrFail(protocolId)
     let savedProtocol: Protocol
     let nextProtocol: Protocol
