@@ -221,6 +221,10 @@ export class ProtocolsController {
     @InjectUser() user: User,
     @Res() response: Response,
   ): Promise<ProtocolDto | string> {
+    response.status(HttpStatus.NO_CONTENT)
+    response.send('')
+    return ''
+
     const workItem = await this.workQueue.assignNextAvailableWorkItem(user)
     if (workItem === null) {
       response.status(HttpStatus.NO_CONTENT)
