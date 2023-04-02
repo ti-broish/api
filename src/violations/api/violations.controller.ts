@@ -76,7 +76,7 @@ export default class ViolationsController {
   @HttpCode(201)
   @UseGuards(PoliciesGuard, ThrottlerGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Violation))
-  @Throttle(2, 60)
+  @Throttle(10, 60)
   @Recaptcha()
   @UsePipes(
     new ValidationPipe({

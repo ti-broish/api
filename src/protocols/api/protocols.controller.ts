@@ -101,7 +101,7 @@ export class ProtocolsController {
   @Public()
   @UseGuards(PoliciesGuard, ThrottlerGuard)
   @CheckPolicies((ability: AppAbility) => ability.can(Action.Create, Protocol))
-  @Throttle(4, 60)
+  @Throttle(10, 60)
   @Recaptcha()
   @UsePipes(
     new ValidationPipe({
