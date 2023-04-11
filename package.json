@@ -1,8 +1,8 @@
 {
   "name": "@ti-broish/api",
   "engines": {
-    "node": ">= 16.0.0",
-    "npm": ">= 8.0.0"
+    "node": "^16",
+    "npm": "^8 || ^9"
   },
   "engineStrict": true,
   "description": "Ti Broish API built with Nest TypeScript starter repository",
