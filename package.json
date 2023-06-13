@@ -66,7 +66,7 @@
     "lodash": "^4.17.21",
     "lodash.merge": "^4.6.2",
     "mime-types": "^2.1.35",
-    "minio": "^7.0.33",
+    "minio": "^7.1.1",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "nestjs-command": "^3.1.3",
