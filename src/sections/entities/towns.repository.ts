@@ -32,7 +32,7 @@ export class TownsRepository {
       throw new Error('Cannot filter towns by just election region!')
     }
 
-    if (countryCode === '00') {
+    if (countryCode === '00' || countryCode === '000') {
       countryCode = COUNTRY_DOMESTIC
     }
 

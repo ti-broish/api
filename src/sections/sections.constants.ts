@@ -1,5 +1,5 @@
 export const ELECTION_REGION_ABROAD = '32'
-export const COUNTRY_DOMESTIC = '000'
+export const COUNTRY_DOMESTIC = '00'
 export const CITY_REGION_NONE = '00'
 export const MUNICIPALITIES_HIDDEN = ['2346', '2446', '2546', '1622']
 export const MUNICIPALITIES_MULTI_REGION = ['2346', '2446', '2546']
