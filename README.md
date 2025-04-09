@@ -91,7 +91,7 @@ npm run test:cov
 
 ## Лиценз
 
-Кодът на Ти Броиш е лицензиран под [MIT лиценз](https://github.com/nestjs/nest/blob/master/LICENSE).
+Кодът на Ти Броиш е лицензиран под [MIT лиценз](LICENSE).
 
 [docker]: https://www.docker.com/products/docker-desktop
 [docker compose 2.0]: https://docs.docker.com/compose/cli-command/#installing-compose-v2
