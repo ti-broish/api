@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # Ti Broish NestJS API
   ti-broish-api:

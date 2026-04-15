@@ -227,7 +227,7 @@ export class ProtocolsRepository {
     const qb = this.repo.createQueryBuilder('protocol')
     qb.innerJoinAndSelect('protocol.section', 'section')
     qb.leftJoinAndSelect('protocol.pictures', 'pictures')
-    qb.innerJoinAndSelect('protocol.results', 'results')
+    qb.leftJoinAndSelect('protocol.results', 'results')
     qb.andWhere('protocol.section = :id', { id: sectionCode })
     qb.andWhere('protocol.status in (:...status)', {
       status: [ProtocolStatus.READY, ProtocolStatus.PUBLISHED],
