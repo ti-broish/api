@@ -1,8 +1,8 @@
 {
   "name": "@ti-broish/api",
   "engines": {
-    "node": "^16",
-    "npm": "^8 || ^9"
+    "node": ">=16 <21",
+    "npm": ">=8 <13"
   },
   "engineStrict": true,
   "description": "Ti Broish API built with Nest TypeScript starter repository",
@@ -24,12 +24,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-esm",
-    "migration:create": "typeorm-ts-node-esm migration:create",
-    "migration:run": "typeorm-ts-node-esm -d ./src/database/typeorm.datasource.ts migration:run",
-    "migration:revert": "typeorm-ts-node-esm -d ./src/database/typeorm.datasource.ts migration:revert",
-    "seed:run": "typeorm-ts-node-esm -d ./src/database/typeorm-seeds.datasource.ts migration:run",
-    "seed:revert": "typeorm-ts-node-esm -d ./src/database/typeorm-seeds.datasource.ts migration:revert",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:create": "typeorm-ts-node-commonjs migration:create",
+    "migration:run": "typeorm-ts-node-commonjs -d ./src/database/typeorm.datasource.ts migration:run",
+    "migration:revert": "typeorm-ts-node-commonjs -d ./src/database/typeorm.datasource.ts migration:revert",
+    "seed:run": "npm run build && typeorm-ts-node-commonjs -d ./src/database/typeorm-seeds.datasource.ts migration:run",
+    "seed:revert": "typeorm-ts-node-commonjs -d ./src/database/typeorm-seeds.datasource.ts migration:revert",
     "firebase:token": "node ./scripts/get-token.js",
     "deploy:production": "pm2 deploy ecosystem.config.json production update",
     "deploy:staging": "pm2 deploy ecosystem.config.json staging update",

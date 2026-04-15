@@ -27,12 +27,7 @@ export class Sections1607202587052 implements MigrationInterface {
         "is_covid" boolean
       );
     `)
-    ;(
-      await csvToSql(
-        __dirname + '/2023-10-29/sections-2023-10-29.csv',
-        'sections_seed',
-      )
-    )
+    ;(await csvToSql(__dirname + '/sections.csv', 'sections_seed'))
       .split(';')
       .map(async (sql) => await queryRunner.query(sql))
 
@@ -136,7 +131,7 @@ export class Sections1607202587052 implements MigrationInterface {
         max(sections_seed.section_code),
         coalesce(max(sections_seed.place), ''),
         coalesce(max(sections_seed.voters_count), 0),
-        bool_or(sections_seed.is_machine),
+        bool_or(coalesce(sections_seed.machines_count, 0) > 0),
         bool_or(sections_seed.is_mobile),
         bool_or(sections_seed.is_ship),
         bool_or(sections_seed.is_covid)
