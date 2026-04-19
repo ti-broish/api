@@ -163,7 +163,11 @@ export class Violation {
   }
 
   publish(user: User): void {
-    if (![ViolationStatus.PROCESSING, ViolationStatus.PROCESSED]) {
+    if (
+      ![ViolationStatus.PROCESSING, ViolationStatus.PROCESSED].includes(
+        this.status,
+      )
+    ) {
       throw ViolationPublishingException.forInvalidStatus(this)
     }
 

@@ -40,13 +40,12 @@
     "@anchan828/typeorm-decorators": "^1.0.56",
     "@casl/ability": "^6.4.0",
     "@nestjs/axios": "^2.0.0",
-    "@nestjs/cli": "^9.3.0",
     "@nestjs/common": "^9.4.0",
     "@nestjs/config": "^2.3.1",
     "@nestjs/core": "^9.4.0",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.4.0",
-    "@nestjs/swagger": "^6.3.0",
+    "@nestjs/swagger": "^7.4.2",
     "@nestjs/throttler": "^4.0.0",
     "@nestjs/typeorm": "^9.0.1",
     "@nestlab/google-recaptcha": "^3.3.0",
@@ -87,6 +86,7 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "@nestjs/cli": "^10.4.9",
     "@nestjs/schematics": "^9.1.0",
     "@nestjs/testing": "^9.4.0",
     "@types/cron": "^2.0.1",
@@ -115,7 +115,7 @@
     "ts-loader": "^9.4.2",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.9.3"
   },
   "jest": {
     "moduleFileExtensions": [
