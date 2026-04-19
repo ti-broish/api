@@ -171,7 +171,7 @@ export class ViolationsRepository {
     qb.leftJoinAndSelect('violation.pictures', 'picture')
 
     if (filters.assignee === 'none') {
-      qb.leftJoin('violation.assignees', 'assignee')
+      qb.leftJoinAndSelect('violation.assignees', 'assignee')
       qb.andWhere('assignee.id IS NULL')
     } else if (filters.assignee) {
       qb.innerJoinAndSelect('violation.assignees', 'assignee')
