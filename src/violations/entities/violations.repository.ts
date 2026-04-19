@@ -170,9 +170,12 @@ export class ViolationsRepository {
     qb.leftJoinAndSelect('updates.actor', 'actor')
     qb.leftJoinAndSelect('violation.pictures', 'picture')
 
-    if (filters.assignee) {
+    if (filters.assignee === 'none') {
+      qb.leftJoin('violation.assignees', 'assignee')
+      qb.andWhere('assignee.id IS NULL')
+    } else if (filters.assignee) {
       qb.innerJoinAndSelect('violation.assignees', 'assignee')
-      qb.andWhere('assignee.id = :assignee', { assignee: filters.assignee })
+      qb.andWhere('assignee.email = :assignee', { assignee: filters.assignee })
     } else {
       qb.leftJoinAndSelect('violation.assignees', 'assignee')
     }

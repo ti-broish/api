@@ -8,15 +8,12 @@ import {
   Length,
 } from 'class-validator'
 import { IsTownExists } from 'src/sections/api/town-exists.constraint'
-import { IsUserExists } from 'src/users/api/user-exists.constraint'
 import { PageDTO } from 'src/utils/page.dto'
-import { IsULID } from 'src/utils/ulid-constraint'
 import { ViolationStatus } from '../entities/violation.entity'
 
 export class ViolationsFilters extends PageDTO {
   @IsOptional()
-  @IsULID()
-  @IsUserExists()
+  @IsString()
   assignee: string
 
   @IsOptional()
