@@ -236,6 +236,10 @@ export class ViolationsRepository {
     return qb
   }
 
+  countAll(): Promise<number> {
+    return this.repo.count()
+  }
+
   async save(violation: Violation): Promise<Violation> {
     if (violation.town && !violation.town.id && violation.town.code) {
       violation.town = await this.townsRepo.findOneByCode(violation.town.code)

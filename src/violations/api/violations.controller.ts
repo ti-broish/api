@@ -53,20 +53,20 @@ export default class ViolationsController {
     @Query() query: ViolationsFilters,
     @Request() req: ExpressRequest,
   ): Promise<Pagination<ViolationDto>> {
-    const pagination = await paginate(
-      this.repo.queryBuilderWithFilters(query),
-      {
+    const [pagination, totalUnfilteredItems] = await Promise.all([
+      paginate(this.repo.queryBuilderWithFilters(query), {
         page: query.page,
         limit: 100,
         route: paginationRoute(req),
-      },
-    )
+      }),
+      this.repo.countAll(),
+    ])
 
     return new Pagination<ViolationDto>(
       pagination.items.map<ViolationDto>((violation: Violation) =>
         this.processViolation(violation),
       ),
-      pagination.meta,
+      { ...pagination.meta, totalUnfilteredItems },
       pagination.links,
     )
   }
