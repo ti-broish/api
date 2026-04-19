@@ -237,6 +237,8 @@ export class ViolationsRepository {
       qb.andWhere('violation.type = :type', { type: filters.type })
     }
 
+    qb.orderBy('violation.id', 'DESC')
+
     return qb
   }
 
