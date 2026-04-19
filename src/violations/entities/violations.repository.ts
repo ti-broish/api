@@ -233,6 +233,10 @@ export class ViolationsRepository {
       })
     }
 
+    if (filters.type) {
+      qb.andWhere('violation.type = :type', { type: filters.type })
+    }
+
     return qb
   }
 
@@ -300,6 +304,10 @@ export class ViolationsRepository {
       qb.andWhere('violation.isPublished = :published', {
         published: filters.published,
       })
+    }
+
+    if (filters.type) {
+      qb.andWhere('violation.type = :type', { type: filters.type })
     }
 
     return qb.getCount()
