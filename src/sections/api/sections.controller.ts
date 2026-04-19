@@ -64,9 +64,13 @@ export class SectionsController {
   async query(
     @Query('town', ParseIntPipe) townId: number,
     @Query('city_region') cityRegionCode?: string,
+    @Query('cityRegion') cityRegionCodeCamel?: string,
   ): Promise<SectionDto[]> {
     return (
-      await this.repo.findByTownAndCityRegion(townId, cityRegionCode)
+      await this.repo.findByTownAndCityRegion(
+        townId,
+        cityRegionCode || cityRegionCodeCamel,
+      )
     ).map((section: Section) => SectionDto.fromEntity(section))
   }
 
