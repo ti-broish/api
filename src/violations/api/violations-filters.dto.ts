@@ -9,7 +9,7 @@ import {
 } from 'class-validator'
 import { IsTownExists } from 'src/sections/api/town-exists.constraint'
 import { PageDTO } from 'src/utils/page.dto'
-import { ViolationStatus } from '../entities/violation.entity'
+import { ViolationStatus, ViolationType } from '../entities/violation.entity'
 
 export class ViolationsFilters extends PageDTO {
   @IsOptional()
@@ -54,4 +54,9 @@ export class ViolationsFilters extends PageDTO {
   @IsOptional()
   @IsBooleanString()
   published: boolean
+
+  @IsOptional()
+  @IsString()
+  @IsEnum(ViolationType)
+  type: ViolationType
 }

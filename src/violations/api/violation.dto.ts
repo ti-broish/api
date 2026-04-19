@@ -10,6 +10,7 @@ import {
   IsArray,
   IsBoolean,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
@@ -21,7 +22,11 @@ import {
 } from 'class-validator'
 import { SectionDto } from '../../sections/api/section.dto'
 import { PictureDto } from '../../pictures/api/picture.dto'
-import { Violation, ViolationStatus } from '../entities/violation.entity'
+import {
+  Violation,
+  ViolationStatus,
+  ViolationType,
+} from '../entities/violation.entity'
 import { TownDto } from '../../sections/api/town.dto'
 import { UserDto } from 'src/users/api/user.dto'
 import { ViolationUpdateDto } from './violation-update.dto'
@@ -41,6 +46,11 @@ export class ViolationDto {
 
   @Expose({ groups: ['read', ViolationDto.FEED] })
   id: string
+
+  @Expose({ groups: ['read', 'create', ViolationDto.FEED] })
+  @IsOptional({ groups: ['create'] })
+  @IsEnum(ViolationType, { groups: ['create'] })
+  type: ViolationType
 
   @Expose({ groups: ['read', 'create', ViolationDto.FEED] })
   @Type(() => SectionDto)

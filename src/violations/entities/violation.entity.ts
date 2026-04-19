@@ -31,12 +31,20 @@ export enum ViolationStatus {
   REJECTED = 'rejected',
 }
 
+export enum ViolationType {
+  STANDARD = 'standard',
+  VIDEO = 'video',
+}
+
 @Entity('violations', { orderBy: { id: 'DESC' } })
 export class Violation {
   @PrimaryColumn('char', {
     length: 26,
   })
   id: string = ulid()
+
+  @Column({ type: 'varchar', default: ViolationType.STANDARD })
+  type: ViolationType
 
   @Column({ type: 'text' })
   description: string
