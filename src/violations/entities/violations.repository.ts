@@ -241,11 +241,68 @@ export class ViolationsRepository {
   }
 
   async countWithFilters(filters: ViolationsFilters): Promise<number> {
-    const qb = this.queryBuilderWithFilters(filters)
-    const { cnt } = await qb
-      .select('COUNT(DISTINCT violation.id)', 'cnt')
-      .getRawOne()
-    return parseInt(cnt)
+    const qb = this.repo.createQueryBuilder('violation')
+
+    qb.innerJoin('violation.town', 'town')
+
+    if (filters.assignee === 'none') {
+      qb.leftJoin('violation.assignees', 'assignee')
+      qb.andWhere('assignee.id IS NULL')
+    } else if (filters.assignee) {
+      qb.innerJoin('violation.assignees', 'assignee')
+      qb.andWhere('assignee.email = :assignee', { assignee: filters.assignee })
+    }
+
+    if (filters.section) {
+      qb.innerJoin('violation.section', 'section')
+      qb.andWhere('section.id LIKE :section', {
+        section: `${filters.section}%`,
+      })
+    }
+
+    if (filters.electionRegion) {
+      if (filters.electionRegion != ELECTION_REGION_ABROAD) {
+        qb.innerJoin('town.municipality', 'municipality')
+        qb.innerJoin('municipality.electionRegions', 'electionRegions')
+        qb.andWhere('electionRegions.code = :electionRegion', {
+          electionRegion: filters.electionRegion,
+        })
+
+        if (filters.municipality) {
+          qb.andWhere('municipality.code = :municipality', {
+            municipality: filters.municipality,
+          })
+        }
+
+        if (filters.country) {
+          qb.innerJoin('town.country', 'country')
+          qb.andWhere('country.code = :country', { country: filters.country })
+        }
+      } else {
+        qb.innerJoin('town.country', 'country')
+        if (filters.country) {
+          qb.andWhere('country.code = :country', { country: filters.country })
+        } else {
+          qb.andWhere('country.code != :country', { country: COUNTRY_DOMESTIC })
+        }
+      }
+
+      if (filters.town) {
+        qb.andWhere('town.code = :town', { town: filters.town })
+      }
+    }
+
+    if (filters.status) {
+      qb.andWhere('violation.status = :status', { status: filters.status })
+    }
+
+    if (filters.published) {
+      qb.andWhere('violation.isPublished = :published', {
+        published: filters.published,
+      })
+    }
+
+    return qb.getCount()
   }
 
   async save(violation: Violation): Promise<Violation> {
