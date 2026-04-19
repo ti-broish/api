@@ -242,10 +242,6 @@ export class ViolationsRepository {
     return qb
   }
 
-  countAll(): Promise<number> {
-    return this.repo.count()
-  }
-
   async countWithFilters(filters: ViolationsFilters): Promise<number> {
     const qb = this.repo.createQueryBuilder('violation')
 

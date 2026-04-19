@@ -57,19 +57,17 @@ export default class ViolationsController {
     const page = query.page || 1
     const route = paginationRoute(req)
 
-    const [pagination, totalUnfilteredItems, totalFilteredItems] =
-      await Promise.all([
-        paginate(this.repo.queryBuilderWithFilters(query), {
-          page,
-          limit,
-          route,
-          countQueries: false,
-        }),
-        this.repo.countAll(),
-        this.repo.countWithFilters(query),
-      ])
+    const [pagination, totalItems] = await Promise.all([
+      paginate(this.repo.queryBuilderWithFilters(query), {
+        page,
+        limit,
+        route,
+        countQueries: false,
+      }),
+      this.repo.countWithFilters(query),
+    ])
 
-    const totalPages = Math.ceil(totalFilteredItems / limit) || 1
+    const totalPages = Math.ceil(totalItems / limit) || 1
     const symbol = route.includes('?') ? '&' : '?'
 
     return new Pagination<ViolationDto>(
@@ -77,10 +75,11 @@ export default class ViolationsController {
         this.processViolation(violation),
       ),
       {
-        ...pagination.meta,
-        totalItems: totalFilteredItems,
+        totalItems,
+        itemCount: pagination.items.length,
+        itemsPerPage: limit,
         totalPages,
-        totalUnfilteredItems,
+        currentPage: page,
       },
       {
         first: `${route}${symbol}limit=${limit}`,
