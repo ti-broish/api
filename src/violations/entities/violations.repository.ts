@@ -240,6 +240,14 @@ export class ViolationsRepository {
     return this.repo.count()
   }
 
+  async countWithFilters(filters: ViolationsFilters): Promise<number> {
+    const qb = this.queryBuilderWithFilters(filters)
+    const { cnt } = await qb
+      .select('COUNT(DISTINCT violation.id)', 'cnt')
+      .getRawOne()
+    return parseInt(cnt)
+  }
+
   async save(violation: Violation): Promise<Violation> {
     if (violation.town && !violation.town.id && violation.town.code) {
       violation.town = await this.townsRepo.findOneByCode(violation.town.code)
