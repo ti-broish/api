@@ -98,7 +98,7 @@ export class ViolationDto {
   pictures: PictureDto[]
 
   @Expose({ groups: ['read', 'create'] })
-  @MinLength(5, { groups: ['create'] })
+  @MinLength(20, { groups: ['create'] })
   @MaxLength(2000, { groups: ['create'] })
   @IsNotEmpty({ groups: ['create'] })
   description: string
