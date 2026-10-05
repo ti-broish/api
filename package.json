@@ -31,6 +31,7 @@
     "seed:run": "npm run build && typeorm-ts-node-commonjs -d ./src/database/typeorm-seeds.datasource.ts migration:run",
     "seed:revert": "typeorm-ts-node-commonjs -d ./src/database/typeorm-seeds.datasource.ts migration:revert",
     "firebase:token": "node ./scripts/get-token.js",
+    "sections:update-abroad": "ts-node --transpile-only ./scripts/update-abroad-sections.ts",
     "deploy:production": "pm2 deploy ecosystem.config.json production update",
     "deploy:staging": "pm2 deploy ecosystem.config.json staging update",
     "deploy:prod:test": "pm2 deploy ecosystem.config.json prod-test update",
