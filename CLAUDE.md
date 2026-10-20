@@ -71,8 +71,9 @@ live domestic sections without a rebuild (people, protocols etc. stay):
 `src/sections/domestic` adds missing sections (creating settlements by EKATTE
 code and city-district links when needed), updates addresses, and deletes
 domestic sections missing from the register unless they are referenced
-(protocols, violations, streams, people, …), mobile ballot boxes, or in
-`keep`. Abroad (МИР 32) is never written. It refuses an input sharing less
+(protocols, violations, streams, people, …) or they are in `keep`
+(`keepMobile` also keeps mobile ballot boxes; the register lists the
+election's own ones, so by default old mobile ones are deleted). Abroad (МИР 32) is never written. It refuses an input sharing less
 than 80% of ids with the database, and is idempotent.
 
 ## npm scripts gotchas

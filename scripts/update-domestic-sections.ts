@@ -27,7 +27,7 @@ async function main(): Promise<number> {
   const file = args.find((a) => !a.startsWith('--'))
   if (!file) {
     console.error(
-      'Usage: npm run sections:update-domestic -- <file.csv> [--dry-run] [--keep=id,id] [--verbose]',
+      'Usage: npm run sections:update-domestic -- <file.csv> [--dry-run] [--keep=id,id] [--keep-mobile] [--verbose]',
     )
     return 2
   }
@@ -42,6 +42,7 @@ async function main(): Promise<number> {
     const report = await updateDomesticSections(AppDataSource, sections, {
       dryRun,
       keep,
+      keepMobile: args.includes('--keep-mobile'),
     })
     console.log(
       JSON.stringify(

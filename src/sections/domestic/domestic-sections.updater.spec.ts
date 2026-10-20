@@ -84,7 +84,7 @@ describeDb('updateDomesticSections (PostgreSQL)', () => {
         ('111800046', 1, 2, null, '046', 'стара секция', 10, false, false, false, 'low', 0),
         -- Not in the register, but has a protocol: kept
         ('111800047', 1, 1, null, '047', 'с протокол', 10, false, false, false, 'low', 0),
-        -- Not in the register, but a mobile ballot box: kept
+        -- Not in the register, a mobile ballot box of an earlier election: deleted unless keepMobile
         ('111800090', 1, 1, null, '090', 'Подвижна избирателна кутия', 0, false, true, false, 'low', 0),
         -- Not in the register, but requested to keep: kept
         ('111800091', 1, 1, null, '091', 'приоритетна', 0, false, false, false, 'low', 0),
@@ -111,14 +111,13 @@ describeDb('updateDomesticSections (PostgreSQL)', () => {
       },
     ])
     expect(report.sections.unchanged).toBe(1)
-    expect(report.sections.deleted).toEqual(['111800046'])
+    expect(report.sections.deleted).toEqual(['111800046', '111800090'])
     expect(report.sections.kept).toEqual([
       {
         id: '111800047',
         reasons: ['referenced'],
         references: { 'protocols.section_id': 1 },
       },
-      { id: '111800090', reasons: ['mobile'] },
       { id: '111800091', reasons: ['requested'] },
     ])
     expect(report.towns.created).toEqual([
@@ -165,7 +164,6 @@ describeDb('updateDomesticSections (PostgreSQL)', () => {
       '111800047',
       '111800070',
       '111800077',
-      '111800090',
       '111800091',
       '234616057',
       '320010003',
@@ -183,6 +181,20 @@ describeDb('updateDomesticSections (PostgreSQL)', () => {
       deleted: [],
     })
     expect(again.towns.created).toEqual([])
+  })
+
+  it('keeps mobile ballot boxes with keepMobile', async () => {
+    const report = await updateDomesticSections(ds, INPUT, {
+      keep: ['111800091'],
+      minOverlap: 0,
+      keepMobile: true,
+    })
+    expect(report.sections.deleted).toEqual(['111800046'])
+    expect(report.sections.kept.map((k) => [k.id, k.reasons])).toEqual([
+      ['111800047', ['referenced']],
+      ['111800090', ['mobile']],
+      ['111800091', ['requested']],
+    ])
   })
 
   it('creates a city district link when a settlement lacks it', async () => {

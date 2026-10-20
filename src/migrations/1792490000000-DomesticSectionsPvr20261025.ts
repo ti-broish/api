@@ -28,7 +28,7 @@ const KEEP = ['082900015', '153900020', '301900016']
 /**
  * Bring the domestic sections in line with the CIK register of 25 Oct 2026:
  * add the sections that are missing (e.g. 111800077, с. Умаревци), and delete the ones
- * CIK no longer lists unless something references them or they are mobile ballot boxes.
+ * CIK no longer lists unless something references them.
  * Abroad (МИР 32) is untouched. A database without domestic sections (a fresh one that
  * is seeded later) is skipped. Re-run later registers with `npm run sections:update-domestic`.
  */
