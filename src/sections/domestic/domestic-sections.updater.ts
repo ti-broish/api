@@ -2,7 +2,7 @@ import { DataSource, EntityManager } from 'typeorm'
 import { COUNTRY_DOMESTIC, ELECTION_REGION_ABROAD } from '../sections.constants'
 import { DomesticSectionInput } from './domestic-sections.parser'
 
-/** A mobile ballot box (ПСИК) is kept even when it is not in the register: CIK lists some of them separately. */
+/** A mobile ballot box (ПСИК): `is_mobile`, or „подвижна“ in the address. */
 const MOBILE_PLACE = /подвижн/i
 /** Refuse an input that shares less than this share of ids with the database: it is not the same register. */
 export const MIN_OVERLAP = 0.8
@@ -47,6 +47,8 @@ export interface DomesticSectionsOptions {
   /** Section ids to keep even if they are missing from the register (e.g. referenced by the signup app). */
   keep?: string[]
   /** Minimum share of the database's domestic sections the input must contain (default MIN_OVERLAP). */
+  /** Also keep mobile ballot boxes missing from the register (default: delete them like any other). */
+  keepMobile?: boolean
   minOverlap?: number
 }
 
@@ -130,7 +132,9 @@ export async function countDomesticSections(
  *   creating the settlement / city district when the database has none;
  * - update the address (and settlement) of sections that differ;
  * - delete domestic sections that are not in the register, unless something references them,
- *   they are mobile ballot boxes, or they are in `options.keep`. Those are kept and reported.
+ *   they are in `options.keep`, or (with `options.keepMobile`) they are mobile ballot boxes.
+ *   Those are kept and reported. The register lists the election's mobile ballot boxes,
+ *   so by default a mobile one missing from it is left over from an earlier election.
  *
  * Abroad (МИР 32) is never selected for writes: every write is scoped to `id not like '32%'`.
  * Voters, machines, risk level and population of existing sections are left alone.
@@ -372,7 +376,10 @@ export async function applyDomesticSections(
     const reasons: KeepReason[] = []
     if (refs.has(id)) reasons.push('referenced')
     const current = existingById.get(id)
-    if (current.is_mobile || MOBILE_PLACE.test(current.place ?? ''))
+    if (
+      options.keepMobile &&
+      (current.is_mobile || MOBILE_PLACE.test(current.place ?? ''))
+    )
       reasons.push('mobile')
     if (keep.has(id)) reasons.push('requested')
     if (reasons.length === 0) deletable.push(id)
