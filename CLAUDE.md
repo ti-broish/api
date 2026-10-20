@@ -53,6 +53,28 @@ Scripts involved:
   carried-over people get their stream_id/section_id nullified and
   organization_id set to "Без организация".
 
+## Updating domestic sections in place (CIK register refresh)
+
+When CIK republishes „Адреси на избирателните секции“ mid-campaign, update the
+live domestic sections without a rebuild (people, protocols etc. stay):
+
+1. `python3 scripts/sections-preprocess/build_domestic_sections_csv.py
+   --addresses <CIK addresses .xlsx> [--voters <CIK voters .xlsx>]
+   --out src/seeds/<election-date>/domestic-sections.csv` (needs `openpyxl`;
+   CSVs are globally gitignored on some machines, so `git add -f`).
+   Oblast codes are mapped to МИР (Пловдив, София, 17+ shift); a квартал
+   („ГР.СОФИЯ,КВ.ГОРУБЛЯНЕ“) gets its city's settlement code.
+2. Ship it as a migration (see `1792490000000-DomesticSectionsPvr20261025.ts`),
+   which runs on deploy (`postdeploy` → `migration:run`), or run it directly:
+   `npm run sections:update-domestic -- <csv> --dry-run [--keep=id,id]`.
+
+`src/sections/domestic` adds missing sections (creating settlements by EKATTE
+code and city-district links when needed), updates addresses, and deletes
+domestic sections missing from the register unless they are referenced
+(protocols, violations, streams, people, …), mobile ballot boxes, or in
+`keep`. Abroad (МИР 32) is never written. It refuses an input sharing less
+than 80% of ids with the database, and is idempotent.
+
 ## npm scripts gotchas
 
 - `seed:run` must prebuild (`npm run build`) — the seed migration reads CSVs
