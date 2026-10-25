@@ -150,7 +150,12 @@ export class Violation {
   }
 
   reject(actor: User): void {
-    if (this.status !== ViolationStatus.PROCESSING) {
+    // Allow correcting a violation that was marked as processed by mistake
+    if (
+      ![ViolationStatus.PROCESSING, ViolationStatus.PROCESSED].includes(
+        this.status,
+      )
+    ) {
       throw new ViolationStatusException(this, ViolationStatus.REJECTED)
     }
 
@@ -162,7 +167,12 @@ export class Violation {
   }
 
   process(actor: User): void {
-    if (this.status !== ViolationStatus.PROCESSING) {
+    // Allow correcting a violation that was rejected by mistake
+    if (
+      ![ViolationStatus.PROCESSING, ViolationStatus.REJECTED].includes(
+        this.status,
+      )
+    ) {
       throw new ViolationStatusException(this, ViolationStatus.PROCESSED)
     }
 
