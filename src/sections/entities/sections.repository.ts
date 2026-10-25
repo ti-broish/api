@@ -37,7 +37,13 @@ export class SectionsRepository {
   }
 
   findOneOrFail(id: string): Promise<Section> {
-    if (!id.match(/^\d{9}$/)) {
+    // An id like 999999999 has 9 digits but no valid election region, so it
+    // must be a not-found and not a crash in joinRelationsBasedOnSegments.
+    if (
+      typeof id !== 'string' ||
+      !id.match(/^\d{9}$/) ||
+      !SECTION_SEGMENT_BREAKDOWN.test(id)
+    ) {
       throw new EntityNotFoundError(Section, id)
     }
 
