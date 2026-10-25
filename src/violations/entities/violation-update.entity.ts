@@ -17,6 +17,7 @@ export enum ViolationUpdateType {
   PROCESS = 'process',
   PUBLISH = 'publish',
   UNPUBLISH = 'unpublish',
+  SECTION = 'section',
 }
 
 @Entity('violation_updates')
@@ -86,6 +87,17 @@ export class ViolationUpdate {
 
   public static createUnpublishUpdate(actor: User): ViolationUpdate {
     return ViolationUpdate.create(ViolationUpdateType.UNPUBLISH, actor)
+  }
+
+  public static createSectionUpdate(
+    actor: User,
+    from: string | null,
+    to: string,
+  ): ViolationUpdate {
+    return ViolationUpdate.create(ViolationUpdateType.SECTION, actor, {
+      from,
+      to,
+    })
   }
 
   private static create(

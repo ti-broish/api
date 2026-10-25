@@ -65,6 +65,8 @@
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_REJECTED_TO_REJECTED": "Сигналът не може да се промени от отхвърлен към отхвърлен",
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_RECEIVED_TO_RECEIVED": "Сигналът не може да се промени от получен към получен",
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_PROCESSING_TO_PROCESSING": "Сигналът не може да се промени от обработващ се към обработващ се",
+  "VIOLATION_SECTION_IN_DIFFERENT_TOWN": "Секцията не е в населеното място (общината) на сигнала",
+  "VIOLATION_SECTION_NOT_FOUND": "Няма секция с такъв номер",
   "VIOLATION_IS_ALREADY_PUBLISHED": "Сигналът вече е публикуван",
   "VIOLATION_IS_ALREADY_UNPUBLISHED": "Сигналът вече е непубликуван",
   "VIOLATION_CANNOT_BE_PUBLISHED_WHEN_RECEIVED": "Сигналът не може да бъде публикуван когато е тепърва получен",

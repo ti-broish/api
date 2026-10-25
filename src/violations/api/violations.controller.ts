@@ -12,6 +12,7 @@ import {
   UseGuards,
   Query,
   Patch,
+  Put,
   Request,
   NotFoundException,
   ForbiddenException,
@@ -34,6 +35,10 @@ import { ViolationDto } from './violation.dto'
 import { ViolationsFilters } from './violations-filters.dto'
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
 import { SECTION_SEGMENT_BREAKDOWN } from 'src/sections/sections-pattern'
+import { SectionsRepository } from 'src/sections/entities/sections.repository'
+import { EntityNotFoundError } from 'typeorm'
+import { ViolationSectionDto } from './violation-section.dto'
+import { ViolationSectionException } from '../entities/violation.exceptions'
 
 @Controller('violations')
 export default class ViolationsController {
@@ -42,6 +47,8 @@ export default class ViolationsController {
     @Inject(PicturesUrlGenerator)
     private readonly urlGenerator: PicturesUrlGenerator,
     private readonly caslAbilityFactory: CaslAbilityFactory,
+    @Inject(SectionsRepository)
+    private readonly sectionsRepo: SectionsRepository,
   ) {}
 
   @Get()
@@ -183,6 +190,31 @@ export default class ViolationsController {
   ): Promise<ViolationDto> {
     const violation = await this.repo.findOneOrFail(id)
     violation.process(user)
+
+    return this.processViolation(await this.repo.save(violation))
+  }
+
+  @Put(':id/section')
+  @HttpCode(200)
+  @UseGuards(PoliciesGuard)
+  @CheckPolicies((ability: AppAbility) => ability.can(Action.Update, Violation))
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async setSection(
+    @Param('id') id: string,
+    @InjectUser() user: User,
+    @Body() body: ViolationSectionDto,
+  ): Promise<ViolationDto> {
+    const violation = await this.repo.findOneOrFail(id)
+    let section
+    try {
+      section = await this.sectionsRepo.findOneOrFail(body.section)
+    } catch (e) {
+      if (e instanceof EntityNotFoundError) {
+        throw ViolationSectionException.forMissingSection(violation)
+      }
+      throw e
+    }
+    violation.setSection(user, section)
 
     return this.processViolation(await this.repo.save(violation))
   }

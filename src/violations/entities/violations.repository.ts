@@ -22,22 +22,26 @@ export class ViolationsRepository {
   ) {}
 
   findOneOrFail(id: string): Promise<Violation> {
-    return this.repo
-      .createQueryBuilder('violation')
-      .leftJoinAndSelect('violation.section', 'section')
-      .leftJoinAndSelect('section.cityRegion', 'cityRegion')
-      .leftJoinAndSelect('section.electionRegion', 'electionRegion')
-      .innerJoinAndSelect('violation.updates', 'updates')
-      .leftJoinAndSelect('updates.actor', 'actor')
-      .leftJoinAndSelect('actor.organization', 'organization')
-      .leftJoinAndSelect('violation.pictures', 'pictures')
-      .leftJoinAndSelect('violation.assignees', 'assignees')
-      .innerJoinAndSelect('violation.town', 'town')
-      .innerJoinAndSelect('town.country', 'country')
-      .leftJoinAndSelect('town.municipality', 'municipality')
-      .leftJoinAndSelect('municipality.electionRegions', 'electionRegions')
-      .where('violation.id = :id', { id })
-      .getOneOrFail()
+    return (
+      this.repo
+        .createQueryBuilder('violation')
+        .leftJoinAndSelect('violation.section', 'section')
+        .leftJoinAndSelect('section.cityRegion', 'cityRegion')
+        .leftJoinAndSelect('section.electionRegion', 'electionRegion')
+        .innerJoinAndSelect('violation.updates', 'updates')
+        .leftJoinAndSelect('updates.actor', 'actor')
+        .leftJoinAndSelect('actor.organization', 'organization')
+        .leftJoinAndSelect('violation.pictures', 'pictures')
+        .leftJoinAndSelect('violation.assignees', 'assignees')
+        .innerJoinAndSelect('violation.town', 'town')
+        .innerJoinAndSelect('town.country', 'country')
+        .leftJoinAndSelect('town.municipality', 'municipality')
+        .leftJoinAndSelect('municipality.electionRegions', 'electionRegions')
+        // Lets the admin map a "район" from the description to a city region
+        .leftJoinAndSelect('town.cityRegions', 'townCityRegions')
+        .where('violation.id = :id', { id })
+        .getOneOrFail()
+    )
   }
 
   async findPublishedViolations(after?: string): Promise<Violation[]> {
