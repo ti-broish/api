@@ -209,9 +209,9 @@ export class Violation {
 
   /**
    * Set or correct the section, e.g. when the sender only picked a town that
-   * spans several election regions and wrote the section in the description.
-   * The section must be in the violation's town or in the same municipality
-   * (then the town follows the section).
+   * spans several election regions or picked the wrong town and wrote the
+   * section in the description. Any existing section is allowed; the town
+   * always follows the section.
    */
   setSection(actor: User, section: Section): void {
     if (!section) {
@@ -222,19 +222,18 @@ export class Violation {
       return
     }
 
-    const sameTown = !!this.town && section.town?.id === this.town.id
-    const sameMunicipality =
-      !!this.town?.municipality?.id &&
-      section.town?.municipality?.id === this.town.municipality.id
-    if (!sameTown && !sameMunicipality) {
-      throw ViolationSectionException.forDifferentTown(this)
-    }
-
     const previousSectionId = this.section?.id ?? null
+    const previousTown = this.town
     this.section = section
     this.town = section.town
     this.addUpdate(
-      ViolationUpdate.createSectionUpdate(actor, previousSectionId, section.id),
+      ViolationUpdate.createSectionUpdate(
+        actor,
+        previousSectionId,
+        section.id,
+        previousTown,
+        section.town,
+      ),
     )
   }
 

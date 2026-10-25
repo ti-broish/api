@@ -10,7 +10,12 @@ describe('Violation section', () => {
   const otherMunicipality = { id: 2, code: '01', name: 'Друга' }
 
   const town = (id: number, municipality = sofiaMunicipality): Town =>
-    Object.assign(new Town(), { id, code: id * 10, municipality })
+    Object.assign(new Town(), {
+      id,
+      code: id * 10,
+      name: `town-${id}`,
+      municipality,
+    })
 
   const section = (id: string, sectionTown: Town): Section =>
     Object.assign(new Section(), { id, town: sectionTown })
@@ -39,6 +44,8 @@ describe('Violation section', () => {
     expect(violation.updates[0].payload).toEqual({
       from: null,
       to: '234602012',
+      fromTown: { code: 10, name: 'town-1' },
+      toTown: { code: 10, name: 'town-1' },
     })
   })
 
@@ -47,7 +54,7 @@ describe('Violation section', () => {
     violation.setSection(actor, section('244601001', sofia))
 
     expect(violation.section.id).toBe('244601001')
-    expect(violation.updates[0].payload).toEqual({
+    expect(violation.updates[0].payload).toMatchObject({
       from: '234602012',
       to: '244601001',
     })
@@ -69,25 +76,27 @@ describe('Violation section', () => {
     expect(violation.updates).toHaveLength(0)
   })
 
-  it('refuses a section in another municipality', () => {
-    const violation = violationIn(sofia)
-    expect(() =>
-      violation.setSection(
-        actor,
-        section('010100001', town(3, otherMunicipality)),
-      ),
-    ).toThrow(ViolationSectionException)
-    expect(violation.section).toBeUndefined()
-    expect(violation.updates).toHaveLength(0)
+  it('allows a section in another municipality and moves the town', () => {
+    const otherTown = town(3, otherMunicipality)
+    const violation = violationIn(sofia, section('234602012', sofia))
+    violation.setSection(actor, section('010100001', otherTown))
+
+    expect(violation.section.id).toBe('010100001')
+    expect(violation.town).toBe(otherTown)
+    expect(violation.updates[0].payload).toEqual({
+      from: '234602012',
+      to: '010100001',
+      fromTown: { code: 10, name: 'town-1' },
+      toTown: { code: 30, name: 'town-3' },
+    })
   })
 
-  it('refuses a section in another town abroad (no municipality)', () => {
+  it('allows moving a violation from a domestic town to a section abroad', () => {
     const abroad = town(4, null)
-    const otherAbroad = town(5, null)
-    const violation = violationIn(abroad)
-    expect(() =>
-      violation.setSection(actor, section('320100001', otherAbroad)),
-    ).toThrow(ViolationSectionException)
+    const violation = violationIn(sofia)
+    violation.setSection(actor, section('320100001', abroad))
+
+    expect(violation.town).toBe(abroad)
   })
 
   it('refuses a missing section', () => {

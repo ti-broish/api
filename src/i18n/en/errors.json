@@ -65,7 +65,6 @@
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_REJECTED_TO_REJECTED": "Violation cannot change status from rejected to rejected",
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_RECEIVED_TO_RECEIVED": "Violation cannot change status from received to received",
   "VIOLATION_CANNOT_CHANGE_STATUS_FROM_PROCESSING_TO_PROCESSING": "Violation cannot change status from processing to processing",
-  "VIOLATION_SECTION_IN_DIFFERENT_TOWN": "The section is not in the violation's town (municipality)",
   "VIOLATION_SECTION_NOT_FOUND": "There is no section with this number",
   "VIOLATION_SECTION_INVALID_FORMAT": "The section number must be exactly 9 digits",
   "VIOLATION_IS_ALREADY_PUBLISHED": "Violation is already published",
