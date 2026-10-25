@@ -85,15 +85,6 @@ export class ViolationSectionException
     this.violation = violation
   }
 
-  public static forDifferentTown(
-    violation: Violation,
-  ): ViolationSectionException {
-    return new ViolationSectionException(
-      violation,
-      'VIOLATION_SECTION_IN_DIFFERENT_TOWN',
-    )
-  }
-
   public static forMissingSection(
     violation: Violation,
   ): ViolationSectionException {

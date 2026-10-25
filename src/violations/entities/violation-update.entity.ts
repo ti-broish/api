@@ -8,6 +8,7 @@ import {
 } from 'typeorm'
 import { ulid } from 'ulid'
 import { User } from '../../users/entities'
+import { Town } from '../../sections/entities/town.entity'
 import { Violation } from './violation.entity'
 
 export enum ViolationUpdateType {
@@ -93,10 +94,17 @@ export class ViolationUpdate {
     actor: User,
     from: string | null,
     to: string,
+    fromTown?: Town | null,
+    toTown?: Town | null,
   ): ViolationUpdate {
+    const townRef = (town?: Town | null) =>
+      town ? { code: town.code, name: town.name } : null
+
     return ViolationUpdate.create(ViolationUpdateType.SECTION, actor, {
       from,
       to,
+      fromTown: townRef(fromTown),
+      toTown: townRef(toTown),
     })
   }
 
