@@ -21,6 +21,7 @@ import {
 import { ViolationComment } from './violation-comment.entity'
 import {
   ViolationPublishingException,
+  ViolationSectionException,
   ViolationStatusException,
 } from './violation.exceptions'
 
@@ -204,6 +205,37 @@ export class Violation {
 
     this.isPublished = false
     this.addUpdate(ViolationUpdate.createUnpublishUpdate(user))
+  }
+
+  /**
+   * Set or correct the section, e.g. when the sender only picked a town that
+   * spans several election regions and wrote the section in the description.
+   * The section must be in the violation's town or in the same municipality
+   * (then the town follows the section).
+   */
+  setSection(actor: User, section: Section): void {
+    if (!section) {
+      throw ViolationSectionException.forMissingSection(this)
+    }
+
+    if (this.section?.id === section.id) {
+      return
+    }
+
+    const sameTown = !!this.town && section.town?.id === this.town.id
+    const sameMunicipality =
+      !!this.town?.municipality?.id &&
+      section.town?.municipality?.id === this.town.municipality.id
+    if (!sameTown && !sameMunicipality) {
+      throw ViolationSectionException.forDifferentTown(this)
+    }
+
+    const previousSectionId = this.section?.id ?? null
+    this.section = section
+    this.town = section.town
+    this.addUpdate(
+      ViolationUpdate.createSectionUpdate(actor, previousSectionId, section.id),
+    )
   }
 
   private addUpdate(update: ViolationUpdate): void {

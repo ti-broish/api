@@ -73,3 +73,41 @@ export class ViolationPublishingException
     return this.message
   }
 }
+
+export class ViolationSectionException
+  extends Error
+  implements ViolationException
+{
+  private violation: Violation
+
+  constructor(violation: Violation, message: string) {
+    super(message)
+    this.violation = violation
+  }
+
+  public static forDifferentTown(
+    violation: Violation,
+  ): ViolationSectionException {
+    return new ViolationSectionException(
+      violation,
+      'VIOLATION_SECTION_IN_DIFFERENT_TOWN',
+    )
+  }
+
+  public static forMissingSection(
+    violation: Violation,
+  ): ViolationSectionException {
+    return new ViolationSectionException(
+      violation,
+      'VIOLATION_SECTION_NOT_FOUND',
+    )
+  }
+
+  getViolation(): Violation {
+    return this.violation
+  }
+
+  getMessage(): string {
+    return this.message
+  }
+}

@@ -15,6 +15,7 @@ import { Request, Response } from 'express'
 import { I18nService } from 'nestjs-i18n'
 import {
   ViolationPublishingException,
+  ViolationSectionException,
   ViolationStatusException,
 } from 'src/violations/entities/violation.exceptions'
 import {
@@ -36,6 +37,7 @@ interface ExceptionResponse {
   ProtocolStatusConflictException,
   ViolationStatusException,
   ViolationPublishingException,
+  ViolationSectionException,
   HttpException,
   GoogleRecaptchaException,
   GoogleRecaptchaNetworkException,
