@@ -1,10 +1,11 @@
-import { IsNotEmpty, IsNumberString, IsString, Length } from 'class-validator'
-import { Section } from '../../sections/entities/section.entity'
+import { IsNotEmpty, IsString, Matches } from 'class-validator'
+
+export const VIOLATION_SECTION_INVALID_FORMAT =
+  'VIOLATION_SECTION_INVALID_FORMAT'
 
 export class ViolationSectionDto {
-  @IsNotEmpty()
-  @IsString()
-  @Length(Section.SECTION_ID_LENGTH, Section.SECTION_ID_LENGTH)
-  @IsNumberString({ no_symbols: true })
+  @IsNotEmpty({ message: VIOLATION_SECTION_INVALID_FORMAT })
+  @IsString({ message: VIOLATION_SECTION_INVALID_FORMAT })
+  @Matches(/^\d{9}$/, { message: VIOLATION_SECTION_INVALID_FORMAT })
   section: string
 }
