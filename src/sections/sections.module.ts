@@ -25,6 +25,8 @@ import { IsTownExistsConstraint } from './api/town-exists.constraint'
 import { CaslModule } from 'src/casl/casl.module'
 import { MunicipalitiesRepository } from './entities/municipalities.repository'
 import { CityRegionsRepository } from './entities/cityRegions.repository'
+import { AbroadAddressesController } from './api/abroad-addresses.controller'
+import { AbroadAddressesService } from './abroad-addresses'
 
 @Module({
   imports: [
@@ -47,6 +49,7 @@ import { CityRegionsRepository } from './entities/cityRegions.repository'
     IsSectionExistsConstraint,
     IsTownExistsConstraint,
     CityRegionsRepository,
+    AbroadAddressesService,
   ],
   exports: [
     SectionsRepository,
@@ -57,6 +60,8 @@ import { CityRegionsRepository } from './entities/cityRegions.repository'
     TownsRepository,
   ],
   controllers: [
+    // Before SectionsController, whose GET :section would take /sections/abroad.
+    AbroadAddressesController,
     SectionsController,
     CountriesController,
     ElectionRegionsController,
