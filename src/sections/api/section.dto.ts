@@ -10,6 +10,7 @@ import { IsNumberString, IsString, Length } from 'class-validator'
 import { StreamDto } from 'src/streams/api/stream.dto'
 import { ViolationDto } from 'src/violations/api/violation.dto'
 import { Section } from '../entities/section.entity'
+import { sectionAddress } from '../section-address'
 import { CityRegionDto } from './cityRegion.dto'
 import { ElectionRegionDto } from './electionRegion.dto'
 import { IsSectionExists } from './section-exists.constraint'
@@ -67,6 +68,17 @@ export class SectionDto {
     ],
   })
   public place: string
+
+  @ApiProperty({
+    nullable: true,
+    description:
+      'Street address: the address column, or place for a domestic section without one. Null for an abroad section without an address.',
+  })
+  @Expose({
+    groups: ['read', 'get', 'partialMatch', 'protocol.protocolInResults'],
+  })
+  @Transform(({ obj }) => sectionAddress(obj), { toClassOnly: true })
+  public address: string | null
 
   @ApiProperty()
   @Expose({

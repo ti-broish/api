@@ -21,6 +21,10 @@ export class Section implements WithCode {
   @Column()
   place: string = ''
 
+  /** Street address; null for most domestic sections, whose `place` is the address. See sectionAddress(). */
+  @Column({ type: 'text', nullable: true })
+  address: string | null = null
+
   @Column()
   votersCount: number = 0
 

@@ -38,6 +38,7 @@ import {
 import { TownsRepository } from 'src/sections/entities/towns.repository'
 import { WithCode } from 'src/sections/entities/withCode.interface'
 import { SECTION_SEGMENT_BREAKDOWN } from 'src/sections/sections-pattern'
+import { sectionAddress } from 'src/sections/section-address'
 import { PartyDto } from 'src/parties/api/party.dto'
 import { Party } from 'src/parties/entities/party.entity'
 
@@ -608,6 +609,7 @@ export class ResultsController {
       crumbs: this.crumbMaker.makeCrumbs([electionRegion, unit, district]),
       abroad: electionRegion.isAbroad,
       place: section.place,
+      address: sectionAddress(section),
       town: {
         id: section.town.code,
         name: section.town.name,
