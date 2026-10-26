@@ -53,10 +53,14 @@ async function main(): Promise<number> {
   return 0
 }
 
+// exitCode, not process.exit(): exiting at once cuts off a long report
+// written to a pipe (e.g. over ssh).
 main().then(
-  (code) => process.exit(code),
+  (code) => {
+    process.exitCode = code
+  },
   (e: Error) => {
     console.error(e instanceof AbroadAddressesInputError ? e.message : e)
-    process.exit(1)
+    process.exitCode = 1
   },
 )
